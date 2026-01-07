@@ -4,7 +4,9 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>سياسة الخصوصية - DocSera</title>
-    <link href="https://fonts.googleapis.com/css2?family=Cairo:wght@400;600;700&display=swap" rel="stylesheet">
+    <link
+        href="https://fonts.googleapis.com/css2?family=Cairo:wght@400;600;700&family=Roboto:wght@400;500;700&display=swap"
+        rel="stylesheet">
     <style>
         body {
             font-family: 'Cairo', 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
@@ -69,96 +71,267 @@
         a:hover {
             text-decoration: underline;
         }
+        /* Language Switcher Styles */
+        .lang-switcher {
+            text-align: center;
+            margin-bottom: 20px;
+            display: flex;
+            justify-content: center;
+            gap: 10px;
+        }
+        .lang-switcher button {
+            background: none;
+            border: 1px solid #009092;
+            color: #009092;
+            padding: 6px 14px;
+            margin: 0;
+            border-radius: 20px;
+            cursor: pointer;
+            font-weight: 600;
+            font-family: inherit;
+            transition: all 0.3s ease;
+        }
+        .lang-switcher button:hover {
+            background-color: rgba(0, 144, 146, 0.1);
+        }
+        .lang-switcher button.active {
+            background-color: #009092;
+            color: white;
+        }
     </style>
 </head>
 <body>
+    <div class="lang-switcher">
+        <button onclick="setLang('ar')" class="active">AR</button>
+        <button onclick="setLang('en')">EN</button>
+    </div>
     <div class="container">
-        <h1>سياسة الخصوصية</h1>
-        <p class="date">آخر تحديث: يناير 2026</p>
-        <p>مرحباً بكم في <strong>DocSera</strong> ("نحن"، "لنا" أو "التطبيق"). نحن نأخذ خصوصيتك على محمل الجد ونلتزم
-            بحماية بياناتك الشخصية والصحية بأعلى معايير الأمان. توضح وثيقة "سياسة الخصوصية" هذه بشفافية تامة كيف نقوم
-            بجمع واستخدام وحماية المعلومات الخاصة بك عند استخدامك لتطبيقنا وخدماتنا.</p>
-        <h2>1. المعلومات التي نقوم بجمعها</h2>
-        <p>لتقديم خدمات الرعاية الصحية المتكاملة، قد نطلب منك تزويدنا ببعض المعلومات، والتي تشمل:</p>
-        <ul>
-            <li><strong>المعلومات الشخصية والتعريفية:</strong> الاسم الكامل، رقم الهاتف، البريد الإلكتروني، تاريخ
-                الميلاد، والجنس. كما يمكنك اختيارياً إضافة <strong>العنوان</strong> لتسهيل الخدمات.، نستخدم هذه البيانات
-                لإنشاء حسابك والتحقق من هويتك لضمان أمان الملف الطبي.</li>
-            <li><strong>البيانات الصحية (Health Wallet):</strong> تشمل التقارير الطبية، صور الوصفات الطبية (التي تقوم
-                برفعها بنفسك)، سجل
-                المواعيد، وبيانات أفراد العائلة التي تختار إضافتها. يتم تخزين هذه البيانات مشفرة لتمكينك من الوصول لملفك
-                الطبي في أي وقت.</li>
-            <li><strong>المحتوى الذي ينشئه المستخدم:</strong> الرسائل النصية، والملاحظات الصوتية (Voice Notes)،
-                والمرفقات التي ترسلها للأطباء عبر خدمة المحادثة في التطبيق.</li>
-            <li><strong>بيانات الموقع الجغرافي (اختياري):</strong> قد نطلب إذن الوصول لموقعك الجغرافي الدقيق فقط
-                لمساعدتك في العثور على الأطباء والعيادات القريبة منك. يمكنك استخدام التطبيق دون تفعيل هذه الميزة.</li>
-            <li><strong>معلومات الجهاز والاستخدام:</strong> مثل نوع الجهاز، معرف الجهاز الفريد (Device ID)، وعنوان IP.
-                تُستخدم هذه البيانات لأغراض الأمان وإرسال الإشعارات الضرورية.</li>
-        </ul>
-        <h2>2. كيف نستخدم معلوماتك</h2>
-        <p>نستخدم المعلومات التي نجمعها للأغراض التالية فقط:</p>
-        <ul>
-            <li><strong>تقديم الخدمة الطبية:</strong> حجز وإدارة المواعيد الطبية، والتواصل المباشر مع الأطباء.</li>
-            <li><strong>تسهيل التواصل:</strong> تمكين الأطباء المسجلين في المنصة من العثور عليك باستخدام رقم هاتفك أو
-                بريدك الإلكتروني لإرسال طلبات الربط أو المتابعة الطبية.</li>
-            <li><strong>إدارة السجلات:</strong> حفظ وأرشفة تقاريرك الطبية ووصفاتك في مكان آمن يسهل الرجوع إليه.</li>
-            <li><strong>التواصل والإشعارات:</strong> إرسال تذكيرات المواعيد، تحديثات الحالة الطبية، والرسائل الإدارية
-                الهامة عبر خدمة الإشعارات.</li>
-            <li><strong>الأمان والحماية:</strong> التحقق من الهوية ومنع الوصول غير المصرح به لحسابك.</li>
-            <li><strong>تحسين الأداء:</strong> مراقبة أداء الخوادم (Server Logs) لضمان سرعة واستقرار الخدمة، دون تتبع
-                سلوكك الشخصي لأغراض إعلانية.</li>
-        </ul>
-        <h2>3. مشاركة البيانات والإفصاح عنها</h2>
-        <p>خصوصيتك خط أحمر. <strong>نحن لا نقوم ببيع بياناتك الشخصية لأي طرف ثالث</strong>. تتم مشاركة البيانات فقط في
-            الحالات المحددة التالية:</p>
-        <ul>
-            <li><strong>مع الأطباء/مقدمي الرعاية:</strong> يتم مشاركة اسمك وملفك الصحي ورسائلك مع الطبيب الذي تقوم
-                بالحجز لديه أو الموافقة على التواصل معه. كما يمكن للأطباء في المنصة البحث عن معلومات الاتصال الأساسية بك
-                (دون الملف الطبي) لغرض التواصل المهني.</li>
-            <li><strong>مع مزودي الخدمة التقنية:</strong> نتعامل مع شركات عالمية موثوقة لضمان عمل التطبيق:
-                <ul>
-                    <li><strong>Supabase:</strong> لاستضافة وتخزين قاعدة البيانات والملفات بشكل آمن ومشفر. (<a
-                            href="https://supabase.com/privacy" target="_blank">سياسة الخصوصية</a>)</li>
-                    <li><strong>Pushy:</strong> لخدمة إرسال الإشعارات الفورية الموثوقة. (<a
-                            href="https://pushy.me/privacy" target="_blank">سياسة الخصوصية</a>)</li>
-                </ul>
-            </li>
-            <li><strong>الامتثال القانوني:</strong> قد نفصح عن المعلومات إذا كان ذلك مطلوباً بموجب القانون أو استجابة
-                لطلب حكومي رسمي ساري المفعول.</li>
-        </ul>
-        <h2>4. أمن البيانات وتخزينها</h2>
-        <p>نطبق إجراءات أمنية صارمة ومثبتة تقنياً لحماية بياناتك:</p>
-        <ul>
-            <li><strong>التشفير (Encryption):</strong> جميع البيانات تنتقل عبر القنوات الآمنة (HTTPS/SSL)، ويتم تخزين
-                البيانات الحساسة مشفرة في الخوادم.</li>
-            <li><strong>البنية التحتية (Infrastructure):</strong> نعتمد على خوادم Supabase المؤمنة والمحمية بمعايير
-                عالمية.</li>
-            <li><strong>صلاحيات الوصول (RLS):</strong> نبرمج قاعدة البيانات بحيث تمنع تقنياً أي شخص (بما في ذلك المطورين
-                غير المصرح لهم) من قراءة بياناتك، حيث يتم ربط كل سجل بمعرف المستخدم الخاص بك فقط.</li>
-        </ul>
-        <h2>5. حقوقك كمستخدم</h2>
-        <p>بموجب قوانين الخصوصية، لديك الحقوق التالية:</p>
-        <ul>
-            <li><strong>حق الوصول والتصحيح:</strong> يمكنك الاطلاع على كافة بياناتك وتعديلها عبر إعدادات الملف الشخصي.
-            </li>
-            <li><strong>حق الحذف/التعطيل:</strong> يمكنك طلب "حذف الحساب" من الإعدادات. سيؤدي ذلك إلى تعطيل حسابك فوراً
-                ومنع الوصول إليه. يرجى الملاحظة أننا قد نحتفظ ببعض السجلات الطبية لفترة زمنية محددة امتثالاً للقوانين
-                الطبية التي تمنع إتلاف السجلات الصحية، ولكنها ستكون غير قابلة للوصول للمستخدمين العاديين.</li>
-        </ul>
-        <h2>6. خصوصية الأطفال</h2>
-        <p>التطبيق مخصص للاستخدام العام (18+). بالنسبة للمرضى القصر، يجب إدارة حساباتهم وملفاتهم الطبية حصرياً من قبل
-            الوالدين أو الأوصياء القانونيين عبر ميزة "إدارة العائلة" في التطبيق.</p>
-        <h2>7. التغييرات على سياسة الخصوصية</h2>
-        <p>قد نقوم بتحديث هذه السياسة من وقت لآخر لتعكس التحسينات في خدماتنا. سنقوم بإشعارك عبر التطبيق أو البريد
-            الإلكتروني في حال وجود تغييرات جوهرية تؤثر على حقوقك.</p>
-        <h2>8. اتصل بنا</h2>
-        <p>إذا كان لديك أي استفسار حول سياسة الخصوصية أو ممارسات التخزين لدينا، يسعدنا تواصلك معنا عبر:</p>
-        <p style="text-align: center; font-weight: bold; margin-top: 20px;">
-            البريد الإلكتروني: <a href="mailto:support@docsera.com">support@docsera.com</a>
-        </p>
+        <!-- Arabic Section -->
+        <section id="ar" lang="ar" dir="rtl">
+            <h1>سياسة الخصوصية</h1>
+            <p class="date">آخر تحديث: 07 كانون الثاني 2026</p>
+            <p>مرحباً بكم في <strong>DocSera</strong> ("نحن"، "لنا" أو "التطبيق"). نحن نأخذ خصوصيتك على محمل الجد ونلتزم
+                بحماية بياناتك الشخصية والصحية بأعلى معايير الأمان. توضح وثيقة "سياسة الخصوصية" هذه بشفافية تامة كيف
+                نقوم
+                بجمع واستخدام وحماية المعلومات الخاصة بك عند استخدامك لتطبيقنا وخدماتنا.</p>
+            <h2>1. المعلومات التي نقوم بجمعها</h2>
+            <p>لتقديم خدمات الرعاية الصحية المتكاملة، قد نطلب منك تزويدنا ببعض المعلومات، والتي تشمل:</p>
+            <ul>
+                <li><strong>المعلومات الشخصية والتعريفية:</strong> الاسم الكامل، رقم الهاتف، البريد الإلكتروني، تاريخ
+                    الميلاد، الجنس. كما يمكنك اختيارياً إضافة <strong>العنوان</strong> لتسهيل الخدمات.، نستخدم هذه
+                    البيانات
+                    لإنشاء حسابك والتحقق من هويتك لضمان أمان الملف الطبي.</li>
+                <li><strong>البيانات الصحية (Health Wallet):</strong> تشمل التقارير الطبية، صور الوصفات الطبية (التي
+                    تقوم
+                    برفعها بنفسك)، سجل
+                    المواعيد، وبيانات أفراد العائلة التي تختار إضافتها. يتم تخزين هذه البيانات مشفرة لتمكينك من الوصول
+                    لملفك
+                    الطبي في أي وقت. لا يتم استخدام هذه البيانات الصحية لأي أغراض إعلانية أو تحليلية، ولا يتم مشاركتها
+                    مع أي
+                    طرف ثالث خارج إطار تقديم الخدمة الطبية.</li>
+                <li><strong>المحتوى الذي ينشئه المستخدم:</strong> الرسائل النصية، والملاحظات الصوتية (Voice Notes)،
+                    والمرفقات التي ترسلها للأطباء عبر خدمة المحادثة في التطبيق.</li>
+                <li><strong>بيانات الموقع الجغرافي (اختياري):</strong> قد نطلب إذن الوصول لموقعك الجغرافي الدقيق فقط
+                    لمساعدتك في العثور على الأطباء والعيادات القريبة منك. يمكنك استخدام التطبيق دون تفعيل هذه الميزة.
+                </li>
+                <li><strong>معلومات الجهاز والاستخدام:</strong> مثل نوع الجهاز، معرف الجهاز الفريد (Device ID)، وعنوان
+                    IP.
+                    تُستخدم هذه البيانات لأغراض الأمان وإرسال الإشعارات الضرورية.</li>
+            </ul>
+            <h2>2. كيف نستخدم معلوماتك</h2>
+            <p>نستخدم المعلومات التي نجمعها للأغراض التالية فقط:</p>
+            <ul>
+                <li><strong>تقديم الخدمة الطبية:</strong> حجز وإدارة المواعيد الطبية، والتواصل المباشر مع الأطباء.</li>
+                <li><strong>تسهيل التواصل:</strong> تمكين الأطباء المسجلين في المنصة من العثور عليك باستخدام رقم هاتفك
+                    أو
+                    بريدك الإلكتروني لإرسال طلبات الربط أو المتابعة الطبية.</li>
+                <li><strong>إدارة السجلات:</strong> حفظ وأرشفة تقاريرك الطبية ووصفاتك في مكان آمن يسهل الرجوع إليه.</li>
+                <li><strong>التواصل والإشعارات:</strong> إرسال تذكيرات المواعيد، تحديثات الحالة الطبية، والرسائل
+                    الإدارية
+                    الهامة عبر خدمة الإشعارات.</li>
+                <li><strong>الأمان والحماية:</strong> التحقق من الهوية ومنع الوصول غير المصرح به لحسابك.</li>
+                <li><strong>تحسين الأداء:</strong> مراقبة أداء الخوادم (Server Logs) لضمان سرعة واستقرار الخدمة، دون
+                    تتبع
+                    سلوكك الشخصي لأغراض إعلانية.</li>
+            </ul>
+            <h2>3. مشاركة البيانات والإفصاح عنها</h2>
+            <p>خصوصيتك خط أحمر. <strong>نحن لا نقوم ببيع بياناتك الشخصية لأي طرف ثالث</strong>. تتم مشاركة البيانات فقط
+                في
+                الحالات المحددة التالية:</p>
+            <ul>
+                <li><strong>مع الأطباء/مقدمي الرعاية:</strong> يتم مشاركة اسمك وملفك الصحي ورسائلك مع الطبيب الذي تقوم
+                    بالحجز لديه أو الموافقة على التواصل معه. كما يمكن للأطباء في المنصة، وبموافقتك الصريحة، الوصول إلى
+                    معلومات الاتصال الأساسية بك (دون الاطلاع على ملفك الطبي) لغرض التواصل المهني فقط.</li>
+                <li><strong>مع مزودي الخدمة التقنية:</strong> نتعامل مع شركات عالمية موثوقة لضمان عمل التطبيق:
+                    <ul>
+                        <li><strong>Supabase:</strong> لاستضافة وتخزين قاعدة البيانات والملفات بشكل آمن ومشفر. (<a
+                                href="https://supabase.com/privacy" target="_blank">سياسة الخصوصية</a>)</li>
+                        <li><strong>Pushy:</strong> لخدمة إرسال الإشعارات الفورية الموثوقة. (<a
+                                href="https://pushy.me/terms-and-privacy" target="_blank">سياسة الخصوصية</a>)</li>
+                        <li><strong>Google Maps:</strong> لعرض الخرائط وتحديد المواقع الجغرافية. (<a
+                                href="https://policies.google.com/privacy" target="_blank">سياسة خصوصية Google</a>)</li>
+                    </ul>
+                </li>
+                <li><strong>الامتثال القانوني:</strong> قد نفصح عن المعلومات إذا كان ذلك مطلوباً بموجب القانون أو
+                    استجابة
+                    لطلب حكومي رسمي ساري المفعول.</li>
+            </ul>
+            <h2>4. أمن البيانات وتخزينها</h2>
+            <p>نطبق إجراءات أمنية صارمة ومثبتة تقنياً لحماية بياناتك:</p>
+            <ul>
+                <li><strong>التشفير (Encryption):</strong> جميع البيانات تنتقل عبر القنوات الآمنة (HTTPS/SSL)، ويتم
+                    تخزين
+                    البيانات الحساسة مشفرة في الخوادم.</li>
+                <li><strong>البنية التحتية (Infrastructure):</strong> نعتمد على خوادم Supabase المؤمنة والمحمية بمعايير
+                    عالمية.</li>
+                <li><strong>صلاحيات الوصول (RLS):</strong> نبرمج قاعدة البيانات بحيث تمنع تقنياً أي شخص (بما في ذلك
+                    المطورين
+                    غير المصرح لهم) من قراءة بياناتك، حيث يتم ربط كل سجل بمعرف المستخدم الخاص بك فقط.</li>
+            </ul>
+            <h2>5. حقوقك كمستخدم</h2>
+            <p>بموجب قوانين الخصوصية، لديك الحقوق التالية:</p>
+            <ul>
+                <li><strong>حق الوصول والتصحيح:</strong> يمكنك الاطلاع على كافة بياناتك وتعديلها عبر إعدادات الملف
+                    الشخصي.
+                </li>
+                <li><strong>حق الحذف/التعطيل:</strong> يمكنك طلب "حذف الحساب" من الإعدادات. سيؤدي ذلك إلى تعطيل حسابك
+                    فوراً
+                    ومنع الوصول إليه. يرجى الملاحظة أننا قد نحتفظ ببعض السجلات الطبية لفترة زمنية محددة امتثالاً
+                    للقوانين
+                    الطبية التي تمنع إتلاف السجلات الصحية، ولكنها ستكون غير قابلة للوصول للمستخدمين العاديين.</li>
+            </ul>
+            <h2>6. خصوصية الأطفال</h2>
+            <p>التطبيق مخصص للاستخدام العام (16+). بالنسبة للمرضى القصر، يجب إدارة حساباتهم وملفاتهم الطبية حصرياً من
+                قبل
+                الوالدين أو الأوصياء القانونيين عبر ميزة "إدارة العائلة" في التطبيق.</p>
+            <h2>7. التغييرات على سياسة الخصوصية</h2>
+            <p>قد نقوم بتحديث هذه السياسة من وقت لآخر لتعكس التحسينات في خدماتنا. سنقوم بإشعارك عبر التطبيق أو البريد
+                الإلكتروني في حال وجود تغييرات جوهرية تؤثر على حقوقك.</p>
+            <h2>8. اتصل بنا</h2>
+            <p>إذا كان لديك أي استفسار حول سياسة الخصوصية أو ممارسات التخزين لدينا، يسعدنا تواصلك معنا عبر:</p>
+            <p style="text-align: center; font-weight: bold; margin-top: 20px;">
+                البريد الإلكتروني: <a href="mailto:support@docsera.app">support@docsera.app</a>
+            </p>
+            <div class="footer">
+                &copy; 2026 DocSera. جميع الحقوق محفوظة.
+            </div>
+        </section>
+        <!-- English Section -->
+        <section id="en" lang="en" dir="ltr" style="display:none;">
+            <h1>Privacy Policy</h1>
+            <p class="date">Last Updated: 07 January 2026</p>
+            <p>Thank you for using <strong>DocSera</strong>. This policy explains how we collect, use, and protect your
+                personal and health data when you use our application.</p>
+            <h2>1. Data We Collect</h2>
+            <p>We collect the following data to provide the service:</p>
+            <ul>
+                <li><strong>Personal Information:</strong> Includes your full name, phone number, email address, date of
+                    birth, gender, and optional address.</li>
+                <li><strong>Health Data (Health Wallet):</strong> Includes medical reports, prescription images
+                    (uploaded by you), appointment history, and family member data you choose to add. This data is
+                    stored encrypted to allow you to access your medical file at any time. This health data is NOT used
+                    for any advertising or analytical purposes and is not shared with any third party outside the scope
+                    of providing medical service.</li>
+                <li><strong>User Generated Content:</strong> Text messages, voice notes, and attachments you send to
+                    doctors via the chat feature.</li>
+                <li><strong>Location Data (Optional):</strong> We may request access to your precise location only when
+                    you search for nearby doctors. This data is processed via Google Maps API and is not stored on our
+                    servers permanently. (<a href="https://policies.google.com/privacy" target="_blank">Google Privacy
+                        Policy</a>)</li>
+            </ul>
+            <h2>2. How We Use Your Data</h2>
+            <p>We use your data strictly for the following purposes:</p>
+            <ul>
+                <li><strong>Service Provision:</strong> Enabling you to book appointments, manage your medical file, and
+                    communicate with doctors.</li>
+                <li><strong>Account Management:</strong> Verifying your identity via phone number (OTP) or email.</li>
+                <li><strong>Communication:</strong> Sending appointment notifications and medical updates via Push
+                    Notifications (using Pushy service).</li>
+                <li><strong>Performance Improvement:</strong> Monitoring server logs to ensure service speed and
+                    stability.</li>
+            </ul>
+            <h2>3. Data Sharing and Third Parties</h2>
+            <p>We do not sell or rent your personal data to any third party. Data is shared only in the following
+                specific cases:</p>
+            <ul>
+                <li><strong>With Doctors/Providers:</strong> Your name, health file, and messages are shared with the
+                    doctor you book with or agree to communicate with. Additionally, registered doctors on the platform
+                    can, with your explicit consent, access your basic contact information (without accessing your
+                    medical file) for professional communication purposes only.</li>
+                <li><strong>With Technical Service Providers:</strong> We work with trusted global companies to ensure
+                    the app functions:
+                    <ul>
+                        <li><strong>Supabase:</strong> For secure and encrypted database hosting and file storage. (<a
+                                href="https://supabase.com/privacy" target="_blank">Supabase Privacy</a>)</li>
+                        <li><strong>Pushy:</strong> For sending instant notifications. (<a
+                                href="https://pushy.me/terms-and-privacy" target="_blank">Pushy Privacy</a>)</li>
+                    </ul>
+                </li>
+                <li><strong>Legal Compliance:</strong> If required by law or a judicial order.</li>
+            </ul>
+            <h2>4. Data Storage and Security</h2>
+            <p>We take advanced security measures to protect your data:</p>
+            <ul>
+                <li><strong>Encryption:</strong> All data is transmitted via secure SSL/TLS. Sensitive data is stored in
+                    a secure database.</li>
+                <li><strong>Access Control (RLS):</strong> We use "Row Level Security" technology, meaning no one (not
+                    even other users) can access your data unless you explicitly grant them permission (like your
+                    doctor).</li>
+            </ul>
+            <h2>5. Account Deletion</h2>
+            <p>You can request to delete your account at any time via the settings page ("Delete Account").</p>
+            <ul>
+                <li><strong>Immediate Effect:</strong> Your account will be deactivated immediately, and you will not be
+                    able to log in.</li>
+                <li><strong>Medical Records:</strong> Some medical records may be retained for a specific period to
+                    comply with local medical laws preventing the destruction of health records, but they will be
+                    inaccessible to regular users.</li>
+            </ul>
+            <h2>6. Children's Privacy</h2>
+            <p>The application is intended for general use (16+). For minor patients, their accounts and medical files
+                must be managed exclusively by parents or legal guardians via the "Family Management" feature in the
+                app.</p>
+            <h2>7. Changes to Privacy Policy</h2>
+            <p>We may update this policy from time to time to reflect improvements in our services. We will notify you
+                via the app or email of any significant changes.</p>
+            <h2>8. Contact Us</h2>
+            <p>If you have any questions about this Privacy Policy, please contact us at:</p>
+            <p style="text-align: center; font-weight: bold; margin-top: 20px;">
+                Email: <a href="mailto:support@docsera.app">support@docsera.app</a>
+            </p>
+            <div class="footer">
+                &copy; 2026 DocSera. All rights reserved.
+            </div>
+        </section>
     </div>
-    <div class="footer">
-        &copy; 2026 DocSera. جميع الحقوق محفوظة.
-    </div>
+    <script>
+        function setLang(lang) {
+            const ar = document.getElementById('ar');
+            const en = document.getElementById('en');
+            const buttons = document.querySelectorAll('.lang-switcher button');
+            const container = document.querySelector('.container');
+            if (lang === 'ar') {
+                ar.style.display = 'block';
+                en.style.display = 'none';
+                document.documentElement.lang = 'ar';
+                document.documentElement.dir = 'rtl';
+                document.body.style.fontFamily = "'Cairo', 'Segoe UI', Tahoma, sans-serif";
+            } else {
+                ar.style.display = 'none';
+                en.style.display = 'block';
+                document.documentElement.lang = 'en';
+                document.documentElement.dir = 'ltr';
+                document.body.style.fontFamily = "'Roboto', sans-serif";
+            }
+            buttons.forEach(btn => btn.classList.remove('active'));
+            if (event && event.target) {
+                event.target.classList.add('active');
+            } else {
+                // If called programmatically or without event
+                const activeBtn = Array.from(buttons).find(b => b.textContent.toLowerCase() === lang);
+                if (activeBtn) activeBtn.classList.add('active');
+            }
+        }
+    </script>
 </body>
 </html>
