@@ -1,0 +1,206 @@
+---
+---
+<section class="features-list">
+    
+    <!-- 1. Home Dashboard (s5) -->
+    <div class="feature-item fade-up">
+        <div class="container feature-grid">
+            <div class="text">
+                <span class="step-num">01</span>
+                <h2>لوحة تحكم شاملة</h2>
+                <p>كل ما تحتاجه في شاشة واحدة. مواعيدك القادمة، تنبيهات الأدوية، والوصول السريع لخدمات الرعاية الصحية.</p>
+            </div>
+            <div class="image">
+                <img src="/images/screenshots/s5.png" alt="Home Dashboard" class="app-screen">
+            </div>
+        </div>
+    </div>
+
+    <!-- 2. Search Doctor (s8) -->
+    <div class="feature-item alt-bg fade-up">
+        <div class="container feature-grid reverse">
+            <div class="text">
+                <span class="step-num">02</span>
+                <h2>بحث متقدم عن الأطباء</h2>
+                <p>خريطة تفاعلية وقائمة ذكية للعثور على أقرب العيادات إليك حسب الاختصاص والتقييم.</p>
+            </div>
+            <div class="image">
+                <img src="/images/screenshots/s8.png" alt="Map Search" class="app-screen">
+            </div>
+        </div>
+    </div>
+
+    <!-- 3. Doctor Profile (s3) -->
+    <div class="feature-item fade-up">
+        <div class="container feature-grid">
+            <div class="text">
+                <span class="step-num">03</span>
+                <h2>ملفات أطباء موثقة</h2>
+                <p>تعرف على مؤهلات الطبيب، الخدمات التي يقدمها، وأوقات الدوام قبل الحجز. شفافية كاملة.</p>
+            </div>
+            <div class="image">
+                <img src="/images/screenshots/s3.png" alt="Doctor Profile" class="app-screen">
+            </div>
+        </div>
+    </div>
+
+    <!-- 4. Booking (s1) -->
+    <div class="feature-item alt-bg fade-up">
+        <div class="container feature-grid reverse">
+            <div class="text">
+                <span class="step-num">04</span>
+                <h2>حجز فوري ومؤكد</h2>
+                <p>لا مزيد من الانتظار على الهاتف. اختر الموعد المناسب واحجزه بضغطة زر مع تأكيد فوري.</p>
+            </div>
+            <div class="image">
+                <img src="/images/screenshots/s1.jpg" alt="Booking" class="app-screen">
+            </div>
+        </div>
+    </div>
+
+    <!-- 5. Chat (s2) -->
+    <div class="feature-item fade-up">
+        <div class="container feature-grid">
+            <div class="text">
+                <span class="step-num">05</span>
+                <h2>تواصل مباشر وآمن</h2>
+                <p>قناة تواصل آمنة مع طبيبك. أرسل استفساراتك، صور التحاليل، أو الملاحظات الصوتية.</p>
+            </div>
+            <div class="image">
+                <img src="/images/screenshots/s2.png" alt="Chat" class="app-screen">
+            </div>
+        </div>
+    </div>
+
+    <!-- 6. Family Management (s6) -->
+    <div class="feature-item alt-bg fade-up">
+        <div class="container feature-grid reverse">
+            <div class="text">
+                <span class="step-num">06</span>
+                <h2>إدارة صحة العائلة</h2>
+                <p>أضف أفراد عائلتك إلى حسابك وقم بإدارة مواعيدهم وملفاتهم الطبية بكل سهولة.</p>
+            </div>
+            <div class="image">
+                <img src="/images/screenshots/s6.png" alt="Family" class="app-screen">
+            </div>
+        </div>
+    </div>
+    
+    <!-- 7. Medical Reports List (s7) -->
+    <div class="feature-item fade-up">
+        <div class="container feature-grid">
+            <div class="text">
+                <span class="step-num">07</span>
+                <h2>أرشيف التقارير الطبية</h2>
+                <p>سجل كامل لزياراتك وتقاريرك الطبية. لا داعي للقلق من ضياع الأوراق بعد اليوم.</p>
+            </div>
+            <div class="image">
+                <img src="/images/screenshots/s7.png" alt="Reports List" class="app-screen">
+            </div>
+        </div>
+    </div>
+
+    <!-- 8. Health Wallet (s4) -->
+    <div class="feature-item alt-bg fade-up">
+        <div class="container feature-grid reverse">
+            <div class="text">
+                <span class="step-num">08</span>
+                <h2>ملفك الصحي المتكامل</h2>
+                <p>الوصول السريع لبياناتك الحيوية، الحساسيات، والأمراض المزمنة. ملفك الطبي، في جيبك دائماً.</p>
+            </div>
+            <div class="image">
+                <img src="/images/screenshots/s4.png" alt="Health Wallet" class="app-screen">
+            </div>
+        </div>
+    </div>
+
+</section>
+
+<script>
+    // Scroll Animation Observer within component scope
+    const observer = new IntersectionObserver((entries) => {
+        entries.forEach(entry => {
+            if (entry.isIntersecting) {
+                entry.target.classList.add('visible');
+            }
+        });
+    }, { threshold: 0.2 });
+
+    document.querySelectorAll('.fade-up').forEach((el) => observer.observe(el));
+</script>
+
+<style>
+    .feature-item {
+        padding: 100px 0;
+        border-bottom: 1px solid #FAF9F8;
+        opacity: 0;
+        transform: translateY(40px);
+        transition: opacity 0.8s ease-out, transform 0.8s ease-out;
+    }
+
+    .feature-item.visible {
+        opacity: 1;
+        transform: translateY(0);
+    }
+
+    .alt-bg { background: #FAFAFA; }
+
+    .feature-grid {
+        display: grid;
+        grid-template-columns: 1fr 1.2fr;
+        align-items: center;
+        gap: 80px;
+    }
+
+    .reverse { direction: ltr; }
+    .reverse .text { direction: rtl; }
+
+    .step-num {
+        display: block;
+        font-family: var(--font-en);
+        font-size: 4rem;
+        font-weight: 900;
+        color: var(--c-sand);
+        opacity: 0.5;
+        line-height: 1;
+        margin-bottom: -10px;
+    }
+
+    .text h2 {
+        font-size: 2.5rem;
+        color: var(--c-text);
+        margin-bottom: 20px;
+        position: relative;
+    }
+    
+    .text p {
+        font-size: 1.25rem;
+        color: var(--c-text-muted);
+        line-height: 1.8;
+        max-width: 450px;
+    }
+
+    .image {
+        display: flex;
+        justify-content: center;
+    }
+
+    .app-screen {
+        max-width: 280px;
+        border-radius: 40px;
+        box-shadow: 0 30px 60px rgba(0,0,0,0.1);
+        border: 8px solid white;
+        transition: transform 0.5s;
+    }
+    
+    .feature-item:hover .app-screen {
+        transform: scale(1.02);
+    }
+
+    @media (max-width: 768px) {
+        .feature-grid { grid-template-columns: 1fr; text-align: center; gap: 40px; }
+        .reverse { direction: rtl; }
+        .text p { margin: 0 auto; }
+        .step-num { font-size: 3rem; margin-bottom: 10px; }
+    }
+</style>

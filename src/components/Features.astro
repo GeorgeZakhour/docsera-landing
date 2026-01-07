@@ -1,0 +1,304 @@
+---
+---
+<section class="features" id="features">
+    <div class="container">
+        
+        <!-- Feature 1: Family Tree (Creative) -->
+        <div class="feature-block fade-up">
+            <div class="feature-text centered">
+                <span class="badge-pill mb-2">رعاية متكاملة</span>
+                <h2>صحة عائلتك.. بيدك</h2>
+                <p>لم تعد بحاجة لحمل أوراق التحاليل والوصفات لكل فرد. أنشئ ملفات لأطفالك، والديك، وشريك حياتك، وتابع صحتهم لحظة بلحظة.</p>
+            </div>
+            
+            <div class="feature-visual family-visual">
+                <!-- SVG Connector Lines (Absolute behind) -->
+                <svg class="connectors" width="100%" height="100%" viewBox="0 0 800 500" preserveAspectRatio="none">
+                    <!-- Path from Center Phone to Left Avatar -->
+                    <path d="M400,250 C300,250 200,150 150,150" fill="none" stroke="#EAE0D5" stroke-width="2" stroke-dasharray="5,5" />
+                     <!-- Path from Center Phone to Right Avatar -->
+                    <path d="M400,250 C500,250 600,350 650,350" fill="none" stroke="#EAE0D5" stroke-width="2" stroke-dasharray="5,5" />
+                </svg>
+
+                <!-- Center Phone -->
+                <div class="phone-center z-10">
+                    <img src="/images/screenshots/s6.png" alt="Family Management" class="screen-img shadow-strong">
+                </div>
+
+                <!-- Floating Avatar Left -->
+                <div class="avatar-card pos-left float-slow">
+                    <div class="av-img kid"></div>
+                    <div class="av-info">
+                        <strong>زين (5 سنوات)</strong>
+                        <span class="tag-alert">موعد لقاح قريباً</span>
+                    </div>
+                </div>
+
+                <!-- Floating Avatar Right -->
+                <div class="avatar-card pos-right float-reverse">
+                    <div class="av-img grandpa"></div>
+                    <div class="av-info">
+                        <strong>الجد أبو مازن</strong>
+                        <span class="tag-success">الضغط: منتظم ✅</span>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- Feature 2: Map & Search (Creative) -->
+        <div class="feature-split reverse mt-huge fade-up">
+            <div class="text-side">
+                <span class="badge-pill">بحث ذكي</span>
+                <h2>أقرب طبيب إليك</h2>
+                <p>لا تضيع وقتك في البحث العشوائي. ابحث حسب الاختصاص، الموقع، أو التقييم. شاهد العيادات القريبة منك على الخريطة واحجز الأنسب.</p>
+                
+                <ul class="check-list">
+                    <li>📍 خرائط دقيقة للعيادات</li>
+                    <li>⭐ تقييمات حقيقية من المرضى</li>
+                    <li>👨‍⚕️ فلترة حسب الاختصاص والتأمين</li>
+                </ul>
+            </div>
+
+            <div class="visual-side map-container">
+                <div class="phone-tilted">
+                    <img src="/images/screenshots/s8.png" alt="Map Search" class="screen-img">
+                </div>
+                
+                <!-- Floating Map Pins -->
+                <div class="map-pin pin-1 pop-in">
+                    <div class="pin-head">🦷</div>
+                    <div class="pin-pulse"></div>
+                </div>
+                <div class="map-pin pin-2 pop-in delay-1">
+                    <div class="pin-head">🩺</div>
+                    <div class="pin-pulse"></div>
+                </div>
+                
+                <!-- Location Card -->
+                <div class="location-card">
+                    <div class="loc-icon">🏥</div>
+                    <div>
+                        <strong>عيادة د. سمير</strong>
+                        <span>تبعد 1.2 كم • مفتوح</span>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+           <!-- Feature 3: Records (Classic Clean) -->
+           <div class="feature-split mt-huge fade-up">
+            <div class="text-side">
+                <span class="badge-pill">السجل الطبي</span>
+                <h2>تقاريرك.. محفوظة وموثقة</h2>
+                <p>وداعاً لضياع صور الأشعة والوصفات الورقية. DocSera يؤرشف كل زيارة، كل تشخيص، وكل دواء في سجل زمني منظم يسهل الرجوع إليه.</p>
+            </div>
+
+            <div class="visual-side">
+                <div class="phone-upright">
+                    <img src="/images/screenshots/s7.png" alt="Medical Reports" class="screen-img shadow-strong">
+                </div>
+                <!-- Document Decoration -->
+                <div class="doc-deco doc-1">📃 وصفة</div>
+                <div class="doc-deco doc-2">🧬 تحليل</div>
+            </div>
+        </div>
+
+    </div>
+</section>
+
+<style>
+    .features {
+        padding: 100px 0;
+        background: linear-gradient(to bottom, #FFFFFF 0%, #FAFAFA 100%);
+        overflow: hidden; /* For absolute elements */
+    }
+
+    .mt-huge { margin-top: 150px; }
+    .mb-2 { margin-bottom: 20px; }
+
+    .centered { text-align: center; max-width: 700px; margin: 0 auto 60px; }
+
+    .badge-pill {
+        background: var(--c-sand-light);
+        color: var(--c-main-dark);
+        padding: 6px 16px;
+        border-radius: 50px;
+        font-weight: 700;
+        font-size: 0.9rem;
+        display: inline-block;
+        margin-bottom: 16px;
+    }
+
+    h2 {
+        font-size: 2.5rem;
+        font-weight: 800;
+        color: var(--c-text);
+        margin-bottom: 16px;
+    }
+    
+    p {
+        font-size: 1.15rem;
+        color: var(--c-text-muted);
+        line-height: 1.7;
+    }
+
+    /* Family Visual Scene */
+    .family-visual {
+        position: relative;
+        height: 600px;
+        display: flex;
+        justify-content: center;
+        align-items: center;
+    }
+
+    .connectors {
+        position: absolute;
+        top: 0; left: 0;
+        z-index: 0;
+        opacity: 0.6;
+    }
+
+    .phone-center {
+        width: 280px;
+        z-index: 5;
+        position: relative;
+    }
+    .shadow-strong {
+        box-shadow: 0 30px 60px rgba(0,0,0,0.15);
+        border-radius: 40px;
+        border: 8px solid white;
+    }
+
+    .avatar-card {
+        position: absolute;
+        background: white;
+        padding: 12px;
+        border-radius: 16px;
+        box-shadow: 0 10px 30px rgba(0,0,0,0.1);
+        display: flex;
+        align-items: center;
+        gap: 12px;
+        min-width: 200px;
+        z-index: 6;
+        border: 1px solid rgba(0,0,0,0.05);
+    }
+    .av-img { width: 45px; height: 45px; border-radius: 50%; background-size: cover; background-color: #eee; }
+    .kid { background-image: url('https://api.dicebear.com/7.x/avataaars/svg?seed=Felix'); }
+    .grandpa { background-image: url('https://api.dicebear.com/7.x/avataaars/svg?seed=Aneka'); }
+
+    .av-info { display: flex; flex-direction: column; text-align: right; }
+    .av-info strong { font-size: 0.9rem; }
+    
+    .tag-alert { font-size: 0.7rem; color: #E67E22; background: #FFF3E0; padding: 2px 6px; border-radius: 4px; display: inline-block; margin-top: 2px; }
+    .tag-success { font-size: 0.7rem; color: #27AE60; background: #E8F8F5; padding: 2px 6px; border-radius: 4px; display: inline-block; margin-top: 2px; }
+
+    .pos-left { top: 20%; left: 10%; }
+    .pos-right { bottom: 25%; right: 10%; }
+
+    /* Split Layout */
+    .feature-split {
+        display: flex;
+        align-items: center;
+        gap: 80px;
+    }
+    .feature-split.reverse { flex-direction: row-reverse; }
+
+    .text-side { flex: 1; }
+    .check-list { list-style: none; padding: 0; margin-top: 24px; }
+    .check-list li { margin-bottom: 12px; font-weight: 600; color: var(--c-text); font-size: 1.05rem; }
+
+    .visual-side {
+        flex: 1;
+        position: relative;
+        display: flex;
+        justify-content: center;
+    }
+
+    .phone-tilted {
+        width: 270px;
+        transform: rotate(-5deg);
+        transition: transform 0.5s;
+        border-radius: 40px;
+        box-shadow: 0 20px 40px rgba(0,0,0,0.12);
+        border: 6px solid white;
+        overflow: hidden;
+    }
+    
+    .map-container:hover .phone-tilted { transform: rotate(0deg) scale(1.02); }
+
+    /* Map Pins */
+    .map-pin {
+        position: absolute;
+        z-index: 10;
+        cursor: pointer;
+    }
+    .pin-head {
+        width: 40px; height: 40px;
+        background: var(--c-main);
+        color: white;
+        border-radius: 50% 50% 0 50%;
+        transform: rotate(45deg);
+        display: flex; align-items: center; justify-content: center;
+        box-shadow: 0 5px 15px rgba(0, 144, 146, 0.4);
+        border: 2px solid white;
+    }
+    .pin-head::after {
+        content: attr(data-icon);
+        transform: rotate(-45deg); /* Counter rotate icon */
+        font-size: 18px;
+    }
+    
+    .pin-1 { top: 10%; right: 20%; animation: bounce 2s infinite; }
+    .pin-2 { bottom: 30%; left: 15%; animation: bounce 2.5s infinite reverse; }
+
+    .location-card {
+        position: absolute;
+        bottom: 50px; right: -20px;
+        background: white;
+        padding: 12px 16px;
+        border-radius: 12px;
+        box-shadow: 0 10px 20px rgba(0,0,0,0.1);
+        display: flex;
+        align-items: center;
+        gap: 10px;
+        z-index: 11;
+        font-size: 0.9rem;
+    }
+    .loc-icon { font-size: 1.5rem; }
+
+    /* Doc Deco */
+    .doc-deco {
+        position: absolute;
+        background: white;
+        padding: 10px 20px;
+        border-radius: 8px;
+        box-shadow: 0 8px 16px rgba(0,0,0,0.08);
+        font-weight: 700;
+        color: var(--c-text-muted);
+        border: 1px solid #EEE;
+        z-index: 0;
+    }
+    .doc-1 { top: 100px; left: 20px; transform: rotate(-10deg); }
+    .doc-2 { bottom: 100px; right: 20px; transform: rotate(10deg); }
+    .phone-upright { position: relative; z-index: 1; width: 260px; border-radius: 40px; border: 6px solid white; box-shadow: 0 20px 50px rgba(0,0,0,0.1); }
+
+    @keyframes bounce {
+        0%, 100% { transform: translateY(0); }
+        50% { transform: translateY(-10px); }
+    }
+
+    /* Pop In Animation */
+    .pop-in { animation: popIn 0.6s cubic-bezier(0.175, 0.885, 0.32, 1.275) forwards; opacity: 0; transform: scale(0.5); }
+    .visible .pop-in { opacity: 1; transform: scale(1); }
+
+    @media (max-width: 768px) {
+        .feature-split { flex-direction: column !important; gap: 40px; text-align: center; }
+        .family-visual { height: 400px; }
+        .connectors { display: none; }
+        .pos-left { left: 0; top: 10%; }
+        .pos-right { right: 0; bottom: 10%; }
+        .phone-center { width: 220px; }
+        
+        .map-pin { display: none; } /* Hide complex decorative elements on mobile */
+    }
+</style>

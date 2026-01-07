@@ -1,0 +1,87 @@
+---
+---
+<nav class="navbar">
+    <div class="container navbar-content">
+        <a href="/" class="logo-link">
+            <img src="/images/docsera_main.svg" alt="DocSera" class="logo-svg">
+        </a>
+        
+        <div class="nav-links">
+            <a href="/" class="nav-item">الرئيسية</a>
+            <a href="/features" class="nav-item">المميزات</a>
+        </div>
+
+        <div class="actions">
+            <a href="#download" class="btn-download">حمل التطبيق</a>
+        </div>
+    </div>
+</nav>
+
+<style>
+    .navbar {
+        position: fixed;
+        top: 0;
+        left: 0;
+        width: 100%;
+        background: rgba(255, 255, 255, 0.98); /* Less translucent */
+        z-index: 1000;
+        border-bottom: 1px solid rgba(0,0,0,0.05);
+        height: 80px; /* Taller, more premium */
+        display: flex;
+        align-items: center;
+        box-shadow: 0 2px 10px rgba(0,0,0,0.02);
+    }
+
+    .navbar-content {
+        display: flex;
+        justify-content: space-between;
+        align-items: center;
+        width: 100%;
+    }
+
+    .logo-svg {
+        height: 26px; /* Smaller, more premium */
+        width: auto;
+        display: block;
+    }
+
+    .nav-links {
+        display: flex;
+        gap: 32px;
+        position: absolute;
+        left: 50%;
+        transform: translateX(-50%);
+    }
+
+    .nav-item {
+        font-family: var(--font-ar);
+        font-weight: 600;
+        color: var(--c-text);
+        text-decoration: none;
+        font-size: 1.05rem;
+        transition: color 0.2s;
+    }
+
+    .nav-item:hover {
+        color: var(--c-main);
+    }
+
+    .btn-download {
+        background: var(--c-main);
+        color: white;
+        text-decoration: none;
+        padding: 12px 28px;
+        border-radius: 8px; /* Less rounded, more corporate */
+        font-weight: 700;
+        font-size: 0.95rem;
+        transition: background 0.2s;
+    }
+
+    .btn-download:hover {
+        background: var(--c-main-dark);
+    }
+
+    @media (max-width: 768px) {
+        .nav-links { display: none; } /* Mobile Menu would go here */
+    }
+</style>

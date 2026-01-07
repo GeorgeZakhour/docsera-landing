@@ -1,0 +1,202 @@
+---
+import Layout from '../layouts/Layout.astro';
+import Navbar from '../components/Navbar.astro';
+import Hero from '../components/Hero.astro';
+import Footer from '../components/Footer.astro';
+---
+
+<Layout title="DocSera - الرعاية الصحية الحديثة">
+	<Navbar />
+	<main>
+		<Hero />
+        
+        <!-- Creative Value Section (Bento / Stats) -->
+        <section class="creative-values">
+            <div class="container">
+                <div class="bento-grid fade-up delay-1">
+                    
+                    <!-- Main Value Box -->
+                    <div class="bento-item wide glass">
+                        <div class="b-content">
+                            <h3>خصوصية لا تهاون فيها</h3>
+                            <p>أمانك أولويتنا. كل بياناتك مشفرة وفق أعلى المعايير العالمية (HIPAA Compliant concepts).</p>
+                        </div>
+                        <img src="/images/encrypted.webp" class="b-icon-corner" alt="Security" />
+                    </div>
+
+                    <!-- Secondary Box -->
+                    <div class="bento-item tall dark">
+                        <h3>+10k</h3>
+                        <p>مريض يثق بنا</p>
+                        <div class="graph-line"></div>
+                    </div>
+
+                    <!-- Tertiary Box -->
+                    <div class="bento-item sand">
+                        <span class="emoji">👨‍👩‍👧‍👦</span>
+                        <h3>إدارة عائلية</h3>
+                        <p>حساب واحد للجميع.</p>
+                    </div>
+
+                    <!-- Tertiary Box -->
+                    <div class="bento-item teal">
+                         <span class="emoji">⚡</span>
+                         <h3>سرعة</h3>
+                         <p>حجز في 30 ثانية.</p>
+                    </div>
+
+                </div>
+            </div>
+        </section>
+
+        <!-- Brief Download CTA -->
+        <section id="download" class="download-section">
+            <div class="container text-center">
+                <h2>جاهز لتجربة صحية أفضل؟</h2>
+                <p>حمل تطبيق DocSera وانضم للآلاف من المستخدمين.</p>
+                <div class="store-buttons">
+                    <a href="#" class="store-btn apple">
+                        <span class="btn-icon"></span> App Store
+                    </a>
+                </div>
+            </div>
+        </section>
+
+	</main>
+	<Footer />
+</Layout>
+
+<script>
+	const observer = new IntersectionObserver((entries) => {
+		entries.forEach(entry => {
+			if (entry.isIntersecting) {
+				entry.target.classList.add('visible');
+			}
+		});
+	});
+	document.querySelectorAll('.fade-up').forEach((el) => observer.observe(el));
+</script>
+
+<style>
+    .creative-values {
+        padding: 120px 0;
+        background: #FAFAFA;
+    }
+
+    .bento-grid {
+        display: grid;
+        grid-template-columns: 2fr 1fr 1fr;
+        grid-template-rows: 250px 250px;
+        gap: 24px;
+    }
+
+    .bento-item {
+        border-radius: 32px;
+        padding: 32px;
+        position: relative;
+        overflow: hidden;
+        transition: transform 0.3s;
+        display: flex;
+        flex-direction: column;
+        justify-content: flex-end;
+    }
+    
+    .bento-item:hover { transform: translateY(-5px); }
+
+    /* Specific Styles */
+    .wide {
+        grid-column: 1 / 3;
+        grid-row: 1 / 3; /* Large square on left */
+        background: white;
+        border: 1px solid rgba(0,0,0,0.05);
+        justify-content: space-between;
+    }
+    
+    .b-icon-corner {
+        width: 120px;
+        align-self: flex-end;
+        opacity: 0.8;
+    }
+
+    .b-content h3 { font-size: 2rem; color: var(--c-main-dark); margin-bottom: 12px; }
+    .b-content p { font-size: 1.1rem; color: var(--c-text-muted); max-width: 80%; }
+
+    .tall {
+        grid-column: 3;
+        grid-row: 1 / 3;
+        background: var(--c-main-dark);
+        color: white;
+        align-items: center;
+        justify-content: center;
+        text-align: center;
+    }
+    .tall h3 { font-size: 3.5rem; margin: 0; }
+    .tall p { opacity: 0.8; font-size: 1.2rem; }
+
+    .sand {
+        grid-column: 1; /* These might need adjustment if grid flow is strict, keeping flex for simplicity below */
+        display: none; /* Hide if simpler layout preferred, but let's re-arrange below for mobile */
+    }
+
+    /* Re-doing Grid for 3-col layout properly */
+    .bento-grid {
+        grid-template-columns: 2fr 1fr;
+        grid-template-rows: auto;
+    }
+    
+    .wide { grid-column: 1; grid-row: 1 / span 2; }
+    .tall { grid-column: 2; grid-row: 1; height: 250px; }
+    
+    .teal { 
+        background: var(--c-main); 
+        color: white; 
+        grid-column: 2; 
+        grid-row: 2; 
+        padding: 24px;
+    }
+    .teal h3 { font-size: 1.5rem; margin: 0; }
+    .teal .emoji { font-size: 2rem; margin-bottom: 10px; display: block; }
+
+
+    .download-section {
+        padding: 100px 0;
+        background: #111; /* Premium Black */
+        color: white;
+        position: relative;
+        overflow: hidden;
+    }
+    
+    /* Background Shape */
+    .download-section::before {
+        content: '';
+        position: absolute;
+        top: -50%; right: -20%;
+        width: 600px; height: 600px;
+        background: radial-gradient(circle, var(--c-main-dark) 0%, transparent 70%);
+        opacity: 0.4;
+    }
+    
+    .download-section h2 { color: white; margin-bottom: 10px; font-size: 2.5rem; }
+    .download-section p { color: rgba(255,255,255,0.7); margin-bottom: 40px; font-size: 1.2rem; }
+
+    .store-btn {
+        background: white;
+        color: black;
+        padding: 14px 36px;
+        border-radius: 50px;
+        text-decoration: none;
+        font-weight: 700;
+        display: inline-flex;
+        align-items: center;
+        gap: 10px;
+        transition: transform 0.2s;
+    }
+    .store-btn:hover { transform: scale(1.05); }
+    .btn-icon { font-size: 1.4rem; }
+
+    @media (max-width: 900px) {
+        .bento-grid { display: flex; flex-direction: column; }
+        .wide { height: auto; padding-bottom: 0; }
+        .b-icon-corner { width: 100px; margin-top: 20px; }
+    }
+</style>

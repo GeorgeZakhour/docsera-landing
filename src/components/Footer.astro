@@ -1,0 +1,99 @@
+---
+const year = new Date().getFullYear();
+---
+<footer>
+    <div class="container">
+        <div class="footer-content">
+            <div class="brand">
+                <img src="/images/docsera_main.svg" alt="DocSera" height="30" />
+                <p>مستقبلك الصحي، بين يديك.</p>
+            </div>
+            
+            <div class="links-group">
+                <h4>روابط مهمة</h4>
+                <ul>
+                    <li><a href="/privacy-policy/">سياسة الخصوصية</a></li>
+                    <li><a href="/terms-of-service/">شروط الاستخدام</a></li>
+                    <li><a href="/report-illicit-content/">الإبلاغ عن محتوى</a></li>
+                </ul>
+            </div>
+
+            <div class="links-group">
+                <h4>تواصل معنا</h4>
+                <ul>
+                    <li><a href="mailto:support@docsera.app">support@docsera.app</a></li>
+                </ul>
+            </div>
+        </div>
+        
+        <div class="copyright">
+            <p>&copy; {year} DocSera. جميع الحقوق محفوظة.</p>
+        </div>
+    </div>
+</footer>
+
+<style>
+    footer {
+        background: #F8F9FA;
+        padding: 80px 0 30px;
+        border-top: 1px solid #EEE;
+    }
+
+    .footer-content {
+        display: grid;
+        grid-template-columns: 2fr 1fr 1fr;
+        gap: 60px;
+        margin-bottom: 60px;
+    }
+
+    .brand img { margin-bottom: 16px; }
+    .brand h3 {
+        color: var(--c-main);
+        font-size: 1.5rem;
+        margin-bottom: 10px;
+    }
+    .brand p {
+        color: var(--c-text-muted);
+        max-width: 300px;
+    }
+
+    h4 {
+        color: var(--c-text);
+        font-weight: 700;
+        margin-bottom: 20px;
+    }
+
+    ul {
+        list-style: none;
+        padding: 0;
+    }
+
+    li { margin-bottom: 12px; }
+
+    a {
+        text-decoration: none;
+        color: var(--c-text-muted);
+        transition: color 0.2s;
+    }
+
+    a:hover {
+        color: var(--c-main);
+    }
+
+    .copyright {
+        text-align: center;
+        padding-top: 30px;
+        border-top: 1px solid #E5E5E5;
+        color: #999;
+        font-size: 0.9rem;
+    }
+
+    @media (max-width: 768px) {
+        .footer-content {
+            grid-template-columns: 1fr;
+            text-align: center;
+            gap: 40px;
+        }
+        .brand p { margin: 0 auto; }
+    }
+</style>

@@ -1,0 +1,38 @@
+---
+import Layout from '../layouts/Layout.astro';
+import Navbar from '../components/Navbar.astro';
+import FeaturesList from '../components/FeaturesList.astro';
+import Footer from '../components/Footer.astro';
+---
+
+<Layout title="DocSera - مميزات التطبيق">
+	<Navbar />
+    
+    <header class="page-header">
+        <div class="container">
+            <h1>كل ما تحتاجه لصحتك</h1>
+            <p>اكتشف أدوات DocSera المتكاملة للمريض والطبيب.</p>
+        </div>
+    </header>
+
+	<FeaturesList />
+	<Footer />
+</Layout>
+
+<style>
+    .page-header {
+        padding: 180px 0 80px; /* Space for navbar */
+        background: var(--c-main-light);
+        text-align: center;
+    }
+
+    h1 {
+        font-size: 3rem;
+        color: var(--c-main-dark);
+        margin-bottom: 16px;
+    }
+    p {
+        font-size: 1.2rem;
+        color: var(--c-text-muted);
+    }
+</style>

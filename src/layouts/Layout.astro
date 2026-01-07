@@ -1,0 +1,91 @@
+---
+interface Props {
+	title: string;
+}
+
+const { title } = Astro.props;
+---
+
+<!doctype html>
+<html lang="ar" dir="rtl">
+	<head>
+		<meta charset="UTF-8" />
+		<meta name="description" content="DocSera - Your Health, Always Available. The comprehensive healthcare companion for you and your family." />
+		<meta name="viewport" content="width=device-width" />
+		<link rel="icon" type="image/x-icon" href="/images/DocSera-app-icon.png" />
+		<link rel="preconnect" href="https://fonts.googleapis.com">
+		<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+		<link href="https://fonts.googleapis.com/css2?family=Cairo:wght@400;600;700;800&family=Montserrat:wght@400;500;600;700&display=swap" rel="stylesheet">
+		<meta name="generator" content={Astro.generator} />
+		<title>{title}</title>
+	</head>
+	<body>
+		<slot />
+	</body>
+</html>
+
+<style is:global>
+	:root {
+		/* Palette */
+		--c-main: #009092;
+		--c-main-dark: #007474;
+		--c-main-light: #E0F2F2;
+		--c-orange: #FFA070;
+		--c-sand: #EAE0D5;
+		--c-sand-light: #F7F5F2;
+		--c-text: #2D3436;
+		--c-text-muted: #636E72;
+		--c-white: #FFFFFF;
+
+		/* Fonts */
+		--font-ar: 'Cairo', sans-serif;
+		--font-en: 'Montserrat', sans-serif;
+	}
+
+	html {
+		font-family: var(--font-ar);
+		background: #FAFAFA;
+		color: var(--c-text);
+		scroll-behavior: smooth;
+	}
+
+	body {
+		margin: 0;
+		padding: 0;
+		overflow-x: hidden;
+	}
+
+	h1, h2, h3, h4, 
+	.font-ar { font-family: var(--font-ar); }
+	
+	.font-en { font-family: var(--font-en); }
+
+	/* Utility: Container */
+	.container {
+		max-width: 1200px;
+		margin: 0 auto;
+		padding: 0 20px;
+	}
+
+	/* Animation Classes */
+	.fade-up {
+		opacity: 0;
+		transform: translateY(30px);
+		transition: opacity 0.8s ease-out, transform 0.8s ease-out;
+	}
+
+	.fade-up.visible {
+		opacity: 1;
+		transform: translateY(0);
+	}
+
+	.float {
+		animation: float 6s ease-in-out infinite;
+	}
+
+	@keyframes float {
+		0% { transform: translateY(0px); }
+		50% { transform: translateY(-15px); }
+		100% { transform: translateY(0px); }
+	}
+</style>

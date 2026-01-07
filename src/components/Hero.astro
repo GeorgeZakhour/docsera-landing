@@ -1,0 +1,187 @@
+---
+---
+<section class="hero">
+    <div class="pattern-bg"></div>
+    <div class="container hero-content">
+        <div class="content-side fade-up">
+            <h1 class="headline">
+                الرعاية الصحية.. <br />
+                <span class="highlight">بمفهوم جديد.</span>
+            </h1>
+            <p class="subheadline">
+                DocSera يجمع لك بين سهولة حجز المواعيد، التواصل المباشر مع الأطباء، وإدارة ملف عائلتك الطبي بأعلى معايير الأمان والخصوصية.
+            </p>
+            <div class="cta-group">
+                <a href="#download" class="btn-primary">
+                    تحميل التطبيق
+                </a>
+                <a href="/features" class="btn-secondary">استكشف المميزات &larr;</a>
+            </div>
+        </div>
+        
+        <div class="visual-side fade-up delay-1">
+             <div class="image-composition">
+                <!-- Main Lifestyle Image -->
+                <div class="main-img-mask">
+                    <img src="/images/female-doc.webp" alt="Doctor" class="hero-img">
+                </div>
+                <!-- Decorative Elements -->
+                <div class="floating-badge badge-1">
+                    <span class="icon">🛡️</span>
+                    <span>بيانات مشفرة</span>
+                </div>
+                <div class="floating-badge badge-2">
+                    <span class="icon">⚡</span>
+                    <span>حجز فوري</span>
+                </div>
+             </div>
+        </div>
+    </div>
+</section>
+
+<style>
+    .hero {
+        position: relative;
+        padding-top: 140px;
+        padding-bottom: 100px;
+        overflow: hidden;
+    }
+
+    .pattern-bg {
+        position: absolute;
+        top: 0; right: 0;
+        width: 50%;
+        height: 100%;
+        background-image: url('/images/doctor_header_pattern.webp');
+        background-size: cover;
+        opacity: 0.05;
+        z-index: -1;
+        mask-image: linear-gradient(to bottom, black, transparent);
+    }
+
+    .hero-content {
+        display: grid;
+        grid-template-columns: 1fr 1fr;
+        align-items: center;
+        gap: 60px;
+    }
+
+    .headline {
+        font-size: 3.8rem;
+        line-height: 1.2;
+        color: var(--c-text);
+        margin-bottom: 24px;
+        font-weight: 800;
+    }
+
+    .highlight {
+        color: var(--c-main);
+        position: relative;
+    }
+    .highlight::after {
+        content: '';
+        position: absolute;
+        bottom: 8px; left: 0; right: 0;
+        height: 12px;
+        background: var(--c-sand);
+        opacity: 0.5;
+        z-index: -1;
+        border-radius: 4px;
+    }
+
+    .subheadline {
+        font-size: 1.25rem;
+        color: var(--c-text-muted);
+        line-height: 1.8;
+        margin-bottom: 40px;
+        max-width: 90%;
+    }
+
+    /* Buttons */
+    .cta-group { display: flex; gap: 20px; }
+    .btn-primary {
+        background: var(--c-main);
+        color: white;
+        padding: 16px 40px;
+        border-radius: 50px;
+        font-weight: 700;
+        text-decoration: none;
+        box-shadow: 0 10px 25px rgba(0, 144, 146, 0.3);
+        transition: transform 0.2s;
+    }
+    .btn-primary:hover { transform: translateY(-3px); background: var(--c-main-dark); }
+    .btn-secondary {
+        display: flex; align-items: center; gap: 8px;
+        color: var(--c-text); font-weight: 600; text-decoration: none;
+        transition: color 0.2s;
+    }
+    .btn-secondary:hover { color: var(--c-main); }
+
+    /* Visual Side */
+    .visual-side {
+        position: relative;
+        display: flex;
+        justify-content: center;
+    }
+
+    .image-composition {
+        position: relative;
+        width: 450px;
+        height: 500px;
+    }
+
+    .main-img-mask {
+        width: 100%;
+        height: 100%;
+        border-radius: 40px 40px 40px 40px; /* Modern shape */
+        overflow: hidden;
+        /* box-shadow: 20px 20px 0 var(--c-sand-light); */
+        position: relative;
+    }
+    
+    /* Add a shape blob behind */
+    .image-composition::before {
+        content: '';
+        position: absolute;
+        top: -20px; left: -20px;
+        width: 100%; height: 100%;
+        background: var(--c-main-light);
+        border-radius: 45px;
+        z-index: -1;
+    }
+
+    .hero-img {
+        width: 100%;
+        height: 100%;
+        object-fit: cover;
+        object-position: top;
+    }
+
+    /* Floating Badges */
+    .floating-badge {
+        position: absolute;
+        background: white;
+        padding: 10px 20px;
+        border-radius: 12px;
+        box-shadow: 0 10px 30px rgba(0,0,0,0.1);
+        display: flex;
+        align-items: center;
+        gap: 10px;
+        font-weight: 700;
+        font-size: 0.9rem;
+        z-index: 2;
+        animation: float 6s ease-in-out infinite;
+    }
+    .icon { font-size: 1.2rem; }
+
+    .badge-1 { top: 40px; left: -30px; }
+    .badge-2 { bottom: 60px; right: -20px; animation-delay: 2s; }
+
+    @media (max-width: 900px) {
+        .hero-content { grid-template-columns: 1fr; text-align: center; }
+        .image-composition { width: 300px; height: 350px; margin: 0 auto; }
+        .subheadline { margin: 0 auto 40px; }
+        .cta-group { justify-content: center; }
+        .headline { font-size: 2.8rem; }
+    }
+</style>
