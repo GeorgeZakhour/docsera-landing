@@ -10,7 +10,8 @@
     <style>
         body {
             font-family: 'Cairo', 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
-            line-height: 1.8;
+            font-size: 13px;
+            line-height: 1.6;
             color: #333;
             max-width: 900px;
             margin: 0 auto;
@@ -25,8 +26,8 @@
         }
         h1 {
             color: #009092;
-            font-size: 1.8em;
-            margin-bottom: 10px;
+            font-size: 1.4em;
+            margin-bottom: 8px;
             text-align: center;
         }
         h2 {
@@ -34,7 +35,7 @@
             border-bottom: 2px solid #eef2f2;
             padding-bottom: 10px;
             margin-top: 40px;
-            font-size: 1.3em;
+            font-size: 1.1em;
         }
         p {
             margin-bottom: 15px;
@@ -97,123 +98,104 @@
     </style>
 </head>
 <body>
-
-<div class="lang-switcher">
-    <button onclick="setLang('ar')" class="active">AR</button>
-    <button onclick="setLang('en')">EN</button>
-</div>
-
-<div class="container">
-
-<!-- Arabic -->
-<section id="ar" lang="ar" dir="rtl">
-    <h1>الإبلاغ عن محتوى مخالف أو غير قانوني</h1>
-
-    <p>
-        تلتزم منصة <strong>DocSera</strong> بتوفير بيئة آمنة ومحترمة لجميع المستخدمين، سواء المرضى أو مقدمي الرعاية الصحية.
-        في حال واجهت أي محتوى أو سلوك مخالف للقانون أو للأخلاقيات الطبية أو لشروط الاستخدام، نرجو منك الإبلاغ عنه.
-    </p>
-
-    <div class="alert-box">
-        <strong>مهم:</strong> يتم التعامل مع جميع البلاغات بسرية تامة، ولا يتم اتخاذ أي إجراء إلا بعد المراجعة.
+    <div class="lang-switcher">
+        <button onclick="setLang('ar')" class="active">AR</button>
+        <button onclick="setLang('en')">EN</button>
     </div>
-
-    <h2>أنواع المحتوى التي يمكن الإبلاغ عنها</h2>
-    <ul>
-        <li>محتوى إباحي أو يتضمن عريًا أو إيحاءات جنسية غير لائقة</li>
-        <li>رسائل مسيئة، تحرش، تهديد، أو خطاب كراهية</li>
-        <li>إساءة استخدام أو نشر معلومات طبية مضللة أو خطيرة</li>
-        <li>انتهاك الخصوصية أو مشاركة بيانات شخصية دون إذن</li>
-        <li>انتحال شخصية أو نشاط احتيالي</li>
-        <li>محتوى غير قانوني أو مخالف للأنظمة المعمول بها</li>
-    </ul>
-
-    <h2>كيفية الإبلاغ</h2>
-    <p>
-        يرجى إرسال رسالة بريد إلكتروني تتضمن وصفًا مختصرًا للمشكلة إلى:
-    </p>
-
-    <p style="text-align:center; font-weight:bold;">
-        <a href="mailto:abuse@docsera.app">abuse@docsera.app</a>
-    </p>
-
-    <p>
-        يفضل إرفاق أي تفاصيل مساعدة مثل لقطات شاشة أو تاريخ الرسائل إن أمكن.
-    </p>
-
-    <div class="footer">
-        &copy; 2026 DocSera. جميع الحقوق محفوظة.
+    <div class="container">
+        <!-- Arabic -->
+        <section id="ar" lang="ar" dir="rtl">
+            <h1>الإبلاغ عن محتوى مخالف أو غير قانوني</h1>
+            <p>
+                تلتزم منصة <strong>DocSera</strong> بتوفير بيئة آمنة ومحترمة لجميع المستخدمين، سواء المرضى أو مقدمي
+                الرعاية الصحية.
+                في حال واجهت أي محتوى أو سلوك مخالف للقانون أو للأخلاقيات الطبية أو لشروط الاستخدام، نرجو منك الإبلاغ
+                عنه.
+            </p>
+            <div class="alert-box">
+                <strong>مهم:</strong> يتم التعامل مع جميع البلاغات بسرية تامة، ولا يتم اتخاذ أي إجراء إلا بعد المراجعة.
+            </div>
+            <h2>أنواع المحتوى التي يمكن الإبلاغ عنها</h2>
+            <ul>
+                <li>محتوى إباحي أو يتضمن عريًا أو إيحاءات جنسية غير لائقة</li>
+                <li>رسائل مسيئة، تحرش، تهديد، أو خطاب كراهية</li>
+                <li>إساءة استخدام أو نشر معلومات طبية مضللة أو خطيرة</li>
+                <li>انتهاك الخصوصية أو مشاركة بيانات شخصية دون إذن</li>
+                <li>انتحال شخصية أو نشاط احتيالي</li>
+                <li>محتوى غير قانوني أو مخالف للأنظمة المعمول بها</li>
+            </ul>
+            <h2>كيفية الإبلاغ</h2>
+            <p>
+                يرجى إرسال رسالة بريد إلكتروني تتضمن وصفًا مختصرًا للمشكلة إلى:
+            </p>
+            <p style="text-align:center; font-weight:bold;">
+                <a href="mailto:abuse@docsera.app">abuse@docsera.app</a>
+            </p>
+            <p>
+                يفضل إرفاق أي تفاصيل مساعدة مثل لقطات شاشة أو تاريخ الرسائل إن أمكن.
+            </p>
+            <div class="footer">
+                &copy; 2026 DocSera. جميع الحقوق محفوظة.
+            </div>
+        </section>
+        <!-- English -->
+        <section id="en" lang="en" dir="ltr" style="display:none;">
+            <h1>Report Illicit or Abusive Content</h1>
+            <p>
+                <strong>DocSera</strong> is committed to maintaining a safe and respectful environment for all users.
+                If you encounter any content or behavior that violates the law, medical ethics, or our Terms of Use,
+                please report it.
+            </p>
+            <div class="alert-box alert-box-ltr">
+                <strong>Important:</strong> All reports are reviewed confidentially before any action is taken.
+            </div>
+            <h2>What you can report</h2>
+            <ul>
+                <li>Nudity, sexual, or explicit content</li>
+                <li>Harassment, threats, abusive language, or hate speech</li>
+                <li>Misuse or dissemination of misleading or harmful medical information</li>
+                <li>Privacy violations or unauthorized sharing of personal data</li>
+                <li>Impersonation or fraudulent activity</li>
+                <li>Any illegal or prohibited content</li>
+            </ul>
+            <h2>How to report</h2>
+            <p>
+                Please send an email with a brief description of the issue to:
+            </p>
+            <p style="text-align:center; font-weight:bold;">
+                <a href="mailto:abuse@docsera.app">abuse@docsera.app</a>
+            </p>
+            <p>
+                Including screenshots or relevant timestamps will help us review the report more efficiently.
+            </p>
+            <div class="footer">
+                &copy; 2026 DocSera. All rights reserved.
+            </div>
+        </section>
     </div>
-</section>
-
-<!-- English -->
-<section id="en" lang="en" dir="ltr" style="display:none;">
-    <h1>Report Illicit or Abusive Content</h1>
-
-    <p>
-        <strong>DocSera</strong> is committed to maintaining a safe and respectful environment for all users.
-        If you encounter any content or behavior that violates the law, medical ethics, or our Terms of Use,
-        please report it.
-    </p>
-
-    <div class="alert-box alert-box-ltr">
-        <strong>Important:</strong> All reports are reviewed confidentially before any action is taken.
-    </div>
-
-    <h2>What you can report</h2>
-    <ul>
-        <li>Nudity, sexual, or explicit content</li>
-        <li>Harassment, threats, abusive language, or hate speech</li>
-        <li>Misuse or dissemination of misleading or harmful medical information</li>
-        <li>Privacy violations or unauthorized sharing of personal data</li>
-        <li>Impersonation or fraudulent activity</li>
-        <li>Any illegal or prohibited content</li>
-    </ul>
-
-    <h2>How to report</h2>
-    <p>
-        Please send an email with a brief description of the issue to:
-    </p>
-
-    <p style="text-align:center; font-weight:bold;">
-        <a href="mailto:abuse@docsera.app">abuse@docsera.app</a>
-    </p>
-
-    <p>
-        Including screenshots or relevant timestamps will help us review the report more efficiently.
-    </p>
-
-    <div class="footer">
-        &copy; 2026 DocSera. All rights reserved.
-    </div>
-</section>
-
-</div>
-
-<script>
-function setLang(lang) {
-    const ar = document.getElementById('ar');
-    const en = document.getElementById('en');
-    const buttons = document.querySelectorAll('.lang-switcher button');
-
-    if (lang === 'ar') {
-        ar.style.display = 'block';
-        en.style.display = 'none';
-        document.documentElement.lang = 'ar';
-        document.documentElement.dir = 'rtl';
-        document.body.style.fontFamily = "'Cairo', sans-serif";
-    } else {
-        ar.style.display = 'none';
-        en.style.display = 'block';
-        document.documentElement.lang = 'en';
-        document.documentElement.dir = 'ltr';
-        document.body.style.fontFamily = "'Montserrat', sans-serif";
-    }
-
-    buttons.forEach(btn => btn.classList.remove('active'));
-    event.target.classList.add('active');
-}
-</script>
-
+    <script>
+        function setLang(lang) {
+            const ar = document.getElementById('ar');
+            const en = document.getElementById('en');
+            const buttons = document.querySelectorAll('.lang-switcher button');
+            if (lang === 'ar') {
+                ar.style.display = 'block';
+                en.style.display = 'none';
+                document.documentElement.lang = 'ar';
+                document.documentElement.dir = 'rtl';
+                document.body.style.fontFamily = "'Cairo', sans-serif";
+            } else {
+                ar.style.display = 'none';
+                en.style.display = 'block';
+                document.documentElement.lang = 'en';
+                document.documentElement.dir = 'ltr';
+                document.body.style.fontFamily = "'Montserrat', sans-serif";
+            }
+            buttons.forEach(btn => btn.classList.remove('active'));
+            if (event && event.target) {
+                event.target.classList.add('active');
+            }
+        }
+    </script>
 </body>
 </html>
