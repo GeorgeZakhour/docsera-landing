@@ -50,6 +50,7 @@ const { src, alt, class: className, id } = Astro.props;
     height: 1344px;
     perspective: 4000px; /* Doubled perspective to match scale */
     transform-style: preserve-3d;
+    will-change: transform; /* Hardware Acceleration */
     /* Centering helper */
     margin: 0 auto; 
     position: relative;
@@ -60,6 +61,7 @@ const { src, alt, class: className, id } = Astro.props;
     height: 100%;
     position: relative;
     transform-style: preserve-3d;
+    will-change: transform; /* Hardware Acceleration */
     /* Initial State */
     transform: rotateY(0deg) rotateX(0deg);
     transition: transform 0.1s linear; /* Smooth scroll scrub */
@@ -70,6 +72,8 @@ const { src, alt, class: className, id } = Astro.props;
     backface-visibility: hidden; 
     backface-visibility: visible;
   }
+  
+
 
   /* FRONT */
   .face.front {
@@ -150,8 +154,8 @@ const { src, alt, class: className, id } = Astro.props;
   }
 
   @media (max-width: 768px) {
-    /* Hide back face on mobile to prevent "ghost" artifact */
-    .face.back {
+    /* Hide back face/thickness on mobile for performance */
+    .face.back, .face.mid {
       display: none !important;
     }
   }

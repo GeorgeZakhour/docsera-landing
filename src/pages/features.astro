@@ -159,15 +159,18 @@ import ScrollyFeature from '../components/ScrollyFeature.astro';
 
         // Apply Transform to Container
         if (container) {
-            container.style.transform = `translateY(${currentTranslateY}px) scale(${currentScale})`;
+            container.style.transform = `translateX(-50%) translateY(${currentTranslateY}px) scale(${currentScale})`;
         }
 
         // 2. ROTATION LOGIC
-        const rotationY = Math.sin(scrolled / 500) * 12; 
-        const rotationX = Math.cos(scrolled / 600) * 4; 
-
         if (pivot) {
-             pivot.style.transform = `rotateY(${rotationY}deg) rotateX(${rotationX}deg)`;
+            if (!isMobile) {
+                const rotationY = Math.sin(scrolled / 500) * 12; 
+                const rotationX = Math.cos(scrolled / 600) * 4; 
+                pivot.style.transform = `rotateY(${rotationY}deg) rotateX(${rotationX}deg)`;
+            } else {
+                pivot.style.transform = `rotateY(0deg) rotateX(0deg)`;
+            }
         }
         // 3. FADE OUT TEXT CARDS ON SCROLL (Mobile Polish)
         // If a card gets too high (approaching the phone), fade it out.
@@ -203,8 +206,18 @@ import ScrollyFeature from '../components/ScrollyFeature.astro';
     // Run immediately to set initial state (Fixes "Small Phone" glitch)
     update();
     
-    // Run on scroll
-    window.addEventListener('scroll', update, { passive: true });
+    // Optimized Scroll Loop
+    let ticking = false;
+    window.addEventListener('scroll', () => {
+        if (!ticking) {
+            window.requestAnimationFrame(() => {
+                update();
+                ticking = false;
+            });
+            ticking = true;
+        }
+    }, { passive: true });
+    
     // Run on resize to recalculate target scale
     window.addEventListener('resize', update);
 
@@ -257,7 +270,12 @@ import ScrollyFeature from '../components/ScrollyFeature.astro';
     }
 
     .phone-container {
-        /* Will be transformed by JS */
+        /* Fix: Use absolute positioning + translateX for robust horizontal centering */
+        position: absolute;
+        left: 50%;
+        top: 0;
+        width: 620px;
+        height: 1344px;
         transform-origin: center center;
         transition: transform 0.1s linear; /* Smooth sync */
     }
