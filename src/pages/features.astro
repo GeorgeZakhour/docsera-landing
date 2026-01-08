@@ -100,113 +100,116 @@ import ScrollyFeature from '../components/ScrollyFeature.astro';
     const HERO_SCROLL_HEIGHT = 800; // Pixels to transition from Hero to Standard
     const PHONE_BASE_HEIGHT = 1344; // Scalling 2x for 4K quality
 
-    function update() {
-        const scrolled = window.scrollY;
-        const viewportHeight = window.innerHeight;
-        const viewportWidth = window.innerWidth;
-        const isMobile = viewportWidth < 768;
+    // Cache Viewport Dimensions (Stability Fix)
+    let vpW = window.innerWidth;
+    let vpH = window.innerHeight;
 
-        // Calculate Target Scale (Standard Size)
-        // Desktop: 82% of screen. Mobile: 58% of screen (User requested bigger than 50%)
-        const targetPercent = isMobile ? 0.58 : 0.82;
-        const targetHeight = viewportHeight * targetPercent; 
-        const targetScale = targetHeight / PHONE_BASE_HEIGHT;
+    function updateDimensions() {
+        const newW = window.innerWidth;
+        // Only update height if width changes (orientation) or if on Desktop
+        // This prevents the phone from "Jumping" when Mobile URL bar hides/shows
+        if (newW !== vpW || newW >= 768) {
+            vpW = newW;
+            vpH = window.innerHeight;
+        }
+        update();
+    }
+
+    function update() {
+        // 1. READS (Collect all metrics first)
+        const scrolled = window.scrollY;
+        const isMobile = vpW < 768;
         
-        // Hero Zoom Start Scale
-        // Desktop: 2.1x target. Mobile: 1.5x target (less extreme zoom)
+        // Batch Section Reads (Prevent Layout Thrashing on Mobile)
+        let sectionUpdates: {el: HTMLElement, opacity: number}[] = [];
+        if (isMobile) {
+             const centerPoint = vpH * 0.6;
+             const endPoint = vpH * 0.3;
+             
+             sections.forEach(sec => {
+                 const rect = sec.getBoundingClientRect(); // READ
+                 const content = sec.querySelector('.content') as HTMLElement;
+                 if(!content) return;
+                 
+                 let op = 1;
+                 if (rect.top < centerPoint) {
+                     op = (rect.top - endPoint) / (centerPoint - endPoint);
+                     if (op < 0) op = 0;
+                     if (op > 1) op = 1;
+                 }
+                 sectionUpdates.push({ el: content, opacity: op });
+             });
+        }
+
+        // 2. CALCULATIONS (Pure Math)
+        const targetPercent = isMobile ? 0.58 : 0.82;
+        const targetHeight = vpH * targetPercent; 
+        const targetScale = targetHeight / PHONE_BASE_HEIGHT;
         const startScaleMultiplier = isMobile ? 1.5 : 2.1;
-        // Adjusted floors for 2x resolution (Base Height 1344px)
-        // Old was 1.5/2.5 on 672px. New is 0.75/1.25 on 1344px.
         const startScale = Math.max(isMobile ? 0.75 : 1.25, targetScale * startScaleMultiplier);
 
-        // 1. HERO ZOOM LOGIC
         let progress = scrolled / HERO_SCROLL_HEIGHT;
         if (progress > 1) progress = 1;
         
         let currentScale = startScale - (progress * (startScale - targetScale));
+        
+        // Calculate Translation
+        const halfHeight = PHONE_BASE_HEIGHT / 2;
+        const startVisualTopOffset = halfHeight - (halfHeight * startScale);
+        
+        // Start: 55% VH
+        const startTargetTop = vpH * 0.55;
+        const zoomTranslateY = startTargetTop - startVisualTopOffset;
 
-        // Opacity of Hero Title
-        let titleOp = 1 - (scrolled / 400);
+        // End Strategy
+        const targetVisualTopOffset = halfHeight - (halfHeight * targetScale);
+        let restTranslateY = 0;
+        if (isMobile) {
+            restTranslateY = (vpH * 0.15) - targetVisualTopOffset;
+        } else {
+            restTranslateY = (vpH * 0.10) - targetVisualTopOffset;
+        }
+
+        const currentTranslateY = zoomTranslateY - (progress * (zoomTranslateY - restTranslateY));
+
+        // Rotation
+        let rotY = 0, rotX = 0;
+        if (pivot && !isMobile) {
+             rotY = Math.sin(scrolled / 500) * 12; 
+             rotX = Math.cos(scrolled / 600) * 4; 
+        }
+
+        // Title Opacity
+        let titleOp = Math.max(0, 1 - (scrolled / 400));
+
+
+        // 3. WRITES (Apply all styles at once)
+        if (container) {
+            container.style.transform = `translateY(${currentTranslateY}px) scale(${currentScale})`;
+        }
+        
+        if (pivot) {
+             pivot.style.transform = `rotateY(${rotY}deg) rotateX(${rotX}deg)`;
+        }
+
         if (heroTitle) {
-            heroTitle.style.opacity = Math.max(0, titleOp).toString();
+            heroTitle.style.opacity = titleOp.toString();
             heroTitle.style.pointerEvents = titleOp <= 0 ? 'none' : 'auto';
         }
 
-        // AUTO-CENTERING THE TOP WHEN ZOOMED
-        // User Request: "Make it 65%" (Visual Top at 65% of viewport)
-        // Formula: TranslateY = (ScaledHeight / 2) + (ViewportHeight * 0.15)
-        const scaledHeight = PHONE_BASE_HEIGHT * startScale;
-        const zoomTranslateY = (scaledHeight / 2) + (viewportHeight * 0.15);
-
-        // RESTING POSITION (Standard State)
-        let restTranslateY = 0;
-        
         if (isMobile) {
-            // MOBILE: Anchor Top to 15% of Viewport
-            // Container is Centered (50%). Phone Top is at (50% - Height/2).
-            // We want Top at 15%.
-            // Shift = TargetTop - CurrentTop
-            // Shift = 0.15VH - (0.50VH - Height/2)
-            // Shift = -0.35VH + Height/2
-            restTranslateY = -(viewportHeight * 0.35) + (targetHeight / 2);
-        } else {
-            // DESKTOP: Push down 5% (Total top at ~14%)
-             restTranslateY = viewportHeight * 0.05;
-        }
-
-        // Interpolate Translation
-        const currentTranslateY = zoomTranslateY - (progress * (zoomTranslateY - restTranslateY));
-
-        // Apply Transform to Container
-        if (container) {
-            container.style.transform = `translateX(-50%) translateY(${currentTranslateY}px) scale(${currentScale})`;
-        }
-
-        // 2. ROTATION LOGIC
-        if (pivot) {
-            if (!isMobile) {
-                const rotationY = Math.sin(scrolled / 500) * 12; 
-                const rotationX = Math.cos(scrolled / 600) * 4; 
-                pivot.style.transform = `rotateY(${rotationY}deg) rotateX(${rotationX}deg)`;
-            } else {
-                pivot.style.transform = `rotateY(0deg) rotateX(0deg)`;
-            }
-        }
-        // 3. FADE OUT TEXT CARDS ON SCROLL (Mobile Polish)
-        // If a card gets too high (approaching the phone), fade it out.
-        if (isMobile) {
-            sections.forEach(sec => {
-                const rect = sec.getBoundingClientRect();
-                const content = sec.querySelector('.content') as HTMLElement;
-                if (!content) return;
-                
-                // If top of section is at 50% of viewport, it's centered (Opacity 1).
-                // If it goes up to 30%, it should fade to 0. (Phone is at top).
-                const centerPoint = viewportHeight * 0.6; // Start fading when above this
-                const endPoint = viewportHeight * 0.3; // Fully transparent here
-                
-                let opacity = 1;
-                if (rect.top < centerPoint) {
-                    // Map distance [endPoint, centerPoint] to [0, 1]
-                    opacity = (rect.top - endPoint) / (centerPoint - endPoint);
-                    if (opacity < 0) opacity = 0;
-                    if (opacity > 1) opacity = 1;
-                }
-                
-                // Also fade in from bottom? (Optional, but user said "disappear when scrolling before reaching mobile")
-                // So focusing on the Top Fade.
-                content.style.opacity = opacity.toString();
-                // Scale slightly for effect?
-                const scale = 0.9 + (0.1 * opacity); // 0.9 to 1.0
-                content.style.transform = `scale(${scale})`;
+            sectionUpdates.forEach(item => {
+                item.el.style.opacity = item.opacity.toString();
+                const s = 0.9 + (0.1 * item.opacity);
+                item.el.style.transform = `scale(${s})`;
             });
         }
     }
 
-    // Run immediately to set initial state (Fixes "Small Phone" glitch)
-    update();
-    
-    // Optimized Scroll Loop
+    // Init
+    updateDimensions();
+
+    // Scroll Loop
     let ticking = false;
     window.addEventListener('scroll', () => {
         if (!ticking) {
@@ -218,8 +221,8 @@ import ScrollyFeature from '../components/ScrollyFeature.astro';
         }
     }, { passive: true });
     
-    // Run on resize to recalculate target scale
-    window.addEventListener('resize', update);
+    // Optimized Resize
+    window.addEventListener('resize', updateDimensions);
 
 
     // 3. OBSERVER FOR CONTENT SWITCHING
@@ -263,21 +266,22 @@ import ScrollyFeature from '../components/ScrollyFeature.astro';
         width: 100%;
         overflow: hidden;
         display: flex;
-        align-items: center;
+        align-items: flex-start; 
         justify-content: center;
-        z-index: 1; /* Behind content */
-        pointer-events: none; /* Let clicks pass to content? */
+        direction: ltr; /* Force LTR to ensure true center even with overflow */
+        z-index: 1; 
+        pointer-events: none;
     }
 
     .phone-container {
-        /* Fix: Use absolute positioning + translateX for robust horizontal centering */
-        position: absolute;
-        left: 50%;
-        top: 0;
+        /* Fix: Relative + Flex + LTR Parent = Perfect Centering */
+        position: relative;
+        left: auto; top: auto; right: auto; margin: 0;
         width: 620px;
         height: 1344px;
+        flex-shrink: 0;
         transform-origin: center center;
-        transition: transform 0.1s linear; /* Smooth sync */
+        transition: transform 0.1s linear; 
     }
 
     .hero-overlay {
