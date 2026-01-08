@@ -1,115 +1,121 @@
 ---
+import PhoneMockup from './PhoneMockup.astro';
 ---
 <section class="features-list">
     
-    <!-- 1. Home Dashboard (s5) -->
+    <!-- 1. Home Dashboard -->
     <div class="feature-item fade-up">
         <div class="container feature-grid">
             <div class="text">
                 <span class="step-num">01</span>
-                <h2>لوحة تحكم شاملة</h2>
+                <h2 class="text-title">لوحة تحكم شاملة</h2>
                 <p>كل ما تحتاجه في شاشة واحدة. مواعيدك القادمة، تنبيهات الأدوية، والوصول السريع لخدمات الرعاية الصحية.</p>
             </div>
             <div class="image">
-                <img src="/images/screenshots/s5.png" alt="Home Dashboard" class="app-screen">
+                <PhoneMockup src="/images/raw/home.png" alt="لوحة التحكم الرئيسية" />
             </div>
         </div>
     </div>
 
-    <!-- 2. Search Doctor (s8) -->
+    <!-- 2. Search Doctor (Dual: Map + List) -->
     <div class="feature-item alt-bg fade-up">
         <div class="container feature-grid reverse">
             <div class="text">
                 <span class="step-num">02</span>
-                <h2>بحث متقدم عن الأطباء</h2>
+                <h2 class="text-title">بحث متقدم عن الأطباء</h2>
                 <p>خريطة تفاعلية وقائمة ذكية للعثور على أقرب العيادات إليك حسب الاختصاص والتقييم.</p>
             </div>
-            <div class="image">
-                <img src="/images/screenshots/s8.png" alt="Map Search" class="app-screen">
+            <div class="image dual-phones">
+                <PhoneMockup src="/images/raw/map.png" alt="البحث بالخريطة" className="phone-back" />
+                <PhoneMockup src="/images/raw/search_list.png" alt="نتائج البحث" className="phone-front" />
             </div>
         </div>
     </div>
 
-    <!-- 3. Doctor Profile (s3) -->
+    <!-- 3. Doctor Profile (Dual: Top + Details) -->
     <div class="feature-item fade-up">
         <div class="container feature-grid">
             <div class="text">
                 <span class="step-num">03</span>
-                <h2>ملفات أطباء موثقة</h2>
+                <h2 class="text-title">ملفات أطباء موثقة</h2>
                 <p>تعرف على مؤهلات الطبيب، الخدمات التي يقدمها، وأوقات الدوام قبل الحجز. شفافية كاملة.</p>
             </div>
-            <div class="image">
-                <img src="/images/screenshots/s3.png" alt="Doctor Profile" class="app-screen">
+            <div class="image dual-phones">
+                <PhoneMockup src="/images/raw/doctor_details.png" alt="تفاصيل الطبيب" className="phone-back" />
+                <PhoneMockup src="/images/raw/doctor_profile.png" alt="بروفايل الطبيب" className="phone-front" />
             </div>
         </div>
     </div>
 
-    <!-- 4. Booking (s1) -->
+    <!-- 4. Booking (Dual: Step 2 + Confirmation) -->
     <div class="feature-item alt-bg fade-up">
         <div class="container feature-grid reverse">
             <div class="text">
                 <span class="step-num">04</span>
-                <h2>حجز فوري ومؤكد</h2>
-                <p>لا مزيد من الانتظار على الهاتف. اختر الموعد المناسب واحجزه بضغطة زر مع تأكيد فوري.</p>
+                <h2 class="text-title">حجز فوري ومؤكد</h2>
+                <p>اختر الموعد المناسب واحجزه بضغطة زر مع تأكيد فوري ومزامنة مع تقويمك.</p>
             </div>
-            <div class="image">
-                <img src="/images/screenshots/s1.jpg" alt="Booking" class="app-screen">
+            <div class="image dual-phones">
+                <PhoneMockup src="/images/raw/booking_1.png" alt="خطوات الحجز" className="phone-back" />
+                <PhoneMockup src="/images/raw/booking_2.png" alt="تأكيد الحجز" className="phone-front" />
             </div>
         </div>
     </div>
 
-    <!-- 5. Chat (s2) -->
+    <!-- 5. Chat & Inbox (Dual) -->
     <div class="feature-item fade-up">
         <div class="container feature-grid">
             <div class="text">
                 <span class="step-num">05</span>
-                <h2>تواصل مباشر وآمن</h2>
+                <h2 class="text-title">تواصل مباشر وآمن</h2>
                 <p>قناة تواصل آمنة مع طبيبك. أرسل استفساراتك، صور التحاليل، أو الملاحظات الصوتية.</p>
             </div>
-            <div class="image">
-                <img src="/images/screenshots/s2.png" alt="Chat" class="app-screen">
+            <div class="image dual-phones">
+                <PhoneMockup src="/images/raw/inbox.png" alt="صندوق الرسائل" className="phone-back" />
+                <PhoneMockup src="/images/raw/chat.png" alt="المحادثة" className="phone-front" />
             </div>
         </div>
     </div>
 
-    <!-- 6. Family Management (s6) -->
+    <!-- 6. Family Management -->
     <div class="feature-item alt-bg fade-up">
         <div class="container feature-grid reverse">
             <div class="text">
                 <span class="step-num">06</span>
-                <h2>إدارة صحة العائلة</h2>
+                <h2 class="text-title">إدارة صحة العائلة</h2>
                 <p>أضف أفراد عائلتك إلى حسابك وقم بإدارة مواعيدهم وملفاتهم الطبية بكل سهولة.</p>
             </div>
             <div class="image">
-                <img src="/images/screenshots/s6.png" alt="Family" class="app-screen">
+                <PhoneMockup src="/images/raw/family.png" alt="إدارة العائلة" />
             </div>
         </div>
     </div>
     
-    <!-- 7. Medical Reports List (s7) -->
+    <!-- 7. Medical Reports (Dual: List + Detail) -->
     <div class="feature-item fade-up">
         <div class="container feature-grid">
             <div class="text">
                 <span class="step-num">07</span>
-                <h2>أرشيف التقارير الطبية</h2>
+                <h2 class="text-title">أرشيف التقارير الطبية</h2>
                 <p>سجل كامل لزياراتك وتقاريرك الطبية. لا داعي للقلق من ضياع الأوراق بعد اليوم.</p>
             </div>
-            <div class="image">
-                <img src="/images/screenshots/s7.png" alt="Reports List" class="app-screen">
+            <div class="image dual-phones">
+                <PhoneMockup src="/images/raw/reports.png" alt="أرشيف التقارير" className="phone-back" />
+                <PhoneMockup src="/images/raw/report_detail.png" alt="تفاصيل التقرير" className="phone-front" />
             </div>
         </div>
     </div>
 
-    <!-- 8. Health Wallet (s4) -->
+    <!-- 8. Health Wallet -->
     <div class="feature-item alt-bg fade-up">
         <div class="container feature-grid reverse">
             <div class="text">
                 <span class="step-num">08</span>
-                <h2>ملفك الصحي المتكامل</h2>
+                <h2 class="text-title">ملفك الصحي المتكامل</h2>
                 <p>الوصول السريع لبياناتك الحيوية، الحساسيات، والأمراض المزمنة. ملفك الطبي، في جيبك دائماً.</p>
             </div>
             <div class="image">
-                <img src="/images/screenshots/s4.png" alt="Health Wallet" class="app-screen">
+                <PhoneMockup src="/images/raw/health.png" alt="المحفظة الصحية" />
             </div>
         </div>
     </div>
@@ -117,7 +123,6 @@
 </section>
 
 <script>
-    // Scroll Animation Observer within component scope
     const observer = new IntersectionObserver((entries) => {
         entries.forEach(entry => {
             if (entry.isIntersecting) {
@@ -135,7 +140,8 @@
         border-bottom: 1px solid #FAF9F8;
         opacity: 0;
         transform: translateY(40px);
-        transition: opacity 0.8s ease-out, transform 0.8s ease-out;
+        transition: opacity 0.8s, transform 0.8s;
+        overflow: hidden; /* Prevent horizontal scroll from overlapping phones */
     }
 
     .feature-item.visible {
@@ -143,7 +149,8 @@
         transform: translateY(0);
     }
 
-    .alt-bg { background: #FAFAFA; }
+    .alt-bg { background: white; }
+    .feature-item:nth-child(odd) { background: #FAFAFA; }
 
     .feature-grid {
         display: grid;
@@ -158,49 +165,90 @@
     .step-num {
         display: block;
         font-family: var(--font-en);
-        font-size: 4rem;
+        font-size: clamp(3rem, 5vw, 5rem);
         font-weight: 900;
         color: var(--c-sand);
-        opacity: 0.5;
+        opacity: 0.4;
         line-height: 1;
         margin-bottom: -10px;
     }
 
-    .text h2 {
-        font-size: 2.5rem;
-        color: var(--c-text);
-        margin-bottom: 20px;
-        position: relative;
-    }
-    
-    .text p {
-        font-size: 1.25rem;
-        color: var(--c-text-muted);
-        line-height: 1.8;
-        max-width: 450px;
-    }
+    .text h2 { margin-bottom: 20px; color: var(--c-main-dark); }
+    .text p { color: var(--c-text-muted); max-width: 480px; }
 
     .image {
         display: flex;
         justify-content: center;
+        position: relative;
+        /* SCALING FIX: Center single phones and scale them down */
     }
 
-    .app-screen {
-        max-width: 280px;
-        border-radius: 40px;
-        box-shadow: 0 30px 60px rgba(0,0,0,0.1);
-        border: 8px solid white;
-        transition: transform 0.5s;
+    /* Target direct PhoneMockup children of .image (Single Phones) */
+    .image > :global(.mockup-wrapper) {
+        transform: scale(0.5);
+        transform-origin: center center;
+        /* Negative margins to compensate for the whitespace around the scaled element if needed, 
+           but width constraint on parent usually works better. */
+    }
+
+    /* Dual Phones Layout */
+    .dual-phones {
+        position: relative;
+        height: 650px; /* Space for stacking */
+        width: 100%;
+        display: flex;
+        justify-content: center;
+        align-items: center;
+        
+        /* SCALING FIX for Dual Phones: 
+           Scale the entire container's contents or the container itself. 
+           Let's scale the internal items to maintain the container's layout flow.
+        */
     }
     
-    .feature-item:hover .app-screen {
-        transform: scale(1.02);
+    /* Apply 0.5 scale to the phones inside dual-phones container */
+    .dual-phones :global(.mockup-wrapper) {
+        /* This will be combined with specific transforms below */
     }
 
-    @media (max-width: 768px) {
+    /* Target specific mockups via global class injection or deeply nested style if scoping permits, 
+       but Astro scopes styles by default. We passed `className` prop to PhoneMockup 
+       wrapper div. */
+       
+    :global(.phone-back) {
+        position: absolute !important;
+        /* Original: scale(0.85). New: 0.85 * 0.5 = 0.425 */
+        transform: scale(0.425) translateX(-160px) translateY(-40px);
+        opacity: 0.6;
+        filter: blur(1px);
+        z-index: 1;
+        transition: all 0.5s ease-out;
+    }
+
+    :global(.phone-front) {
+        position: relative !important;
+        z-index: 2;
+        /* Original: translateX(40px). New: + scale(0.5) */
+        transform: scale(0.5) translateX(80px); /* Doubled translate to match new scale */
+        box-shadow: -20px 20px 60px rgba(0,0,0,0.2);
+        border-radius: 56px !important; /* Updated radius 56px matched */
+    }
+    
+    /* Hover Effect */
+    .feature-item:hover :global(.phone-back) {
+        /* Original: scale(0.9). New: 0.45 */
+        transform: scale(0.45) translateX(-240px);
+        opacity: 1;
+        filter: blur(0);
+    }
+
+    @media (max-width: 900px) {
         .feature-grid { grid-template-columns: 1fr; text-align: center; gap: 40px; }
         .reverse { direction: rtl; }
         .text p { margin: 0 auto; }
-        .step-num { font-size: 3rem; margin-bottom: 10px; }
+        
+        .dual-phones { height: 500px; transform: scale(0.8); }
+        :global(.phone-back) { display: none; /* Hide back phone on mobile to convert space */ }
+        :global(.phone-front) { transform: none; }
     }
 </style>

@@ -2,55 +2,124 @@
 ---
 <nav class="navbar">
     <div class="container navbar-content">
+        <!-- Logo -->
         <a href="/" class="logo-link">
             <img src="/images/docsera_main.svg" alt="DocSera" class="logo-svg">
         </a>
         
+        <!-- Desktop Links -->
         <div class="nav-links">
             <a href="/" class="nav-item">الرئيسية</a>
             <a href="/features" class="nav-item">المميزات</a>
         </div>
 
-        <div class="actions">
+        <!-- Desktop Action -->
+        <div class="actions desktop-only">
             <a href="#download" class="btn-download">حمل التطبيق</a>
         </div>
+
+        <!-- Mobile Toggle -->
+        <button class="menu-toggle" aria-label="Toggle Menu" id="menuBtn">
+            <span class="bar"></span>
+            <span class="bar"></span>
+            <span class="bar"></span>
+        </button>
+    </div>
+
+    <!-- Mobile Menu Drawer -->
+    <div class="mobile-menu" id="mobileMenu">
+        <a href="/" class="m-link">الرئيسية</a>
+        <a href="/features" class="m-link">المميزات</a>
+        <a href="#download" class="m-btn">حمل التطبيق</a>
     </div>
 </nav>
+
+<script>
+    const btn = document.getElementById('menuBtn');
+    const menu = document.getElementById('mobileMenu');
+    const navbar = document.querySelector('.navbar');
+    
+    // Scroll Effect
+    window.addEventListener('scroll', () => {
+        if (window.scrollY > 10) {
+            navbar?.classList.add('scrolled');
+        } else {
+            navbar?.classList.remove('scrolled');
+        }
+    }, { passive: true });
+    
+    if (btn && menu) {
+        btn.addEventListener('click', () => {
+             menu.classList.toggle('open');
+             btn.classList.toggle('active');
+             // Force solid background when menu is open
+             navbar?.classList.add('menu-open');
+        });
+        
+        // Close on link click
+        menu.querySelectorAll('a').forEach(link => {
+            link.addEventListener('click', () => {
+                menu.classList.remove('open');
+                btn.classList.remove('active');
+                navbar?.classList.remove('menu-open');
+            });
+        });
+    }
+</script>
 
 <style>
     .navbar {
         position: fixed;
-        top: 0;
-        left: 0;
-        width: 100%;
-        background: rgba(255, 255, 255, 0.98); /* Less translucent */
+        top: 0; right: 0; left: 0;
+        /* Start Transparent / Clear */
+        background: transparent;
+        backdrop-filter: none;
         z-index: 1000;
-        border-bottom: 1px solid rgba(0,0,0,0.05);
-        height: 80px; /* Taller, more premium */
+        height: 70px;
+        box-shadow: none;
         display: flex;
         align-items: center;
-        box-shadow: 0 2px 10px rgba(0,0,0,0.02);
+        transition: background 0.3s ease, backdrop-filter 0.3s ease, box-shadow 0.3s ease;
     }
 
+    /* Scrolled State: Blurry Glass */
+    .navbar.scrolled, .navbar.menu-open {
+        background: rgba(255, 255, 255, 0.85); /* Slightly more transparent than 0.98 */
+        backdrop-filter: blur(12px);
+        box-shadow: 0 1px 0 rgba(0,0,0,0.05);
+    }
+    
+    /* Ensure content is readable */
+    /* Ensure content is readable */
     .navbar-content {
-        display: flex;
-        justify-content: space-between;
-        align-items: center;
         width: 100%;
+        display: grid;
+        grid-template-columns: 1fr auto 1fr; /* Left, Center, Right */
+        align-items: center;
+    }
+
+    /* Logo area */
+    .logo-link {
+        justify-self: start;
     }
 
     .logo-svg {
-        height: 26px; /* Smaller, more premium */
+        height: 16px; /* Reduced further from 20px */
         width: auto;
         display: block;
+        /* Fix potential downscaling aliasing */
+        shape-rendering: geometricPrecision;
     }
 
     .nav-links {
         display: flex;
         gap: 32px;
-        position: absolute;
-        left: 50%;
-        transform: translateX(-50%);
+        justify-self: center;
+        /* Removed absolute positioning */
+    }
+    
+    .actions {
+        justify-self: end;
     }
 
     .nav-item {
@@ -58,30 +127,88 @@
         font-weight: 600;
         color: var(--c-text);
         text-decoration: none;
-        font-size: 1.05rem;
+        font-size: 1rem;
         transition: color 0.2s;
     }
-
-    .nav-item:hover {
-        color: var(--c-main);
-    }
+    .nav-item:hover { color: var(--c-main); }
 
     .btn-download {
         background: var(--c-main);
         color: white;
         text-decoration: none;
-        padding: 12px 28px;
-        border-radius: 8px; /* Less rounded, more corporate */
+        padding: 8px 24px;
+        border-radius: 100px; /* Pill shape */
         font-weight: 700;
-        font-size: 0.95rem;
-        transition: background 0.2s;
+        font-size: 0.9rem;
     }
 
-    .btn-download:hover {
-        background: var(--c-main-dark);
+    /* Mobile Toggle - Default Hidden */
+    .menu-toggle {
+        display: none; /* KEY FIX: Hidden on desktop */
+        background: none;
+        border: none;
+        cursor: pointer;
+        flex-direction: column;
+        gap: 5px;
+        padding: 5px;
+        /* Grid placement for when it IS visible */
+        grid-column: 3;
+        justify-self: end;
+    }
+    .bar {
+        width: 24px; height: 2px;
+        background: var(--c-text);
+        border-radius: 2px;
+        transition: 0.3s;
+    }
+    
+    /* Toggle Animation */
+    .menu-toggle.active .bar:nth-child(1) { transform: rotate(45deg) translate(5px, 5px); }
+    .menu-toggle.active .bar:nth-child(2) { opacity: 0; }
+    .menu-toggle.active .bar:nth-child(3) { transform: rotate(-45deg) translate(5px, -5px); }
+    
+    /* ... Mobile (unchanged major parts) ... */
+    
+    /* Mobile Menu Drawer */
+    .mobile-menu {
+        position: absolute;
+        top: 70px; left: 0; right: 0;
+        background: rgba(255,255,255,0.95);
+        backdrop-filter: blur(12px);
+        padding: 20px;
+        display: flex;
+        flex-direction: column;
+        gap: 20px;
+        box-shadow: 0 10px 20px rgba(0,0,0,0.05);
+        transform: translateY(-150%);
+        transition: transform 0.3s ease-in-out;
+        z-index: -1;
+    }
+    
+    .mobile-menu.open { transform: translateY(0); }
+
+    .m-link {
+        font-size: 1.1rem;
+        font-weight: 600;
+        color: var(--c-text);
+        text-decoration: none;
+        border-bottom: 1px solid #f0f0f0;
+        padding-bottom: 10px;
+    }
+    
+    .m-btn {
+        background: var(--c-main);
+        color: white;
+        text-align: center;
+        padding: 12px;
+        border-radius: 8px;
+        text-decoration: none;
+        font-weight: 700;
     }
 
-    @media (max-width: 768px) {
-        .nav-links { display: none; } /* Mobile Menu would go here */
+    /* Switch to Mobile menu earlier to prevent overlap on tablets */
+    @media (max-width: 1024px) {
+        .nav-links, .desktop-only { display: none; }
+        .menu-toggle { display: flex; }
     }
 </style>

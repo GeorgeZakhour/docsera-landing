@@ -1,40 +1,44 @@
 ---
+import PhoneMockup from '../components/PhoneMockup.astro';
+import HeroAnimation from '../components/HeroAnimation.astro';
 ---
 <section class="hero">
-    <div class="pattern-bg"></div>
+    <!-- Brand Shapes Background -->
+    <div class="shape-bg main-shape">
+        <img src="/images/shapes/main.svg" alt="" />
+    </div>
+    <div class="shape-bg accent-shape">
+        <img src="/images/shapes/main2.svg" alt="" />
+    </div>
+
     <div class="container hero-content">
         <div class="content-side fade-up">
-            <h1 class="headline">
-                الرعاية الصحية.. <br />
-                <span class="highlight">بمفهوم جديد.</span>
+            <h1 class="text-huge">
+                صحتك.. <br />
+                <span class="highlight">بكل بساطة</span>
             </h1>
             <p class="subheadline">
-                DocSera يجمع لك بين سهولة حجز المواعيد، التواصل المباشر مع الأطباء، وإدارة ملف عائلتك الطبي بأعلى معايير الأمان والخصوصية.
+                أكثر من مجرد تطبيق حجز مواعيد.
+                DocSera هو نظام رعاية صحي متكامل لعائلتك.
+                ملفات طبية، تواصل مباشر، وراحة بال.
             </p>
             <div class="cta-group">
                 <a href="#download" class="btn-primary">
-                    تحميل التطبيق
+                    <span class="btn-icon">❄</span>
+                    حمل التطبيق
                 </a>
-                <a href="/features" class="btn-secondary">استكشف المميزات &larr;</a>
+                
+                <a href="/features" class="btn-text-anim">
+                     استكشف التطبيق
+                     <span class="arrow-move">←</span>
+                </a>
             </div>
         </div>
         
         <div class="visual-side fade-up delay-1">
-             <div class="image-composition">
-                <!-- Main Lifestyle Image -->
-                <div class="main-img-mask">
-                    <img src="/images/female-doc.webp" alt="Doctor" class="hero-img">
-                </div>
-                <!-- Decorative Elements -->
-                <div class="floating-badge badge-1">
-                    <span class="icon">🛡️</span>
-                    <span>بيانات مشفرة</span>
-                </div>
-                <div class="floating-badge badge-2">
-                    <span class="icon">⚡</span>
-                    <span>حجز فوري</span>
-                </div>
-             </div>
+             <!-- CINEMATIC HERO ANIMATION -->
+             <!-- Replaces static phone with 3D Flying Pages Loop -->
+             <HeroAnimation />
         </div>
     </div>
 </section>
@@ -43,32 +47,41 @@
     .hero {
         position: relative;
         padding-top: 140px;
-        padding-bottom: 100px;
+        padding-bottom: 80px;
         overflow: hidden;
+        background: radial-gradient(circle at 10% 10%, #FDFDFD 0%, #FAFAFA 100%);
     }
 
-    .pattern-bg {
+    /* Organic Background Shapes */
+    .shape-bg {
         position: absolute;
-        top: 0; right: 0;
-        width: 50%;
-        height: 100%;
-        background-image: url('/images/doctor_header_pattern.webp');
-        background-size: cover;
-        opacity: 0.05;
-        z-index: -1;
-        mask-image: linear-gradient(to bottom, black, transparent);
+        z-index: 0;
+        opacity: 0.06; /* Subtle watermark feel */
+        pointer-events: none;
+    }
+    .main-shape {
+        top: -100px;
+        right: -100px;
+        width: 800px;
+        transform: rotate(-10deg);
+    }
+    .accent-shape {
+        bottom: -50px;
+        left: -100px;
+        width: 600px;
+        opacity: 0.04;
     }
 
     .hero-content {
         display: grid;
-        grid-template-columns: 1fr 1fr;
+        grid-template-columns: 1.1fr 0.9fr;
         align-items: center;
         gap: 60px;
+        position: relative;
+        z-index: 1;
     }
 
-    .headline {
-        font-size: 3.8rem;
-        line-height: 1.2;
+    .text-huge {
         color: var(--c-text);
         margin-bottom: 24px;
         font-weight: 800;
@@ -76,112 +89,154 @@
 
     .highlight {
         color: var(--c-main);
-        position: relative;
-    }
-    .highlight::after {
-        content: '';
-        position: absolute;
-        bottom: 8px; left: 0; right: 0;
-        height: 12px;
-        background: var(--c-sand);
-        opacity: 0.5;
-        z-index: -1;
-        border-radius: 4px;
+        background: linear-gradient(180deg, transparent 70%, rgba(0, 144, 146, 0.1) 70%);
     }
 
     .subheadline {
-        font-size: 1.25rem;
         color: var(--c-text-muted);
-        line-height: 1.8;
         margin-bottom: 40px;
         max-width: 90%;
+        font-size: 1.15rem;
     }
 
-    /* Buttons */
-    .cta-group { display: flex; gap: 20px; }
+    .cta-group {
+        display: flex;
+        align-items: center;
+        gap: 30px;
+    }
+
     .btn-primary {
         background: var(--c-main);
         color: white;
-        padding: 16px 40px;
-        border-radius: 50px;
+        padding: 16px 36px;
+        border-radius: 16px; /* Soft rounding */
         font-weight: 700;
         text-decoration: none;
-        box-shadow: 0 10px 25px rgba(0, 144, 146, 0.3);
+        box-shadow: 0 10px 25px rgba(0, 144, 146, 0.25);
+        display: flex; gap: 10px; align-items: center;
         transition: transform 0.2s;
     }
     .btn-primary:hover { transform: translateY(-3px); background: var(--c-main-dark); }
-    .btn-secondary {
-        display: flex; align-items: center; gap: 8px;
-        color: var(--c-text); font-weight: 600; text-decoration: none;
+
+    .btn-text-anim {
+        display: flex;
+        align-items: center;
+        gap: 8px;
+        color: var(--c-text);
+        font-weight: 600;
+        text-decoration: none;
+        font-size: 1rem;
         transition: color 0.2s;
     }
-    .btn-secondary:hover { color: var(--c-main); }
+    .btn-text-anim:hover {
+        color: var(--c-main);
+    }
+    .arrow-move {
+        display: inline-block;
+        font-size: 1.2rem;
+        animation: arrowSlide 1.5s infinite ease-in-out;
+    }
+
+    @keyframes arrowSlide {
+        0%, 100% { transform: translateX(0); }
+        50% { transform: translateX(-5px); }
+    }
+
+    /* Rating Badge Styles (Kept as utility or removed if sure) - Replacing with above */
 
     /* Visual Side */
     .visual-side {
-        position: relative;
         display: flex;
         justify-content: center;
-    }
-
-    .image-composition {
-        position: relative;
-        width: 450px;
-        height: 500px;
-    }
-
-    .main-img-mask {
-        width: 100%;
-        height: 100%;
-        border-radius: 40px 40px 40px 40px; /* Modern shape */
-        overflow: hidden;
-        /* box-shadow: 20px 20px 0 var(--c-sand-light); */
         position: relative;
     }
-    
-    /* Add a shape blob behind */
-    .image-composition::before {
-        content: '';
-        position: absolute;
-        top: -20px; left: -20px;
-        width: 100%; height: 100%;
-        background: var(--c-main-light);
-        border-radius: 45px;
-        z-index: -1;
+
+    .hero-mockup-wrapper {
+        position: relative;
+        /* SCALING FIX: 
+           The PhoneMockup component is now 4K (620px width). 
+           We scale it down to 0.5 to display it at the original 310px size, 
+           preserving the high pixel density (Super-sampling). 
+        */
+        transform: scale(0.5);
+        transform-origin: top center;
+        /* Force layout size to match the scaled visual size */
+        width: 310px; 
+        /* The height of the scaled element is 1344 * 0.5 = 672px */
+        height: 672px; 
+        margin: 0 auto;
     }
 
-    .hero-img {
-        width: 100%;
-        height: 100%;
-        object-fit: cover;
-        object-position: top;
-    }
-
-    /* Floating Badges */
-    .floating-badge {
+    /* Floating Organic Cards */
+    .float-card {
         position: absolute;
         background: white;
-        padding: 10px 20px;
-        border-radius: 12px;
-        box-shadow: 0 10px 30px rgba(0,0,0,0.1);
+        padding: 12px 16px;
+        border-radius: 16px;
+        box-shadow: 0 15px 40px rgba(0,0,0,0.08); /* Soft shadow */
         display: flex;
         align-items: center;
-        gap: 10px;
-        font-weight: 700;
-        font-size: 0.9rem;
+        gap: 12px;
         z-index: 2;
+        min-width: 160px;
         animation: float 6s ease-in-out infinite;
     }
-    .icon { font-size: 1.2rem; }
 
-    .badge-1 { top: 40px; left: -30px; }
-    .badge-2 { bottom: 60px; right: -20px; animation-delay: 2s; }
+    .icon-box {
+        width: 40px; height: 40px;
+        background: var(--c-main-light);
+        border-radius: 12px;
+        display: flex; align-items: center; justify-content: center;
+        font-size: 1.2rem;
+        color: var(--c-main);
+    }
+
+    .text-box { display: flex; flex-direction: column; text-align: right; }
+    .text-box strong { font-size: 0.9rem; color: var(--c-text); }
+    .text-box span { font-size: 0.75rem; color: var(--c-text-muted); }
+
+    .card-1 { top: 15%; right: -30px; animation-delay: 1s; }
+    .card-2 { bottom: 20%; left: -30px; animation-delay: 3s; }
+
+    @keyframes float {
+        0%, 100% { transform: translateY(0); }
+        50% { transform: translateY(-10px); }
+    }
 
     @media (max-width: 900px) {
-        .hero-content { grid-template-columns: 1fr; text-align: center; }
-        .image-composition { width: 300px; height: 350px; margin: 0 auto; }
+        .hero-content { grid-template-columns: 1fr; text-align: center; gap: 60px; }
         .subheadline { margin: 0 auto 40px; }
         .cta-group { justify-content: center; }
-        .headline { font-size: 2.8rem; }
+        .hero-mockup-wrapper { margin: 0 auto; transform: scale(0.45); /* Adjusted from 0.9 for 2x res */ }
+        .float-card { display: none; /* Hide floats on small screens */ }
+        
+        .main-shape { 
+            width: 200px; /* Fixed small size */
+            top: -20px; 
+            right: -20px; 
+        }
+        
+        .accent-shape {
+            width: 150px; /* Fixed small size */
+            bottom: -10px;
+            left: -20px;
+        }
     }
 </style>
+
+<script>
+    document.addEventListener('scroll', () => {
+        const scrolled = window.scrollY;
+        const mainShape = document.querySelector('.main-shape') as HTMLElement;
+        const accentShape = document.querySelector('.accent-shape') as HTMLElement;
+
+        if (mainShape) {
+            // Initial -10deg + scroll factor
+            mainShape.style.transform = `rotate(${-10 + scrolled * 0.05}deg)`;
+        }
+        
+        if (accentShape) {
+            accentShape.style.transform = `rotate(${scrolled * -0.05}deg)`;
+        }
+    });
+</script>

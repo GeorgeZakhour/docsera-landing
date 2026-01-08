@@ -1,0 +1,77 @@
+---
+interface Props {
+  step: string;
+  title: string;
+  description: string;
+  align?: 'left' | 'right' | 'center';
+  id?: string;
+  imgTarget?: string; // Which raw image to show on the phone
+}
+
+const { step, title, description, align = 'left', id, imgTarget } = Astro.props;
+---
+
+<div class={`scrolly-section ${align}`} data-img={imgTarget} id={id}>
+  <div class="content">
+    <span class="step-num">{step}</span>
+    <h2>{title}</h2>
+    <p>{description}</p>
+  </div>
+</div>
+
+<style>
+  .scrolly-section {
+    min-height: 100vh; /* Full screen per section */
+    display: flex;
+    align-items: center;
+    padding: 2rem;
+    box-sizing: border-box;
+    opacity: 0.2; /* Fade out inactive */
+    transition: opacity 0.5s;
+  }
+  
+  .scrolly-section.active {
+    opacity: 1;
+  }
+
+  .content {
+    max-width: 450px;
+    position: relative;
+    z-index: 10;
+  }
+
+  .left { justify-content: flex-start; }
+  .right { justify-content: flex-end; }
+  .center { justify-content: center; text-align: center; }
+
+  .step-num {
+    display: block;
+    font-family: var(--font-en);
+    font-size: 5rem;
+    font-weight: 900;
+    color: var(--c-sand);
+    opacity: 0.4;
+    line-height: 1;
+  }
+
+  h2 {
+    font-size: 2.5rem;
+    color: var(--c-main-dark);
+    margin: 1rem 0;
+  }
+
+  p {
+    font-size: 1.25rem;
+    color: var(--c-text-muted);
+    line-height: 1.6;
+  }
+
+  @media (max-width: 768px) {
+    .scrolly-section {
+      min-height: auto;
+      padding: 100px 20px;
+      justify-content: center;
+      text-align: center;
+    }
+  }
+</style>

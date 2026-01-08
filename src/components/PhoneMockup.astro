@@ -1,0 +1,191 @@
+---
+interface Props {
+    src: string;
+    alt: string;
+    className?: string;
+}
+
+const { src, alt, className = "" } = Astro.props;
+---
+<div class={`mockup-wrapper ${className}`}>
+    <!-- Buttons (Outside Frame to avoid clipping) -->
+    <div class="side-btn silent"></div>
+    <div class="side-btn vol-up"></div>
+    <div class="side-btn vol-down"></div>
+    <div class="side-btn power"></div>
+
+    <div class="iphone-frame">
+        <!-- Scroll Shine Overlay on Border -->
+        <div class="border-shine"></div>
+        
+        <!-- Screen Container -->
+        <div class="screen-area">
+             <div class="dynamic-island"></div>
+             <img src={src} alt={alt} class="screen-img" />
+             <!-- Subtle Screen Glare -->
+             <div class="glass-glare"></div>
+        </div>
+    </div>
+</div>
+
+<script>
+    const mockups = document.querySelectorAll('.mockup-wrapper');
+    
+    // Updates shine position based on scroll progress
+    window.addEventListener('scroll', () => {
+        const viewHeight = window.innerHeight;
+        
+        mockups.forEach(mockup => {
+            const rect = mockup.getBoundingClientRect();
+            // Check if in view
+            if (rect.top < viewHeight && rect.bottom > 0) {
+                // simple 0-1 progress
+                const progress = (viewHeight - rect.top) / (viewHeight + rect.height);
+                // Map to gradient position percent
+                (mockup as HTMLElement).style.setProperty('--shine-pos', `${progress * 200}%`);
+            }
+        });
+    }, { passive: true });
+</script>
+
+<style>
+    .mockup-wrapper {
+        position: relative;
+        display: inline-block;
+        z-index: 10;
+        /* Scroll-driven variable default */
+        --shine-pos: 50%;
+    }
+
+    /* The Main Bezel (Frame) */
+    .iphone-frame {
+        position: relative;
+        width: 620px;
+        height: 1344px; /* 672 * 2 */
+        /* Natural Titanium Gradient (Lighter) */
+        background: linear-gradient(
+            125deg, 
+            #e0e0e0 0%, 
+            #b0b0b0 20%, 
+            #f5f5f5 40%, 
+            #d6d6d6 60%, 
+            #b0b0b0 80%, 
+            #e0e0e0 100%
+        );
+        background-size: 300% 300%;
+        border-radius: 112px; /* 56 * 2 */
+        box-shadow: 
+            0 0 0 2px #a0a0a0,
+            0 60px 120px rgba(0,0,0,0.3);
+        padding: 10px; /* 5 * 2 */
+        box-sizing: border-box;
+        overflow: hidden; 
+        display: flex; /* Centers the screen info */
+        align-items: center;
+        justify-content: center;
+        animation: metalShimmer 8s linear infinite;
+    }
+
+    /* Metallic Shine on Border */
+    .border-shine {
+        position: absolute;
+        top: 0; left: 0; right: 0; bottom: 0;
+        border-radius: 112px;
+        
+        /* Softer, Blurry Shine Gradient */
+        background: linear-gradient(
+            115deg, /* Adjusted angle */
+            rgba(255,255,255,0) 0%, 
+            rgba(255,255,255,0.1) 30%, 
+            rgba(255,255,255,0.6) 50%, /* Diffused center */
+            rgba(255,255,255,0.1) 70%, 
+            rgba(255,255,255,0) 100%
+        );
+        background-size: 200% 200%;
+        background-position: var(--shine-pos) var(--shine-pos);
+        transition: background-position 0.1s linear; 
+        
+        pointer-events: none;
+        z-index: 20;
+        mix-blend-mode: overlay;
+        /* Blur to remove sharpness */
+        filter: blur(24px); 
+    }
+
+    /* Screen Area (Black Bezel + Content) */
+    .screen-area {
+        width: 100%;
+        height: 100%;
+        background: black;
+        border-radius: 100px; /* 50 * 2 */
+        overflow: hidden;
+        position: relative;
+        border: 6px solid #111; /* 3 * 2 */
+        box-sizing: border-box;
+    }
+
+    .screen-img {
+        width: 100%;
+        height: 100%;
+        /* Maintain aspect ratio, but anchor to top to keep notch aligned */
+        object-fit: cover; 
+        object-position: top center;
+        display: block;
+    }
+
+    /* Subtle top-left glare on glass */
+    .glass-glare {
+        position: absolute;
+        top: -50%; left: -50%;
+        width: 200%; height: 200%;
+        background: linear-gradient(135deg, rgba(255,255,255,0.1) 0%, transparent 40%);
+        pointer-events: none;
+    }
+
+    /* Buttons - Positioned relative to wrapper, fully visible */
+    .side-btn {
+        position: absolute;
+        /* Metallic Button Style */
+        background: linear-gradient(to right, #ccc, #999);
+        width: 8px; /* 4 * 2 */
+        box-shadow: inset -2px 0 2px rgba(0,0,0,0.2);
+        border: 1px solid #aaa;
+        z-index: -1; /* Behind frame */
+    }
+    .silent { top: 200px; left: -4px; height: 60px; border-radius: 8px 0 0 8px; }
+    .vol-up { top: 300px; left: -4px; height: 120px; border-radius: 8px 0 0 8px; }
+    .vol-down { top: 450px; left: -4px; height: 120px; border-radius: 8px 0 0 8px; }
+    .power { top: 360px; right: -4px; height: 180px; border-radius: 0 8px 8px 0; }
+
+    /* Dynamic Island */
+    .dynamic-island {
+        position: absolute;
+        top: 16px; 
+        left: 50%;
+        transform: translateX(-50%);
+        width: 180px;
+        height: 44px;
+        background: black;
+        border-radius: 24px;
+        z-index: 50;
+        /* Hidden by default to show screenshot's native notch */
+        opacity: 0; 
+        transition: width 0.3s cubic-bezier(0.175, 0.885, 0.32, 1.275), 
+                    height 0.3s ease, 
+                    border-radius 0.3s ease,
+                    opacity 0.2s ease;
+    }
+
+    .mockup-wrapper:hover .dynamic-island {
+        width: 240px;
+        height: 56px;
+        top: 16px;
+        border-radius: 32px;
+        /* Appear on hover */
+        opacity: 1;
+    }
+
+    @media (max-width: 768px) {
+        .iphone-frame { width: 560px; height: 1210px; } /* 2x Mobile Size */
+    }
+</style>

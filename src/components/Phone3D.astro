@@ -1,0 +1,188 @@
+---
+import PhoneMockup from './PhoneMockup.astro';
+
+interface Props {
+  src: string;
+  alt: string;
+  class?: string;
+  id?: string;
+}
+
+const { src, alt, class: className, id } = Astro.props;
+---
+
+<div class={`phone-3d-scene ${className}`} id={id}>
+  <div class="phone-pivot">
+    
+    <!-- FRONT FACE -->
+    <div class="face front">
+      <!-- We use the existing mockup but override texturing -->
+      <PhoneMockup src={src} alt={alt} className="no-shadow" />
+    </div>
+
+    <!-- BACK FACE -->
+    <div class="face back">
+      <div class="back-glass">
+        <div class="apple-logo"></div>
+        <div class="camera-island">
+          <div class="lens l1"></div>
+          <div class="lens l2"></div>
+          <div class="lens l3"></div>
+          <div class="lidar"></div>
+          <div class="flash"></div>
+        </div>
+      </div>
+    </div>
+
+    <!-- SIDES (Thickness) -->
+    <div class="face right"></div>
+    <div class="face left"></div>
+    <div class="face top"></div>
+    <div class="face bottom"></div>
+
+  </div>
+</div>
+
+<style>
+  /* 3D Scene Setup */
+  .phone-3d-scene {
+    width: 620px;
+    height: 1344px;
+    perspective: 4000px; /* Doubled perspective to match scale */
+    transform-style: preserve-3d;
+    /* Centering helper */
+    margin: 0 auto; 
+    position: relative;
+  }
+
+  .phone-pivot {
+    width: 100%;
+    height: 100%;
+    position: relative;
+    transform-style: preserve-3d;
+    /* Initial State */
+    transform: rotateY(0deg) rotateX(0deg);
+    transition: transform 0.1s linear; /* Smooth scroll scrub */
+  }
+
+  .face {
+    position: absolute;
+    backface-visibility: hidden; 
+    backface-visibility: visible;
+  }
+
+  /* FRONT */
+  .face.front {
+    width: 620px;
+    height: 1344px;
+    transform: translateZ(50px); /* 25 * 2 = 50px */
+    z-index: 2;
+  }
+  /* Override Mockup Shadow for 3D */
+  .face.front :global(.iphone-frame) {
+    box-shadow: none !important;
+  }
+
+  /* BACK */
+  .face.back {
+    width: 620px;
+    height: 1344px;
+    font-family: system-ui;
+    transform: rotateY(180deg) translateZ(50px); /* 50px */
+    border-radius: 112px;
+    background: linear-gradient(135deg, #d6d6d6 0%, #f2f2f2 50%, #d6d6d6 100%); 
+    box-shadow: inset 0 0 40px rgba(0,0,0,0.1);
+    display: flex;
+    justify-content: center;
+    border: 2px solid #bbb;
+  }
+  
+  .back-glass {
+    width: 100%; height: 100%;
+    position: relative;
+  }
+
+  .apple-logo {
+    position: absolute;
+    top: 50%; left: 50%;
+    transform: translate(-50%, -50%);
+    width: 120px; height: 120px;
+    background: #555; 
+    -webkit-mask: url('https://upload.wikimedia.org/wikipedia/commons/f/fa/Apple_logo_black.svg') no-repeat center / contain;
+    mask: url('https://upload.wikimedia.org/wikipedia/commons/f/fa/Apple_logo_black.svg') no-repeat center / contain;
+    opacity: 0.4;
+  }
+
+  /* CAMERA ISLAND */
+  .camera-island {
+    position: absolute;
+    top: 50px; left: 50px;
+    width: 260px; height: 260px;
+    background: #e5e5e5;
+    border-radius: 80px;
+    box-shadow: 
+      inset 0 0 10px rgba(255,255,255,1), 
+      10px 10px 20px rgba(0,0,0,0.1);
+  }
+  .lens {
+    width: 88px; height: 88px;
+    background: #111;
+    border-radius: 50%;
+    position: absolute;
+    border: 8px solid #ccc; /* Lens ring */
+    background: radial-gradient(circle at 30% 30%, #444, #000);
+    box-shadow: inset 0 0 10px #000;
+  }
+  .l1 { top: 20px; left: 20px; }
+  .l2 { bottom: 20px; left: 20px; }
+  .l3 { top: 86px; right: 20px; }
+  .lidar { 
+    width: 48px; height: 48px; 
+    background: #222; border-radius: 50%; 
+    position: absolute; bottom: 30px; right: 30px; 
+    border: 4px solid #ccc;
+  }
+  .flash {
+    width: 40px; height: 40px;
+    background: #fff; border-radius: 50%;
+    position: absolute; top: 30px; right: 30px;
+    opacity: 0.8;
+  }
+
+  @media (max-width: 768px) {
+    /* Hide back face on mobile to prevent "ghost" artifact */
+    .face.back {
+      display: none !important;
+    }
+  }
+
+  /* SIDES */
+  .face.right {
+    width: 100px; height: 1244px; 
+    left: 260px; top: 50px; /* Centering? 620/2 - 50 = 260 */
+    transform: rotateY(90deg) translateZ(310px); /* 620/2 = 310 */
+    background: #b0b0b0;
+  }
+  .face.left {
+    width: 100px; height: 1244px;
+    left: 260px; top: 50px;
+    transform: rotateY(-90deg) translateZ(310px);
+    background: #b0b0b0;
+  }
+  
+  /* THICKNESS STRIPS (Simplified) */
+  .face.bottom, .face.top, .face.right, .face.left {
+    display: none; 
+  }
+
+  /* THICKNESS */
+  .face.mid {
+    width: 616px;
+    height: 1340px;
+    background: #888;
+    transform: translateZ(0);
+    border-radius: 104px;
+    box-shadow: 0 0 20px #888;
+  }
+
+</style>

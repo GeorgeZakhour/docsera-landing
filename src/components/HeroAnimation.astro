@@ -1,0 +1,1108 @@
+---
+---
+<div class="animation-stage">
+    
+    <!-- 7. CURSOR (Branded - Teal) -->
+    <div class="cursor-hand">
+        <div class="touch-ring"></div>
+        <div class="touch-dot"></div>
+    </div>
+
+    <!-- 1. SCENE: Home Page (Vector Implementation) -->
+    <div class="scene-card home-card" id="scene-home">
+        
+        <!-- Status Bar Mock -->
+        <div class="status-bar-home">
+            <span class="time">09:41</span>
+            <div class="status-icons">
+                 <svg width="16" height="12" viewBox="0 0 16 12" fill="none"><path d="M1 9.5H15M1 5.5H15M1 1.5H15" stroke="white" stroke-width="2" stroke-linecap="round"/></svg> <!-- Signal -->
+                 <svg width="18" height="12" viewBox="0 0 18 12" fill="none"><rect x="1" y="1" width="14" height="10" rx="2" stroke="white" stroke-width="1.5"/><path d="M15 4V8" stroke="white" stroke-width="1.5"/><rect x="3" y="3" width="10" height="6" fill="white"/></svg> <!-- Battery -->
+            </div>
+        </div>
+
+        <!-- Top Nav -->
+        <div class="home-nav">
+            <div class="lang-switch"><span>AR</span> <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="white" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="10"></circle><line x1="2" y1="12" x2="22" y2="12"></line><path d="M12 2a15.3 15.3 0 0 1 4 10 15.3 15.3 0 0 1-4 10 15.3 15.3 0 0 1-4-10 15.3 15.3 0 0 1 4-10z"></path></svg></div>
+            <div class="logo-text">DocSera</div>
+            <div class="menu-burger"></div> <!-- Empty spacer or burger -->
+        </div>
+
+        <!-- Hero Content -->
+        <div class="home-hero">
+            <div class="hero-subtitle">دكتورك معنا...</div>
+            <div class="hero-title">دايماً موجود</div>
+            
+            <!-- Search Trigger Box -->
+            <div class="home-search-box">
+                <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="var(--c-main)" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round" class="search-icon">
+                    <circle cx="11" cy="11" r="8"></circle><line x1="21" y1="21" x2="16.65" y2="16.65"></line>
+                </svg>
+                <span class="placeholder">بحث</span>
+            </div>
+        </div>
+
+        <!-- Banners / Widgets Area -->
+        <div class="home-widgets">
+            <!-- Ad Banner (Left) -->
+            <div class="widget-card ad-card">
+                <div class="ad-content">
+                    <div class="ad-tag">إعلان</div>
+                    <svg width="40" height="40" viewBox="0 0 24 24" fill="none" stroke="#2c3e50" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round" class="doc-illustration">
+                        <path d="M20 21v-2a4 4 0 0 0-4-4H8a4 4 0 0 0-4 4v2"></path><circle cx="12" cy="7" r="4"></circle>
+                    </svg>
+                </div>
+            </div>
+            <!-- Promo Banner (Right) -->
+            <div class="widget-card promo-card">
+                <div class="promo-lines"></div>
+                <div class="promo-lines short"></div>
+                <div class="promo-circle"></div>
+            </div>
+        </div>
+
+        <!-- Bottom Navigation -->
+        <div class="bottom-nav">
+            <div class="nav-item">
+                <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="#ccc" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M20 21v-2a4 4 0 0 0-4-4H8a4 4 0 0 0-4 4v2"></path><circle cx="12" cy="7" r="4"></circle></svg>
+                <span>الحساب</span>
+            </div>
+            <div class="nav-item">
+                <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="#ccc" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M21 15a2 2 0 0 1-2 2H7l-4 4V5a2 2 0 0 1 2-2h14a2 2 0 0 1 2 2z"></path></svg>
+                <span>الرسائل</span>
+            </div>
+            <div class="nav-item">
+                <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="#ccc" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M22 12h-4l-3 9L9 3l-3 9H2"></path></svg>
+                <span>الصحة</span>
+            </div>
+            <div class="nav-item">
+                <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="#ccc" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect x="3" y="4" width="18" height="18" rx="2" ry="2"></rect><line x1="16" y1="2" x2="16" y2="6"></line><line x1="8" y1="2" x2="8" y2="6"></line><line x1="3" y1="10" x2="21" y2="10"></line></svg>
+                <span>المواعيد</span>
+            </div>
+            <div class="nav-item active">
+                <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="var(--c-main)" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M3 9l9-7 9 7v11a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2z"></path><polyline points="9 22 9 12 15 12 15 22"></polyline></svg>
+                <span>الرئيسية</span>
+            </div>
+        </div>
+
+    </div>
+
+    <!-- 2. SCENE: Active Search (Reference: Image 0 - Corrected RTL) -->
+    <div class="scene-card search-active-card" id="scene-search-active">
+        
+        <!-- Header -->
+        <div class="search-header">
+            <div class="status-bar-mock"></div> 
+            <div class="header-content">
+                <!-- Back Arrow (SVG) -->
+                <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round" class="back-arrow-svg">
+                    <path d="M15 18l-6-6 6-6"/>
+                </svg>
+                <span class="title">بحث</span>
+                <span class="spacer"></span>
+            </div>
+        </div>
+
+        <!-- Search Bar -->
+        <div class="search-container">
+            <div class="search-bar-pill">
+                <!-- Search Icon (Right in RTL) -->
+                <svg width="20" height="20" viewBox="0 0 24 24" fill="none" class="search-icon-svg" stroke="currentColor" stroke-width="2">
+                   <circle cx="11" cy="11" r="8"></circle><line x1="21" y1="21" x2="16.65" y2="16.65"></line>
+                </svg>
+                <span class="typing-text"></span><span class="cursor-blink">|</span>
+                <!-- Close Icon (Left in RTL - Optional but common) -->
+            </div>
+        </div>
+
+        <!-- Specialties List -->
+        <div class="specialties-list-v2">
+            <!-- Item 1: General Med -->
+            <div class="list-item">
+                <!-- Content (Icon + Text) -> Right side in RTL -->
+                <div class="item-content">
+                    <div class="icon-circle">
+                         <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                            <path d="M22 12h-4l-3 9L9 3l-3 9H2"/>
+                        </svg>
+                    </div>
+                    <div class="text-group">
+                        <span class="main-text">طب عام</span>
+                        <span class="sub-text">البحث حسب التخصص</span>
+                    </div>
+                </div>
+                <!-- Arrow -> Left side in RTL -->
+                <div class="arrow-icon">
+                    <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                        <line x1="7" y1="17" x2="17" y2="7"></line><polyline points="7 7 17 7 17 17"></polyline>
+                    </svg>
+                </div>
+            </div>
+
+            <!-- Item 2: Internal -->
+            <div class="list-item">
+                <div class="item-content">
+                    <div class="icon-circle">
+                        <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                            <path d="M12 21.35l-1.45-1.32C5.4 15.36 2 12.28 2 8.5 2 5.42 4.42 3 7.5 3c1.74 0 3.41.81 4.5 2.09C13.09 3.81 14.76 3 16.5 3 19.58 3 22 5.42 22 8.5c0 3.78-3.4 6.86-8.55 11.54L12 21.35z"/>
+                        </svg> <!-- Stethoscope-ish/Heart -->
+                    </div>
+                    <div class="text-group">
+                        <span class="main-text">طب باطني</span>
+                        <span class="sub-text">البحث حسب التخصص</span>
+                    </div>
+                </div>
+                <div class="arrow-icon">
+                    <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                        <line x1="7" y1="17" x2="17" y2="7"></line><polyline points="7 7 17 7 17 17"></polyline>
+                    </svg>
+                </div>
+            </div>
+
+            <!-- Item 3: Children -->
+            <div class="list-item">
+                <div class="item-content">
+                    <div class="icon-circle">
+                         <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="feather feather-smile">
+                            <circle cx="12" cy="12" r="10"></circle><path d="M8 14s1.5 2 4 2 4-2 4-2"></path><line x1="9" y1="9" x2="9.01" y2="9"></line><line x1="15" y1="9" x2="15.01" y2="9"></line>
+                        </svg>
+                    </div>
+                    <div class="text-group">
+                        <span class="main-text">طب أطفال</span>
+                        <span class="sub-text">البحث حسب التخصص</span>
+                    </div>
+                </div>
+                <div class="arrow-icon">
+                    <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                        <line x1="7" y1="17" x2="17" y2="7"></line><polyline points="7 7 17 7 17 17"></polyline>
+                    </svg>
+                </div>
+            </div>
+             <!-- Item 4: Heart/Cardio -->
+             <div class="list-item">
+                <div class="item-content">
+                    <div class="icon-circle">
+                        <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                            <path d="M20.84 4.61a5.5 5.5 0 0 0-7.78 0L12 5.67l-1.06-1.06a5.5 5.5 0 0 0-7.78 7.78l1.06 1.06L12 21.23l7.78-7.78 1.06-1.06a5.5 5.5 0 0 0 0-7.78z"></path>
+                        </svg>
+                    </div>
+                    <div class="text-group">
+                        <span class="main-text">قلبية</span>
+                        <span class="sub-text">البحث حسب التخصص</span>
+                    </div>
+                </div>
+                <div class="arrow-icon">
+                    <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                        <line x1="7" y1="17" x2="17" y2="7"></line><polyline points="7 7 17 7 17 17"></polyline>
+                    </svg>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- 3. SCENE: City Picker / Filter (Reference: Image 1) -->
+    <div class="scene-card city-card" id="scene-city">
+        
+        <!-- Top Filter Inputs -->
+        <div class="filter-inputs">
+             <!-- Input 1: Specialty -->
+             <div class="filter-input-row">
+                 <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="#bbb" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="remove-icon"><line x1="18" y1="6" x2="6" y2="18"></line><line x1="6" y1="6" x2="18" y2="18"></line></svg>
+                 <span class="input-val">غدد و سكري</span>
+                 <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="var(--c-main)" stroke-width="2" class="search-icon-sm">
+                    <circle cx="11" cy="11" r="8"></circle><line x1="21" y1="21" x2="16.65" y2="16.65"></line>
+                 </svg>
+             </div>
+             <!-- Input 2: Location -->
+             <div class="filter-input-row">
+                <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="#bbb" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="remove-icon"><line x1="18" y1="6" x2="6" y2="18"></line><line x1="6" y1="6" x2="18" y2="18"></line></svg>
+                <span class="input-val">بالقرب مني</span>
+                <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="var(--c-main)" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="pin-icon-sm">
+                    <path d="M21 10c0 7-9 13-9 13s-9-6-9-13a9 9 0 0 1 18 0z"></path><circle cx="12" cy="10" r="3"></circle>
+                </svg>
+            </div>
+        </div>
+
+        <!-- Slider Section -->
+        <div class="slider-box">
+            <div class="slider-header">
+                <span>أقصى مسافة</span>
+                <div class="km-badge">6 km</div>
+            </div>
+            <div class="slider-track-dotted">
+                <div class="slider-fill-teal"></div>
+                <div class="slider-thumb-teal"></div>
+            </div>
+
+            <!-- Done Button -->
+            <div class="done-btn">تم</div>
+        </div>
+
+        <!-- Cities List Mock -->
+        <div class="cities-list-mock">
+            <div class="city-row">
+                <span class="city-name">بالقرب مني</span>
+                <svg width="20" height="20" viewBox="0 0 24 24" fill="none" class="city-icon" stroke="var(--c-main)" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                    <path d="M21 10c0 7-9 13-9 13s-9-6-9-13a9 9 0 0 1 18 0z"></path><circle cx="12" cy="10" r="3"></circle>
+                </svg>
+            </div>
+            <div class="city-row">
+                <span class="city-name">دمشق</span>
+                <svg width="20" height="20" viewBox="0 0 24 24" fill="none" class="city-icon" stroke="#888" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                    <path d="M21 10c0 7-9 13-9 13s-9-6-9-13a9 9 0 0 1 18 0z"></path><circle cx="12" cy="10" r="3"></circle>
+                </svg>
+            </div>
+            <div class="city-row">
+                <span class="city-name">ريف دمشق</span>
+                <svg width="20" height="20" viewBox="0 0 24 24" fill="none" class="city-icon" stroke="#888" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                    <path d="M21 10c0 7-9 13-9 13s-9-6-9-13a9 9 0 0 1 18 0z"></path><circle cx="12" cy="10" r="3"></circle>
+                </svg>
+            </div>
+        </div>
+    </div>
+
+    <!-- 4. RESULTS STREAM -->
+    <!-- 4. RESULTS STREAM (Vector Implementation with Real Assets) -->
+    <div class="scene-card results-stream" id="scene-results">
+        
+        <!-- Map Background (Image) -->
+        <div class="map-bg">
+            <img src="/images/map.webp" alt="Map" class="map-img-cover" />
+            <svg class="map-pin-deco" width="24" height="24" viewBox="0 0 24 24" fill="var(--c-main)" stroke="white" stroke-width="2">
+                 <path d="M21 10c0 7-9 13-9 13s-9-6-9-13a9 9 0 0 1 18 0z"></path><circle cx="12" cy="10" r="3" fill="white"></circle>
+            </svg>
+        </div>
+
+        <!-- Open Map Pill Button -->
+        <div class="open-map-btn">
+             <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><polygon points="1 6 1 22 8 18 16 22 23 18 23 2 16 6 8 2 1 6"></polygon><line x1="8" y1="2" x2="8" y2="18"></line><line x1="16" y1="6" x2="16" y2="22"></line></svg>
+             <span>افتح في الخرائط</span>
+        </div>
+
+        <!-- Bottom Sheet with Skeleton List -->
+        <div class="results-sheet">
+             <div class="sheet-handle"></div>
+             
+             <!-- Header Row (Skeleton) -->
+             <div class="sheet-header-row">
+                 <div class="skeleton-bar sk-w-40"></div>
+             </div>
+
+             <div class="doctor-list">
+                
+                <!-- Item 1 (Male) -->
+                <div class="doc-item-minimal">
+                    <div class="doc-left-content">
+                        <div class="vector-avatar">
+                             <img src="/images/male-doc.webp" alt="Doctor" />
+                        </div>
+                        <div class="doc-text-info">
+                            <div class="sk-title"></div>
+                            <div class="sk-sub"></div>
+                            <div class="sk-loc"></div>
+                        </div>
+                    </div>
+                    <div class="arrow-btn">
+                        <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="#ddd" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><polyline points="15 18 9 12 15 6"></polyline></svg>
+                    </div>
+                </div>
+
+                <!-- Item 2 (Female) -->
+                <div class="doc-item-minimal">
+                    <div class="doc-left-content">
+                        <div class="vector-avatar">
+                             <img src="/images/female-doc.webp" alt="Doctor" />
+                        </div>
+                        <div class="doc-text-info">
+                            <div class="sk-title" style="width: 100px;"></div>
+                            <div class="sk-sub" style="width: 60px;"></div>
+                            <div class="sk-loc"></div>
+                        </div>
+                    </div>
+                    <div class="arrow-btn">
+                        <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="#ddd" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><polyline points="15 18 9 12 15 6"></polyline></svg>
+                    </div>
+                </div>
+
+                <!-- Item 3 (Male) -->
+                <div class="doc-item-minimal">
+                    <div class="doc-left-content">
+                        <div class="vector-avatar">
+                             <img src="/images/male-doc.webp" alt="Doctor" />
+                        </div>
+                        <div class="doc-text-info">
+                            <div class="sk-title" style="width: 130px;"></div>
+                            <div class="sk-sub" style="width: 70px;"></div>
+                            <div class="sk-loc"></div>
+                        </div>
+                    </div>
+                    <div class="arrow-btn">
+                        <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="#ddd" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><polyline points="15 18 9 12 15 6"></polyline></svg>
+                    </div>
+                </div>
+                
+             </div>
+        </div>
+
+        <!-- 5. DOCTOR PROFILE OVERLAY (Added) -->
+        <div class="profile-overlay">
+            <div class="profile-header">
+                <div class="profile-avatar-large">
+                    <img src="/images/female-doc.webp" alt="Doctor Profile" />
+                </div>
+                <!-- Skeleton Name/Title -->
+                <div class="profile-sk-line" style="width: 120px;"></div>
+                <div class="profile-sk-line" style="width: 80px; opacity: 0.6;"></div>
+                
+                <div class="book-btn-large">
+                    <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><rect x="3" y="4" width="18" height="18" rx="2" ry="2"></rect><line x1="16" y1="2" x2="16" y2="6"></line><line x1="8" y1="2" x2="8" y2="6"></line><line x1="3" y1="10" x2="21" y2="10"></line></svg>
+                    <span>احجز موعد</span>
+                </div>
+            </div>
+            
+            <div class="profile-body">
+                <!-- Gallery Section -->
+                <div class="prof-section">
+                    <div class="prof-head">
+                        <span>صور العيادة والطبيب</span>
+                        <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="#1A5F5F" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect x="3" y="3" width="18" height="18" rx="2" ry="2"></rect><circle cx="8.5" cy="8.5" r="1.5"></circle><polyline points="21 15 16 10 5 21"></polyline></svg>
+                    </div>
+                    <div class="gallery-row">
+                        <div class="gallery-item"><svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="3" y="3" width="18" height="18" rx="2" ry="2"></rect><circle cx="8.5" cy="8.5" r="1.5"></circle><polyline points="21 15 16 10 5 21"></polyline></svg></div>
+                        <div class="gallery-item"><svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="3" y="3" width="18" height="18" rx="2" ry="2"></rect><circle cx="8.5" cy="8.5" r="1.5"></circle><polyline points="21 15 16 10 5 21"></polyline></svg></div>
+                        <div class="gallery-item"><svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="3" y="3" width="18" height="18" rx="2" ry="2"></rect><circle cx="8.5" cy="8.5" r="1.5"></circle><polyline points="21 15 16 10 5 21"></polyline></svg></div>
+                        <div class="gallery-item"><svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="3" y="3" width="18" height="18" rx="2" ry="2"></rect><circle cx="8.5" cy="8.5" r="1.5"></circle><polyline points="21 15 16 10 5 21"></polyline></svg></div>
+                    </div>
+                </div>
+
+                <!-- Bio Section -->
+                <div class="prof-section">
+                    <div class="prof-head">
+                        <span>الملف الشخصي</span>
+                        <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="#1A5F5F" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M20 21v-2a4 4 0 0 0-4-4H8a4 4 0 0 0-4 4v2"></path><circle cx="12" cy="7" r="4"></circle></svg>
+                    </div>
+                    <div class="sk-text-lines">
+                        <div class="sk-row" style="width: 100%;"></div>
+                        <div class="sk-row" style="width: 90%;"></div>
+                        <div class="sk-row" style="width: 95%;"></div>
+                        <div class="sk-row" style="width: 60%;"></div>
+                        <div class="sk-row" style="width: 75%;"></div>
+                    </div>
+                </div>
+                
+                <!-- Services Section -->
+                <div class="prof-section">
+                     <div class="prof-head">
+                        <span>الخدمات المقدمة</span>
+                        <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="#1A5F5F" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect x="2" y="6" width="20" height="12" rx="2"></rect><path d="M12 2v4"></path><path d="M12 18v4"></path><path d="M2 12h4"></path><path d="M18 12h4"></path></svg>
+                    </div>
+                    <div class="sk-text-lines">
+                        <div class="sk-row" style="width: 80%;"></div>
+                        <div class="sk-row" style="width: 70%;"></div>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+    </div>
+
+
+
+    <!-- 6. SCENE: Final Logo Reveal -->
+    <div class="logo-reveal" id="scene-logo">
+        <img src="/images/docsera_main.svg" alt="DocSera" />
+    </div>
+
+</div>
+
+<style>
+    /* STAGE SETUP */
+    .animation-stage {
+        position: relative;
+        width: 380px; 
+        height: 680px; 
+        margin: 0 auto;
+        perspective: 1500px;
+        transform-style: preserve-3d;
+        font-family: var(--font-ar);
+    }
+
+    /* SHARED CARD STYLES */
+    .scene-card {
+        position: absolute;
+        background-color: white;
+        background-repeat: no-repeat;
+        border-radius: 24px;
+        box-shadow: 0 25px 60px rgba(0,0,0,0.15);
+        opacity: 0;
+        overflow: hidden; /* Important for header clip */
+        background-size: 100% auto; 
+    }
+
+    /* 1. HOME SCENE (Vector) */
+    .home-card {
+        background: linear-gradient(180deg, var(--c-main) 0%, var(--c-main) 45%, white 45%, white 100%);
+        width: 100%; height: 500px; /* Increased height to generic match others */
+        top: 100px; left: 0;
+        display: flex; flex-direction: column;
+        animation: sequenceHome 21s ease-in-out infinite;
+        overflow: hidden;
+    }
+    .status-bar-home {
+        display: flex; justify-content: space-between; padding: 10px 20px;
+        color: white; font-size: 0.8rem; font-weight: bold;
+    }
+    .status-icons { display: flex; gap: 5px; }
+    
+    .home-nav {
+        display: flex; justify-content: space-between; align-items: center;
+        padding: 10px 20px; color: white;
+    }
+    .logo-text { font-weight: 800; font-size: 1.2rem; }
+    .lang-switch { display: flex; align-items: center; gap: 5px; font-size: 0.9rem; font-weight: bold; }
+    
+    .home-hero {
+        padding: 30px 20px; text-align: center; color: white;
+        display: flex; flex-direction: column; align-items: center; gap: 5px;
+    }
+    .hero-subtitle { font-size: 1rem; opacity: 0.9; }
+    .hero-title { font-size: 1.8rem; font-weight: 800; margin-bottom: 20px; }
+    
+    .home-search-box {
+        background: white; width: 100%; max-width: 280px;
+        padding: 12px 20px; border-radius: 30px;
+        display: flex; align-items: center; justify-content: center; gap: 10px;
+        color: #999; font-weight: 600;
+        box-shadow: 0 4px 15px rgba(0,0,0,0.1);
+    }
+    
+    .home-widgets {
+        padding: 0 20px; display: flex; gap: 15px; margin-top: auto; margin-bottom: 20px;
+        height: 120px;
+    }
+    .widget-card {
+        flex: 1; border-radius: 15px; overflow: hidden; position: relative;
+        box-shadow: 0 4px 10px rgba(0,0,0,0.05);
+    }
+    .ad-card { background: #E0F2F1; display: flex; align-items: end; justify-content: center;}
+    .ad-content { text-align: center; width: 100%; }
+    .ad-tag { 
+        background: rgba(255,255,255,0.8); font-size: 0.6rem; padding: 2px 8px; border-radius: 4px;
+        position: absolute; bottom: 10px; right: 10px; color: #555;
+    }
+    .doc-illustration { margin-bottom: 10px; width: 60px; height: 60px; stroke: var(--c-main); }
+    
+    .promo-card { background: #B2DFDB; position: relative; overflow: hidden; }
+    .promo-circle { 
+        position: absolute; right: -20px; bottom: -20px; width: 80px; height: 80px; 
+        background: rgba(255,255,255,0.2); border-radius: 50%; 
+    }
+    .promo-lines {
+        height: 8px; width: 60px; background: rgba(0,144,146,0.2); border-radius: 4px;
+        position: absolute; top: 20px; left: 20px;
+    }
+    .promo-lines.short { top: 35px; width: 40px; }
+    
+    .bottom-nav {
+        background: white; padding: 10px 15px 20px;
+        display: flex; justify-content: space-between;
+        border-top: 1px solid #eee;
+    }
+    .nav-item {
+        display: flex; flex-direction: column; align-items: center; gap: 4px;
+        color: #ccc; font-size: 0.7rem; font-weight: 600;
+    }
+    .nav-item.active { color: var(--c-main); }
+    .nav-item.active svg { stroke: var(--c-main); }
+
+    /* 2. ACTIVE SEARCH SCENE */
+    .search-active-card {
+        top: 100px; left: 0;
+        width: 100%; height: 500px;
+        background: #F8F9FA;
+        display: flex; flex-direction: column;
+        z-index: 10;
+        animation: sequenceSearchActive 21s ease-in-out infinite;
+    }
+    
+    /* Header */
+    .search-header {
+        background-color: var(--c-main);
+        padding: 40px 20px 15px; 
+        color: white;
+    }
+    .header-content {
+        display: flex; justify-content: space-between; align-items: center;
+        direction: rtl; 
+    }
+    .title { font-weight: 700; font-size: 1.1rem; }
+    .status-bar-mock { width: 24px; }
+    
+    /* Search Bar - Center Input? Image aligned */
+    .search-container { padding: 15px 20px; background: white; }
+    .search-bar-pill {
+        display: flex; align-items: center; gap: 10px;
+        background: white;
+        border: 1px solid #ddd;
+        padding: 10px 15px; border-radius: 30px; 
+        box-shadow: 0 2px 5px rgba(0,0,0,0.05);
+        direction: rtl; 
+    }
+    .search-icon-svg { color: var(--c-main); }
+    .typing-text {
+        font-weight: 600; color: #333; font-size: 1rem; flex: 1;
+        transform: translateY(-2px); /* visual tweak */
+    }
+    .typing-text::after {
+        content: "غدد و سكري";
+        animation: typingArabicFull 2s steps(12) forwards;
+        animation-delay: 3.5s; 
+        opacity: 0;
+    }
+    
+    /* List */
+    .specialties-list-v2 {
+        padding: 10px 20px;
+        background: white;
+        flex: 1;
+        direction: rtl; 
+    }
+    /* 
+       RTL Flex Rules:
+       - Default R->L direction.
+       - First child is Rightmost.
+       - Last child is Leftmost.
+       
+       Design: Icon (Right), Text (Middle), Arrow (Left).
+       HTML Order must match RTL visual order: Content(Icon+Text) First, Arrow Second?
+       Let's use justify-content: space-between.
+       Child 1: Content (Right aligned).
+       Child 2: Arrow (Left aligned).
+    */
+    .list-item {
+        display: flex; justify-content: space-between; align-items: center;
+        padding: 15px 0;
+        border-bottom: 1px solid #f0f0f0;
+    }
+    .item-content { display: flex; align-items: center; gap: 15px; }
+    .icon-circle {
+        width: 45px; height: 45px; 
+        background: rgba(0, 144, 146, 0.08); 
+        color: var(--c-main);
+        border-radius: 50%;
+        display: flex; justify-content: center; align-items: center;
+    }
+    .text-group { display: flex; flex-direction: column; text-align: right; }
+    .main-text { font-weight: 700; color: #333; font-size: 0.95rem; }
+    .sub-text { font-size: 0.75rem; color: #999; }
+    .arrow-icon { color: #ccc; }
+
+
+    /* 3. CITY SCENE */
+    .city-card {
+        top: 250px; left: 10px;
+        width: 360px; height: 350px; 
+        background: #F5F7FA;
+        display: flex; flex-direction: column;
+        z-index: 20;
+        animation: sequenceCity 21s ease-in-out infinite;
+        border: 1px solid #eee;
+    }
+    .filter-inputs {
+        background: white; padding: 20px;
+        border-bottom: 1px solid #eee;
+        display: flex; flex-direction: column; gap: 10px;
+    }
+    .filter-input-row {
+        background: white; border: 1px solid #ddd;
+        border-radius: 25px; padding: 8px 15px;
+        display: flex; justify-content: space-between; align-items: center;
+        direction: rtl; color: #333; font-weight: 600; font-size: 0.9rem;
+    }
+    /* Icons styled inline now */
+    
+    .slider-box {
+        background: white; margin: 15px 15px 0; padding: 20px;
+        border-radius: 15px; box-shadow: 0 5px 15px rgba(0,0,0,0.03);
+        direction: rtl; position: relative;
+    }
+    .slider-header { display: flex; justify-content: space-between; align-items: center; margin-bottom: 25px; }
+    .km-badge {
+        background: var(--c-main); color: white;
+        padding: 4px 10px; border-radius: 12px; font-size: 0.8rem; font-weight: bold;
+        position: relative;
+    }
+    .km-badge::after {
+        content: ""; position: absolute; bottom: -4px; left: 50%; transform: translateX(-50%);
+        border-width: 4px 4px 0; border-style: solid; border-color: var(--c-main) transparent transparent;
+    }
+    
+    .slider-track-dotted {
+        position: relative; height: 6px; 
+        background-image: linear-gradient(to right, #ddd 33%, rgba(255,255,255,0) 0%);
+        background-position: bottom; background-size: 8px 1px; background-repeat: repeat-x;
+        margin-bottom: 20px;
+    }
+    .slider-fill-teal {
+        position: absolute; right: 0; top: 0; height: 6px; background: var(--c-main);
+        width: 0%; border-radius: 3px;
+        animation: sliderFillAnim 21s linear infinite; 
+    }
+    .slider-thumb-teal {
+        position: absolute; right: 0; top: 50%; width: 20px; height: 20px;
+        background: var(--c-main); border: 2px solid white; border-radius: 50%;
+        transform: translate(50%, -50%);
+        box-shadow: 0 2px 5px rgba(0,0,0,0.2);
+        animation: sliderThumbAnim 21s linear infinite; 
+    }
+    
+    .done-btn {
+        background: var(--c-main); color: white;
+        text-align: center; padding: 10px; border-radius: 10px;
+        font-weight: bold; cursor: pointer;
+    }
+
+    .cities-list-mock { padding: 10px 20px; direction: rtl; }
+    .city-row { display: flex; align-items: center; gap: 10px; padding: 12px 0; border-bottom: 1px solid #eee; color: #555; justify-content: space-between;}
+
+
+    /* 4. RESULTS STREAM (Bottom Sheet + Map + Skeletons) */
+    .results-stream {
+        background: #EBF7F8; /* Map Base Color */
+        width: 100%; height: 500px;
+        top: 80px; left: 0;
+        animation: sequenceResults 21s ease-in-out infinite;
+        overflow: hidden; 
+        direction: rtl;
+        display: block; 
+    }
+    
+    /* Decoration: Map Pattern */
+    .map-bg {
+        position: absolute; top: 0; left: 0; width: 100%; height: 50%;
+        overflow: hidden; pointer-events: none;
+    }
+    .map-img-cover {
+        width: 100%; height: 100%; object-fit: cover;
+        opacity: 0.8; 
+    }
+    
+    .vector-avatar img {
+        width: 100% !important; height: 100% !important; 
+        object-fit: contain !important; /* scaling forced */
+        padding: 4px; background: #E0F7FA; /* Light Teal */
+    }
+    
+    /* ... existing styles ... */
+
+    /* Cursor Animation Sequence */
+    @keyframes cursorMove {
+        0% { opacity: 0; top: 110%; left: 50%; transform: translate(-50%, 0); }
+        5% { opacity: 1; top: 80%; left: 50%; }
+        /* Step 1: Click Search Bar */
+        10% { top: 38%; left: 50%; transform: translate(-50%, 0) scale(1); }
+        12% { transform: translate(-50%, 0) scale(0.9); }
+        15% { transform: translate(-50%, 0) scale(1); }
+        
+        /* Step 2: Move to Specialty */
+        22% { top: 45%; left: 50%; transform: translate(-50%, 0); }
+        25% { transform: translate(-50%, 0) scale(0.9); }
+        28% { transform: translate(-50%, 0) scale(1); }
+        
+        /* Step 3: Move to City */
+        35% { top: 60%; left: 50%; transform: translate(-50%, 0); }
+        38% { transform: translate(-50%, 0) scale(0.9); }
+        40% { transform: translate(-50%, 0) scale(1); }
+        
+        /* Step 4: Click Doctor (LOWERED) */
+        48% { top: 65%; left: 50%; transform: translate(-50%, 0); }
+        50% { transform: translate(-50%, 0) scale(0.9); } /* Tap triggers profile */
+        52% { transform: translate(-50%, 0) scale(1); }
+        
+        /* Step 5: Click Book (On Profile) */
+        65% { top: 32%; left: 50%; transform: translate(-50%, 0); } /* Target new Book button */
+        68% { transform: translate(-50%, 0) scale(0.9); }
+        70% { transform: translate(-50%, 0) scale(1); }
+        
+        /* Exit */
+        85% { opacity: 1; top: 90%; left: 50%; }
+        90% { opacity: 0; }
+        100% { opacity: 0; }
+    }
+    
+    /* 5. PROFILE OVERLAY */
+    .profile-overlay {
+        position: absolute; top: 0; left: 0; width: 100%; height: 100%;
+        background: #F5F7F8;
+        z-index: 20;
+        display: flex; flex-direction: column;
+        animation: slideUpProfile 21s ease-in-out infinite;
+        transform: translateY(110%); /* Hidden initially */
+    }
+    
+    @keyframes slideUpProfile {
+        0%, 50% { transform: translateY(110%); }
+        53% { transform: translateY(0); } /* Slide up after click */
+        85% { transform: translateY(0); }
+        90% { transform: translateY(110%); }
+        100% { transform: translateY(110%); }
+    }
+    
+    .profile-header {
+        height: 38%; background: var(--c-main);
+        display: flex; flex-direction: column; align-items: center; justify-content: center;
+        position: relative; padding-bottom: 20px;
+    }
+    
+    .profile-avatar-large {
+        width: 80px; height: 80px; background: #E0F7FA; 
+        border-radius: 50%; border: 3px solid rgba(255,255,255,0.2);
+        overflow: hidden; margin-bottom: 10px;
+        flex-shrink: 0;
+    }
+    .profile-avatar-large img { width: 100%; height: 100%; object-fit: contain; }
+    
+    .profile-sk-line { height: 8px; background: rgba(255,255,255,0.2); border-radius: 4px; margin-bottom: 6px; }
+    
+    .book-btn-large {
+        background: #F0FCFC; color: #0D4545;
+        padding: 12px 0; width: 85%; justify-content: center;
+        border-radius: 30px;
+        font-weight: bold; display: flex; align-items: center; gap: 8px;
+        position: absolute; bottom: -20px;
+        box-shadow: 0 5px 15px rgba(0,0,0,0.1);
+        z-index: 5;
+        animation: pulseBtn 21s linear infinite;
+    }
+    
+    .profile-body {
+        flex: 1; background: #F5F7F8;
+        padding: 40px 20px 20px;
+        display: flex; flex-direction: column; gap: 15px;
+    }
+    
+    .prof-section {
+        background: white; border-radius: 12px; padding: 15px;
+        box-shadow: 0 2px 5px rgba(0,0,0,0.02);
+    }
+    .prof-head { display: flex; align-items: center; gap: 8px; font-weight: bold; color: #333; margin-bottom: 10px; font-size: 0.9rem; justify-content: flex-end;}
+    
+    .gallery-row { display: flex; gap: 8px; justify-content: flex-end; }
+    .gallery-item { width: 50px; height: 50px; background: #E0F2F1; border-radius: 8px; display: flex; align-items: center; justify-content: center; color: #1A5F5F; opacity: 0.5; }
+    
+    .sk-text-lines { display: flex; flex-direction: column; gap: 8px; align-items: flex-end; }
+    .sk-row { height: 8px; background: #eee; border-radius: 4px; }
+    
+    /* Decoration */
+    .map-pin-deco {
+        position: absolute; top: 70px; left: 50%; transform: translateX(-50%);
+        color: var(--c-main);
+        filter: drop-shadow(0 4px 6px rgba(0,0,0,0.1));
+    }
+
+    /* Open Map Button */
+    .open-map-btn {
+        position: absolute; top: 130px; left: 50%; transform: translateX(-50%);
+        background: var(--c-main); color: white;
+        padding: 8px 20px; border-radius: 20px;
+        font-size: 0.8rem; font-weight: bold;
+        display: flex; align-items: center; gap: 6px;
+        box-shadow: 0 4px 10px rgba(0,144,146,0.2);
+        z-index: 5;
+    }
+    
+    /* Bottom Sheet */
+    .results-sheet {
+        position: absolute; bottom: 0; left: 0; right: 0;
+        height: 55%; 
+        background: white; border-radius: 24px 24px 0 0;
+        box-shadow: 0 -5px 20px rgba(0,0,0,0.05);
+        padding: 10px 20px 20px;
+        display: flex; flex-direction: column;
+        z-index: 10;
+    }
+    
+    .sheet-handle {
+        width: 40px; height: 4px; background: #ddd; border-radius: 2px;
+        margin: 5px auto 15px;
+    }
+    
+    .sheet-header-row {
+        display: flex; justify-content: flex-start;
+        margin-bottom: 10px; padding: 0 5px;
+    }
+    
+    /* Skeleton Styles */
+    .skeleton-bar {
+        background: #f0f0f0; border-radius: 4px;
+        margin-bottom: 6px;
+    }
+    .sk-w-100 { width: 100px; height: 10px; }
+    .sk-w-40 { width: 40px; height: 10px; }
+    
+    .doctor-list {
+        display: flex; flex-direction: column; gap: 0;
+        margin-top: 5px;
+    }
+
+    /* Minimal Doctor Card */
+    .doc-item-minimal {
+        display: flex; align-items: center; justify-content: space-between;
+        padding: 15px 0; border-bottom: 1px solid #f5f5f5;
+    }
+    .doc-left-content { display: flex; align-items: center; gap: 12px; flex: 1; }
+    
+    .vector-avatar {
+        width: 50px; height: 50px; background: #f0f0f0; border-radius: 50%;
+        display: flex; align-items: center; justify-content: center;
+        overflow: hidden;
+        flex-shrink: 0;
+        border: 2px solid white;
+        box-shadow: 0 2px 5px rgba(0,0,0,0.05);
+    }
+    
+    .doc-text-info { display: flex; flex-direction: column; text-align: right; width: 100%; }
+    /* Skeleton inside card */
+    .sk-title { width: 120px; height: 12px; background: var(--c-main); opacity: 0.2; margin-bottom: 6px; border-radius: 4px; }
+    .sk-sub { width: 80px; height: 8px; background: #eee; margin-bottom: 4px; border-radius: 4px; }
+    .sk-loc { width: 60px; height: 8px; background: #eee; border-radius: 4px; }
+
+    
+    .arrow-btn { padding: 5px; color: #ccc; }
+    
+    @keyframes sequenceResults {
+        0%, 42% { opacity: 0; transform: translateY(100px) rotateX(-20deg) scale(0.9); }
+        45% { opacity: 1; transform: translateY(0) rotateX(0deg) scale(1); }
+        /* Static hold phase while content scrolls */
+        58% { opacity: 1; transform: translateZ(0); }
+        62% { opacity: 0; transform: translateZ(150px) rotateX(10deg); }
+        100% { opacity: 0; }
+    }
+
+    /* ... skipped ... */
+
+    /* 4. RESULTS STREAM (Vector) */
+    .results-stream {
+        background: #F8F9FA;
+        width: 100%; height: 500px;
+        top: 80px; left: 0;
+        animation: sequenceResults 21s ease-in-out infinite;
+        display: flex; flex-direction: column;
+        overflow: hidden; 
+        direction: rtl;
+    }
+    
+    .results-header {
+        background: white; padding: 20px 20px 15px;
+        box-shadow: 0 4px 10px rgba(0,0,0,0.03);
+        z-index: 10;
+    }
+    .header-top { display: flex; justify-content: space-between; align-items: start; }
+    .header-title-group { display: flex; flex-direction: column; flex: 1; padding: 0 15px; }
+    .header-main { font-weight: 800; font-size: 1.1rem; color: #333; }
+    .header-sub { font-size: 0.8rem; color: #888; margin-top: 2px; }
+    .filter-toggle { 
+        width: 36px; height: 36px; border-radius: 12px;
+        background: rgba(0,144,146,0.1); display: flex; align-items: center; justify-content: center;
+    }
+    
+    .scroll-content {
+        padding: 20px; display: flex; flex-direction: column; gap: 15px;
+        animation: scrollResultsList 21s ease-in-out infinite;
+    }
+    
+    .doctor-card {
+        background: white; border-radius: 18px; padding: 15px;
+        box-shadow: 0 4px 15px rgba(0,0,0,0.04);
+        display: flex; gap: 15px; border: 1px solid transparent;
+        transition: transform 0.2s;
+    }
+    .doctor-card.highlighted-card {
+        border-color: rgba(0,144,146,0.3);
+        background: linear-gradient(to bottom right, white, #FaFeFe);
+    }
+    
+    .doc-avatar-area { position: relative; }
+    .doc-avatar { 
+        width: 60px; height: 60px; background: #eee; border-radius: 50%; 
+        display: flex; align-items: center; justify-content: center;
+        overflow: hidden;
+    }
+    .online-indicator {
+        position: absolute; bottom: 2px; right: 2px; width: 12px; height: 12px;
+        background: #4CAF50; border: 2px solid white; border-radius: 50%;
+    }
+    
+    .doc-info { flex: 1; display: flex; flex-direction: column; justify-content: space-between; gap: 4px; }
+    
+    .doc-header-row { display: flex; justify-content: space-between; align-items: center; }
+    .doc-name { font-weight: 700; color: #333; font-size: 0.95rem; }
+    .rating-badge { 
+        display: flex; align-items: center; gap: 4px; 
+        font-size: 0.75rem; font-weight: bold; color: #333; 
+    }
+    
+    .doc-spec { font-size: 0.8rem; color: var(--c-main); font-weight: 500; }
+    
+    .doc-meta { font-size: 0.75rem; color: #999; margin-top: 2px; }
+    .doc-loc { 
+        display: flex; align-items: center; gap: 5px; 
+        font-size: 0.75rem; color: #777; margin-top: 5px; 
+    }
+
+    @keyframes sequenceResults {
+        0%, 42% { opacity: 0; transform: translateY(100px) rotateX(-20deg) scale(0.9); }
+        45% { opacity: 1; transform: translateY(0) rotateX(0deg) scale(1); }
+        /* Static hold phase while content scrolls */
+        58% { opacity: 1; transform: translateZ(0); }
+        62% { opacity: 0; transform: translateZ(150px) rotateX(10deg); }
+        100% { opacity: 0; }
+    }
+    
+    @keyframes scrollResultsList {
+        0%, 45% { transform: translateY(0); }
+        53% { transform: translateY(-70px); } /* Scroll slightly to show 2nd card better */
+        58% { transform: translateY(-70px); }
+        100% { transform: translateY(-70px); }
+    }
+    
+
+
+    /* 6. LOGO */
+    .logo-reveal {
+        position: absolute; top: 0; left: 0; width: 100%; height: 100%;
+        display: flex; justify-content: center; align-items: center; opacity: 0;
+        animation: sequenceLogo 21s ease-in-out infinite;
+    }
+    .logo-reveal img { width: 260px; filter: drop-shadow(0 20px 40px rgba(0,144,146,0.3)); }
+
+    /* 7. CURSOR (Branded - Teal) */
+    .cursor-hand {
+        position: absolute; z-index: 100; opacity: 0;
+        width: 40px; height: 40px;
+        animation: cursorTimeline 21s linear infinite;
+        pointer-events: none;
+    }
+    
+    .touch-ring {
+        position: absolute; inset: 0;
+        border: 2px solid var(--c-main); 
+        border-radius: 50%;
+        background: rgba(255, 255, 255, 0.3);
+        box-shadow: 0 4px 10px rgba(0, 144, 146, 0.3);
+    }
+    .touch-dot {
+        position: absolute; top: 50%; left: 50%;
+        width: 12px; height: 12px;
+        background: var(--c-main); 
+        border-radius: 50%;
+        transform: translate(-50%, -50%);
+    }
+    .cursor-blink { animation: blink 0.8s infinite; color: var(--c-main); }
+
+
+    /* --- KEYFRAMES --- */
+    
+    @keyframes sequenceHome {
+        0% { opacity: 0; transform: translateY(60px) rotateX(30deg) rotateY(-10deg); }
+        3% { opacity: 1; transform: translateY(0) rotateX(0deg) rotateY(0deg); }
+        11% { opacity: 1; transform: translateY(0) rotateZ(2deg); }
+        14% { opacity: 0; transform: translateY(-40px) rotateX(-20deg); }
+        100% { opacity: 0; }
+    }
+
+    @keyframes sequenceSearchActive {
+        0%, 14% { opacity: 0; transform: scale(0.8) rotateX(20deg); }
+        17% { opacity: 1; transform: scale(1) rotateX(0deg); }
+        25% { opacity: 1; transform: scale(1) rotateY(5deg); } 
+        28% { opacity: 0; transform: scale(1.1) rotateX(-10deg); }
+        100% { opacity: 0; }
+    }
+
+    @keyframes sequenceCity {
+        0%, 28% { opacity: 0; transform: translateX(-40px) rotateY(-20deg); }
+        31% { opacity: 1; transform: translateX(0) rotateY(0deg); }
+        39% { opacity: 1; transform: rotateZ(-2deg); }
+        42% { opacity: 0; transform: translateY(-30px) rotateX(10deg); }
+        100% { opacity: 0; }
+    }
+    @keyframes sliderFillAnim {
+        0%, 31% { width: 0%; }
+        37% { width: 60%; } 
+        100% { width: 60%; }
+    }
+    @keyframes sliderThumbAnim {
+        0%, 31% { right: 0%; }
+        37% { right: 60%; }
+        100% { right: 60%; }
+    }
+
+    @keyframes sequenceResults {
+        0%, 42% { opacity: 0; transform: translateY(100px) rotateX(-20deg) scale(0.9); background-position: center top; }
+        45% { opacity: 1; transform: translateY(0) rotateX(0deg) scale(1); }
+        /* Scroll deeper */
+        53% { background-position: center -220px; transform: rotateY(5deg); } 
+        /* Hold longer for profile view */
+        58% { opacity: 1; transform: translateZ(0); }
+        74% { opacity: 1; transform: translateZ(0) rotateY(0deg); }
+        /* Zoom Out / Explode Exit - Overlaps with Logo */
+        77% { opacity: 0; transform: scale(1.5) translateZ(50px) rotateZ(5deg); }
+        100% { opacity: 0; }
+    }
+
+
+
+    @keyframes sequenceLogo {
+        0%, 74% { opacity: 0; transform: scale(0.5) rotateX(40deg); }
+        77% { opacity: 1; transform: scale(1.2) rotateX(0deg); }
+        81% { opacity: 1; transform: scale(1); }
+        96% { opacity: 1; transform: scale(1.1); }
+        100% { opacity: 0; transform: scale(1.1); }
+    }
+
+    @keyframes cursorTimeline {
+        0% { opacity: 0; top: 500px; left: 250px; }
+        2% { opacity: 1; }
+        7% { top: 380px; left: 190px; transform: scale(1); } 
+        9% { transform: scale(0.85); } 
+        11% { transform: scale(1); opacity: 0; } 
+        
+        /* City */
+        28% { opacity: 0; top: 500px; left: 250px; } 
+        31% { opacity: 1; top: 480px; left: 190px; } 
+        33% { transform: scale(0.85); } 
+        37% { left: 260px; } 
+        39% { transform: scale(1); }
+        
+        /* Results Click - Higher ~240px */
+        46% { opacity: 1; top: 240px; left: 190px; } 
+        48% { transform: scale(0.85); } 
+        50% { transform: scale(1); }
+        
+        /* Book Click - Top 25% ~220px */
+        60% { top: 300px; left: 190px; opacity: 1; } 
+        65% { top: 220px; left: 190px; } 
+        67% { transform: scale(0.85); } 
+        70% { opacity: 0; }
+        100% { opacity: 0; }
+    }
+
+    @keyframes pulseBtn {
+        0%, 55% { box-shadow: 0 0 0 0 rgba(13,69,69, 0); }
+        58% { box-shadow: 0 0 0 10px rgba(13,69,69, 0.2); }
+        62% { box-shadow: 0 0 0 20px rgba(13,69,69, 0); }
+        100% { box-shadow: 0 0 0 0 rgba(13,69,69, 0); }
+    }
+    @keyframes typingArabicFull {
+        0% { opacity: 0; content: ""; }
+        1% { opacity: 1; content: "غ"; }
+        10% { content: "غد"; }
+        20% { content: "غدد"; }
+        40% { content: "غدد "; }
+        60% { content: "غدد و"; }
+        80% { content: "غدد و س"; }
+        90% { content: "غدد و سك"; }
+        100% { opacity: 1; content: "غدد و سكري"; }
+    }
+    @keyframes blink { 0%, 100% { opacity: 1; } 50% { opacity: 0; } }
+
+</style>
