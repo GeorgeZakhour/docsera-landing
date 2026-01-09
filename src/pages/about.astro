@@ -1,0 +1,377 @@
+---
+import Layout from '../layouts/Layout.astro';
+import Navbar from '../components/Navbar.astro';
+import Footer from '../components/Footer.astro';
+---
+
+<Layout title="DocSera - من نحن">
+	<Navbar />
+	<main>
+        <!-- Hero Section -->
+        <section class="about-hero">
+            <div class="shape-bg shape-1">
+                <img src="/images/shapes/main.svg" alt="" />
+            </div>
+            <div class="container hero-container">
+                <div class="hero-content fade-up">
+                    <span class="pill-badge">قصتنا</span>
+                    <h1 class="hero-title">
+                        رؤية جديدة<br>
+                        <span class="highlight">للرعاية الصحية</span>
+                    </h1>
+                    <p class="hero-desc">
+                        نحن لسنا مجرد تطبيق.. نحن حركة تهدف لتغيير واقع الطب في سوريا. نؤمن أن التكنولوجيا يجب أن تخدم الإنسان، وأن الوصول للرعاية الصحية حق وليس رفاهية.
+                    </p>
+                </div>
+            </div>
+        </section>
+
+        <!-- The Story / Origin -->
+        <section class="story-section">
+            <div class="container">
+                <div class="story-grid">
+                    <div class="story-text fade-up">
+                        <h2 class="section-title">من قلب المعاناة.. ولدت الفكرة</h2>
+                        <div class="text-content">
+                            <p>
+                                بدأت رحلة <strong>DocSera</strong> من تجربة شخصية عاشها كل سوري تقريباً. الانتظار الطويل في العيادات، ضياع الصور والتحاليل الطبية، صعوبة العثور على الطبيب المناسب، وفوضى المواعيد.
+                            </p>
+                            <p>
+                                أدركنا أن المشكلة ليست في نقص الكفاءات الطبية - فسوريا تمتلك أفضل الأطباء - بل في <strong>غياب النظام</strong> الذي يربط الطبيب بالمريض بكفاءة.
+                            </p>
+                            <p>
+                                قررنا أن نبني الجسر. منصة رقمية متكاملة تضع حداً للفوضى، وتعيد للرعاية الصحية إنسانيتها وسهولتها.
+                            </p>
+                        </div>
+                    </div>
+                    <div class="story-visual fade-up delay-1">
+                        <div class="visual-card">
+                            <div class="stat-row">
+                                <div class="stat-box">
+                                    <div class="icon-lg">
+                                        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M12 22s8-4 8-10V5l-8-3-8 3v7c0 6 8 10 8 10z"/></svg>
+                                    </div>
+                                    <span class="lbl">أعلى معايير الأمان</span>
+                                </div>
+                                <div class="stat-box">
+                                    <div class="icon-lg">
+                                        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="2" y="3" width="20" height="14" rx="2" ry="2"/><line x1="8" y1="21" x2="16" y2="21"/><line x1="12" y1="17" x2="12" y2="21"/></svg>
+                                    </div>
+                                    <span class="lbl">نظام ذكي متكامل</span>
+                                </div>
+                            </div>
+                            <div class="abstract-ring"></div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </section>
+
+        <!-- Core Values -->
+        <section class="values-section">
+            <div class="container">
+                <div class="section-header fade-up">
+                    <h2 class="section-title center">قيمنا الأساسية</h2>
+                    <p class="section-sub center">المبادئ التي تقود كل سطر برمجي نكتبه، وكل قرار نتخذه.</p>
+                </div>
+                
+                <div class="values-grid">
+                    <!-- Value 1 -->
+                    <div class="value-card fade-up">
+                        <div class="card-icon">
+                            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M12 22s8-4 8-10V5l-8-3-8 3v7c0 6 8 10 8 10z"/></svg>
+                        </div>
+                        <h3>أمان وخصوصية</h3>
+                        <p>بياناتك الصحية هي أمانة. نستخدم أحدث تقنيات التشفير العالمية لضمان سرية معلوماتك وعدم مشاركتها مع أي طرف ثالث.</p>
+                    </div>
+
+                    <!-- Value 2 -->
+                    <div class="value-card fade-up delay-1">
+                        <div class="card-icon">
+                            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="12" r="10"/><line x1="2" y1="12" x2="22" y2="12"/><path d="M12 2a15.3 15.3 0 0 1 4 10 15.3 15.3 0 0 1-4 10 15.3 15.3 0 0 1-4-10 15.3 15.3 0 0 1 4-10z"/></svg>
+                        </div>
+                        <h3>تأثير مجتمعي</h3>
+                        <p>هدفنا ليس الربح فقط. نسعى لبناء شبكة صحية متكاملة ترفع سوية الخدمات الطبية في مجتمعنا وتسهل حياة الناس.</p>
+                    </div>
+
+                    <!-- Value 3 -->
+                    <div class="value-card fade-up delay-2">
+                        <div class="card-icon">
+                            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M14.7 6.3a1 1 0 0 0 0 1.4l1.6 1.6a1 1 0 0 0 1.4 0l3.77-3.77a6 6 0 0 1-7.94 7.94l-6.91 6.91a2.12 2.12 0 0 1-3-3l6.91-6.91a6 6 0 0 1 7.94-7.94l-3.76 3.76z"/></svg>
+                        </div>
+                        <h3>ابتكار مستمر</h3>
+                        <p>لا نكتفي بالحلول التقليدية. نبحث دائماً عن طرق ذكية وأدوات جديدة تجعل رحلة العلاج أبسط وأسرع للجميع.</p>
+                    </div>
+                </div>
+            </div>
+        </section>
+
+        <!-- Manifesto / Vision -->
+        <section class="manifesto-section">
+            <div class="container fade-up">
+                <div class="manifesto-box">
+                    <h2 class="manifesto-title">
+                        لسنا مجرد بديل،  نحن المعيار الجديد.
+                    </h2>
+                    <img src="/images/docsera_white.svg" alt="DocSera" class="manifesto-logo" />
+                </div>
+            </div>
+        </section>
+
+        <!-- CTA -->
+        <section class="join-cta">
+            <div class="container">
+                 <div class="cta-card fade-up">
+                    <h2>كن جزءاً من القصة</h2>
+                    <p>سواء كنت طبيباً تبحث عن تنظيم عيادتك، أو مريضاً يبحث عن الراحة.. مكانك معنا.</p>
+                    <div class="cta-actions">
+                        <a href="/#download" class="btn-main">حمل التطبيق الآن</a>
+                    </div>
+                 </div>
+            </div>
+        </section>
+
+	</main>
+	<Footer />
+</Layout>
+
+<script>
+	const observer = new IntersectionObserver((entries) => {
+		entries.forEach(entry => {
+			if (entry.isIntersecting) {
+				entry.target.classList.add('visible');
+			}
+		});
+	});
+	document.querySelectorAll('.fade-up').forEach((el) => observer.observe(el));
+</script>
+
+<style>
+    /* Variables inherited from global but redefined here for context if needed */
+    :root {
+        --c-main: #009092;
+        --c-main-dark: #007274;
+        --c-text: #1a1a1a;
+        --c-text-muted: #666;
+    }
+
+    main {
+        overflow-x: hidden;
+    }
+
+    /* Common Types */
+    .section-title {
+        font-size: 2.5rem;
+        font-weight: 800;
+        margin-bottom: 20px;
+        color: var(--c-text);
+        line-height: 1.2;
+    }
+    .section-title.center { text-align: center; }
+    .section-sub { font-size: 1.1rem; color: var(--c-text-muted); margin-bottom: 60px; }
+    .section-sub.center { text-align: center; max-width: 600px; margin-left: auto; margin-right: auto; }
+
+    /* Hero */
+    .about-hero {
+        position: relative;
+        padding: 180px 0 100px;
+        background: radial-gradient(circle at 10% 10%, #fff 0%, #FAFAFA 100%);
+        overflow: hidden;
+    }
+    .shape-bg {
+        position: absolute;
+        opacity: 0.05;
+        pointer-events: none;
+    }
+    .shape-1 {
+        top: -50px; left: -50px;
+        width: 600px;
+        transform: rotate(45deg);
+    }
+    
+    .hero-container { position: relative; z-index: 1; text-align: center; }
+    .hero-content { max-width: 800px; margin: 0 auto; }
+    
+    .pill-badge {
+        display: inline-block;
+        background: rgba(0, 144, 146, 0.1);
+        color: var(--c-main);
+        padding: 8px 20px;
+        border-radius: 30px;
+        font-weight: 700;
+        margin-bottom: 24px;
+    }
+
+    .hero-title {
+        font-size: clamp(3rem, 5vw, 4.5rem);
+        font-weight: 900;
+        line-height: 1.1;
+        margin-bottom: 30px;
+        color: var(--c-text);
+    }
+    .highlight {
+        color: var(--c-main);
+        background: linear-gradient(180deg, transparent 70%, rgba(0, 144, 146, 0.15) 70%);
+    }
+
+    .hero-desc {
+        font-size: 1.3rem;
+        color: var(--c-text-muted);
+        line-height: 1.8;
+        max-width: 700px;
+        margin: 0 auto;
+    }
+
+    /* Story Section */
+    .story-section {
+        padding: 100px 0;
+        background: white;
+    }
+    .story-grid {
+        display: grid;
+        grid-template-columns: 1.2fr 0.8fr;
+        gap: 80px;
+        align-items: center;
+    }
+    .text-content p {
+        font-size: 1.15rem;
+        line-height: 1.8;
+        color: #444;
+        margin-bottom: 20px;
+    }
+    .text-content strong { color: var(--c-main); font-weight: 700; }
+
+    .visual-card {
+        background: var(--c-main);
+        border-radius: 40px;
+        padding: 60px 40px;
+        color: white;
+        position: relative;
+        overflow: hidden;
+        box-shadow: 0 20px 40px rgba(0, 144, 146, 0.2);
+    }
+    .stat-row {
+        position: relative;
+        z-index: 2;
+        display: flex;
+        flex-direction: column;
+        gap: 40px;
+    }
+    .stat-box { display: flex; flex-direction: column; align-items: center; text-align: center; }
+    .icon-lg { 
+        width: 64px; height: 64px; 
+        margin-bottom: 15px; 
+        color: rgba(255,255,255,0.9);
+    }
+    .icon-lg svg { width: 100%; height: 100%; }
+    .stat-box .lbl { font-size: 1.1rem; opacity: 1; font-weight: 700; }
+    
+    .abstract-ring {
+        position: absolute;
+        bottom: -50px; left: -50px;
+        width: 200px; height: 200px;
+        border: 20px solid rgba(255,255,255,0.1);
+        border-radius: 50%;
+    }
+
+    /* Values Section */
+    .values-section {
+        padding: 100px 0;
+        background: #FAFAFA;
+    }
+    .values-grid {
+        display: grid;
+        grid-template-columns: repeat(3, 1fr);
+        gap: 30px;
+    }
+    .value-card {
+        background: white;
+        padding: 40px 30px;
+        border-radius: 24px;
+        border: 1px solid #eee;
+        transition: transform 0.3s, box-shadow 0.3s;
+    }
+    .value-card:hover {
+        transform: translateY(-10px);
+        box-shadow: 0 15px 30px rgba(0,0,0,0.05);
+    }
+    .card-icon {
+        width: 60px; height: 60px;
+        background: rgba(0, 144, 146, 0.1);
+        border-radius: 16px;
+        display: flex; align-items: center; justify-content: center;
+        color: var(--c-main);
+        margin-bottom: 24px;
+    }
+    .card-icon svg { width: 30px; height: 30px; }
+    .value-card h3 { font-size: 1.3rem; font-weight: 700; margin-bottom: 12px; }
+    .value-card p { color: var(--c-text-muted); line-height: 1.6; font-size: 0.95rem; }
+
+    /* Manifesto */
+    .manifesto-section {
+        padding: 120px 0;
+        background: var(--c-main-dark);
+        color: white;
+        text-align: center;
+        position: relative;
+        overflow: hidden;
+    }
+    .manifesto-section::before {
+        content: ''; position: absolute; top: 0; left: 0; width: 100%; height: 100%;
+        background-image: radial-gradient(rgba(255,255,255,0.1) 1px, transparent 1px);
+        background-size: 30px 30px; opacity: 0.2;
+    }
+    .manifesto-box { position: relative; z-index: 2; max-width: 900px; margin: 0 auto; }
+    .manifesto-title {
+        font-size: clamp(1.2rem, 2.5vw, 1.8rem);
+        font-weight: 800;
+        line-height: 1.4;
+        margin-bottom: 40px;
+    }
+    .manifesto-logo {
+        display: block;
+        margin: 0 auto;
+        height: 25px;
+        opacity: 0.9;
+    }
+
+    /* CTA */
+    .join-cta { padding: 80px 0; }
+    .cta-card {
+        background: white;
+        border-radius: 30px;
+        padding: 60px;
+        text-align: center;
+        border: 1px solid #eee;
+        box-shadow: 0 20px 60px rgba(0,0,0,0.04);
+    }
+    .cta-card h2 { font-size: 2.2rem; margin-bottom: 16px; font-weight: 800; }
+    .cta-card p { font-size: 1.1rem; color: #666; margin-bottom: 40px; }
+    .btn-main {
+        background: var(--c-main);
+        color: white;
+        padding: 16px 40px;
+        border-radius: 12px;
+        font-weight: 700;
+        text-decoration: none;
+        display: inline-block;
+        transition: background 0.2s;
+    }
+    .btn-main:hover { background: var(--c-main-dark); }
+
+    /* Fade Up Animation */
+    .fade-up { opacity: 0; transform: translateY(30px); transition: all 0.8s cubic-bezier(0.25, 1, 0.5, 1); }
+    .fade-up.visible { opacity: 1; transform: translateY(0); }
+    .delay-1 { transition-delay: 0.1s; }
+    .delay-2 { transition-delay: 0.2s; }
+
+    @media (max-width: 900px) {
+        .about-hero { padding: 140px 0 60px; }
+        .hero-title { font-size: 2.5rem; }
+        .story-grid { grid-template-columns: 1fr; gap: 40px; text-align: center; }
+        .visual-card { max-width: 400px; margin: 0 auto; }
+        .stat-row { flex-direction: row; justify-content: space-around; }
+        .values-grid { grid-template-columns: 1fr; }
+        .value-card { padding: 30px; }
+    }
+</style>

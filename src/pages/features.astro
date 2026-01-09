@@ -3,10 +3,9 @@ import Layout from '../layouts/Layout.astro';
 import Navbar from '../components/Navbar.astro';
 import Footer from '../components/Footer.astro';
 import Phone3D from '../components/Phone3D.astro';
-import ScrollyFeature from '../components/ScrollyFeature.astro';
 ---
 
-<Layout title="DocSera - مميزات التطبيق">
+<Layout title="DocSera - عن التطبيق">
 	<Navbar />
     
     <main class="scrolly-wrapper">
@@ -14,13 +13,49 @@ import ScrollyFeature from '../components/ScrollyFeature.astro';
         <!-- STICKY CONTAINER FOR 3D PHONE -->
         <div class="sticky-graphic">
             <div class="phone-container">
-                <Phone3D src="/images/raw/home.webp" alt="App Screen" id="hero-phone" />
+                <Phone3D id="hero-phone">
+                    <div class="screen-stack">
+                        <!-- Homepage (Base) -->
+                        <img src="/images/raw/home.webp" class="screen-layer active" id="layer-home" alt="Home" />
+                        
+                        <!-- Search Sequence -->
+                        <img src="/images/screenshots/search_specialty.webp" class="screen-layer" id="layer-search-1" alt="Specialty" />
+                        <img src="/images/screenshots/search_location.webp" class="screen-layer" id="layer-search-2" alt="Location" />
+                        <img src="/images/raw/search_list.webp" class="screen-layer" id="layer-search-3" alt="Results" />
+                        <img src="/images/raw/map.webp" class="screen-layer" id="layer-search-4" alt="Map" />
+
+                        <!-- Doctor Profile Scroll Container -->
+                        <div class="screen-layer scroll-container" id="layer-doctor-scroll">
+                             <div class="scroll-inner">
+                                <img src="/images/screenshots/doctor_profile_full.webp" class="scroll-img full" alt="Full Profile" />
+                             </div>
+                        </div>
+
+                        <!-- NEW: Booking Sequence (5 steps) -->
+                        <img src="/images/screenshots/booking_3.webp" class="screen-layer" id="layer-booking-1" alt="Booking Patient" />
+                        <img src="/images/screenshots/booking_2.webp" class="screen-layer" id="layer-booking-2" alt="Booking Reason" />
+                        <img src="/images/screenshots/booking_1.webp" class="screen-layer" id="layer-booking-3" alt="Booking Time" />
+                        <img src="/images/screenshots/booking_4.webp" class="screen-layer" id="layer-booking-4" alt="Booking Confirm" />
+                        <img src="/images/screenshots/booking_5.webp" class="screen-layer" id="layer-booking-5" alt="Booking Success" />
+
+                        <!-- Appointments Sequence -->
+                        <img src="/images/screenshots/appointments_list.webp" class="screen-layer" id="layer-appointments-1" alt="Appointments List" />
+                        <img src="/images/screenshots/appointment_details.webp" class="screen-layer" id="layer-appointments-2" alt="Appointment Details" />
+
+                        <!-- NEW: Messaging Sequence (Step 6) -->
+                        <img src="/images/screenshots/messages_list.webp" class="screen-layer" id="layer-messages-1" alt="Messages List" />
+                        <img src="/images/screenshots/conversation.webp" class="screen-layer" id="layer-messages-2" alt="Conversation" />
+
+                        <!-- QR Code -->
+                        <img src="/images/screenshots/doctor_qr.webp" class="screen-layer" id="layer-qr" alt="QR" />
+                    </div>
+                </Phone3D>
             </div>
             
             <!-- Dynamic Title that fades out -->
             <div class="hero-overlay" id="hero-title">
                 <h1>تطبيق متكامل<br>بين يديك</h1>
-                <p>مرر لأسفل لاكتشاف المميزات</p>
+                <p>كل ما تحتاجه لرعاية صحية أفضل</p>
                 <div class="scroll-ind">↓</div>
             </div>
         </div>
@@ -28,58 +63,114 @@ import ScrollyFeature from '../components/ScrollyFeature.astro';
         <!-- SCROLLABLE CONTENT -->
         <div class="content-stream">
             
-            <!-- SPACER FOR HERO ZOOM EFFECT -->
-            <div class="scroll-spacer" id="zoom-trigger"></div>
+            <!-- SPACER FOR HERO ZOOM -->
+            <div class="section-spacer" id="start-trigger"></div>
 
-            <ScrollyFeature 
-                step="01" 
-                title="لوحة تحكم شاملة" 
-                description="كل ما تحتاجه في شاشة واحدة. مواعيدك القادمة، وتنبيهات الأدوية."
-                align="right"
-                imgTarget="/images/raw/home.webp"
-            />
+            <!-- SECTION 1: HOMEPAGE (Search, Favs, Nav, Banners) -->
+            <div class="feature-block active" data-layer="layer-home">
+                <div class="content-card right with-number" data-step="01">
+                    <h2>الرئيسية الشاملة</h2>
+                    <p>واجهة متكاملة تمنحك الوصول السريع لكل ما تحتاجه:</p>
+                    <ul>
+                        <li><strong>البحث المتقدم:</strong> ابحث عن الأطباء بسهولة.</li>
+                        <li><strong>أطبائي:</strong> قائمة بأطبائك المفضلين للوصول السريع.</li>
+                        <li><strong>دليلك الطبي:</strong> مقالات ونصائح طبية موثوقة.</li>
+                        <li><strong>الإعلانات والعروض:</strong> آخر العروض الطبية والباقات.</li>
+                    </ul>
+                </div>
+            </div>
 
-            <ScrollyFeature 
-                step="02" 
-                title="بحث ذكي" 
-                description="خريطة تفاعلية وقائمة ذكية للعثور على أقرب العيادات إليك."
-                align="left"
-                imgTarget="/images/raw/map.webp"
-            />
+            <!-- SECTION 2: SEARCH FLOW (Sequence) -->
+            <div class="feature-sequence" id="search-sequence">
+                <div class="sticky-note left with-number" data-step="02">
+                    <h2>بحث ذكي ومتطور</h2>
+                    <p>نقدم لك خيارات بحث مرنة تناسب احتياجاتك:</p>
+                    <ul class="clean-list">
+                        <li class="active-item" data-target="layer-search-1">1. اختر التخصص الطبي</li>
+                        <li data-target="layer-search-2">2. حدد الموقع الأقرب إليك</li>
+                        <li data-target="layer-search-3">3. تصفح النتائج مع الفلترة</li>
+                        <li data-target="layer-search-4">4. استعرض العيادات على الخريطة</li>
+                    </ul>
+                </div>
+                <!-- Invisible triggers for scroll-based switching -->
+                <div class="seq-trigger" data-layer="layer-search-1"></div>
+                <div class="seq-trigger" data-layer="layer-search-2"></div>
+                <div class="seq-trigger" data-layer="layer-search-3"></div>
+                <div class="seq-trigger" data-layer="layer-search-4"></div>
+            </div>
 
-            <ScrollyFeature 
-                step="03" 
-                title="ملفات الأطباء" 
-                description="تعرف على مؤهلات الطبيب وتقييماته قبل الحجز."
-                align="right"
-                imgTarget="/images/raw/doctor_profile.webp"
-            />
+            <!-- SECTION 3: DOCTOR PROFILE (Scroll Effect + QR) -->
+            <div class="feature-sequence" id="doctor-sequence">
+                <div class="sticky-note right with-number" data-step="03">
+                    <h2>ملف الطبيب الشخصي</h2>
+                    <p>تعرف على طبيبك قبل الحجز. استعرض المؤهلات، الخبرات، وأوقات الدوام.</p>
+                    <p class="sub-note">يمكنك أيضاً مشاركة الملف عبر QR Code لسهولة الوصول.</p>
+                </div>
+                
+                <!-- Trigger for Profile Top -->
+                <div class="seq-trigger" data-layer="layer-doctor-scroll" data-action="reset-scroll"></div>
+                
+                <!-- Trigger for Scroll Animation -->
+                <div class="seq-trigger long" data-layer="layer-doctor-scroll" data-action="animate-scroll"></div>
+                
+                <!-- Trigger for QR -->
+                <div class="seq-trigger" data-layer="layer-qr"></div>
+            </div>
 
-            <ScrollyFeature 
-                step="04" 
-                title="حجز فوري" 
-                description="احجز موعدك بضغطة زر مع تأكيد فوري."
-                align="left"
-                imgTarget="/images/raw/booking_1.webp"
-            />
+            <!-- SECTION 4: BOOKING FLOW (Sequence) -->
+            <div class="feature-sequence" id="booking-sequence">
+                <div class="sticky-note left with-number" data-step="04">
+                    <h2 class="rtl">حجز المواعيد بسهولة</h2>
+                    <p>خطوات بسيطة وسريعة لحجز موعدك مع طبيبك المفضل:</p>
+                    <ul class="clean-list">
+                        <li class="active-item" data-target="layer-booking-1">1. اختر المريض (أنت أو أحد أفراد عائلتك)</li>
+                        <li data-target="layer-booking-2">2. حدد سبب الزيارة</li>
+                        <li data-target="layer-booking-3">3. اختر الوقت والتاريخ المناسب</li>
+                        <li data-target="layer-booking-4">4. راجع تفاصيل الحجز وتأكيده</li>
+                        <li data-target="layer-booking-5">5. تم الحجز بنجاح!</li>
+                    </ul>
+                </div>
+                <!-- Triggers -->
+                <div class="seq-trigger" data-layer="layer-booking-1"></div>
+                <div class="seq-trigger" data-layer="layer-booking-2"></div>
+                <div class="seq-trigger" data-layer="layer-booking-3"></div>
+                <div class="seq-trigger" data-layer="layer-booking-4"></div>
+                <div class="seq-trigger" data-layer="layer-booking-5"></div>
+            </div>
 
-            <ScrollyFeature 
-                step="05" 
-                title="محادثة آمنة" 
-                description="تواصل مع طبيبك مباشرة عبر الشات الآمن."
-                align="right"
-                imgTarget="/images/raw/chat.webp"
-            />
+            <!-- SECTION 5: APPOINTMENTS (Sequence) -->
+            <div class="feature-sequence" id="appointments-sequence">
+                <div class="sticky-note right with-number" data-step="05">
+                    <h2>إدارة مواعيدك الشخصية</h2>
+                    <p>تحكم كامل في مواعيدك الطبية بكل سهولة ويسر:</p>
+                    <ul class="clean-list">
+                        <li class="active-item" data-target="layer-appointments-1">1. استعرض المواعيد القادمة والسابقة</li>
+                        <li data-target="layer-appointments-2">2. تفاصيل دقيقة لكل موعد (الوقت، الطبيب، الحالة)</li>
+                    </ul>
+                </div>
+                <!-- Triggers -->
+                <div class="seq-trigger" data-layer="layer-appointments-1"></div>
+                <div class="seq-trigger" data-layer="layer-appointments-2"></div>
+            </div>
 
-            <ScrollyFeature 
-                step="06" 
-                title="إدارة العائلة" 
-                description="أضف أفراد عائلتك وائدر ملفاتهم الطبية."
-                align="left"
-                imgTarget="/images/raw/family.webp"
-            />
-            
-            <!-- Padding for end -->
+            <!-- SECTION 6: MESSAGING & CONVERSATION (Sequence) -->
+            <div class="feature-sequence" id="messages-sequence">
+                <div class="sticky-note left with-number" data-step="06">
+                    <h2>تواصل مباشر مع طبيبك</h2>
+                    <p>منصة محادثة متطورة للتواصل الفعال والآمن:</p>
+                    <ul class="clean-list">
+                        <li class="active-item" data-target="layer-messages-1">1. قائمة المحادثات: تواصل باسمك أو نيابة عن عائلتك</li>
+                        <li data-target="layer-messages-2">2. محادثة غنية: أرسل صور، ملفات PDF، ورسائل صوتية بكل سهولة</li>
+                    </ul>
+                    <p class="sub-note" style="margin-top: 20px; font-size: 0.95rem; opacity: 0.8;">
+                        ميزة "التحدث نيابة عن" تتيح لك إدارة الملفات الطبية لأطفالك أو كبار العائلة والتواصل مع الطبيب بخصوص حالتهم مباشرة من حسابك.
+                    </p>
+                </div>
+                <!-- Triggers -->
+                <div class="seq-trigger" data-layer="layer-messages-1"></div>
+                <div class="seq-trigger" data-layer="layer-messages-2"></div>
+            </div>
+
             <div style="height: 50vh;"></div>
 
         </div>
@@ -89,279 +180,323 @@ import ScrollyFeature from '../components/ScrollyFeature.astro';
 </Layout>
 
 <script>
+    // --- 3D Phone Motion Logic (Same as before but refined) ---
     const phone = document.getElementById('hero-phone');
     const pivot = phone?.querySelector('.phone-pivot') as HTMLElement;
-    const screenImg = phone?.querySelector('.screen-img') as HTMLImageElement;
     const heroTitle = document.getElementById('hero-title');
-    const sections = document.querySelectorAll('.scrolly-section');
     const container = phone?.closest('.phone-container') as HTMLElement;
     
-    // Config
-    const HERO_SCROLL_HEIGHT = 800; // Pixels to transition from Hero to Standard
-    const PHONE_BASE_HEIGHT = 1344; // Scalling 2x for 4K quality
+    // Layers
+    const layers = document.querySelectorAll('.screen-layer');
+    const triggers = document.querySelectorAll('.seq-trigger, .feature-block');
+    const scrollInner = document.querySelector('.scroll-inner') as HTMLElement;
+    const scrollContainer = document.querySelector('.scroll-container') as HTMLElement;
 
-    // Cache Viewport Dimensions (Stability Fix)
+    // Viewport Config
     let vpW = window.innerWidth;
     let vpH = window.innerHeight;
-
+    const PHONE_BASE_HEIGHT = 1344;
+    
     function updateDimensions() {
-        const newW = window.innerWidth;
-        // Only update height if width changes (orientation) or if on Desktop
-        // This prevents the phone from "Jumping" when Mobile URL bar hides/shows
-        if (newW !== vpW || newW >= 768) {
-            vpW = newW;
-            vpH = window.innerHeight;
-        }
-        update();
+        vpW = window.innerWidth;
+        vpH = window.innerHeight;
+        updatePhoneTransform();
     }
 
-    function update() {
-        // 1. READS (Collect all metrics first)
+    function updatePhoneTransform() {
         const scrolled = window.scrollY;
-        const isMobile = vpW < 768;
+        const isMobile = vpW < 1024;
         
-        // Batch Section Reads (Prevent Layout Thrashing on Mobile)
-        let sectionUpdates: {el: HTMLElement, opacity: number}[] = [];
-        if (isMobile) {
-             const centerPoint = vpH * 0.6;
-             const endPoint = vpH * 0.3;
-             
-             sections.forEach(sec => {
-                 const rect = sec.getBoundingClientRect(); // READ
-                 const content = sec.querySelector('.content') as HTMLElement;
-                 if(!content) return;
-                 
-                 let op = 1;
-                 if (rect.top < centerPoint) {
-                     op = (rect.top - endPoint) / (centerPoint - endPoint);
-                     if (op < 0) op = 0;
-                     if (op > 1) op = 1;
-                 }
-                 sectionUpdates.push({ el: content, opacity: op });
-             });
-        }
-
-        // 2. CALCULATIONS (Pure Math)
+        // --- 1. Zoom Logic for Hero ---
+        const HERO_HEIGHT = 800;
+        let progress = Math.min(1, scrolled / HERO_HEIGHT);
+        
         const targetPercent = isMobile ? 0.58 : 0.82;
-        const targetHeight = vpH * targetPercent; 
-        const targetScale = targetHeight / PHONE_BASE_HEIGHT;
+        const targetScale = (vpH * targetPercent) / PHONE_BASE_HEIGHT;
         const startScaleMultiplier = isMobile ? 1.5 : 2.1;
         const startScale = Math.max(isMobile ? 0.75 : 1.25, targetScale * startScaleMultiplier);
-
-        let progress = scrolled / HERO_SCROLL_HEIGHT;
-        if (progress > 1) progress = 1;
         
-        let currentScale = startScale - (progress * (startScale - targetScale));
+        const currentScale = startScale - (progress * (startScale - targetScale));
         
-        // Calculate Translation
+        // Translation Logic
         const halfHeight = PHONE_BASE_HEIGHT / 2;
         const startVisualTopOffset = halfHeight - (halfHeight * startScale);
-        
-        // Start: 55% VH
-        const startTargetTop = vpH * 0.55;
-        const zoomTranslateY = startTargetTop - startVisualTopOffset;
+        const startTargetTop = vpH * 0.65;
+        const startY = startTargetTop - startVisualTopOffset;
 
-        // End Strategy
         const targetVisualTopOffset = halfHeight - (halfHeight * targetScale);
-        let restTranslateY = 0;
-        if (isMobile) {
-            restTranslateY = (vpH * 0.15) - targetVisualTopOffset;
-        } else {
-            restTranslateY = (vpH * 0.10) - targetVisualTopOffset;
-        }
+        const endY = (vpH * (isMobile ? 0.15 : 0.10)) - targetVisualTopOffset;
+        
+        const currentY = startY - (progress * (startY - endY));
 
-        const currentTranslateY = zoomTranslateY - (progress * (zoomTranslateY - restTranslateY));
+        if (container) {
+            const transform = isMobile 
+                ? `translateX(-50%) translateY(${currentY}px) scale(${currentScale})`
+                : `translateY(${currentY}px) scale(${currentScale})`;
+            container.style.transform = transform;
+        }
 
         // Rotation
-        let rotY = 0, rotX = 0;
         if (pivot && !isMobile) {
-             rotY = Math.sin(scrolled / 500) * 12; 
-             rotX = Math.cos(scrolled / 600) * 4; 
-        }
-
-        // Title Opacity
-        let titleOp = Math.max(0, 1 - (scrolled / 400));
-
-
-        // 3. WRITES (Apply all styles at once)
-        if (container) {
-            container.style.transform = `translateY(${currentTranslateY}px) scale(${currentScale})`;
-        }
-        
-        if (pivot) {
+             const rotY = Math.sin(scrolled / 500) * 12; 
+             const rotX = Math.cos(scrolled / 600) * 4; 
              pivot.style.transform = `rotateY(${rotY}deg) rotateX(${rotX}deg)`;
         }
 
+        // Title Fade
         if (heroTitle) {
-            heroTitle.style.opacity = titleOp.toString();
-            heroTitle.style.pointerEvents = titleOp <= 0 ? 'none' : 'auto';
-        }
-
-        if (isMobile) {
-            sectionUpdates.forEach(item => {
-                item.el.style.opacity = item.opacity.toString();
-                const s = 0.9 + (0.1 * item.opacity);
-                item.el.style.transform = `scale(${s})`;
-            });
+            const op = Math.max(0, 1 - (scrolled / 400));
+            heroTitle.style.opacity = op.toString();
+            heroTitle.style.pointerEvents = op <= 0 ? 'none' : 'auto';
         }
     }
 
-    // Init
-    updateDimensions();
+    // --- 2. Scroll Interaction (Layer Switching) ---
+    const observer = new IntersectionObserver((entries) => {
+        entries.forEach(entry => {
+            if (entry.isIntersecting) {
+                const targetId = entry.target.getAttribute('data-layer');
+                const action = entry.target.getAttribute('data-action');
 
-    // Scroll Loop
+                // 1. Switch Layer
+                if (targetId) {
+                    layers.forEach(l => l.classList.remove('active'));
+                    const targetEl = document.getElementById(targetId);
+                    if (targetEl) targetEl.classList.add('active');
+                    
+                    // Highlight list items if in search sequence
+                    if (targetId.includes('search')) {
+                         document.querySelectorAll('#search-sequence .clean-list li').forEach(li => {
+                             li.classList.toggle('active-item', li.getAttribute('data-target') === targetId);
+                         });
+                    }
+                    // Highlight list items if in booking sequence
+                    if (targetId.includes('booking')) {
+                         document.querySelectorAll('#booking-sequence .clean-list li').forEach(li => {
+                             li.classList.toggle('active-item', li.getAttribute('data-target') === targetId);
+                         });
+                    }
+                    // Highlight list items if in appointments sequence
+                    if (targetId.includes('appointments')) {
+                         document.querySelectorAll('#appointments-sequence .clean-list li').forEach(li => {
+                             li.classList.toggle('active-item', li.getAttribute('data-target') === targetId);
+                         });
+                    }
+                    // Highlight list items if in messages sequence
+                    if (targetId.includes('messages')) {
+                         document.querySelectorAll('#messages-sequence .clean-list li').forEach(li => {
+                             li.classList.toggle('active-item', li.getAttribute('data-target') === targetId);
+                         });
+                    }
+                }
+
+                // 2. Handle Special Actions (Doctor Scroll)
+                if (targetId === 'layer-doctor-scroll' && scrollInner) {
+                    if (action === 'animate-scroll') {
+                        // Calculate scroll distance (Content Height - Viewport Height)
+                        const contentHeight = scrollInner.scrollHeight;
+                        const viewportHeight = scrollInner.parentElement?.clientHeight || 0;
+                        const scrollDist = contentHeight - viewportHeight;
+                        
+                        if (scrollDist > 0) {
+                            scrollInner.style.transform = `translateY(-${scrollDist}px)`;
+                        }
+                    } else {
+                        scrollInner.style.transform = 'translateY(0)'; // Reset to top
+                    }
+                }
+            }
+        });
+    }, { 
+        threshold: 0.5,
+        rootMargin: "-10% 0px -10% 0px"
+    });
+
+    triggers.forEach(t => observer.observe(t));
+
+    // Loop
     let ticking = false;
     window.addEventListener('scroll', () => {
         if (!ticking) {
             window.requestAnimationFrame(() => {
-                update();
+                updatePhoneTransform();
                 ticking = false;
             });
             ticking = true;
         }
     }, { passive: true });
-    
-    // Optimized Resize
     window.addEventListener('resize', updateDimensions);
-
-
-    // 3. OBSERVER FOR CONTENT SWITCHING
-    const observer = new IntersectionObserver((entries) => {
-        entries.forEach(entry => {
-            if (entry.isIntersecting) {
-                // Highlight text
-                document.querySelectorAll('.scrolly-section').forEach(el => el.classList.remove('active'));
-                entry.target.classList.add('active');
-
-                // Switch Image
-                const targetImg = entry.target.getAttribute('data-img');
-                if (targetImg && screenImg && screenImg.getAttribute('src') !== targetImg) {
-                    screenImg.style.opacity = '0';
-                    setTimeout(() => {
-                        screenImg.src = targetImg;
-                        screenImg.style.opacity = '1';
-                    }, 200);
-                }
-            }
-        });
-    }, { threshold: 0.5 }); 
-
-    sections.forEach(sec => observer.observe(sec));
-    
-    if(screenImg) {
-        screenImg.style.transition = 'opacity 0.3s ease';
-    }
+    updateDimensions();
 
 </script>
 
 <style>
-    .scrolly-wrapper {
-        position: relative;
-    }
-
+    .scrolly-wrapper { position: relative; }
+    
+    /* Sticky Container */
     .sticky-graphic {
-        position: sticky;
-        top: 0;
-        height: 100vh;
-        width: 100%;
-        overflow: hidden;
-        display: flex;
-        align-items: flex-start; 
-        justify-content: center;
-        direction: ltr; /* Force LTR to ensure true center even with overflow */
-        z-index: 1; 
-        pointer-events: none;
+        position: sticky; top: 0; height: 100vh;
+        width: 100%; overflow: hidden;
+        display: flex; justify-content: center;
+        z-index: 1; pointer-events: none;
+        direction: ltr;
     }
-
+    
     .phone-container {
-        /* Fix: Relative + Flex + LTR Parent = Perfect Centering */
         position: relative;
-        left: auto; top: auto; right: auto; margin: 0;
-        width: 620px;
-        height: 1344px;
+        width: 620px; height: 1344px;
         flex-shrink: 0;
         transform-origin: center center;
-        transition: transform 0.1s linear; 
-    }
-
-    .hero-overlay {
-        position: absolute;
-        top: 15%; /* Move title to top to avoid covering the phone */
-        left: 50%;
-        transform: translateX(-50%);
-        text-align: center;
-        z-index: 10;
-        transition: opacity 0.5s;
-        width: 100%;
-        pointer-events: none;
+        will-change: transform;
+        transform: translateZ(0); 
     }
     
+    @media (max-width: 1024px) {
+        .phone-container { position: absolute; left: 50%; transform: translateX(-50%); }
+    }
+
+    /* Hero Overlay */
+    .hero-overlay {
+        position: absolute; top: 15%; left: 50%;
+        transform: translateX(-50%); text-align: center;
+        z-index: 10; width: 100%;
+    }
     .hero-overlay h1 {
         font-size: clamp(3rem, 6vw, 5rem);
-        line-height: 1.1;
         color: var(--c-main-dark);
         margin-bottom: 1rem;
-        /* Clean text without heavy box */
-        text-shadow: 0 4px 12px rgba(255,255,255,0.8); 
+        text-shadow: 0 10px 30px rgba(255,255,255,0.9);
     }
-    
-    .scroll-ind {
-        font-size: 2rem;
-        animation: bounce 2s infinite;
-    }
+    .scroll-ind { font-size: 2rem; animation: bounce 2s infinite; }
 
-    .content-stream {
+    /* Screen Stack Logic */
+    .screen-stack {
+        position: relative; width: 100%; height: 100%;
+        background: black;
+    }
+    .screen-layer {
+        position: absolute; top: 0; left: 0;
+        width: 100%; height: 100%;
+        object-fit: cover; object-position: top;
+        opacity: 0;
+        transition: opacity 0.4s ease; /* Fast switch */
+        z-index: 1;
+    }
+    .screen-layer.active { opacity: 1; z-index: 2; }
+
+    /* Doctor Scroll Special Layer */
+    .scroll-container { overflow: hidden; }
+    .scroll-inner {
+        width: 100%; height: auto; /* Allow content to define height */
+        display: block; 
+        transition: transform 2.0s cubic-bezier(0.45, 0, 0.55, 1); /* Smooth elegant scroll */
+        will-change: transform;
+    }
+    .scroll-img.full { width: 100%; height: auto; display: block; }
+
+    /* Content Stream */
+    .content-stream { position: relative; z-index: 5; pointer-events: none; }
+    .section-spacer { height: 100vh; }
+    
+    /* Feature Blocks & Sequences */
+    .feature-block, .feature-sequence {
         position: relative;
-        z-index: 2; /* In front of sticky graphic? */
-        /* Actually, we want text to float OVER the phone if centered, or beside it. */
-        /* For "Apple Style", often text is Over or Side. */
-        /* Using Mix-Blend-Mode or distinct layout. */
-        /* Let's put content-stream on top, but spaced out so phone is visible */
-        pointer-events: none; /* Let content be clickable, but not block scroll */
-    }
-
-    /* Re-enable pointer events for text */
-    :global(.scrolly-section .content) {
-        pointer-events: auto;
-        background: rgba(255,255,255,0.9);
-        backdrop-filter: blur(10px);
-        padding: 30px;
-        border-radius: 20px;
-        box-shadow: 0 10px 30px rgba(0,0,0,0.1);
-        transition: opacity 0.1s linear, transform 0.1s linear; /* Smooth fade/scale */
+        min-height: 100vh;
+        display: flex;
+        align-items: center;
+        width: 100%;
+        max-width: 1400px; /* Increased max width to pull cards further out */
+        margin: 0 auto;
+        padding: 50px;
+        box-sizing: border-box;
     }
     
-    .scroll-spacer {
-        height: 100vh; /* First screen is mostly empty for Hero Zoom */
+    /* Cards */
+    .content-card, .sticky-note {
+        background: rgba(255, 255, 255, 0.9);
+        backdrop-filter: blur(16px);
+        padding: 40px;
+        border-radius: 30px;
+        box-shadow: 0 20px 50px rgba(0,0,0,0.1);
+        max-width: 400px; /* Reduced width to avoid overlap */
+        pointer-events: auto;
+        border: 1px solid rgba(255,255,255,0.5);
+    }
+    .content-card.right, .sticky-note.right { margin-right: 0; margin-left: auto; } /* Pushed to edges */
+    .sticky-note.left { margin-right: auto; margin-left: 0; }
+
+    /* Numbering */
+    .with-number { position: relative; }
+    .with-number::before {
+        content: attr(data-step);
+        position: absolute;
+        top: -40px; right: 0;
+        font-size: 5rem;
+        font-weight: 900;
+        color: rgba(0, 144, 146, 0.1);
+        font-family: var(--font-en);
+        line-height: 1;
+        z-index: -1;
     }
 
-    @keyframes bounce {
-        0%, 100% { transform: translateY(0); }
-        50% { transform: translateY(10px); }
+    h2 { font-size: 2rem; font-weight: 800; color: var(--c-main-dark); margin-bottom: 20px; }
+    p { font-size: 1.1rem; line-height: 1.6; color: #555; margin-bottom: 15px; }
+    ul { list-style: none; padding: 0; }
+    li { margin-bottom: 12px; position: relative; padding-right: 25px; }
+    li::before { content: '✓'; color: var(--c-main); position: absolute; right: 0; font-weight: bold; }
+    
+    /* Clean List for Sequence */
+    .clean-list li { 
+        padding-right: 0; opacity: 0.5; transition: opacity 0.3s; 
+        font-weight: 600; cursor: pointer;
     }
+    .clean-list li::before { content: none; }
+    .clean-list li.active-item { opacity: 1; color: var(--c-main); transform: scale(1.05); }
 
-    /* MOBILE ADJUSTMENTS */
+    /* Triggers */
+    .seq-trigger { height: 80vh; width: 100%; } /* Trigger space for each step */
+    .feature-sequence { flex-direction: column; align-items: flex-start; }
+    .sticky-note { position: sticky; top: 30vh; z-index: 20; }
+    .feature-sequence .sticky-note { margin-bottom: 50vh; } /* Push trigger down? No, sticky stays */
+    
+    /* Layout Adjustments for specific sequences */
+    #search-sequence { align-items: flex-start; } /* Left aligned text */
+    #search-sequence .sticky-note { margin-right: auto; margin-left: 0; }
+    
+    #doctor-sequence { align-items: flex-end; } /* Right aligned text */
+    #doctor-sequence .sticky-note { margin-left: auto; margin-right: 0; }
+
+    #doctor-sequence { align-items: flex-end; } /* Right aligned text */
+    #doctor-sequence .sticky-note { margin-left: auto; margin-right: 0; }
+
+    #booking-sequence { align-items: flex-start; } /* Left aligned text */
+    #booking-sequence .sticky-note { margin-right: auto; margin-left: 0; }
+
+    #appointments-sequence { align-items: flex-end; } /* Right aligned text (Alternating) */
+    #appointments-sequence .sticky-note { margin-left: auto; margin-right: 0; }
+
+    #messages-sequence { align-items: flex-start; } /* Left aligned text */
+    #messages-sequence .sticky-note { margin-right: auto; margin-left: 0; }
+
+    @keyframes bounce { 0%, 100% { transform: translateY(0); } 50% { transform: translateY(10px); } }
+
     @media (max-width: 768px) {
-        /* On mobile, keep the sticky graphic visible but scale logic handles size */
-        .sticky-graphic { 
-            /* No opacity fade! Keep it visible as per user request */
-            opacity: 1; 
+        .content-card, .sticky-note {
+            max-width: 90%; margin: 20px auto !important;
+            padding: 25px;
+            bottom: 50px;
+            position: relative; /* Remove sticky on mobile for simplicity or adjust top */
+        }
+        /* Sticky fix for mobile sequences */
+        .feature-sequence .sticky-note {
+             position: sticky;
+             top: auto; 
+             bottom: 30px; /* Stick to bottom */
+             z-index: 50;
+             margin-bottom: 20px;
         }
         
-        .hero-overlay h1 { font-size: 2.5rem; } /* Smaller header */
-        
-        /* Adjust text cards to be bottom sheets or smaller */
-        :global(.scrolly-section) {
-            justify-content: flex-end; /* Push text to bottom */
-            padding-bottom: 150px; /* Space from bottom */
-        }
-        :global(.scrolly-section .content) {
-            max-width: 90%;
-            margin: 0 auto;
-            background: rgba(255,255,255,0.95);
-            /* Initial smaller state is handled by JS but set base here */
-            font-size: 0.9em;
-            padding: 20px;
-        }
+        .feature-sequence { height: auto; display: block; }
+        .seq-trigger { height: 60vh; }
     }
 </style>

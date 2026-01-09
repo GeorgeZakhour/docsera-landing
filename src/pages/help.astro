@@ -1,0 +1,1292 @@
+---
+import Layout from '../layouts/Layout.astro';
+import Navbar from '../components/Navbar.astro';
+import Footer from '../components/Footer.astro';
+---
+
+<Layout title="مركز المساعدة - DocSera">
+    <Navbar />
+    <main class="help-page">
+        <!-- Hero Section -->
+        <section class="hero">
+            <div class="container">
+                <div class="hero-content fade-up">
+                    <div class="pill-badge">الدعم والمساعدة</div>
+                    <h1 class="text-huge">مركز المساعدة</h1>
+                    <p class="subheadline">كل ما تحتاج معرفته عن استخدام DocSera</p>
+                    
+                    <!-- Search Bar -->
+                    <div class="search-wrapper">
+                        <input 
+                            type="text" 
+                            id="searchInput" 
+                            placeholder="ابحث عن سؤالك..." 
+                            class="search-input"
+                        />
+                        <svg class="search-icon" width="20" height="20" viewBox="0 0 20 20" fill="none">
+                            <circle cx="9" cy="9" r="6" stroke="currentColor" stroke-width="2"/>
+                            <path d="M14 14L18 18" stroke="currentColor" stroke-width="2" stroke-linecap="round"/>
+                        </svg>
+                    </div>
+                </div>
+            </div>
+        </section>
+
+        <!-- Categories Grid -->
+        <section class="categories-section">
+            <div class="container">
+                <div class="categories-grid">
+                    <a href="#getting-started" class="category-card fade-up">
+                        <div class="card-icon">
+                            <svg width="32" height="32" viewBox="0 0 24 24" fill="none">
+                                <path d="M12 2L2 7L12 12L22 7L12 2Z" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/>
+                                <path d="M2 17L12 22L22 17" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/>
+                                <path d="M2 12L12 17L22 12" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/>
+                            </svg>
+                        </div>
+                        <h3>البدء</h3>
+                        <p>إنشاء حساب والخطوات الأولى</p>
+                    </a>
+                    
+                    <a href="#family" class="category-card fade-up delay-1">
+                        <div class="card-icon">
+                            <svg width="32" height="32" viewBox="0 0 24 24" fill="none">
+                                <path d="M17 21V19C17 17.9 16.1 17 15 17H9C7.9 17 7 17.9 7 19V21" stroke="currentColor" stroke-width="2" stroke-linecap="round"/>
+                                <circle cx="12" cy="7" r="4" stroke="currentColor" stroke-width="2"/>
+                            </svg>
+                        </div>
+                        <h3>العائلة والأقارب</h3>
+                        <p>إضافة وإدارة حسابات العائلة</p>
+                    </a>
+                    
+                    <a href="#health-records" class="category-card fade-up delay-2">
+                        <div class="card-icon">
+                            <svg width="32" height="32" viewBox="0 0 24 24" fill="none">
+                                <path d="M20 6L9 17L4 12" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/>
+                                <path d="M12 2C6.5 2 2 6.5 2 12S6.5 22 12 22 22 17.5 22 12" stroke="currentColor" stroke-width="2" stroke-linecap="round"/>
+                            </svg>
+                        </div>
+                        <h3>السجلات الصحية</h3>
+                        <p>إدارة معلوماتك الطبية</p>
+                    </a>
+                    
+                    <a href="#doctors" class="category-card fade-up">
+                        <div class="card-icon">
+                            <svg width="32" height="32" viewBox="0 0 24 24" fill="none">
+                                <rect x="3" y="4" width="18" height="18" rx="2" stroke="currentColor" stroke-width="2"/>
+                                <path d="M16 2V6M8 2V6M3 10H21" stroke="currentColor" stroke-width="2" stroke-linecap="round"/>
+                            </svg>
+                        </div>
+                        <h3>الأطباء والمواعيد</h3>
+                        <p>البحث والحجز مع الأطباء</p>
+                    </a>
+                    
+                    <a href="#messaging" class="category-card fade-up delay-1">
+                        <div class="card-icon">
+                            <svg width="32" height="32" viewBox="0 0 24 24" fill="none">
+                                <path d="M21 15C21 15.5 20.5 16 20 16H7L3 20V4C3 3.5 3.5 3 4 3H20C20.5 3 21 3.5 21 4V15Z" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/>
+                            </svg>
+                        </div>
+                        <h3>المراسلة</h3>
+                        <p>التواصل مع الأطباء</p>
+                    </a>
+                    
+                    <a href="#account" class="category-card fade-up delay-2">
+                        <div class="card-icon">
+                            <svg width="32" height="32" viewBox="0 0 24 24" fill="none">
+                                <circle cx="12" cy="12" r="3" stroke="currentColor" stroke-width="2"/>
+                                <path d="M12 1V3M12 21V23M4.22 4.22L5.64 5.64M18.36 18.36L19.78 19.78M1 12H3M21 12H23M4.22 19.78L5.64 18.36M18.36 5.64L19.78 4.22" stroke="currentColor" stroke-width="2" stroke-linecap="round"/>
+                            </svg>
+                        </div>
+                        <h3>الحساب والإعدادات</h3>
+                        <p>إدارة حسابك وخصوصيتك</p>
+                    </a>
+                </div>
+            </div>
+        </section>
+
+        <!-- FAQ Sections -->
+        <section class="faq-sections">
+            <div class="container">
+                
+                <!-- Getting Started -->
+                <div class="faq-category" id="getting-started">
+                    <h2 class="category-title">البدء مع DocSera</h2>
+                    
+                    <!-- Q1: Account Creation -->
+                    <div class="faq-item">
+                        <button class="faq-question">
+                            <span>كيف أقوم بإنشاء حساب جديد؟</span>
+                            <svg class="arrow" width="20" height="20" viewBox="0 0 20 20">
+                                <path d="M5 7.5L10 12.5L15 7.5" stroke="currentColor" stroke-width="2" fill="none" stroke-linecap="round" stroke-linejoin="round"/>
+                            </svg>
+                        </button>
+                        <div class="faq-answer">
+                            <p><strong>المتطلبات الأساسية:</strong></p>
+                            <ul>
+                                <li>بريد إلكتروني غير مستخدم في DocSera</li>
+                                <li>رقم هاتف غير مسجل في DocSera</li>
+                                <li>عمرك 16 سنة أو أكثر</li>
+                            </ul>
+                            
+                            <p><strong>طرق الوصول لصفحة التسجيل:</strong></p>
+                            <ul>
+                                <li>من صفحة البداية: اضغط على "إنشاء حساب جديد"</li>
+                                <li>من الشاشة الرئيسية: اضغط على زر "تسجيل الدخول"</li>
+                                <li>من صفحة الحساب (وضع الضيف): اضغط على "إنشاء حساب"</li>
+                            </ul>
+
+                            <p><strong>خطوات التسجيل:</strong></p>
+                            <ol>
+                                <li><strong>رقم الهاتف:</strong> أدخل رقم هاتفك (يجب ألا يكون مسجلاً مسبقاً)</li>
+                                <li><strong>المعلومات الشخصية:</strong> أدخل الجنس، الاسم الأول، اسم العائلة، وتاريخ الميلاد (يجب أن تكون فوق 16 سنة)</li>
+                                <li><strong>البريد الإلكتروني:</strong> أدخل بريدك الإلكتروني (غير مستخدم في DocSera)</li>
+                                <li><strong>تأكيد البريد:</strong> أدخل رمز OTP المرسل إلى بريدك الإلكتروني</li>
+                                <li><strong>تأكيد الهاتف:</strong> أدخل رمز OTP المرسل عبر WhatsApp</li>
+                                <li><strong>إنشاء كلمة المرور:</strong> أنشئ كلمة مرور قوية تستوفي المتطلبات التالية:
+                                    <ul>
+                                        <li>8 أحرف على الأقل (مطلوب)</li>
+                                        <li>حرف كبير واحد على الأقل (A-Z)</li>
+                                        <li>حرف صغير واحد على الأقل (a-z)</li>
+                                        <li>رقم واحد على الأقل (0-9)</li>
+                                        <li>رمز خاص واحد على الأقل (!@#$%^&*)</li>
+                                        <li>تجنب الأنماط البسيطة (مثل: 1234، abcd، qwerty)</li>
+                                        <li>تجنب تكرار نفس الحرف 3 مرات متتالية</li>
+                                    </ul>
+                                </li>
+                                <li><strong>الموافقة:</strong> اقرأ ووافق على شروط الاستخدام للمتابعة</li>
+                                <li><strong>التسويق (اختياري):</strong> يمكنك الموافقة على تلقي رسائل تسويقية</li>
+                                <li><strong>المراجعة:</strong> راجع معلوماتك وأكمل التسجيل</li>
+                                <li><strong>التأكيد:</strong> ستتلقى بريد إلكتروني يؤكد إنشاء حسابك</li>
+                            </ol>
+                        </div>
+                    </div>
+
+                    <!-- Q2: Login Methods -->
+                    <div class="faq-item">
+                        <button class="faq-question">
+                            <span>كيف أقوم بتسجيل الدخول؟</span>
+                            <svg class="arrow" width="20" height="20" viewBox="0 0 20 20">
+                                <path d="M5 7.5L10 12.5L15 7.5" stroke="currentColor" stroke-width="2" fill="none" stroke-linecap="round" stroke-linejoin="round"/>
+                            </svg>
+                        </button>
+                        <div class="faq-answer">
+                            <p>يمكنك تسجيل الدخول باستخدام:</p>
+                            <ul>
+                                <li><strong>البريد الإلكتروني + كلمة المرور:</strong> أدخل بريدك الإلكتروني المسجل وكلمة المرور</li>
+                                <li><strong>رقم الهاتف + كلمة المرور:</strong> أدخل رقم هاتفك المسجل وكلمة المرور</li>
+                                <li><strong>البصمة/Face ID:</strong> إذا قمت بتفعيل المصادقة البيومترية من الإعدادات، يمكنك استخدامها للدخول السريع (بعد أول تسجيل دخول يدوي)</li>
+                            </ul>
+                            <p class="note">ملاحظة: إذا قمت بتفعيل المصادقة الثنائية (2FA) للأجهزة الجديدة في الإعدادات، ستحتاج إلى إدخال رمز OTP عند تسجيل الدخول من جهاز جديد.</p>
+                        </div>
+                    </div>
+
+                    <!-- Q3: Guest Mode -->
+                    <div class="faq-item">
+                        <button class="faq-question">
+                            <span>ما هو وضع الضيف وما هي محدوداته؟</span>
+                            <svg class="arrow" width="20" height="20" viewBox="0 0 20 20">
+                                <path d="M5 7.5L10 12.5L15 7.5" stroke="currentColor" stroke-width="2" fill="none" stroke-linecap="round" stroke-linejoin="round"/>
+                            </svg>
+                        </button>
+                        <div class="faq-answer">
+                            <p>وضع الضيف يتيح لك استكشاف التطبيق دون إنشاء حساب، لكن مع قيود:</p>
+                            
+                            <p><strong>ما يمكنك فعله كضيف:</strong></p>
+                            <ul>
+                                <li>البحث عن الأطباء</li>
+                                <li>عرض ملفات الأطباء الشخصية</li>
+                                <li>استعراض التخصصات والمواقع</li>
+                            </ul>
+
+                            <p><strong>ما لا يمكنك فعله كضيف:</strong></p>
+                            <ul>
+                                <li>حجز المواعيد</li>
+                                <li>إرسال رسائل للأطباء</li>
+                                <li>إدارة السجلات الصحية</li>
+                                <li>إضافة أفراد العائلة</li>
+                                <li>حفظ المعلومات الطبية</li>
+                            </ul>
+
+                            <p class="note">للاستفادة الكاملة من التطبيق، يجب إنشاء حساب.</p>
+                        </div>
+                    </div>
+
+                    <!-- Q4: Email Verification -->
+                    <div class="faq-item">
+                        <button class="faq-question">
+                            <span>كيف أتحقق من بريدي الإلكتروني؟</span>
+                            <svg class="arrow" width="20" height="20" viewBox="0 0 20 20">
+                                <path d="M5 7.5L10 12.5L15 7.5" stroke="currentColor" stroke-width="2" fill="none" stroke-linecap="round" stroke-linejoin="round"/>
+                            </svg>
+                        </button>
+                        <div class="faq-answer">
+                            <p>عملية التحقق من البريد الإلكتروني:</p>
+                            <ol>
+                                <li>بعد إدخال بريدك الإلكتروني، ستتلقى رسالة تحتوي على رمز OTP</li>
+                                <li>أدخل الرمز في الصفحة المخصصة</li>
+                                <li>إذا لم يصلك الرمز، اضغط على "إعادة إرسال الرمز"</li>
+                            </ol>
+
+                            <p><strong>إذا لم يصل الرمز:</strong></p>
+                            <ul>
+                                <li>تحقق من مجلد البريد العشوائي (Spam)</li>
+                                <li>تأكد من صحة عنوان البريد الإلكتروني</li>
+                                <li>انتظر دقيقة ثم اطلب إعادة إرسال</li>
+                            </ul>
+
+                            <p class="note">ملاحظة: الرمز صالح لمدة محدودة، تأكد من إدخاله فوراً.</p>
+                        </div>
+                    </div>
+
+                    <!-- Q5: Biometric Login Setup -->
+                    <div class="faq-item">
+                        <button class="faq-question">
+                            <span>كيف أفعّل تسجيل الدخول بالبصمة أو Face ID؟</span>
+                            <svg class="arrow" width="20" height="20" viewBox="0 0 20 20">
+                                <path d="M5 7.5L10 12.5L15 7.5" stroke="currentColor" stroke-width="2" fill="none" stroke-linecap="round" stroke-linejoin="round"/>
+                            </svg>
+                        </button>
+                        <div class="faq-answer">
+                            <p>لتفعيل المصادقة البيومترية:</p>
+                            <ol>
+                                <li>اذهب إلى "الحساب" ← "الأمان"</li>
+                                <li>فعّل خيار "تسجيل الدخول بالبصمة/Face ID"</li>
+                                <li>أدخل كلمة مرورك للتأكيد</li>
+                                <li>سجّل الدخول يدوياً مرة واحدة بعد التفعيل</li>
+                                <li>من المرة القادمة، يمكنك استخدام البصمة/Face ID مباشرة</li>
+                            </ol>
+
+                            <p><strong>متطلبات الأمان:</strong></p>
+                            <ul>
+                                <li>يجب أن يكون جهازك يدعم البصمة أو Face ID</li>
+                                <li>يجب تفعيل البصمة/Face ID في إعدادات الجهاز</li>
+                            </ul>
+
+                            <p class="note">بعد تفعيل البصمة، سيتم حفظ بيانات تسجيل الدخول بشكل آمن على جهازك.</p>
+                        </div>
+                    </div>
+
+                    <!-- Q6: Password Recovery -->
+                    <div class="faq-item">
+                        <button class="faq-question">
+                            <span>ماذا أفعل إذا نسيت كلمة المرور؟</span>
+                            <svg class="arrow" width="20" height="20" viewBox="0 0 20 20">
+                                <path d="M5 7.5L10 12.5L15 7.5" stroke="currentColor" stroke-width="2" fill="none" stroke-linecap="round" stroke-linejoin="round"/>
+                            </svg>
+                        </button>
+                        <div class="faq-answer">
+                            <p>لاستعادة كلمة المرور:</p>
+                            <ol>
+                                <li>في صفحة تسجيل الدخول، اضغط على "نسيت كلمة المرور؟"</li>
+                                <li>أدخل بريدك الإلكتروني المسجل</li>
+                                <li>ستتلقى رمز تحقق عبر البريد الإلكتروني</li>
+                                <li>أدخل الرمز</li>
+                                <li>أنشئ كلمة مرور جديدة</li>
+                                <li>أكد كلمة المرور الجديدة</li>
+                            </ol>
+
+                            <p><strong>نصائح لكلمة مرور قوية:</strong></p>
+                            <ul>
+                                <li>استخدم 8 أحرف على الأقل</li>
+                                <li>اجمع بين الأحرف الكبيرة والصغيرة</li>
+                                <li>أضف أرقام ورموز خاصة</li>
+                                <li>تجنب استخدام معلومات شخصية واضحة</li>
+                            </ul>
+                        </div>
+                    </div>
+
+                    <!-- Q7: 2FA for New Devices -->
+                    <div class="faq-item">
+                        <button class="faq-question">
+                            <span>لماذا أحتاج إلى رمز OTP عند تسجيل الدخول من جهاز جديد؟</span>
+                            <svg class="arrow" width="20" height="20" viewBox="0 0 20 20">
+                                <path d="M5 7.5L10 12.5L15 7.5" stroke="currentColor" stroke-width="2" fill="none" stroke-linecap="round" stroke-linejoin="round"/>
+                            </svg>
+                        </button>
+                        <div class="faq-answer">
+                            <p>رمز OTP للأجهزة الجديدة هو طبقة أمان إضافية تحمي حسابك.</p>
+
+                            <p><strong>متى يُطلب رمز OTP؟</strong></p>
+                            <ul>
+                                <li>فقط إذا قمت بتفعيل "المصادقة الثنائية (2FA) للأجهزة الجديدة" في الإعدادات</li>
+                                <li>عند تسجيل الدخول من جهاز لم تستخدمه من قبل</li>
+                            </ul>
+
+                            <p><strong>كيف يعمل؟</strong></p>
+                            <ol>
+                                <li>عند تسجيل الدخول من جهاز جديد، سيُطلب منك رمز OTP</li>
+                                <li>ستتلقى الرمز عبر بريدك الإلكتروني</li>
+                                <li>أدخل الرمز للتحقق من هويتك</li>
+                                <li>بعد التحقق، سيُضاف الجهاز إلى قائمة الأجهزة الموثوقة</li>
+                            </ol>
+
+                            <p class="note">يمكنك تفعيل أو إيقاف هذه الميزة من: الحساب ← الأمان ← المصادقة الثنائية للأجهزة الجديدة</p>
+                        </div>
+                    </div>
+
+                    <!-- Q8: First Time Use -->
+                    <div class="faq-item">
+                        <button class="faq-question">
+                            <span>كيف أستخدم التطبيق لأول مرة؟</span>
+                            <svg class="arrow" width="20" height="20" viewBox="0 0 20 20">
+                                <path d="M5 7.5L10 12.5L15 7.5" stroke="currentColor" stroke-width="2" fill="none" stroke-linecap="round" stroke-linejoin="round"/>
+                            </svg>
+                        </button>
+                        <div class="faq-answer">
+                            <p>بعد تسجيل الدخول، ستجد التطبيق منظم في 4 أقسام رئيسية:</p>
+
+                            <p><strong>الشريط السفلي (التنقل الرئيسي):</strong></p>
+                            <ul>
+                                <li><strong>الرئيسية:</strong> لوحة المعلومات مع شريط بحث في الأعلى للبحث عن الأطباء</li>
+                                <li><strong>المواعيد:</strong> عرض المواعيد القادمة والسابقة، مع إمكانية إضافة موعد جديد عبر زر "إضافة موعد" الذي يتيح لك البحث عن طبيب وحجز موعد</li>
+                                <li><strong>الصحة:</strong> سجلاتك الطبية (حساسية، أدوية، تطعيمات، تقارير الزيارات، مستندات، إلخ)</li>
+                                <li><strong>الرسائل:</strong> تواصل مع الأطباء</li>
+                                <li><strong>الحساب:</strong> إعداداتك ومعلوماتك الشخصية</li>
+                            </ul>
+
+                            <p><strong>خطوات البداية المقترحة:</strong></p>
+                            <ol>
+                                <li>أكمل ملفك الشخصي في قسم "الحساب"</li>
+                                <li>أضف معلوماتك الصحية الأساسية في "الصحة"</li>
+                                <li>اذهب إلى "المواعيد" واضغط على "إضافة موعد" للبحث عن طبيب</li>
+                                <li>احجز موعدك الأول</li>
+                            </ol>
+                        </div>
+                    </div>
+
+                    <!-- Q9: Change Language -->
+                    <div class="faq-item">
+                        <button class="faq-question">
+                            <span>كيف أغير لغة التطبيق؟</span>
+                            <svg class="arrow" width="20" height="20" viewBox="0 0 20 20">
+                                <path d="M5 7.5L10 12.5L15 7.5" stroke="currentColor" stroke-width="2" fill="none" stroke-linecap="round" stroke-linejoin="round"/>
+                            </svg>
+                        </button>
+                        <div class="faq-answer">
+                            <p>يمكنك تغيير اللغة من موقعين:</p>
+
+                            <p><strong>الطريقة الأولى - من صفحة الحساب:</strong></p>
+                            <ol>
+                                <li>اذهب إلى تبويب "الحساب"</li>
+                                <li>اضغط على "اللغة" أو "Language"</li>
+                                <li>اختر اللغة المفضلة (العربية أو English)</li>
+                                <li>سيتم تحديث التطبيق فوراً</li>
+                            </ol>
+
+                            <p><strong>الطريقة الثانية - من الشاشة الرئيسية:</strong></p>
+                            <ol>
+                                <li>في الشريط العلوي للشاشة الرئيسية</li>
+                                <li>اضغط على أيقونة اللغة</li>
+                                <li>اختر اللغة المطلوبة</li>
+                            </ol>
+
+                            <p class="note">اللغات المتاحة: العربية (مع واجهة RTL) والإنجليزية (مع واجهة LTR)</p>
+                        </div>
+                    </div>
+
+                    <!-- Q10: Doctor Registration -->
+                    <div class="faq-item">
+                        <button class="faq-question">
+                            <span>هل يمكنني التسجيل كطبيب؟</span>
+                            <svg class="arrow" width="20" height="20" viewBox="0 0 20 20">
+                                <path d="M5 7.5L10 12.5L15 7.5" stroke="currentColor" stroke-width="2" fill="none" stroke-linecap="round" stroke-linejoin="round"/>
+                            </svg>
+                        </button>
+                        <div class="faq-answer">
+                            <p>تطبيق DocSera مخصص للمرضى فقط.</p>
+
+                            <p><strong>للأطباء:</strong></p>
+                            <p>إذا كنت طبيباً وتريد الانضمام إلى منصة DocSera، لدينا منصة خاصة بالأطباء تسمى <strong>DocSera Pro</strong>.</p>
+
+                            <p><strong>كيف تنضم كطبيب؟</strong></p>
+                            <ol>
+                                <li>قم بزيارة منصة الأطباء: <a href="https://pro.docsera.app" target="_blank" style="color: var(--c-main); font-weight: 700;">pro.docsera.app</a></li>
+                                <li>سجّل كطبيب على المنصة</li>
+                                <li>قدّم المستندات والشهادات المطلوبة</li>
+                                <li>انتظر الموافقة من فريق DocSera</li>
+                                <li>ابدأ باستقبال المرضى وإدارة مواعيدك</li>
+                            </ol>
+
+                            <p class="note">DocSera Pro توفر للأطباء أدوات احترافية لإدارة العيادة، المواعيد، السجلات الطبية، والتواصل مع المرضى.</p>
+                        </div>
+                    </div>
+                </div>
+
+
+                <!-- Family & Relatives -->
+                <div class="faq-category" id="family">
+                    <h2 class="category-title">العائلة والأقارب</h2>
+                    
+                    <!-- Q1: How to Add Relative -->
+                    <div class="faq-item">
+                        <button class="faq-question">
+                            <span>كيف أضيف فرد من العائلة؟</span>
+                            <svg class="arrow" width="20" height="20" viewBox="0 0 20 20">
+                                <path d="M5 7.5L10 12.5L15 7.5" stroke="currentColor" stroke-width="2" fill="none" stroke-linecap="round" stroke-linejoin="round"/>
+                            </svg>
+                        </button>
+                        <div class="faq-answer">
+                            <p>يمكنك إضافة فرد من العائلة من عدة أماكن في التطبيق:</p>
+
+                            <p><strong>الطريقة الأولى - من صفحة الحساب:</strong></p>
+                            <ol>
+                                <li>اذهب إلى "الحساب" ← "أقاربي"</li>
+                                <li>اضغط على "+ إضافة قريب"</li>
+                                <li>املأ المعلومات المطلوبة</li>
+                                <li>اضغط على "إضافة"</li>
+                            </ol>
+
+                            <p><strong>الطريقة الثانية - عند حجز موعد:</strong></p>
+                            <ol>
+                                <li>عند حجز موعد، ستصل إلى صفحة "اختيار المريض"</li>
+                                <li>اضغط على "+ إضافة قريب"</li>
+                                <li>أضف المعلومات، وسيُضاف القريب تلقائياً إلى صفحة "أقاربي"</li>
+                            </ol>
+
+                            <p><strong>الطريقة الثالثة - عند إرسال رسالة لطبيب:</strong></p>
+                            <ol>
+                                <li>عند إرسال طلب محادثة لطبيب، ستظهر صفحة "اختيار المريض"</li>
+                                <li>اضغط على "+ إضافة قريب" لإضافة قريب جديد</li>
+                            </ol>
+
+                            <p><strong>الطريقة الرابعة - من صفحة الصحة:</strong></p>
+                            <ol>
+                                <li>في صفحة "الصحة"، اضغط على اسمك في الأعلى (مبدل المريض)</li>
+                                <li>اضغط على "+ إضافة قريب"</li>
+                                <li>سيكون للقريب ملف صحي منفصل تماماً</li>
+                            </ol>
+
+                            <p class="note">ملاحظة: جميع الطرق تؤدي إلى نفس النتيجة - إضافة القريب إلى قائمة "أقاربي".</p>
+                        </div>
+                    </div>
+
+                    <!-- Q2: Required Information -->
+                    <div class="faq-item">
+                        <button class="faq-question">
+                            <span>ما هي المعلومات المطلوبة لإضافة قريب؟</span>
+                            <svg class="arrow" width="20" height="20" viewBox="0 0 20 20">
+                                <path d="M5 7.5L10 12.5L15 7.5" stroke="currentColor" stroke-width="2" fill="none" stroke-linecap="round" stroke-linejoin="round"/>
+                            </svg>
+                        </button>
+                        <div class="faq-answer">
+                            <p><strong>المعلومات الإلزامية:</strong></p>
+                            <ul>
+                                <li><strong>الجنس:</strong> ذكر أو أنثى</li>
+                                <li><strong>الاسم الأول:</strong> الاسم الشخصي للقريب</li>
+                                <li><strong>اسم العائلة:</strong> اللقب</li>
+                                <li><strong>تاريخ الميلاد:</strong> لا يوجد قيود على العمر (يمكنك إضافة طفل عمره يوم واحد أو جدك البالغ 90 عاماً)</li>
+                                <li><strong>الموافقة:</strong> يجب الموافقة على أنك الممثل القانوني لهذا القريب</li>
+                            </ul>
+
+                            <p><strong>المعلومات الاختيارية:</strong></p>
+                            <ul>
+                                <li><strong>البريد الإلكتروني:</strong> إذا لم تضفه، سيُستخدم بريدك الإلكتروني</li>
+                                <li><strong>رقم الهاتف:</strong> إذا لم تضفه، سيُستخدم رقم هاتفك</li>
+                                <li><strong>العنوان:</strong> اختياري تماماً</li>
+                            </ul>
+
+                            <p class="note">إذا لم تضف معلومات الاتصال (البريد الإلكتروني ورقم الهاتف)، سيتم استخدام معلوماتك الخاصة لهذا القريب.</p>
+                        </div>
+                    </div>
+
+                    <!-- Q3: Who Can Be Added -->
+                    <div class="faq-item">
+                        <button class="faq-question">
+                            <span>هل يمكنني إضافة أي شخص كقريب؟</span>
+                            <svg class="arrow" width="20" height="20" viewBox="0 0 20 20">
+                                <path d="M5 7.5L10 12.5L15 7.5" stroke="currentColor" stroke-width="2" fill="none" stroke-linecap="round" stroke-linejoin="round"/>
+                            </svg>
+                        </button>
+                        <div class="faq-answer">
+                            <p>نعم، يمكنك إضافة أي فرد من عائلتك بغض النظر عن العمر.</p>
+
+                            <p><strong>لا يوجد قيود على العمر:</strong></p>
+                            <ul>
+                                <li>يمكنك إضافة طفل حديث الولادة</li>
+                                <li>يمكنك إضافة كبار السن</li>
+                                <li>يمكنك إضافة أي شخص من أي فئة عمرية</li>
+                            </ul>
+
+                            <p><strong>الخصوصية والموافقة:</strong></p>
+                            <ul>
+                                <li>يجب أن تكون الممثل القانوني للشخص الذي تضيفه</li>
+                                <li>يجب الموافقة على أنك مسؤول عن إدارة معلوماته الطبية</li>
+                                <li>احترم خصوصية القريب ولا تشارك معلوماته دون إذنه (إن كان بالغاً)</li>
+                            </ul>
+
+                            <p class="note">مهم: عند إضافة قريب، أنت تتحمل مسؤولية إدارة ملفه الطبي والحفاظ على خصوصية معلوماته.</p>
+                        </div>
+                    </div>
+
+                    <!-- Q4: Edit/Delete Relative -->
+                    <div class="faq-item">
+                        <button class="faq-question">
+                            <span>كيف أحذف أو أعدل معلومات قريب؟</span>
+                            <svg class="arrow" width="20" height="20" viewBox="0 0 20 20">
+                                <path d="M5 7.5L10 12.5L15 7.5" stroke="currentColor" stroke-width="2" fill="none" stroke-linecap="round" stroke-linejoin="round"/>
+                            </svg>
+                        </button>
+                        <div class="faq-answer">
+                            <p><strong>لتعديل معلومات قريب:</strong></p>
+                            <ol>
+                                <li>اذهب إلى "الحساب" ← "أقاربي"</li>
+                                <li>اضغط على القريب الذي تريد تعديل معلوماته</li>
+                                <li>عدّل المعلومات المطلوبة</li>
+                                <li>احفظ التغييرات</li>
+                            </ol>
+
+                            <p><strong>لحذف قريب (إلغاء التفعيل):</strong></p>
+                            <ol>
+                                <li>اذهب إلى "الحساب" ← "أقاربي"</li>
+                                <li>اضغط على القريب الذي تريد حذفه</li>
+                                <li>اضغط على خيار "حذف"</li>
+                                <li>أكد الحذف</li>
+                            </ol>
+
+                            <p class="note">ملاحظة مهمة: عند "حذف" قريب، لن يتم حذف بياناته نهائياً. بدلاً من ذلك، سيتم إلغاء تفعيل الحساب وإخفاؤه من قائمتك. جميع السجلات الصحية والمواعيد والرسائل ستبقى محفوظة بشكل آمن في النظام لأغراض طبية وقانونية. هذا يضمن الامتثال للمعايير الطبية والحفاظ على التاريخ الطبي الكامل.</p>
+                        </div>
+                    </div>
+
+                    <!-- Q5: Patient Switcher -->
+                    <div class="faq-item">
+                        <button class="faq-question">
+                            <span>كيف أتنقل بين حسابات أفراد العائلة؟</span>
+                            <svg class="arrow" width="20" height="20" viewBox="0 0 20 20">
+                                <path d="M5 7.5L10 12.5L15 7.5" stroke="currentColor" stroke-width="2" fill="none" stroke-linecap="round" stroke-linejoin="round"/>
+                            </svg>
+                        </button>
+                        <div class="faq-answer">
+                            <p>للتنقل بين حسابات أفراد العائلة:</p>
+
+                            <p><strong>من صفحة الصحة:</strong></p>
+                            <ol>
+                                <li>اذهب إلى تبويب "الصحة"</li>
+                                <li>في أعلى الصفحة، ستجد اسم المريض الحالي</li>
+                                <li>اضغط على الاسم لفتح قائمة الأقارب</li>
+                                <li>اختر القريب الذي تريد عرض سجلاته الصحية</li>
+                                <li>ستتغير جميع البيانات الصحية لتعرض معلومات القريب المختار</li>
+                            </ol>
+
+                            <p><strong>ما الذي يتغير عند التبديل؟</strong></p>
+                            <ul>
+                                <li>السجلات الصحية (حساسية، أدوية، تطعيمات، إلخ)</li>
+                                <li>تقارير الزيارات والمستندات الطبية</li>
+                                <li>جميع البيانات الصحية الخاصة بالمريض المختار</li>
+                            </ul>
+
+                            <p class="note">ملاحظة: مبدل المريض يعمل فقط في صفحة "الصحة". في الأماكن الأخرى (مثل حجز موعد أو إرسال رسالة)، ستُطلب منك اختيار المريض في كل مرة.</p>
+                        </div>
+                    </div>
+
+                    <!-- Q6: Current Patient Indicator -->
+                    <div class="faq-item">
+                        <button class="faq-question">
+                            <span>كيف أعرف أي حساب أستخدم حالياً؟</span>
+                            <svg class="arrow" width="20" height="20" viewBox="0 0 20 20">
+                                <path d="M5 7.5L10 12.5L15 7.5" stroke="currentColor" stroke-width="2" fill="none" stroke-linecap="round" stroke-linejoin="round"/>
+                            </svg>
+                        </button>
+                        <div class="faq-answer">
+                            <p><strong>في صفحة الصحة:</strong></p>
+                            <ul>
+                                <li>اسم المريض الحالي معروض في أعلى الصفحة</li>
+                                <li>جميع البيانات المعروضة تخص المريض المختار</li>
+                                <li>يمكنك التبديل بين المرضى من نفس المكان</li>
+                            </ul>
+
+                            <p><strong>في باقي التطبيق:</strong></p>
+                            <ul>
+                                <li>عند حجز موعد، ستُطلب منك اختيار المريض</li>
+                                <li>عند إرسال رسالة لطبيب، ستختار المريض المعني</li>
+                                <li>كل إجراء يتطلب تحديد المريض بشكل واضح</li>
+                            </ul>
+
+                            <p class="note">فقط صفحة "الصحة" تعرض بيانات مختلفة حسب المريض المختار. في الأماكن الأخرى، سيُطلب منك اختيار المريض عند الحاجة.</p>
+                        </div>
+                    </div>
+
+                    <!-- Q7: Booking for Family -->
+                    <div class="faq-item">
+                        <button class="faq-question">
+                            <span>هل يمكنني حجز مواعيد لأفراد عائلتي؟</span>
+                            <svg class="arrow" width="20" height="20" viewBox="0 0 20 20">
+                                <path d="M5 7.5L10 12.5L15 7.5" stroke="currentColor" stroke-width="2" fill="none" stroke-linecap="round" stroke-linejoin="round"/>
+                            </svg>
+                        </button>
+                        <div class="faq-answer">
+                            <p>نعم، يمكنك حجز مواعيد لأي فرد من عائلتك المضافين في "أقاربي".</p>
+
+                            <p><strong>كيفية حجز موعد لقريب:</strong></p>
+                            <ol>
+                                <li>ابحث عن الطبيب واضغط على "حجز موعد"</li>
+                                <li>في صفحة "اختيار المريض"، اختر القريب الذي تريد حجز الموعد له</li>
+                                <li>أكمل تفاصيل الموعد (التاريخ، الوقت، السبب)</li>
+                                <li>أكد الحجز</li>
+                            </ol>
+
+                            <p><strong>إدارة المواعيد:</strong></p>
+                            <ul>
+                                <li>يمكنك عرض جميع مواعيد العائلة في صفحة "المواعيد"</li>
+                                <li>كل موعد مرتبط بالمريض المحدد</li>
+                                <li>يمكنك إلغاء أو تعديل مواعيد أفراد عائلتك</li>
+                            </ul>
+
+                            <p><strong>الإشعارات:</strong></p>
+                            <ul>
+                                <li>ستتلقى إشعارات بمواعيد جميع أفراد عائلتك</li>
+                                <li>الإشعارات تحدد اسم المريض المعني بالموعد</li>
+                            </ul>
+                        </div>
+                    </div>
+
+                    <!-- Q8: Separate Health Records -->
+                    <div class="faq-item">
+                        <button class="faq-question">
+                            <span>هل السجلات الصحية منفصلة لكل فرد؟</span>
+                            <svg class="arrow" width="20" height="20" viewBox="0 0 20 20">
+                                <path d="M5 7.5L10 12.5L15 7.5" stroke="currentColor" stroke-width="2" fill="none" stroke-linecap="round" stroke-linejoin="round"/>
+                            </svg>
+                        </button>
+                        <div class="faq-answer">
+                            <p>نعم، كل فرد من العائلة له سجل صحي منفصل تماماً.</p>
+
+                            <p><strong>ما هو منفصل لكل مريض:</strong></p>
+                            <ul>
+                                <li><strong>الحساسية:</strong> كل مريض له قائمة حساسية خاصة به</li>
+                                <li><strong>الأدوية:</strong> الأدوية الحالية والسابقة منفصلة</li>
+                                <li><strong>التطعيمات:</strong> سجل تطعيمات مستقل</li>
+                                <li><strong>الأمراض المزمنة:</strong> قائمة منفصلة لكل مريض</li>
+                                <li><strong>العمليات الجراحية:</strong> تاريخ جراحي مستقل</li>
+                                <li><strong>التاريخ العائلي:</strong> معلومات وراثية خاصة</li>
+                                <li><strong>تقارير الزيارات:</strong> تقارير منفصلة لكل مريض</li>
+                            </ul>
+
+                            <p><strong>ما هو مشترك بين جميع أفراد العائلة:</strong></p>
+                            <ul>
+                                <li><strong>المستندات الطبية:</strong> تبويب "المستندات" مشترك بين جميع أفراد العائلة ولا يتغير عند تبديل المريض. يمكنك تحميل ومشاركة المستندات الطبية لجميع أفراد العائلة في مكان واحد.</li>
+                            </ul>
+
+                            <p><strong>الخصوصية:</strong></p>
+                            <ul>
+                                <li>لا يمكن لأحد أفراد العائلة رؤية سجلات الآخرين</li>
+                                <li>أنت فقط (كمدير الحساب) من يمكنه الوصول لجميع السجلات</li>
+                                <li>كل مريض له ملف طبي مستقل ومحمي</li>
+                            </ul>
+
+                            <p class="note">السجلات الصحية منفصلة تماماً لضمان الخصوصية والدقة في إدارة المعلومات الطبية لكل فرد.</p>
+                        </div>
+                    </div>
+                </div>
+
+
+                <!-- Health Records -->
+                <div class="faq-category" id="health-records">
+                    <h2 class="category-title">السجلات الصحية</h2>
+                    
+                    <div class="faq-item">
+                        <button class="faq-question">
+                            <span>كيف أضيف حساسية جديدة؟</span>
+                            <svg class="arrow" width="20" height="20" viewBox="0 0 20 20">
+                                <path d="M5 7.5L10 12.5L15 7.5" stroke="currentColor" stroke-width="2" fill="none" stroke-linecap="round" stroke-linejoin="round"/>
+                            </svg>
+                        </button>
+                        <div class="faq-answer">
+                            <p>لإضافة حساسية:</p>
+                            <ol>
+                                <li>اذهب إلى تبويب "الصحة"</li>
+                                <li>اضغط على بطاقة "الحساسية"</li>
+                                <li>اضغط على زر "+" أو "إضافة حساسية"</li>
+                                <li>أدخل اسم المادة المسببة للحساسية</li>
+                                <li>حدد نوع الحساسية (دواء، طعام، بيئية، إلخ)</li>
+                                <li>أضف الأعراض والملاحظات</li>
+                                <li>احفظ المعلومات</li>
+                            </ol>
+                        </div>
+                    </div>
+
+                    <div class="faq-item">
+                        <button class="faq-question">
+                            <span>كيف أسجل الأدوية التي أتناولها حالياً؟</span>
+                            <svg class="arrow" width="20" height="20" viewBox="0 0 20 20">
+                                <path d="M5 7.5L10 12.5L15 7.5" stroke="currentColor" stroke-width="2" fill="none" stroke-linecap="round" stroke-linejoin="round"/>
+                            </svg>
+                        </button>
+                        <div class="faq-answer">
+                            <p>لتسجيل الأدوية:</p>
+                            <ol>
+                                <li>افتح تبويب "الصحة"</li>
+                                <li>اضغط على "الأدوية"</li>
+                                <li>اضغط على "إضافة دواء"</li>
+                                <li>أدخل اسم الدواء</li>
+                                <li>حدد الجرعة والتكرار (مرة يومياً، مرتين، إلخ)</li>
+                                <li>أضف تاريخ البدء والانتهاء (إن وجد)</li>
+                                <li>يمكنك إضافة ملاحظات أو تعليمات خاصة</li>
+                            </ol>
+                        </div>
+                    </div>
+                </div>
+
+
+                <!-- Doctors & Appointments -->
+                <div class="faq-category" id="doctors">
+                    <h2 class="category-title">الأطباء والمواعيد</h2>
+                    
+                    <div class="faq-item">
+                        <button class="faq-question">
+                            <span>كيف أبحث عن طبيب؟</span>
+                            <svg class="arrow" width="20" height="20" viewBox="0 0 20 20">
+                                <path d="M5 7.5L10 12.5L15 7.5" stroke="currentColor" stroke-width="2" fill="none" stroke-linecap="round" stroke-linejoin="round"/>
+                            </svg>
+                        </button>
+                        <div class="faq-answer">
+                            <p>للبحث عن طبيب:</p>
+                            <ol>
+                                <li>اذهب إلى تبويب "البحث" في الشريط السفلي</li>
+                                <li>يمكنك البحث بالاسم، التخصص، أو الموقع</li>
+                                <li>استخدم الفلاتر المتقدمة لتحديد الجنس، اللغات، التقييمات، والسعر</li>
+                            </ol>
+                        </div>
+                    </div>
+
+                    <div class="faq-item">
+                        <button class="faq-question">
+                            <span>كيف أحجز موعد مع طبيب؟</span>
+                            <svg class="arrow" width="20" height="20" viewBox="0 0 20 20">
+                                <path d="M5 7.5L10 12.5L15 7.5" stroke="currentColor" stroke-width="2" fill="none" stroke-linecap="round" stroke-linejoin="round"/>
+                            </svg>
+                        </button>
+                        <div class="faq-answer">
+                            <p>لحجز موعد:</p>
+                            <ol>
+                                <li>ابحث عن الطبيب واضغط على ملفه الشخصي</li>
+                                <li>اضغط على "حجز موعد"</li>
+                                <li>اختر نوع الموعد (عيادة، استشارة عن بعد)</li>
+                                <li>اختر التاريخ والوقت المناسب</li>
+                                <li>حدد المريض (أنت أو أحد أفراد العائلة)</li>
+                                <li>أضف سبب الزيارة والأعراض (اختياري)</li>
+                                <li>أكد الحجز</li>
+                            </ol>
+                            <p class="note">ستتلقى إشعار تأكيد عندما يوافق الطبيب على الموعد.</p>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Messaging -->
+                <div class="faq-category" id="messaging">
+                    <h2 class="category-title">المراسلة والتواصل</h2>
+                    
+                    <div class="faq-item">
+                        <button class="faq-question">
+                            <span>كيف أتواصل مع طبيب؟</span>
+                            <svg class="arrow" width="20" height="20" viewBox="0 0 20 20">
+                                <path d="M5 7.5L10 12.5L15 7.5" stroke="currentColor" stroke-width="2" fill="none" stroke-linecap="round" stroke-linejoin="round"/>
+                            </svg>
+                        </button>
+                        <div class="faq-answer">
+                            <p>للتواصل مع طبيب:</p>
+                            <ol>
+                                <li>اذهب إلى تبويب "الرسائل"</li>
+                                <li>اضغط على "محادثة جديدة" أو اختر محادثة موجودة</li>
+                                <li>يمكنك إرسال رسائل نصية، صور ومستندات، ورسائل صوتية</li>
+                            </ol>
+                            <p class="note">ملاحظة: يمكنك فقط مراسلة الأطباء الذين لديك معهم مواعيد مؤكدة.</p>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Account & Settings -->
+                <div class="faq-category" id="account">
+                    <h2 class="category-title">الحساب والإعدادات</h2>
+                    
+                    <div class="faq-item">
+                        <button class="faq-question">
+                            <span>كيف أغير كلمة المرور؟</span>
+                            <svg class="arrow" width="20" height="20" viewBox="0 0 20 20">
+                                <path d="M5 7.5L10 12.5L15 7.5" stroke="currentColor" stroke-width="2" fill="none" stroke-linecap="round" stroke-linejoin="round"/>
+                            </svg>
+                        </button>
+                        <div class="faq-answer">
+                            <p>لتغيير كلمة المرور:</p>
+                            <ol>
+                                <li>اذهب إلى "الحساب" ← "الأمان"</li>
+                                <li>اضغط على "تغيير كلمة المرور"</li>
+                                <li>أدخل كلمة المرور الحالية</li>
+                                <li>أدخل كلمة المرور الجديدة</li>
+                                <li>أكد كلمة المرور الجديدة</li>
+                                <li>احفظ التغييرات</li>
+                            </ol>
+                        </div>
+                    </div>
+
+                    <div class="faq-item">
+                        <button class="faq-question">
+                            <span>كيف أفعّل البصمة أو Face ID؟</span>
+                            <svg class="arrow" width="20" height="20" viewBox="0 0 20 20">
+                                <path d="M5 7.5L10 12.5L15 7.5" stroke="currentColor" stroke-width="2" fill="none" stroke-linecap="round" stroke-linejoin="round"/>
+                            </svg>
+                        </button>
+                        <div class="faq-answer">
+                            <p>لتفعيل المصادقة البيومترية:</p>
+                            <ol>
+                                <li>اذهب إلى "الحساب" ← "الأمان"</li>
+                                <li>فعّل خيار "تسجيل الدخول بالبصمة/Face ID"</li>
+                                <li>أدخل كلمة مرورك للتأكيد</li>
+                                <li>اتبع التعليمات لتسجيل بصمتك أو وجهك</li>
+                            </ol>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Contact Support -->
+                <div class="contact-support">
+                    <h2>لم تجد إجابة لسؤالك؟</h2>
+                    <p>تواصل مع فريق الدعم وسنساعدك في أقرب وقت</p>
+                    <a href="mailto:support@docsera.app" class="btn-primary">
+                        <svg width="20" height="20" viewBox="0 0 20 20" fill="none">
+                            <rect x="2" y="4" width="16" height="12" rx="2" stroke="currentColor" stroke-width="2"/>
+                            <path d="M2 6L10 11L18 6" stroke="currentColor" stroke-width="2" stroke-linecap="round"/>
+                        </svg>
+                        support@docsera.app
+                    </a>
+                </div>
+
+            </div>
+        </section>
+    </main>
+    <Footer />
+</Layout>
+
+<style>
+    .help-page {
+        background: #FAFAFA;
+    }
+
+    /* Hero Section */
+    .hero {
+        background: radial-gradient(circle at 10% 10%, #FDFDFD 0%, #FAFAFA 100%);
+        padding: 140px 0 80px;
+        text-align: center;
+    }
+
+    .hero-content {
+        max-width: 700px;
+        margin: 0 auto;
+    }
+
+    .pill-badge {
+        display: inline-block;
+        background: var(--c-main-light);
+        color: var(--c-main-dark);
+        padding: 8px 20px;
+        border-radius: 50px;
+        font-size: 0.9rem;
+        font-weight: 600;
+        margin-bottom: 20px;
+    }
+
+    .text-huge {
+        margin-bottom: 16px;
+    }
+
+    .subheadline {
+        color: var(--c-text-muted);
+        margin-bottom: 40px;
+        font-size: 1.15rem;
+    }
+
+    /* Search Bar */
+    .search-wrapper {
+        position: relative;
+        max-width: 500px;
+        margin: 0 auto;
+        width: 100%;
+    }
+
+    .search-input {
+        width: 100%;
+        padding: 16px 50px 16px 20px;
+        border-radius: 16px;
+        border: 2px solid #E5E5E5;
+        font-size: 16px;
+        font-family: var(--font-ar);
+        background: white;
+        transition: all 0.3s;
+        box-sizing: border-box;
+    }
+
+    .search-input:focus {
+        outline: none;
+        border-color: var(--c-main);
+        box-shadow: 0 0 0 4px rgba(0, 144, 146, 0.1);
+    }
+
+    .search-icon {
+        position: absolute;
+        left: 18px;
+        top: 50%;
+        transform: translateY(-50%);
+        color: var(--c-text-muted);
+        pointer-events: none;
+    }
+
+    /* Categories Grid */
+    .categories-section {
+        padding: 60px 0;
+    }
+
+    .categories-grid {
+        display: grid;
+        grid-template-columns: repeat(3, 1fr);
+        gap: 24px;
+    }
+
+    .category-card {
+        background: white;
+        padding: 32px 24px;
+        border-radius: 16px;
+        text-decoration: none;
+        color: inherit;
+        border: 2px solid transparent;
+        transition: all 0.3s ease;
+        text-align: center;
+    }
+
+    .category-card:hover {
+        transform: translateY(-4px);
+        border-color: var(--c-main);
+        box-shadow: 0 12px 30px rgba(0, 144, 146, 0.15);
+    }
+
+    .card-icon {
+        width: 60px;
+        height: 60px;
+        margin: 0 auto 20px;
+        background: var(--c-main-light);
+        border-radius: 16px;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        color: var(--c-main);
+    }
+
+    .category-card h3 {
+        font-size: 1.25rem;
+        margin-bottom: 8px;
+        color: var(--c-text);
+        font-weight: 700;
+    }
+
+    .category-card p {
+        color: var(--c-text-muted);
+        font-size: 0.95rem;
+        line-height: 1.5;
+    }
+
+    /* FAQ Sections */
+    .faq-sections {
+        padding: 40px 0 100px;
+    }
+
+    .faq-category {
+        margin-bottom: 60px;
+    }
+
+    .category-title {
+        font-size: 1.8rem;
+        margin-bottom: 30px;
+        color: var(--c-text);
+        font-weight: 800;
+        padding-bottom: 16px;
+        border-bottom: 3px solid var(--c-main);
+    }
+
+    .faq-item {
+        background: white;
+        border-radius: 16px;
+        margin-bottom: 16px;
+        overflow: hidden;
+        border: 2px solid #F0F0F0;
+        transition: all 0.3s ease;
+    }
+
+    .faq-item:hover {
+        border-color: var(--c-main-light);
+    }
+
+    .faq-question {
+        width: 100%;
+        padding: 20px 24px;
+        background: none;
+        border: none;
+        text-align: right;
+        font-size: 1.05rem;
+        font-weight: 600;
+        color: var(--c-text);
+        cursor: pointer;
+        display: flex;
+        justify-content: space-between;
+        align-items: center;
+        gap: 16px;
+        font-family: var(--font-ar);
+        transition: background 0.2s ease;
+    }
+
+    .faq-question:hover {
+        background: rgba(0, 144, 146, 0.03);
+    }
+
+    .faq-question .arrow {
+        flex-shrink: 0;
+        transition: transform 0.3s ease;
+        color: var(--c-main);
+    }
+
+    .faq-item.active .arrow {
+        transform: rotate(180deg);
+    }
+
+    .faq-answer {
+        max-height: 0;
+        overflow: hidden;
+        transition: max-height 0.3s ease, padding 0.3s ease;
+        padding: 0 24px;
+    }
+
+    .faq-item.active .faq-answer {
+        max-height: 1000px;
+        padding: 0 24px 24px;
+    }
+
+    .faq-answer p {
+        margin-bottom: 12px;
+        line-height: 1.7;
+        color: var(--c-text);
+        font-size: 1rem;
+    }
+
+    .faq-answer ul, .faq-answer ol {
+        margin: 12px 0;
+        padding-right: 24px;
+    }
+
+    .faq-answer li {
+        margin-bottom: 10px;
+        line-height: 1.6;
+        color: var(--c-text);
+    }
+
+    .faq-answer strong {
+        color: var(--c-main-dark);
+        font-weight: 700;
+    }
+
+    .faq-answer .note {
+        background: var(--c-sand-light);
+        padding: 12px 16px;
+        border-radius: 8px;
+        border-right: 4px solid var(--c-orange);
+        margin-top: 16px;
+        font-size: 0.95rem;
+    }
+
+    /* Contact Support */
+    .contact-support {
+        background: linear-gradient(135deg, var(--c-main) 0%, var(--c-main-dark) 100%);
+        padding: 60px 40px;
+        border-radius: 24px;
+        text-align: center;
+        color: white;
+        margin-top: 60px;
+    }
+
+    .contact-support h2 {
+        font-size: 1.8rem;
+        margin-bottom: 12px;
+        font-weight: 800;
+    }
+
+    .contact-support p {
+        font-size: 1.1rem;
+        opacity: 0.95;
+        margin-bottom: 32px;
+    }
+
+    .btn-primary {
+        display: inline-flex;
+        align-items: center;
+        gap: 10px;
+        padding: 16px 32px;
+        background: white;
+        color: var(--c-main);
+        text-decoration: none;
+        border-radius: 16px;
+        font-weight: 700;
+        transition: all 0.3s ease;
+        box-shadow: 0 4px 15px rgba(0,0,0,0.1);
+    }
+
+    .btn-primary:hover {
+        transform: translateY(-2px);
+        box-shadow: 0 6px 25px rgba(0,0,0,0.15);
+    }
+
+    /* Responsive */
+    @media (max-width: 768px) {
+        .hero {
+            padding: 100px 0 60px;
+        }
+
+        .search-wrapper {
+            max-width: 100%;
+        }
+
+        .categories-grid {
+            grid-template-columns: repeat(2, 1fr);
+        }
+
+        .faq-question {
+            font-size: 1rem;
+            padding: 16px 20px;
+        }
+
+        .contact-support {
+            padding: 40px 24px;
+        }
+
+        .category-title {
+            font-size: 1.5rem;
+        }
+
+        .category-card {
+            padding: 24px 20px;
+        }
+
+        .card-icon {
+            width: 50px;
+            height: 50px;
+        }
+    }
+
+    @media (min-width: 769px) and (max-width: 1024px) {
+        .categories-grid {
+            grid-template-columns: repeat(3, 1fr);
+        }
+    }
+
+    /* Animation Delays */
+    .delay-1 { animation-delay: 0.1s; }
+    .delay-2 { animation-delay: 0.2s; }
+</style>
+
+<script>
+    // Fade-up animation on scroll
+    const observer = new IntersectionObserver((entries) => {
+        entries.forEach(entry => {
+            if (entry.isIntersecting) {
+                entry.target.classList.add('visible');
+            }
+        });
+    }, { threshold: 0.1 });
+
+    document.querySelectorAll('.fade-up').forEach(el => observer.observe(el));
+
+    // FAQ Accordion
+    document.querySelectorAll('.faq-question').forEach(button => {
+        button.addEventListener('click', () => {
+            const item = button.closest('.faq-item');
+            const wasActive = item?.classList.contains('active');
+            
+            // Close all items
+            document.querySelectorAll('.faq-item').forEach(i => i.classList.remove('active'));
+            
+            // Open clicked item if it wasn't active
+            if (!wasActive && item) {
+                item.classList.add('active');
+            }
+        });
+    });
+
+    // Search functionality
+    const searchInput = document.getElementById('searchInput') as HTMLInputElement;
+    searchInput?.addEventListener('input', (e) => {
+        const query = (e.target as HTMLInputElement).value.toLowerCase().trim();
+        
+        if (!query) {
+            // Show all items, categories, and category cards
+            document.querySelectorAll('.faq-item').forEach(item => {
+                (item as HTMLElement).style.display = 'block';
+            });
+            document.querySelectorAll('.faq-category').forEach(category => {
+                (category as HTMLElement).style.display = 'block';
+            });
+            document.querySelectorAll('.category-card').forEach(card => {
+                (card as HTMLElement).style.display = 'block';
+            });
+            return;
+        }
+
+        // Filter FAQ items
+        document.querySelectorAll('.faq-item').forEach(item => {
+            const question = item.querySelector('.faq-question span')?.textContent?.toLowerCase() || '';
+            const answer = item.querySelector('.faq-answer')?.textContent?.toLowerCase() || '';
+            
+            if (question.includes(query) || answer.includes(query)) {
+                (item as HTMLElement).style.display = 'block';
+            } else {
+                (item as HTMLElement).style.display = 'none';
+            }
+        });
+
+        // Track which categories have visible items
+        const visibleCategoryIds = new Set<string>();
+
+        // Show/hide category sections and track visible ones
+        document.querySelectorAll('.faq-category').forEach(category => {
+            const visibleItems = category.querySelectorAll('.faq-item:not([style*="display: none"])').length;
+            
+            if (visibleItems === 0) {
+                (category as HTMLElement).style.display = 'none';
+            } else {
+                (category as HTMLElement).style.display = 'block';
+                // Get category ID (e.g., "getting-started", "family", etc.)
+                const categoryId = category.getAttribute('id');
+                if (categoryId) {
+                    visibleCategoryIds.add(categoryId);
+                }
+            }
+        });
+
+        // Show/hide category cards based on which categories have visible items
+        document.querySelectorAll('.category-card').forEach(card => {
+            const href = card.getAttribute('href');
+            if (href) {
+                // Extract category ID from href (e.g., "#getting-started" -> "getting-started")
+                const categoryId = href.replace('#', '');
+                
+                if (visibleCategoryIds.has(categoryId)) {
+                    (card as HTMLElement).style.display = 'block';
+                } else {
+                    (card as HTMLElement).style.display = 'none';
+                }
+            }
+        });
+    });
+
+    // Smooth scroll for category links
+    document.querySelectorAll('a[href^="#"]').forEach(anchor => {
+        anchor.addEventListener('click', function (e) {
+            e.preventDefault();
+            const href = this.getAttribute('href');
+            if (href) {
+                const target = document.querySelector(href);
+                if (target) {
+                    const offset = 100; // Account for fixed navbar
+                    const targetPosition = target.getBoundingClientRect().top + window.pageYOffset - offset;
+                    window.scrollTo({ top: targetPosition, behavior: 'smooth' });
+                }
+            }
+        });
+    });
+</script>
+</Layout>

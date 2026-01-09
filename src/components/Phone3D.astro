@@ -2,8 +2,8 @@
 import PhoneMockup from './PhoneMockup.astro';
 
 interface Props {
-  src: string;
-  alt: string;
+  src?: string;
+  alt?: string;
   class?: string;
   id?: string;
 }
@@ -17,7 +17,9 @@ const { src, alt, class: className, id } = Astro.props;
     <!-- FRONT FACE -->
     <div class="face front">
       <!-- We use the existing mockup but override texturing -->
-      <PhoneMockup src={src} alt={alt} className="no-shadow" />
+      <PhoneMockup src={src} alt={alt} className="no-shadow">
+        <slot />
+      </PhoneMockup>
     </div>
 
     <!-- BACK FACE -->
@@ -64,7 +66,6 @@ const { src, alt, class: className, id } = Astro.props;
     will-change: transform; /* Hardware Acceleration */
     /* Initial State */
     transform: rotateY(0deg) rotateX(0deg);
-    transition: transform 0.1s linear; /* Smooth scroll scrub */
   }
 
   .face {

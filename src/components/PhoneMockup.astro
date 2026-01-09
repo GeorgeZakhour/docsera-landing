@@ -1,7 +1,7 @@
 ---
 interface Props {
-    src: string;
-    alt: string;
+    src?: string;
+    alt?: string;
     className?: string;
 }
 
@@ -21,7 +21,9 @@ const { src, alt, className = "" } = Astro.props;
         <!-- Screen Container -->
         <div class="screen-area">
              <div class="dynamic-island"></div>
-             <img src={src} alt={alt} class="screen-img" />
+             <slot>
+                <img src={src} alt={alt} class="screen-img" />
+             </slot>
              <!-- Subtle Screen Glare -->
              <div class="glass-glare"></div>
         </div>
@@ -32,20 +34,24 @@ const { src, alt, className = "" } = Astro.props;
     const mockups = document.querySelectorAll('.mockup-wrapper');
     
     // Updates shine position based on scroll progress
-    window.addEventListener('scroll', () => {
-        const viewHeight = window.innerHeight;
-        
-        mockups.forEach(mockup => {
-            const rect = mockup.getBoundingClientRect();
-            // Check if in view
-            if (rect.top < viewHeight && rect.bottom > 0) {
-                // simple 0-1 progress
-                const progress = (viewHeight - rect.top) / (viewHeight + rect.height);
-                // Map to gradient position percent
-                (mockup as HTMLElement).style.setProperty('--shine-pos', `${progress * 200}%`);
-            }
-        });
-    }, { passive: true });
+    // Updates shine position based on scroll progress (Desktop Only)
+    // Disabled on Mobile to prevent layout thrashing/flicker
+    if (window.matchMedia("(min-width: 1024px)").matches) {
+        window.addEventListener('scroll', () => {
+            const viewHeight = window.innerHeight;
+            
+            mockups.forEach(mockup => {
+                const rect = mockup.getBoundingClientRect();
+                // Check if in view
+                if (rect.top < viewHeight && rect.bottom > 0) {
+                    // simple 0-1 progress
+                    const progress = (viewHeight - rect.top) / (viewHeight + rect.height);
+                    // Map to gradient position percent
+                    (mockup as HTMLElement).style.setProperty('--shine-pos', `${progress * 200}%`);
+                }
+            });
+        }, { passive: true });
+    }
 </script>
 
 <style>
@@ -86,6 +92,12 @@ const { src, alt, className = "" } = Astro.props;
         animation: metalShimmer 8s linear infinite;
     }
 
+    @media (max-width: 1024px) {
+        .iphone-frame {
+            animation: none !important; /* Disable continuous animation on mobile */
+        }
+    }
+
     /* Metallic Shine on Border */
     .border-shine {
         position: absolute;
@@ -111,6 +123,13 @@ const { src, alt, className = "" } = Astro.props;
         /* Blur to remove sharpness */
         filter: blur(24px); 
     }
+
+    @media (max-width: 1024px) {
+        .border-shine {
+            display: none; /* Hide expensive gradient overlay on mobile */
+        }
+    }
+
 
     /* Screen Area (Black Bezel + Content) */
     .screen-area {
