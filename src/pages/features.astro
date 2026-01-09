@@ -43,8 +43,19 @@ import Phone3D from '../components/Phone3D.astro';
                         <img src="/images/screenshots/appointment_details.webp" class="screen-layer" id="layer-appointments-2" alt="Appointment Details" />
 
                         <!-- NEW: Messaging Sequence (Step 6) -->
-                        <img src="/images/screenshots/messages_list.webp" class="screen-layer" id="layer-messages-1" alt="Messages List" />
-                        <img src="/images/screenshots/conversation.webp" class="screen-layer" id="layer-messages-2" alt="Conversation" />
+                        <img src="/images/screenshots/conversation.webp" class="screen-layer" id="layer-messages-1" alt="Messages List" />
+                        <img src="/images/screenshots/messages_list.webp" class="screen-layer" id="layer-messages-2" alt="Conversation" />
+
+                        <!-- NEW: Health Profile (Step 7) -->
+                        <img src="/images/screenshots/health_profile.webp" class="screen-layer" id="layer-health" alt="Health Profile" />
+
+                        <!-- NEW: Reports Sequence (Step 8) -->
+                        <img src="/images/screenshots/reports_list.webp" class="screen-layer" id="layer-reports-1" alt="Reports List" />
+                        <img src="/images/screenshots/report_details.webp" class="screen-layer" id="layer-reports-2" alt="Report Details" />
+
+                        <!-- NEW: Account Sequence (Step 9) -->
+                        <img src="/images/screenshots/account_main.webp" class="screen-layer" id="layer-account-1" alt="Account Main" />
+                        <img src="/images/screenshots/account_relatives.webp" class="screen-layer" id="layer-account-2" alt="Account Relatives" />
 
                         <!-- QR Code -->
                         <img src="/images/screenshots/doctor_qr.webp" class="screen-layer" id="layer-qr" alt="QR" />
@@ -171,6 +182,51 @@ import Phone3D from '../components/Phone3D.astro';
                 <div class="seq-trigger" data-layer="layer-messages-2"></div>
             </div>
 
+            <!-- SECTION 7: HEALTH PROFILE (Single Step) -->
+            <div class="feature-block" data-layer="layer-health">
+                <div class="content-card right with-number" data-step="07">
+                    <h2>ملفك الصحي الشامل</h2>
+                    <p>سجل طبي متكامل لك ولعائتلك في مكان واحد:</p>
+                    <ul>
+                        <li><strong>بيانات شاملة:</strong> احتفظ بسجل اللقاحات، الأدوية، الحساسيات، العمليات الجراحية... وغيرها الكثير.</li>
+                        <li><strong>ملفات عائلية منفصلة:</strong> بروفايل مستقل لكل فرد من أفراد العائلة لسهولة المتابعة والعلاج.</li>
+                    </ul>
+                </div>
+            </div>
+
+            <!-- SECTION 8: REPORTS (Sequence) -->
+            <div class="feature-sequence" id="reports-sequence">
+                <div class="sticky-note left with-number" data-step="08">
+                    <h2>تقاريرك الطبية</h2>
+                    <p>أرشيف كامل لتقاريرك الطبية وزياراتك للعيادات:</p>
+                    <ul class="clean-list">
+                        <li class="active-item" data-target="layer-reports-1">1. تصفح جميع التقارير الطبية السابقة</li>
+                        <li data-target="layer-reports-2">2. اطلع على تفاصيل كل زيارة (التشخيص، التوصيات، العلاج)</li>
+                    </ul>
+                    <p class="sub-note" style="margin-top: 20px; font-size: 0.95rem; opacity: 0.8;">
+                        يمكنك دائماً حفظ أو طباعة تقاريرك الطبية مباشرة من التطبيق عند الحاجة.
+                    </p>
+                </div>
+                <!-- Triggers -->
+                <div class="seq-trigger" data-layer="layer-reports-1"></div>
+                <div class="seq-trigger" data-layer="layer-reports-2"></div>
+            </div>
+
+            <!-- SECTION 9: ACCOUNT & RELATIVES (Sequence) -->
+            <div class="feature-sequence" id="account-sequence">
+                <div class="sticky-note right with-number" data-step="09">
+                    <h2>إدارة حسابك وعائلتك</h2>
+                    <p>تحكم كامل في إعداداتك وبيانات عائلتك:</p>
+                    <ul class="clean-list">
+                        <li class="active-item" data-target="layer-account-1">1. إعدادات الحساب: إدارة المعلومات الشخصية والأمان</li>
+                        <li data-target="layer-account-2">2. إدارة الأقارب: إضافة أفراد العائلة وإدارة ملفاتهم الطبية بسهولة</li>
+                    </ul>
+                </div>
+                <!-- Triggers -->
+                <div class="seq-trigger" data-layer="layer-account-1"></div>
+                <div class="seq-trigger" data-layer="layer-account-2"></div>
+            </div>
+
             <div style="height: 50vh;"></div>
 
         </div>
@@ -288,6 +344,18 @@ import Phone3D from '../components/Phone3D.astro';
                              li.classList.toggle('active-item', li.getAttribute('data-target') === targetId);
                          });
                     }
+                    // Highlight list items if in reports sequence
+                    if (targetId.includes('reports')) {
+                         document.querySelectorAll('#reports-sequence .clean-list li').forEach(li => {
+                             li.classList.toggle('active-item', li.getAttribute('data-target') === targetId);
+                         });
+                    }
+                    // Highlight list items if in account sequence
+                    if (targetId.includes('account')) {
+                         document.querySelectorAll('#account-sequence .clean-list li').forEach(li => {
+                             li.classList.toggle('active-item', li.getAttribute('data-target') === targetId);
+                         });
+                    }
                 }
 
                 // 2. Handle Special Actions (Doctor Scroll)
@@ -308,8 +376,8 @@ import Phone3D from '../components/Phone3D.astro';
             }
         });
     }, { 
-        threshold: 0.5,
-        rootMargin: "-10% 0px -10% 0px"
+        threshold: 0.1,
+        rootMargin: "-10% 0px 30% 0px"
     });
 
     triggers.forEach(t => observer.observe(t));
@@ -454,7 +522,9 @@ import Phone3D from '../components/Phone3D.astro';
     .clean-list li.active-item { opacity: 1; color: var(--c-main); transform: scale(1.05); }
 
     /* Triggers */
-    .seq-trigger { height: 80vh; width: 100%; } /* Trigger space for each step */
+    .seq-trigger { height: 70vh; width: 100%; } /* Trigger space for each step */
+    .seq-trigger:last-child { height: 120vh; margin-bottom: 20vh; } /* Longer pause on last step */
+
     .feature-sequence { flex-direction: column; align-items: flex-start; }
     .sticky-note { position: sticky; top: 30vh; z-index: 20; }
     .feature-sequence .sticky-note { margin-bottom: 50vh; } /* Push trigger down? No, sticky stays */
@@ -478,25 +548,27 @@ import Phone3D from '../components/Phone3D.astro';
     #messages-sequence { align-items: flex-start; } /* Left aligned text */
     #messages-sequence .sticky-note { margin-right: auto; margin-left: 0; }
 
+    #reports-sequence { align-items: flex-end; } /* Right aligned text (Alternating) */
+    #reports-sequence .sticky-note { margin-left: auto; margin-right: 0; }
+
+    #account-sequence { align-items: flex-start; } /* Left aligned text */
+    #account-sequence .sticky-note { margin-right: auto; margin-left: 0; }
+
     @keyframes bounce { 0%, 100% { transform: translateY(0); } 50% { transform: translateY(10px); } }
 
     @media (max-width: 768px) {
         .content-card, .sticky-note {
-            max-width: 90%; margin: 20px auto !important;
+            max-width: 90%; 
+            margin: 20px auto !important;
             padding: 25px;
-            bottom: 50px;
-            position: relative; /* Remove sticky on mobile for simplicity or adjust top */
-        }
-        /* Sticky fix for mobile sequences */
-        .feature-sequence .sticky-note {
-             position: sticky;
-             top: auto; 
-             bottom: 30px; /* Stick to bottom */
-             z-index: 50;
-             margin-bottom: 20px;
+            /* Mobile Sticky Logic: Stick to bottom half using TOP offset */
+            position: sticky;
+            top: 62vh !important; 
+            bottom: auto;
+            z-index: 50;
         }
         
         .feature-sequence { height: auto; display: block; }
-        .seq-trigger { height: 60vh; }
+        .seq-trigger { height: 70vh; }
     }
 </style>
