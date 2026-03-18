@@ -17,6 +17,10 @@ jobs:
       - name: Checkout repository
         uses: actions/checkout@v4
 
+      - name: Set lower case owner name
+        run: |
+          echo "OWNER_LC=${{ github.repository_owner }}" | tr '[:upper:]' '[:lower:]' >> ${GITHUB_ENV}
+
       - name: Log in to GHCR
         uses: docker/login-action@v3
         with:
@@ -26,8 +30,8 @@ jobs:
 
       - name: Build Docker image
         run: |
-          docker build -t ghcr.io/${{ github.repository_owner }}/docsera-landing:latest .
+          docker build -t ghcr.io/${{ env.OWNER_LC }}/docsera-landing:latest .
 
       - name: Push Docker image
         run: |
-          docker push ghcr.io/${{ github.repository_owner }}/docsera-landing:latest
+          docker push ghcr.io/${{ env.OWNER_LC }}/docsera-landing:latest
