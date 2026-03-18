@@ -1,0 +1,12 @@
+node_modules
+.git
+.env
+dist
+.astro
+.DS_Store
+*.log
+npm-debug.log*
+yarn-debug.log*
+yarn-error.log*
+.idea
+.vscode
