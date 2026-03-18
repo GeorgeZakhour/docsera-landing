@@ -19,7 +19,8 @@ jobs:
 
       - name: Set lower case owner name
         run: |
-          echo "OWNER_LC=${{ github.repository_owner }}" | tr '[:upper:]' '[:lower:]' >> ${GITHUB_ENV}
+          OWNER_NAME="${{ github.repository_owner }}"
+          echo "OWNER_LC=${OWNER_NAME,,}" >> ${GITHUB_ENV}
 
       - name: Log in to GHCR
         uses: docker/login-action@v3
