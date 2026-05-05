@@ -1,0 +1,40 @@
+{
+  "documents": [
+    {
+      "code": "privacy_policy",
+      "name_en": "Privacy Policy",
+      "name_ar": "سياسة الخصوصية",
+      "url": "https://docsera.app/privacy-policy/",
+      "version": "1.0",
+      "effective_date": "2026-05-05",
+      "requires_consent": true
+    },
+    {
+      "code": "terms_of_service",
+      "name_en": "Terms of Use",
+      "name_ar": "شروط الاستخدام",
+      "url": "https://docsera.app/terms-of-service/",
+      "version": "1.0",
+      "effective_date": "2026-05-05",
+      "requires_consent": true
+    },
+    {
+      "code": "medical_disclaimer",
+      "name_en": "Medical Disclaimer",
+      "name_ar": "الإقرار الطبي",
+      "url": "https://docsera.app/medical-disclaimer/",
+      "version": "1.0",
+      "effective_date": "2026-05-05",
+      "requires_consent": true
+    },
+    {
+      "code": "report_illicit_content",
+      "name_en": "Report Illicit Content",
+      "name_ar": "الإبلاغ عن محتوى مخالف",
+      "url": "https://docsera.app/report-illicit-content/",
+      "version": "1.0",
+      "effective_date": "2026-05-05",
+      "requires_consent": false
+    }
+  ]
+}

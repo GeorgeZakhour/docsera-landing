@@ -4,198 +4,143 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>الإبلاغ عن محتوى مخالف - DocSera</title>
-    <link
-        href="https://fonts.googleapis.com/css2?family=Cairo:wght@400;600;700&family=Montserrat:wght@400;500;700&display=swap"
-        rel="stylesheet">
+    <link href="https://fonts.googleapis.com/css2?family=Cairo:wght@400;600;700&family=Montserrat:wght@400;500;700&display=swap" rel="stylesheet">
     <style>
-        body {
-            font-family: 'Cairo', 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
-            font-size: 13px;
-            line-height: 1.6;
-            color: #333;
-            max-width: 900px;
-            margin: 0 auto;
-            padding: 40px 20px;
-            background-color: #f9f9f9;
-        }
-        .container {
-            background: white;
-            padding: 40px;
-            border-radius: 15px;
-            box-shadow: 0 4px 20px rgba(0, 0, 0, 0.05);
-        }
-        h1 {
-            color: #009092;
-            font-size: 1.4em;
-            margin-bottom: 8px;
-            text-align: center;
-        }
-        h2 {
-            color: #007474;
-            border-bottom: 2px solid #eef2f2;
-            padding-bottom: 10px;
-            margin-top: 40px;
-            font-size: 1.1em;
-        }
-        p {
-            margin-bottom: 15px;
-            text-align: justify;
-        }
-        ul {
-            padding-right: 20px;
-            list-style-type: disc;
-        }
-        li {
-            margin-bottom: 10px;
-        }
-        .alert-box {
-            background-color: #e8f6f6;
-            border-right: 5px solid #009092;
-            padding: 15px;
-            margin: 20px 0;
-            border-radius: 4px;
-        }
-        .alert-box-ltr {
-            border-right: none;
-            border-left: 5px solid #009092;
-        }
-        .footer {
-            margin-top: 50px;
-            text-align: center;
-            font-size: 0.9em;
-            color: #888;
-            border-top: 1px solid #ddd;
-            padding-top: 20px;
-        }
-        a {
-            color: #009092;
-            text-decoration: none;
-        }
-        a:hover {
-            text-decoration: underline;
-        }
-        .lang-switcher {
-            text-align: center;
-            margin-bottom: 20px;
-            display: flex;
-            justify-content: center;
-            gap: 10px;
-        }
-        .lang-switcher button {
-            background: none;
-            border: 1px solid #009092;
-            color: #009092;
-            padding: 6px 14px;
-            border-radius: 20px;
-            cursor: pointer;
-            font-weight: 600;
-            font-family: inherit;
-        }
-        .lang-switcher button.active {
-            background-color: #009092;
-            color: white;
-        }
+        body { font-family: 'Cairo', 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif; font-size: 13px; line-height: 1.65; color: #333; max-width: 900px; margin: 0 auto; padding: 40px 20px; background-color: #f9f9f9; }
+        .container { background: white; padding: 40px; border-radius: 15px; box-shadow: 0 4px 20px rgba(0, 0, 0, 0.05); }
+        h1 { color: #009092; font-size: 1.5em; margin-bottom: 8px; text-align: center; }
+        .meta { text-align: center; color: #666; margin-bottom: 40px; font-style: italic; font-size: 0.95em; }
+        h2 { color: #007474; border-bottom: 2px solid #eef2f2; padding-bottom: 10px; margin-top: 40px; font-size: 1.1em; }
+        p { margin-bottom: 14px; text-align: justify; }
+        ul { padding-right: 20px; padding-left: 20px; list-style-type: disc; }
+        li { margin-bottom: 10px; }
+        strong { color: #005f5f; }
+        .alert-box { background-color: #e8f6f6; border-right: 5px solid #009092; padding: 15px; margin: 20px 0; border-radius: 4px; }
+        .alert-box-ltr { border-right: none; border-left: 5px solid #009092; }
+        .footer { margin-top: 50px; text-align: center; font-size: 0.9em; color: #888; border-top: 1px solid #ddd; padding-top: 20px; }
+        a { color: #009092; text-decoration: none; }
+        a:hover { text-decoration: underline; }
+        .lang-switcher { text-align: center; margin-bottom: 20px; display: flex; justify-content: center; gap: 10px; }
+        .lang-switcher button { background: none; border: 1px solid #009092; color: #009092; padding: 6px 14px; border-radius: 20px; cursor: pointer; font-weight: 600; font-family: inherit; }
+        .lang-switcher button.active { background-color: #009092; color: white; }
     </style>
 </head>
 <body>
+
+<div class="container" id="ar-container" lang="ar" dir="rtl">
     <div class="lang-switcher">
-        <button onclick="setLang('ar')" class="active">AR</button>
-        <button onclick="setLang('en')">EN</button>
+        <button class="active" onclick="setLang('ar')">العربية</button>
+        <button onclick="setLang('en')">English</button>
     </div>
-    <div class="container">
-        <!-- Arabic -->
-        <section id="ar" lang="ar" dir="rtl">
-            <h1>الإبلاغ عن محتوى مخالف أو غير قانوني</h1>
-            <p>
-                تلتزم منصة <strong>DocSera</strong> بتوفير بيئة آمنة ومحترمة لجميع المستخدمين، سواء المرضى أو مقدمي
-                الرعاية الصحية.
-                في حال واجهت أي محتوى أو سلوك مخالف للقانون أو للأخلاقيات الطبية أو لشروط الاستخدام، نرجو منك الإبلاغ
-                عنه.
-            </p>
-            <div class="alert-box">
-                <strong>مهم:</strong> يتم التعامل مع جميع البلاغات بسرية تامة، ولا يتم اتخاذ أي إجراء إلا بعد المراجعة.
-            </div>
-            <h2>أنواع المحتوى التي يمكن الإبلاغ عنها</h2>
-            <ul>
-                <li>محتوى إباحي أو يتضمن عريًا أو إيحاءات جنسية غير لائقة</li>
-                <li>رسائل مسيئة، تحرش، تهديد، أو خطاب كراهية</li>
-                <li>إساءة استخدام أو نشر معلومات طبية مضللة أو خطيرة</li>
-                <li>انتهاك الخصوصية أو مشاركة بيانات شخصية دون إذن</li>
-                <li>انتحال شخصية أو نشاط احتيالي</li>
-                <li>محتوى غير قانوني أو مخالف للأنظمة المعمول بها</li>
-            </ul>
-            <h2>كيفية الإبلاغ</h2>
-            <p>
-                يرجى إرسال رسالة بريد إلكتروني تتضمن وصفًا مختصرًا للمشكلة إلى:
-            </p>
-            <p style="text-align:center; font-weight:bold;">
-                <a href="mailto:abuse@docsera.app">abuse@docsera.app</a>
-            </p>
-            <p>
-                يفضل إرفاق أي تفاصيل مساعدة مثل لقطات شاشة أو تاريخ الرسائل إن أمكن.
-            </p>
-            <div class="footer">
-                &copy; 2026 DocSera. جميع الحقوق محفوظة.
-            </div>
-        </section>
-        <!-- English -->
-        <section id="en" lang="en" dir="ltr" style="display:none;">
-            <h1>Report Illicit or Abusive Content</h1>
-            <p>
-                <strong>DocSera</strong> is committed to maintaining a safe and respectful environment for all users.
-                If you encounter any content or behavior that violates the law, medical ethics, or our Terms of Use,
-                please report it.
-            </p>
-            <div class="alert-box alert-box-ltr">
-                <strong>Important:</strong> All reports are reviewed confidentially before any action is taken.
-            </div>
-            <h2>What you can report</h2>
-            <ul>
-                <li>Nudity, sexual, or explicit content</li>
-                <li>Harassment, threats, abusive language, or hate speech</li>
-                <li>Misuse or dissemination of misleading or harmful medical information</li>
-                <li>Privacy violations or unauthorized sharing of personal data</li>
-                <li>Impersonation or fraudulent activity</li>
-                <li>Any illegal or prohibited content</li>
-            </ul>
-            <h2>How to report</h2>
-            <p>
-                Please send an email with a brief description of the issue to:
-            </p>
-            <p style="text-align:center; font-weight:bold;">
-                <a href="mailto:abuse@docsera.app">abuse@docsera.app</a>
-            </p>
-            <p>
-                Including screenshots or relevant timestamps will help us review the report more efficiently.
-            </p>
-            <div class="footer">
-                &copy; 2026 DocSera. All rights reserved.
-            </div>
-        </section>
+    <h1>الإبلاغ عن محتوى مخالف أو غير قانوني</h1>
+    <div class="meta">الإصدار 1.0 — ساري المفعول من 5 أيار 2026</div>
+
+    <p>تلتزم منصّة DocSera بتوفير بيئة آمنة ومحترمة لجميع المستخدمين، سواء المرضى أو مقدّمي الرعاية الصحية أو الشركاء التجاريين. في حال واجهت أي محتوى أو سلوك مخالف للقانون أو لأخلاقيات المهنة الطبية أو لشروط الاستخدام، نرجو منك الإبلاغ عنه.</p>
+
+    <div class="alert-box"><strong>مهم:</strong> يتم التعامل مع جميع البلاغات بسرية تامة. نراجع كل بلاغ يدوياً قبل اتخاذ أي إجراء، ولن نُفصح عن هويتك للطرف المُبلَّغ عنه.</div>
+
+    <h2>أنواع المحتوى التي يمكن الإبلاغ عنها</h2>
+    <ul>
+        <li>محتوى إباحي أو يتضمّن عرياً أو إيحاءات جنسية غير لائقة.</li>
+        <li>رسائل مسيئة، تحرّش، تهديد، أو خطاب كراهية.</li>
+        <li>إساءة استخدام التطبيق أو نشر معلومات طبية مُضلِّلة أو خطيرة.</li>
+        <li>انتهاك الخصوصية أو مشاركة بيانات شخصية دون إذن.</li>
+        <li>انتحال شخصية أو نشاط احتيالي.</li>
+        <li>محاولات هندسة اجتماعية أو احتيال على المستخدمين.</li>
+        <li>أي محتوى غير قانوني أو مخالف للأنظمة المعمول بها في الجمهورية العربية السورية.</li>
+    </ul>
+
+    <h2>كيفية الإبلاغ</h2>
+    <p>أرسل بريداً إلكترونياً يتضمّن وصفاً مختصراً للمشكلة إلى:</p>
+    <ul>
+        <li><strong><a href="mailto:abuse@docsera.app">abuse@docsera.app</a></strong></li>
+    </ul>
+    <p>يُساعدنا في المراجعة السريعة إذا تضمّن البلاغ:</p>
+    <ul>
+        <li>تاريخ ووقت تقريبيين للحادثة.</li>
+        <li>اسم المستخدم أو الطبيب أو الشريك المُبلَّغ عنه (إن أمكن).</li>
+        <li>لقطات شاشة أو نصوص توضيحية.</li>
+        <li>طبيعة المحتوى المخالف (نوع المخالفة).</li>
+    </ul>
+
+    <h2>ماذا يحدث بعد الإبلاغ؟</h2>
+    <ul>
+        <li>سنُؤكّد استلام بلاغك خلال 48 ساعة عمل.</li>
+        <li>سيراجع فريقنا المختصّ البلاغ ويتخذ الإجراء المناسب (تنبيه، إيقاف مؤقت، إنهاء الحساب، أو إحالة للسلطات المختصة عند الاقتضاء).</li>
+        <li>قد نتواصل معك للحصول على معلومات إضافية إذا لزم الأمر.</li>
+        <li>نظراً لخصوصية الإجراءات المتعلقة بالحسابات، قد لا نتمكّن من إخبارك بالتفاصيل النهائية لما تمّ اتخاذه ضد الطرف المُبلَّغ عنه.</li>
+    </ul>
+
+    <h2>حالات الطوارئ</h2>
+    <p>إذا واجهت تهديداً عاجلاً يُهدّد سلامتك أو سلامة شخص آخر، اتصل بالشرطة (112) أو الإسعاف (110) فوراً قبل الإبلاغ عبر التطبيق.</p>
+
+    <div class="footer">© 2026 DocSera. جميع الحقوق محفوظة.</div>
+</div>
+
+
+<div class="container" id="en-container" lang="en" dir="ltr" style="display:none;">
+    <div class="lang-switcher">
+        <button onclick="setLang('ar')">العربية</button>
+        <button class="active" onclick="setLang('en')">English</button>
     </div>
-    <script>
-        function setLang(lang) {
-            const ar = document.getElementById('ar');
-            const en = document.getElementById('en');
-            const buttons = document.querySelectorAll('.lang-switcher button');
-            if (lang === 'ar') {
-                ar.style.display = 'block';
-                en.style.display = 'none';
-                document.documentElement.lang = 'ar';
-                document.documentElement.dir = 'rtl';
-                document.body.style.fontFamily = "'Cairo', sans-serif";
-            } else {
-                ar.style.display = 'none';
-                en.style.display = 'block';
-                document.documentElement.lang = 'en';
-                document.documentElement.dir = 'ltr';
-                document.body.style.fontFamily = "'Montserrat', sans-serif";
-            }
-            buttons.forEach(btn => btn.classList.remove('active'));
-            if (event && event.target) {
-                event.target.classList.add('active');
-            }
-        }
-    </script>
+    <h1>Report Illicit or Abusive Content</h1>
+    <div class="meta">Version 1.0 — Effective 5 May 2026</div>
+
+    <p>DocSera is committed to maintaining a safe and respectful environment for all users — patients, healthcare providers, and business partners alike. If you encounter any content or behavior that violates the law, medical ethics, or our Terms of Use, please report it.</p>
+
+    <div class="alert-box alert-box-ltr"><strong>Important:</strong> All reports are handled in strict confidence. Every report is reviewed manually before any action is taken, and we will not disclose your identity to the reported party.</div>
+
+    <h2>What you can report</h2>
+    <ul>
+        <li>Pornographic, nude, or sexually suggestive content.</li>
+        <li>Abusive messages, harassment, threats, or hate speech.</li>
+        <li>App misuse or dissemination of misleading or dangerous medical information.</li>
+        <li>Privacy violations or unauthorized sharing of personal data.</li>
+        <li>Impersonation or fraudulent activity.</li>
+        <li>Social engineering or scam attempts targeting users.</li>
+        <li>Any illegal content or violation of laws in the Syrian Arab Republic.</li>
+    </ul>
+
+    <h2>How to report</h2>
+    <p>Send an email with a brief description of the issue to:</p>
+    <ul>
+        <li><strong><a href="mailto:abuse@docsera.app">abuse@docsera.app</a></strong></li>
+    </ul>
+    <p>To help us review faster, please include:</p>
+    <ul>
+        <li>Approximate date and time of the incident.</li>
+        <li>The username, doctor, or partner being reported (if known).</li>
+        <li>Screenshots or relevant text.</li>
+        <li>The nature of the violation.</li>
+    </ul>
+
+    <h2>What happens after you report?</h2>
+    <ul>
+        <li>We will acknowledge receipt within 48 business hours.</li>
+        <li>Our specialized team will review the report and take appropriate action (warning, temporary suspension, account termination, or referral to competent authorities if applicable).</li>
+        <li>We may contact you for additional information if needed.</li>
+        <li>Due to the confidentiality of account-related actions, we may not be able to share the final details of any actions taken against the reported party.</li>
+    </ul>
+
+    <h2>Emergencies</h2>
+    <p>If you face an immediate threat to your safety or someone else's, call police (112) or ambulance (110) before reporting through the app.</p>
+
+    <div class="footer">© 2026 DocSera. All rights reserved.</div>
+</div>
+
+<script>
+    function setLang(lang) {
+        document.getElementById('ar-container').style.display = lang === 'ar' ? 'block' : 'none';
+        document.getElementById('en-container').style.display = lang === 'en' ? 'block' : 'none';
+        document.documentElement.setAttribute('lang', lang);
+        document.documentElement.setAttribute('dir', lang === 'ar' ? 'rtl' : 'ltr');
+    }
+    (function() {
+        const params = new URLSearchParams(window.location.search);
+        const lang = params.get('lang');
+        if (lang === 'en' || lang === 'ar') setLang(lang);
+    })();
+</script>
+
 </body>
 </html>

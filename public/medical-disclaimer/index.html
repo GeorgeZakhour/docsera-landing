@@ -1,0 +1,233 @@
+<!DOCTYPE html>
+<html lang="ar" dir="rtl">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>الإقرار الطبي - DocSera</title>
+    <link href="https://fonts.googleapis.com/css2?family=Cairo:wght@400;600;700&family=Montserrat:wght@400;500;700&display=swap" rel="stylesheet">
+    <style>
+        body { font-family: 'Cairo', 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif; font-size: 13px; line-height: 1.65; color: #333; max-width: 900px; margin: 0 auto; padding: 40px 20px; background-color: #f9f9f9; }
+        .container { background: white; padding: 40px; border-radius: 15px; box-shadow: 0 4px 20px rgba(0, 0, 0, 0.05); }
+        h1 { color: #009092; font-size: 1.5em; margin-bottom: 8px; text-align: center; }
+        .meta { text-align: center; color: #666; margin-bottom: 40px; font-style: italic; font-size: 0.95em; }
+        h2 { color: #007474; border-bottom: 2px solid #eef2f2; padding-bottom: 10px; margin-top: 40px; font-size: 1.1em; }
+        p { margin-bottom: 14px; text-align: justify; }
+        ul { padding-right: 20px; padding-left: 20px; list-style-type: disc; }
+        li { margin-bottom: 10px; }
+        strong { color: #005f5f; }
+        .emergency { background-color: #ffebee; border: 2px solid #c62828; padding: 18px; margin: 28px 0; border-radius: 6px; color: #b71c1c; }
+        .emergency strong { color: #b71c1c; font-size: 1.05em; }
+        .callout { background-color: #fff8e1; border-right: 5px solid #ffb300; padding: 15px; margin: 20px 0; border-radius: 4px; }
+        .callout-ltr { border-right: none; border-left: 5px solid #ffb300; }
+        .footer { margin-top: 50px; text-align: center; font-size: 0.9em; color: #888; border-top: 1px solid #ddd; padding-top: 20px; }
+        a { color: #009092; text-decoration: none; }
+        a:hover { text-decoration: underline; }
+        .lang-switcher { text-align: center; margin-bottom: 20px; display: flex; justify-content: center; gap: 10px; }
+        .lang-switcher button { background: none; border: 1px solid #009092; color: #009092; padding: 6px 14px; margin: 0; border-radius: 20px; cursor: pointer; font-weight: 600; font-family: inherit; transition: all 0.3s ease; }
+        .lang-switcher button:hover { background-color: rgba(0, 144, 146, 0.1); }
+        .lang-switcher button.active { background-color: #009092; color: white; }
+    </style>
+</head>
+<body>
+
+<div class="container" id="ar-container" lang="ar" dir="rtl">
+    <div class="lang-switcher">
+        <button class="active" onclick="setLang('ar')">العربية</button>
+        <button onclick="setLang('en')">English</button>
+    </div>
+    <h1>الإقرار الطبي</h1>
+    <div class="meta">الإصدار 1.0 — ساري المفعول من 5 أيار 2026</div>
+
+    <p>هذا الإقرار جزء أساسي من <a href="/terms-of-service/">شروط الاستخدام</a>. باستخدامك تطبيق DocSera فإنك تُقرّ بفهم ما يلي والموافقة عليه.</p>
+
+    <div class="emergency">
+        <strong>⚠️ في حالات الطوارئ:</strong> إذا كنت تعاني من حالة طبية طارئة (نوبة قلبية، صعوبة في التنفس، نزيف حاد، إصابة بالغة، تسمم، فقدان وعي، أعراض سكتة دماغية، أو أي حالة قد تُهدّد الحياة)، اتصل بالإسعاف فوراً. <strong>لا تنتظر، ولا تستخدم التطبيق لطلب المساعدة الطارئة.</strong> رقم الإسعاف في الجمهورية العربية السورية: <strong>110</strong>.
+    </div>
+
+    <h2>1. ما هو DocSera</h2>
+    <p>DocSera هو <strong>منصّة تقنية</strong> تُتيح لك:</p>
+    <ul>
+        <li>البحث عن أطباء وحجز مواعيد معهم.</li>
+        <li>الاحتفاظ بسجل طبي شخصي (مستندات، تقارير، ملف صحي).</li>
+        <li>التواصل مع الطبيب عبر المراسلة (في حال أتاحها).</li>
+        <li>تذكيرك بمواعيدك الطبية.</li>
+    </ul>
+
+    <h2>2. ما لا يقدّمه DocSera</h2>
+    <div class="callout"><strong>DocSera ليس بديلاً عن الطبيب، ولا يقدّم بأي شكل من الأشكال:</strong></div>
+    <ul>
+        <li><strong>تشخيصاً طبياً.</strong> التطبيق لا يُحدّد مرضك ولا حالتك الصحية.</li>
+        <li><strong>استشارة طبية.</strong> أي معلومات تظهر في التطبيق ليست استشارة، وليست رأياً طبياً.</li>
+        <li><strong>توصيات دوائية.</strong> التطبيق لا يوصي بأدوية أو جرعات أو علاجات.</li>
+        <li><strong>تفسيراً لنتائج فحوصاتك.</strong> الأرقام والقيم في تقاريرك يجب أن يُفسّرها طبيب مرخّص.</li>
+        <li><strong>تقييماً لشدّة الأعراض.</strong> التطبيق لا يُخبرك إن كانت أعراضك "طبيعية" أو "خطيرة".</li>
+        <li><strong>رعاية طبية مباشرة.</strong> التطبيق لا يُعالج، ولا يُجري فحوصات، ولا يصرف أدوية.</li>
+    </ul>
+
+    <h2>3. أي قرار طبي يجب أن يُتّخذ مع طبيب مرخّص</h2>
+    <p>قبل اتخاذ أي قرار يخصّ صحتك:</p>
+    <ul>
+        <li>استشر طبيباً مرخّصاً وجهاً لوجه.</li>
+        <li>لا تبدأ أو توقف أو تُغيّر دواء بناءً على ما تقرأه في التطبيق.</li>
+        <li>لا تعتمد على معلومات من ملفك الصحي وحدها — أعرضها على طبيبك دائماً.</li>
+        <li>إذا كنت في شكّ، اتصل بطبيبك أو توجّه لأقرب مركز رعاية صحية.</li>
+    </ul>
+
+    <h2>4. مسؤولية الطبيب وليس DocSera</h2>
+    <p>الأطباء المسجَّلون في DocSera هم متخصّصون مرخّصون مستقلّون. كلّ ما يخصّ:</p>
+    <ul>
+        <li>التشخيص الذي يُقدّمه لك الطبيب،</li>
+        <li>الوصفة الطبية التي يكتبها،</li>
+        <li>التوصية بالعلاج،</li>
+        <li>جودة الفحص أو الزيارة،</li>
+    </ul>
+    <p>هو من مسؤولية الطبيب وحده، وفقاً لأخلاقيات المهنة الطبية والقوانين الناظمة لها في الجمهورية العربية السورية. <strong>DocSera ليس طرفاً في العلاقة الطبية بينك وبين طبيبك</strong> — نحن نُيسّر التواصل التقني فقط.</p>
+
+    <h2>5. المعلومات الصحية في التطبيق هي للتنظيم لا للتشخيص</h2>
+    <p>الميزات التالية في التطبيق هي أدوات تنظيم شخصي فقط، وليست أدوات تشخيص:</p>
+    <ul>
+        <li><strong>الملف الصحي:</strong> الحساسيات، الأمراض المزمنة، الأدوية، السجل العائلي. هذه معلومات تُدخلها أنت لتُشاركها مع طبيبك بسهولة، لا تحليل تلقائي.</li>
+        <li><strong>المستندات الطبية:</strong> أنت ترفع تقارير وفحوصات قمت أنت بإجرائها. التطبيق لا يُفسّرها.</li>
+        <li><strong>التقارير الصادرة عن الأطباء:</strong> هذه تقارير حقيقية يكتبها طبيبك المعالج، والتطبيق يحفظها لك للاطلاع. تفسيرها وأي قرار بناءً عليها يكون مع طبيبك.</li>
+    </ul>
+
+    <h2>6. حالات الطوارئ</h2>
+    <p>إذا كنت تعاني من أيٍّ ممّا يلي، <strong>لا تستخدم التطبيق</strong>، اتصل بالإسعاف (110) فوراً أو توجّه إلى أقرب مستشفى:</p>
+    <ul>
+        <li>ألم شديد في الصدر أو ضيق نفس حاد.</li>
+        <li>نزيف غير قابل للسيطرة.</li>
+        <li>إصابة بالغة أو حروق واسعة.</li>
+        <li>فقدان وعي، نوبة، أو ارتباك مفاجئ.</li>
+        <li>أعراض سكتة دماغية (تنميل أو ضعف مفاجئ في الوجه أو الذراع، صعوبة في النطق).</li>
+        <li>تسمّم أو ابتلاع مادة ضارّة.</li>
+        <li>أفكار إيذاء النفس أو الانتحار.</li>
+        <li>أيّ حالة تُهدّد الحياة أو سلامة طرف من الجسم.</li>
+    </ul>
+    <p>الأطباء على المنصّة قد يردّون على رسائلك خلال ساعات أو أيام — هذا غير مناسب للحالات الطارئة بأي حال.</p>
+
+    <h2>7. عدم بيع الأدوية أو الوصفات الطبية</h2>
+    <p><strong>DocSera لا يبيع أدوية، ولا يصرفها، ولا يحلّ محلّ الصيدلي.</strong> إذا كان لديك وصفة طبية، توجّه إلى صيدلية مرخّصة. التطبيق ليس متجراً للأدوية.</p>
+
+    <h2>8. الموافقة</h2>
+    <p>باستخدامك للتطبيق، تُؤكّد أنك:</p>
+    <ul>
+        <li>قرأت هذا الإقرار وفهمته.</li>
+        <li>تُدرك أن DocSera منصّة تقنية وليس مزوّد رعاية صحية.</li>
+        <li>توافق على عدم تحميل DocSera مسؤولية أي قرار طبي اتّخذته أو لم تتّخذه.</li>
+        <li>توافق على الاتصال بالإسعاف في حالات الطوارئ بدلاً من استخدام التطبيق.</li>
+    </ul>
+
+    <p>للاستفسار: <a href="mailto:support@docsera.app">support@docsera.app</a></p>
+
+    <div class="footer">© 2026 DocSera. جميع الحقوق محفوظة.</div>
+</div>
+
+
+<div class="container" id="en-container" lang="en" dir="ltr" style="display:none;">
+    <div class="lang-switcher">
+        <button onclick="setLang('ar')">العربية</button>
+        <button class="active" onclick="setLang('en')">English</button>
+    </div>
+    <h1>Medical Disclaimer</h1>
+    <div class="meta">Version 1.0 — Effective 5 May 2026</div>
+
+    <p>This disclaimer is an integral part of the <a href="/terms-of-service/">Terms of Use</a>. By using the DocSera App, you acknowledge that you understand and agree to the following.</p>
+
+    <div class="emergency">
+        <strong>⚠️ In an emergency:</strong> if you are experiencing a medical emergency (heart attack, severe difficulty breathing, severe bleeding, serious injury, poisoning, loss of consciousness, stroke symptoms, or any life-threatening condition), call ambulance services immediately. <strong>Do not wait, and do not use the App to seek emergency help.</strong> Ambulance number in the Syrian Arab Republic: <strong>110</strong>.
+    </div>
+
+    <h2>1. What DocSera is</h2>
+    <p>DocSera is a <strong>technology platform</strong> that lets you:</p>
+    <ul>
+        <li>Search for doctors and book appointments with them.</li>
+        <li>Maintain a personal medical record (documents, reports, health profile).</li>
+        <li>Communicate with doctors via messaging (when they enable it).</li>
+        <li>Receive reminders for your medical appointments.</li>
+    </ul>
+
+    <h2>2. What DocSera does NOT provide</h2>
+    <div class="callout callout-ltr"><strong>DocSera is not a substitute for a doctor and does NOT provide, in any form:</strong></div>
+    <ul>
+        <li><strong>Medical diagnosis.</strong> The App does not determine your illness or health condition.</li>
+        <li><strong>Medical advice.</strong> Any information shown in the App is not advice and not a medical opinion.</li>
+        <li><strong>Drug recommendations.</strong> The App does not recommend medications, dosages, or treatments.</li>
+        <li><strong>Interpretation of test results.</strong> Numbers and values in your reports must be interpreted by a licensed doctor.</li>
+        <li><strong>Symptom severity assessment.</strong> The App does not tell you whether your symptoms are "normal" or "dangerous."</li>
+        <li><strong>Direct medical care.</strong> The App does not treat, perform examinations, or dispense medication.</li>
+    </ul>
+
+    <h2>3. Any medical decision must be made with a licensed doctor</h2>
+    <p>Before making any decision about your health:</p>
+    <ul>
+        <li>Consult a licensed doctor in person.</li>
+        <li>Do not start, stop, or change a medication based on what you read in the App.</li>
+        <li>Do not rely on information from your health profile alone — always show it to your doctor.</li>
+        <li>If in doubt, contact your doctor or go to the nearest healthcare center.</li>
+    </ul>
+
+    <h2>4. Doctor's responsibility, not DocSera's</h2>
+    <p>Doctors registered on DocSera are independent licensed professionals. Everything related to:</p>
+    <ul>
+        <li>The diagnosis a doctor gives you,</li>
+        <li>The prescription they write,</li>
+        <li>The treatment recommendation,</li>
+        <li>The quality of the examination or visit,</li>
+    </ul>
+    <p>is the sole responsibility of the doctor, in accordance with medical ethics and laws governing the medical profession in the Syrian Arab Republic. <strong>DocSera is not a party to the medical relationship between you and your doctor</strong> — we facilitate technical communication only.</p>
+
+    <h2>5. In-app health information is for organization, not diagnosis</h2>
+    <p>The following App features are personal organization tools only, not diagnostic tools:</p>
+    <ul>
+        <li><strong>Health profile:</strong> allergies, chronic conditions, medications, family history. This is information you enter to share easily with your doctor — not automated analysis.</li>
+        <li><strong>Medical documents:</strong> you upload reports and tests you obtained yourself. The App does not interpret them.</li>
+        <li><strong>Doctor-issued reports:</strong> these are real reports written by your treating doctor and stored in the App for reference. Their interpretation and any decision based on them is between you and your doctor.</li>
+    </ul>
+
+    <h2>6. Emergencies</h2>
+    <p>If you are experiencing any of the following, <strong>do not use the App</strong>, call ambulance services (110) immediately or go to the nearest hospital:</p>
+    <ul>
+        <li>Severe chest pain or acute shortness of breath.</li>
+        <li>Uncontrollable bleeding.</li>
+        <li>Serious injury or extensive burns.</li>
+        <li>Loss of consciousness, seizure, or sudden confusion.</li>
+        <li>Stroke symptoms (sudden facial or arm weakness or numbness, difficulty speaking).</li>
+        <li>Poisoning or ingestion of a harmful substance.</li>
+        <li>Thoughts of self-harm or suicide.</li>
+        <li>Any condition threatening life or the integrity of a body part.</li>
+    </ul>
+    <p>Doctors on the platform may reply to your messages within hours or days — this is in no way appropriate for emergency situations.</p>
+
+    <h2>7. No sale of medication or prescriptions</h2>
+    <p><strong>DocSera does not sell medications, does not dispense them, and does not replace a pharmacist.</strong> If you have a prescription, go to a licensed pharmacy. The App is not a medication store.</p>
+
+    <h2>8. Acknowledgment</h2>
+    <p>By using the App, you confirm that you:</p>
+    <ul>
+        <li>Have read and understood this disclaimer.</li>
+        <li>Understand that DocSera is a technology platform, not a healthcare provider.</li>
+        <li>Agree not to hold DocSera responsible for any medical decision you make or fail to make.</li>
+        <li>Agree to call ambulance services in emergencies rather than using the App.</li>
+    </ul>
+
+    <p>Contact: <a href="mailto:support@docsera.app">support@docsera.app</a></p>
+
+    <div class="footer">© 2026 DocSera. All rights reserved.</div>
+</div>
+
+<script>
+    function setLang(lang) {
+        document.getElementById('ar-container').style.display = lang === 'ar' ? 'block' : 'none';
+        document.getElementById('en-container').style.display = lang === 'en' ? 'block' : 'none';
+        document.documentElement.setAttribute('lang', lang);
+        document.documentElement.setAttribute('dir', lang === 'ar' ? 'rtl' : 'ltr');
+    }
+    (function() {
+        const params = new URLSearchParams(window.location.search);
+        const lang = params.get('lang');
+        if (lang === 'en' || lang === 'ar') setLang(lang);
+    })();
+</script>
+
+</body>
+</html>

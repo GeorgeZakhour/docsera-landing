@@ -4,262 +4,328 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>شروط الاستخدام - DocSera</title>
-    <link
-        href="https://fonts.googleapis.com/css2?family=Cairo:wght@400;600;700&family=Montserrat:wght@400;500;700&display=swap"
-        rel="stylesheet">
+    <link href="https://fonts.googleapis.com/css2?family=Cairo:wght@400;600;700&family=Montserrat:wght@400;500;700&display=swap" rel="stylesheet">
     <style>
-        body {
-            font-family: 'Cairo', 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
-            font-size: 13px;
-            line-height: 1.6;
-            color: #333;
-            max-width: 900px;
-            margin: 0 auto;
-            padding: 40px 20px;
-            background-color: #f9f9f9;
-        }
-        .container {
-            background: white;
-            padding: 40px;
-            border-radius: 15px;
-            box-shadow: 0 4px 20px rgba(0, 0, 0, 0.05);
-        }
-        h1 {
-            color: #009092;
-            font-size: 1.4em;
-            margin-bottom: 8px;
-            text-align: center;
-        }
-        h2 {
-            color: #007474;
-            border-bottom: 2px solid #eef2f2;
-            padding-bottom: 10px;
-            margin-top: 40px;
-            font-size: 1.1em;
-        }
-        p {
-            margin-bottom: 15px;
-            text-align: justify;
-        }
-        ul {
-            padding-right: 20px;
-            list-style-type: disc;
-        }
-        li {
-            margin-bottom: 10px;
-        }
-        .alert-box {
-            background-color: #e8f6f6;
-            border-right: 5px solid #009092;
-            padding: 15px;
-            margin: 20px 0;
-            border-radius: 4px;
-        }
-        .alert-box-ltr {
-            border-right: none;
-            border-left: 5px solid #009092;
-        }
-        .footer {
-            margin-top: 50px;
-            text-align: center;
-            font-size: 0.9em;
-            color: #888;
-            border-top: 1px solid #ddd;
-            padding-top: 20px;
-        }
-        a {
-            color: #009092;
-            text-decoration: none;
-        }
-        a:hover {
-            text-decoration: underline;
-        }
-        /* Language Switcher Styles */
-        .lang-switcher {
-            text-align: center;
-            margin-bottom: 20px;
-            display: flex;
-            justify-content: center;
-            gap: 10px;
-        }
-        .lang-switcher button {
-            background: none;
-            border: 1px solid #009092;
-            color: #009092;
-            padding: 6px 14px;
-            margin: 0;
-            border-radius: 20px;
-            cursor: pointer;
-            font-weight: 600;
-            font-family: inherit;
-            transition: all 0.3s ease;
-        }
-        .lang-switcher button:hover {
-            background-color: rgba(0, 144, 146, 0.1);
-        }
-        .lang-switcher button.active {
-            background-color: #009092;
-            color: white;
-        }
+        body { font-family: 'Cairo', 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif; font-size: 13px; line-height: 1.65; color: #333; max-width: 900px; margin: 0 auto; padding: 40px 20px; background-color: #f9f9f9; }
+        .container { background: white; padding: 40px; border-radius: 15px; box-shadow: 0 4px 20px rgba(0, 0, 0, 0.05); }
+        h1 { color: #009092; font-size: 1.5em; margin-bottom: 8px; text-align: center; }
+        .meta { text-align: center; color: #666; margin-bottom: 40px; font-style: italic; font-size: 0.95em; }
+        h2 { color: #007474; border-bottom: 2px solid #eef2f2; padding-bottom: 10px; margin-top: 40px; font-size: 1.1em; }
+        h3 { color: #005f5f; font-size: 1.0em; margin-top: 24px; margin-bottom: 8px; }
+        p { margin-bottom: 14px; text-align: justify; }
+        ul { padding-right: 20px; padding-left: 20px; list-style-type: disc; }
+        li { margin-bottom: 10px; }
+        strong { color: #005f5f; }
+        .alert-box { background-color: #fff8e1; border-right: 5px solid #ffb300; padding: 15px; margin: 20px 0; border-radius: 4px; }
+        .alert-box-ltr { border-right: none; border-left: 5px solid #ffb300; }
+        .footer { margin-top: 50px; text-align: center; font-size: 0.9em; color: #888; border-top: 1px solid #ddd; padding-top: 20px; }
+        a { color: #009092; text-decoration: none; }
+        a:hover { text-decoration: underline; }
+        .lang-switcher { text-align: center; margin-bottom: 20px; display: flex; justify-content: center; gap: 10px; }
+        .lang-switcher button { background: none; border: 1px solid #009092; color: #009092; padding: 6px 14px; margin: 0; border-radius: 20px; cursor: pointer; font-weight: 600; font-family: inherit; transition: all 0.3s ease; }
+        .lang-switcher button:hover { background-color: rgba(0, 144, 146, 0.1); }
+        .lang-switcher button.active { background-color: #009092; color: white; }
     </style>
 </head>
 <body>
+
+<div class="container" id="ar-container" lang="ar" dir="rtl">
     <div class="lang-switcher">
-        <button onclick="setLang('ar')" class="active">AR</button>
-        <button onclick="setLang('en')">EN</button>
+        <button class="active" onclick="setLang('ar')">العربية</button>
+        <button onclick="setLang('en')">English</button>
     </div>
-    <div class="container">
-        <!-- Arabic Section -->
-        <section id="ar" lang="ar" dir="rtl">
-            <h1>شروط الاستخدام (Terms of Use)</h1>
-            <p><strong>تاريخ التحديث:</strong> 07 كانون الثاني 2026</p>
-            <p>أهلاً بك في تطبيق <strong>DocSera</strong>. يرجى قراءة شروط الاستخدام هذه ("الشروط") بعناية قبل استخدام
-                التطبيق. بإنشاء حساب أو استخدام خدماتنا، فإنك توافق على الالتزام بهذه الشروط.</p>
-            <div class="alert-box">
-                <strong>تنويه طبي هام:</strong> تطبيق DocSera هو منصة تقنية لتسهيل حجز المواعيد وإدارة الملفات الطبية.
-                التطبيق لا يقدم تشخيصاً طبياً وعلاجاً مباشراً، ولا يُغني عن استشارة الطبيب المختص. في حالات الطوارئ،
-                يرجى الاتصال بالإسعاف فوراً.
-            </div>
-            <h2>1. أهلية الاستخدام</h2>
-            <p>يجب أن يكون عمرك 16 عاماً على الأقل لإنشاء حساب في DocSera. إذا كنت قاصراً (دون 16 عاماً)، يجب استخدام
-                التطبيق تحت إشراف الوالدين أو الأوصياء القانونيين عبر ميزة "إدارة الاقارب".</p>
-            <h2>2. الحساب والأمان</h2>
-            <ul>
-                <li>أنت مسؤول عن الحفاظ على سرية معلومات الدخول الخاصة بك (كلمة المرور).</li>
-                <li>أنت توافق على تقديم معلومات دقيقة وصحيحة (الاسم، تاريخ الميلاد، رقم الهاتف) أثناء التسجيل.</li>
-                <li>يمنع انتحال شخصية شخص آخر أو إنشاء حسابات وهمية.</li>
-            </ul>
-            <h2>3. قواعد السلوك (Acceptable Use)</h2>
-            <p>عند استخدام DocSera، توافق على عدم:</p>
-            <ul>
-                <li>رفع أي صور أو مستندات أو محتوى مخالف للآداب العامة أو القوانين.</li>
-                <li>استخدام المنصة لإرسال رسائل مسيئة أو مزعجة للأطباء.</li>
-                <li>محاولة اختراق التطبيق أو الوصول غير المصرح به لقاعدة البيانات.</li>
-            </ul>
-            <h2>4. المسؤولية القانونية (Liability)</h2>
-            <ul>
-                <li><strong>دور DocSera:</strong> نحن منصة وسيطة تربط المرضى بالأطباء. نحن مسؤولون عن السلامة التقنية
-                    للمنصة وحماية البيانات.</li>
-                <li><strong>مسؤولية الأطباء:</strong> المحتوى الطبي، التشخيص، والعلاج هي مسؤولية الطبيب المعالج بالكامل.
-                    لا تتحمل DocSera مسؤولية الأخطاء الطبية الناتجة عن الممارسات المهنية للأطباء المسجلين.</li>
-                <li><strong>دقة البيانات:</strong> أنت مسؤول عن دقة البيانات الصحية التي تقوم برفعها بنفسك (مثل صور
-                    الوصفات الطبية).</li>
-            </ul>
-            <h2>5. المدفوعات والرسوم (في حال توفرها)</h2>
-            <p>التطبيق مجاني حالياً للمرضى. في حال تم إضافة خدمات مدفوعة مستقبلاً (مثل الاستشارات المأجورة)، سيتم إعلامك
-                بالأسعار وشروط الدفع والموافقة عليها بشكل منفصل قبل أي خصم.</p>
-            <h2>6. الخصوصية ومشاركة البيانات</h2>
-            <p>استخدامك للتطبيق يخضع <a href="privacy_policy.html">لسياسة الخصوصية</a>. بموافقتك على هذه الشروط، أنت تقر
-                وتوافق أيضاً على أن الأطباء المسجلين في المنصة يمكنهم البحث عن معلومات الاتصال الأساسية بك (الاسم،
-                الهاتف) لغرض التواصل المهني وتسهيل تقديم الرعاية الصحية، مع الحفاظ على سرية ملفك الطبي الذي لا يتم كشفه
-                إلا لمن تمنحه إذناً بذلك.</p>
-            <h2>7. إنهاء الاستخدام</h2>
-            <p>تحتفظ DocSera بالحق في تعليق أو إنهاء حسابك إذا انتهكت هذه الشروط، دون سابق إنذار.</p>
-            <h2>8. التعديلات</h2>
-            <p>قد نقوم بتحديث هذه الشروط من وقت لآخر. سنقوم بإشعارك بأي تغييرات جوهرية عبر التطبيق.</p>
-            <h2>9. اتصل بنا</h2>
-            <p>إذا كان لديك أي استفسار حول شروط الاستخدام، يرجى التواصل معنا عبر:</p>
-            <p style="text-align: center; font-weight: bold;">
-                <a href="mailto:support@docsera.app">support@docsera.app</a>
-            </p>
-            <div class="footer">
-                &copy; 2026 DocSera. جميع الحقوق محفوظة.
-            </div>
-        </section>
-        <!-- English Section -->
-        <section id="en" lang="en" dir="ltr" style="display:none;">
-            <h1>Terms of Use</h1>
-            <p><strong>Last Updated:</strong> 07 January 2026</p>
-            <p>Welcome to <strong>DocSera</strong>. Please read these Terms of Use ("Terms") carefully before using the
-                application. By creating an account or using our services, you agree to be bound by these Terms.</p>
-            <div class="alert-box alert-box-ltr">
-                <strong>Important Medical Disclaimer:</strong> DocSera is a technical platform to facilitate appointment
-                booking and medical file management. The app does not provide direct medical diagnosis or treatment and
-                is not a substitute for professional medical advice. In case of emergency, please call an ambulance
-                immediately.
-            </div>
-            <h2>1. Eligibility</h2>
-            <p>You must be at least 16 years old to create a specific account on DocSera. If you are a minor (under 16),
-                the application must be used under the supervision of parents or legal guardians via the "Family
-                Management" feature.</p>
-            <h2>2. Account and Security</h2>
-            <ul>
-                <li>You are responsible for maintaining the confidentiality of your login credentials (password).</li>
-                <li>You agree to provide accurate and correct information (Name, Date of Birth, Phone Number) during
-                    registration.</li>
-                <li>Impersonating another person or creating fake accounts is prohibited.</li>
-            </ul>
-            <h2>3. Acceptable Use</h2>
-            <p>When using DocSera, you agree not to:</p>
-            <ul>
-                <li>Upload any images, documents, or content that violates public decency or laws.</li>
-                <li>Use the platform to send abusive or annoying messages to doctors.</li>
-                <li>Attempt to hack the application or unauthorizedly access the database.</li>
-            </ul>
-            <h2>4. Liability</h2>
-            <ul>
-                <li><strong>Role of DocSera:</strong> We are an intermediary platform connecting patients with doctors.
-                    We are responsible for the technical integrity of the platform and data protection.</li>
-                <li><strong>Doctor Responsibility:</strong> Medical content, diagnosis, and treatment are entirely the
-                    responsibility of the treating doctor. DocSera bears no liability for medical errors resulting from
-                    the professional practices of registered doctors.</li>
-                <li><strong>Data Accuracy:</strong> You are responsible for the accuracy of the health data you upload
-                    yourself (e.g., images of prescriptions).</li>
-            </ul>
-            <h2>5. Payments and Fees (If Applicable)</h2>
-            <p>The application is currently free for patients. If paid services are added in the future (such as paid
-                consultations), you will be notified of the prices and payment terms and asked for your approval
-                separately before any deduction.</p>
-            <h2>6. Privacy and Data Sharing</h2>
-            <p>Your use of the application is subject to our <a href="privacy_policy.html">Privacy Policy</a>. By
-                agreeing to these Terms, you also acknowledge and agree that registered doctors on the platform may
-                search for your basic contact information (Name, Phone) for the purpose of professional communication
-                and facilitating healthcare delivery, while maintaining the confidentiality of your medical file, which
-                is not disclosed except to those you grant permission.</p>
-            <h2>7. Termination</h2>
-            <p>DocSera reserves the right to suspend or terminate your account if you violate these Terms, without prior
-                notice.</p>
-            <h2>8. Amendments</h2>
-            <p>We may update these Terms from time to time. We will notify you of any material changes via the
-                application.</p>
-            <h2>9. Contact Us</h2>
-            <p>If you have any questions about these Terms of Use, please contact us at:</p>
-            <p style="text-align: center; font-weight: bold;">
-                <a href="mailto:support@docsera.app">support@docsera.app</a>
-            </p>
-            <div class="footer">
-                &copy; 2026 DocSera. All rights reserved.
-            </div>
-        </section>
+    <h1>شروط الاستخدام</h1>
+    <div class="meta">الإصدار 1.0 — ساري المفعول من 5 أيار 2026</div>
+
+    <p>أهلاً بك في تطبيق <strong>DocSera</strong>. هذه الشروط ("الشروط") تُحكم استخدامك للتطبيق. بإنشائك حساباً أو استخدامك أيّ ميزة من ميزاته، فإنك توافق على الالتزام بهذه الشروط. يُرجى قراءتها بعناية.</p>
+
+    <div class="alert-box"><strong>تنويه طبي مهم:</strong> DocSera هو منصّة تقنية لتيسير حجز المواعيد الطبية وإدارة الملفات الطبية الشخصية. <strong>التطبيق لا يقدّم استشارة طبية، ولا تشخيصاً، ولا علاجاً، ولا توصيات دوائية بأي شكل.</strong> أي قرار طبي يجب أن يُتّخذ بالتشاور مع طبيب مرخّص. في حالات الطوارئ، اتصل بالإسعاف فوراً ولا تستخدم التطبيق. تفاصيل التنويه الطبي الكاملة في <a href="/medical-disclaimer/">صفحة الإقرار الطبي</a>.</div>
+
+    <h2>1. تعريف الخدمة</h2>
+    <p>DocSera منصّة وسيطة تربط المرضى بالأطباء المسجَّلين في المنصّة. الميزات الأساسية المتاحة لك:</p>
+    <ul>
+        <li>البحث عن الأطباء وفقاً للتخصّص والموقع.</li>
+        <li>حجز المواعيد، إعادة جدولتها، وإلغاؤها.</li>
+        <li>إدارة سجل طبي شخصي (مستندات، تقارير، ملف صحي).</li>
+        <li>المراسلة المُشفّرة مع الأطباء (في حال أتاحها الطبيب).</li>
+        <li>إدارة ملفات أفراد العائلة (الأقارب) من حسابك.</li>
+        <li>برنامج ولاء وعروض من شركاء تجاريين خارج القطاع الطبي.</li>
+        <li>إشعارات تذكير بالمواعيد والاتصالات التشغيلية.</li>
+    </ul>
+
+    <h2>2. أهلية الاستخدام</h2>
+    <ul>
+        <li>يجب أن يكون عمرك <strong>16 عاماً على الأقل</strong> لإنشاء حساب.</li>
+        <li>للقاصرين دون 16 عاماً، يجب أن يُدير حسابهم وملفهم الطبي ولي الأمر القانوني عبر ميزة "إدارة الأقارب".</li>
+        <li>إذا أضفت أحد الأقارب لحسابك، فأنت تُؤكّد أن لديك الحق القانوني لإدارة شؤونه الطبية ضمن التطبيق.</li>
+        <li>عليك تقديم معلومات صحيحة ودقيقة عند التسجيل (الاسم، تاريخ الميلاد، رقم الهاتف، البريد الإلكتروني). تقديم معلومات كاذبة يُعتبر خرقاً للشروط ويُؤدّي إلى تعطيل الحساب.</li>
+        <li>يُمنع إنشاء حسابات وهمية أو انتحال شخصية شخص آخر.</li>
+    </ul>
+
+    <h2>3. الحساب والأمان</h2>
+    <ul>
+        <li>أنت مسؤول عن الحفاظ على سرّية بيانات الدخول الخاصة بك (رمز التحقق، البريد الإلكتروني، رقم الهاتف).</li>
+        <li>أنت مسؤول عن جميع الأنشطة التي تتم عبر حسابك.</li>
+        <li>يجب إخطارنا فوراً إذا اشتبهت بوصول غير مصرّح به لحسابك عبر <a href="mailto:support@docsera.app">support@docsera.app</a>.</li>
+        <li>لا تُشارك جلسة حسابك مع شخص آخر. استخدام التعرّف البيومتري يجب أن يكون لك وحدك على جهازك.</li>
+        <li>نُطبّق آلية تحقق برمز لمرة واحدة (OTP) عبر الرسائل القصيرة أو البريد الإلكتروني عند تسجيل الدخول من جهاز جديد.</li>
+    </ul>
+
+    <h2>4. السلوك المقبول</h2>
+    <p>عند استخدامك للتطبيق، توافق على عدم:</p>
+    <ul>
+        <li>رفع أي صور أو مستندات أو محتوى مخالف للآداب العامة أو القوانين السورية.</li>
+        <li>إرسال رسائل مسيئة، مهدِّدة، أو مزعجة للأطباء أو لأي شخص آخر عبر التطبيق.</li>
+        <li>استخدام التطبيق لأغراض احتيالية (مثل حجز مواعيد وهمية، أو محاولة استغلال برنامج الولاء بطرق غير مشروعة).</li>
+        <li>محاولة اختراق التطبيق، الوصول غير المصرَّح به لقاعدة البيانات، أو إدخال أي شيفرة خبيثة.</li>
+        <li>هندسة عكسية للتطبيق أو محاولة استخراج كود المصدر.</li>
+        <li>استخدام التطبيق لإعادة بيع خدمات الأطباء أو لأي غرض تجاري لم تتم الموافقة عليه.</li>
+        <li>انتهاك خصوصية مستخدمين آخرين أو نشر بياناتهم الشخصية.</li>
+        <li>طلب وصفات طبية أو علاج عبر التطبيق دون رقابة طبيب — التطبيق ليس عيادة طبية.</li>
+    </ul>
+
+    <h2>5. حجز المواعيد والإلغاء</h2>
+    <ul>
+        <li>الحجز يُؤكَّد فقط بعد تأكيد الطبيب أو العيادة. بعض الأطباء يطلبون تأكيداً يدوياً.</li>
+        <li>لكل طبيب سياسة إلغاء قد تختلف عن طبيب آخر. يُعرض لك فترة إشعار الإلغاء قبل تأكيد الحجز.</li>
+        <li>الإلغاء بعد فترة الإشعار، أو عدم الحضور (No-Show)، قد يُؤدي إلى تقييد قدرتك على الحجز مع نفس الطبيب لاحقاً (يحدد ذلك الطبيب نفسه، ليس DocSera).</li>
+        <li>الرسوم المتعلقة بالاستشارة الطبية تُدفع مباشرة للطبيب أو العيادة. <strong>DocSera لا يعالج أي مدفوعات للاستشارات الطبية في الوقت الحالي.</strong></li>
+    </ul>
+
+    <h2>6. المراسلة مع الأطباء</h2>
+    <ul>
+        <li>ميزة المراسلة متاحة فقط مع الأطباء الذين فعّلوها لحساباتهم.</li>
+        <li>الرسائل ليست بديلاً عن الاستشارة الطبية الكاملة. الطبيب قد يرفض الرد على أسئلة تتطلّب فحصاً شخصياً.</li>
+        <li>أوقات الرد ليست فورية. <strong>في حالات الطوارئ، اتصل بالإسعاف ولا تنتظر رد الطبيب عبر التطبيق.</strong></li>
+        <li>محتوى الرسائل مُشفّر ولا نقرأه. لكنك تتحمّل المسؤولية الكاملة عن المحتوى الذي ترسله.</li>
+        <li>الطبيب قد يُغلق محادثة معك إذا كانت مسيئة أو خارج نطاق ممارسته الطبية.</li>
+    </ul>
+
+    <h2>7. برنامج الولاء والعروض</h2>
+    <ul>
+        <li>تكسب نقاط ولاء عند إكمال مواعيد طبية وعند إحالة مستخدمين جدد.</li>
+        <li>يمكنك استبدال النقاط بقسائم خصم لدى شركاء تجاريين خارج القطاع الطبي.</li>
+        <li>القسائم لها صلاحية محدودة، وقد لا تُجمع مع عروض أخرى لدى الشريك.</li>
+        <li>الشركاء التجاريون مسؤولون عن تطبيق العرض على منتجاتهم/خدماتهم؛ DocSera ليس مسؤولاً عن جودة منتجات الشريك.</li>
+        <li>يحق لـ DocSera إيقاف برنامج الولاء أو تعديله أو سحب نقاط مكتسبة بطرق احتيالية.</li>
+        <li>النقاط لا يمكن تحويلها إلى نقد أو نقلها بين الحسابات.</li>
+    </ul>
+
+    <h2>8. المسؤولية القانونية</h2>
+
+    <h3>8.1 دور DocSera</h3>
+    <p>DocSera منصّة تقنية وسيطة. نحن مسؤولون عن:</p>
+    <ul>
+        <li>توافر التطبيق وأمنه التقني واستقراره (مع جهد معقول).</li>
+        <li>حماية بياناتك وفقاً لـ <a href="/privacy-policy/">سياسة الخصوصية</a>.</li>
+        <li>تيسير التواصل بينك وبين الأطباء.</li>
+    </ul>
+
+    <h3>8.2 ما لسنا مسؤولين عنه</h3>
+    <ul>
+        <li><strong>المحتوى الطبي:</strong> دقّة المعلومات الطبية التي يُقدّمها الطبيب، أو الوصفات، أو التشخيصات. الطبيب وحده مسؤول عن قراراته الطبية.</li>
+        <li><strong>جودة الرعاية:</strong> جودة الخدمة الطبية المُقدَّمة من قِبل الطبيب أو العيادة.</li>
+        <li><strong>توافر الأطباء:</strong> لا نضمن أن طبيباً معيّناً سيكون متاحاً في وقت معيّن.</li>
+        <li><strong>منتجات الشركاء:</strong> جودة أو مناسبة منتجات الشركاء التجاريين الذين يُقدّمون عروضاً عبر برنامج الولاء.</li>
+        <li><strong>الانقطاعات:</strong> لا نضمن توافراً بنسبة 100%؛ قد نُجري صيانة مجدولة أو نواجه مشاكل تقنية تخرج عن سيطرتنا.</li>
+        <li><strong>القرارات الطبية:</strong> أي قرار طبي تتخذه استناداً إلى محتوى التطبيق هو على مسؤوليتك. التطبيق ليس استشارة طبية.</li>
+    </ul>
+
+    <h3>8.3 سقف المسؤولية</h3>
+    <p>إلى الحد الأقصى الذي يسمح به القانون، تقتصر مسؤوليتنا تجاهك في أي ظرف على إصلاح المشكلة التقنية أو استرداد المبالغ التي دفعتها لـ DocSera (إن وجدت). <strong>DocSera حالياً مجّاني للمستخدمين، لذا لا توجد مدفوعات قابلة للاسترداد من قِبَلنا.</strong></p>
+
+    <h2>9. الملكية الفكرية</h2>
+    <ul>
+        <li>اسم "DocSera"، الشعار، التصميم، والكود الخاص بالتطبيق ملك لـ DocSera.</li>
+        <li>المحتوى الذي ترفعه أنت (مستندات، رسائل، صور) يبقى ملكاً لك. تمنحنا فقط ترخيصاً محدوداً لاستخدامه ضمن التطبيق لتقديم الخدمة لك.</li>
+        <li>لا يحق لك استخدام شعار أو اسم DocSera تجارياً دون إذن مكتوب.</li>
+    </ul>
+
+    <h2>10. تعديل أو إنهاء الحساب</h2>
+
+    <h3>10.1 من قِبَلك</h3>
+    <p>يمكنك تعطيل أو حذف حسابك في أي وقت من إعدادات الحساب. تفاصيل عملية الحذف الكاملة في <a href="/privacy-policy/">سياسة الخصوصية - القسم 8</a>.</p>
+
+    <h3>10.2 من قِبَلنا</h3>
+    <p>يحق لـ DocSera تعطيل أو إنهاء حسابك في الحالات التالية:</p>
+    <ul>
+        <li>خرق هذه الشروط بشكل جوهري.</li>
+        <li>سلوك احتيالي أو مسيء.</li>
+        <li>طلب رسمي من السلطات المختصة.</li>
+        <li>عدم استخدام الحساب لفترة طويلة جداً (سنخطرك قبل أي إجراء).</li>
+    </ul>
+    <p>سنُخطرك مسبقاً ما لم يكن الإنهاء فورياً مطلوباً لأسباب قانونية أو أمنية.</p>
+
+    <h2>11. تغييرات على الشروط</h2>
+    <p>قد نُحدِّث هذه الشروط من وقت لآخر. عند أي تحديث جوهري، سنُخطرك داخل التطبيق ونطلب موافقتك على النسخة الجديدة قبل متابعة استخدام الخدمة.</p>
+
+    <h2>12. القانون الحاكم وحلّ النزاعات</h2>
+    <p>تخضع هذه الشروط لقوانين الجمهورية العربية السورية. أيّ نزاع ينشأ عن هذه الشروط أو استخدامك للتطبيق يُحال إلى المحاكم المختصة في الجمهورية العربية السورية، ما لم يتم حلّه ودياً.</p>
+
+    <h2>13. الاتصال بنا</h2>
+    <p>لأي استفسار حول هذه الشروط:</p>
+    <ul>
+        <li>البريد الإلكتروني: <a href="mailto:support@docsera.app">support@docsera.app</a></li>
+        <li>للإبلاغ عن سلوك مخالف: <a href="mailto:abuse@docsera.app">abuse@docsera.app</a></li>
+    </ul>
+
+    <div class="footer">© 2026 DocSera. جميع الحقوق محفوظة.</div>
+</div>
+
+
+<div class="container" id="en-container" lang="en" dir="ltr" style="display:none;">
+    <div class="lang-switcher">
+        <button onclick="setLang('ar')">العربية</button>
+        <button class="active" onclick="setLang('en')">English</button>
     </div>
-    <script>
-        function setLang(lang) {
-            const ar = document.getElementById('ar');
-            const en = document.getElementById('en');
-            const buttons = document.querySelectorAll('.lang-switcher button');
-            const container = document.querySelector('.container');
-            if (lang === 'ar') {
-                ar.style.display = 'block';
-                en.style.display = 'none';
-                document.documentElement.lang = 'ar';
-                document.documentElement.dir = 'rtl';
-                document.body.style.fontFamily = "'Cairo', 'Segoe UI', Tahoma, sans-serif";
-            } else {
-                ar.style.display = 'none';
-                en.style.display = 'block';
-                document.documentElement.lang = 'en';
-                document.documentElement.dir = 'ltr';
-                document.body.style.fontFamily = "'Montserrat', sans-serif";
-            }
-            buttons.forEach(btn => btn.classList.remove('active'));
-            if (event && event.target) {
-                event.target.classList.add('active');
-            } else {
-                // If called programmatically or without event
-                const activeBtn = Array.from(buttons).find(b => b.textContent.toLowerCase() === lang);
-                if (activeBtn) activeBtn.classList.add('active');
-            }
-        }
-    </script>
+    <h1>Terms of Use</h1>
+    <div class="meta">Version 1.0 — Effective 5 May 2026</div>
+
+    <p>Welcome to <strong>DocSera</strong>. These Terms ("Terms") govern your use of the App. By creating an account or using any feature, you agree to be bound by these Terms. Please read them carefully.</p>
+
+    <div class="alert-box alert-box-ltr"><strong>Important medical notice:</strong> DocSera is a technology platform for booking medical appointments and managing personal medical files. <strong>The App does not provide medical advice, diagnosis, treatment, or medication recommendations of any kind.</strong> Any medical decision must be made in consultation with a licensed physician. In emergencies, call ambulance services immediately and do not use the App. Full medical disclaimer: <a href="/medical-disclaimer/">Medical Disclaimer page</a>.</div>
+
+    <h2>1. Service definition</h2>
+    <p>DocSera is an intermediary platform connecting patients with doctors registered on the platform. Core features available to you:</p>
+    <ul>
+        <li>Doctor search by specialty and location.</li>
+        <li>Booking, rescheduling, and cancelling appointments.</li>
+        <li>Personal medical record management (documents, reports, health profile).</li>
+        <li>Encrypted messaging with doctors (when the doctor enables it).</li>
+        <li>Managing relatives' files from your account.</li>
+        <li>Loyalty and offers program from non-medical business partners.</li>
+        <li>Appointment reminders and operational notifications.</li>
+    </ul>
+
+    <h2>2. Eligibility</h2>
+    <ul>
+        <li>You must be at least <strong>16 years old</strong> to create an account.</li>
+        <li>For minors under 16, accounts and medical files must be managed by a parent or legal guardian via the "Manage Relatives" feature.</li>
+        <li>If you add a relative to your account, you confirm you have the legal right to manage their medical affairs through the App.</li>
+        <li>You must provide accurate information at registration (name, date of birth, phone, email). False information is a breach of these Terms and will lead to account deactivation.</li>
+        <li>Creating fake accounts or impersonating another person is prohibited.</li>
+    </ul>
+
+    <h2>3. Account and security</h2>
+    <ul>
+        <li>You are responsible for keeping your login credentials confidential (one-time codes, email, phone).</li>
+        <li>You are responsible for all activity that takes place under your account.</li>
+        <li>Notify us immediately if you suspect unauthorized access at <a href="mailto:support@docsera.app">support@docsera.app</a>.</li>
+        <li>Do not share your account session with anyone. Biometric authentication should be your own, on your own device.</li>
+        <li>We use one-time codes (OTP) by SMS or email when you log in from a new device.</li>
+    </ul>
+
+    <h2>4. Acceptable use</h2>
+    <p>When using the App, you agree NOT to:</p>
+    <ul>
+        <li>Upload images, documents, or content that violate public decency or Syrian law.</li>
+        <li>Send abusive, threatening, or harassing messages to doctors or anyone else through the App.</li>
+        <li>Use the App for fraudulent purposes (fake bookings, attempts to abuse the loyalty program).</li>
+        <li>Attempt to hack the App, gain unauthorized access to the database, or inject malicious code.</li>
+        <li>Reverse-engineer the App or attempt to extract its source code.</li>
+        <li>Use the App to resell doctors' services or for any unapproved commercial purpose.</li>
+        <li>Violate other users' privacy or publish their personal data.</li>
+        <li>Request prescriptions or treatment through the App outside of a doctor's supervision — the App is not a medical clinic.</li>
+    </ul>
+
+    <h2>5. Booking and cancellation</h2>
+    <ul>
+        <li>A booking is confirmed only after the doctor or clinic confirms it. Some doctors require manual confirmation.</li>
+        <li>Each doctor has their own cancellation policy. The cancellation notice period is shown to you before you confirm a booking.</li>
+        <li>Cancelling after the notice period or not showing up (no-show) may restrict your ability to book with the same doctor again (this is set by the doctor, not by DocSera).</li>
+        <li>Fees for medical consultation are paid directly to the doctor or clinic. <strong>DocSera does not currently process any payments for medical consultations.</strong></li>
+    </ul>
+
+    <h2>6. Messaging with doctors</h2>
+    <ul>
+        <li>Messaging is available only with doctors who have enabled it for their accounts.</li>
+        <li>Messages are not a substitute for a complete medical consultation. The doctor may decline to answer questions that require an in-person examination.</li>
+        <li>Reply times are not instantaneous. <strong>In emergencies, call ambulance services and do not wait for a doctor's reply through the App.</strong></li>
+        <li>Message content is encrypted and we do not read it. However, you bear full responsibility for what you send.</li>
+        <li>A doctor may close a conversation if it is abusive or outside the scope of their medical practice.</li>
+    </ul>
+
+    <h2>7. Loyalty and offers program</h2>
+    <ul>
+        <li>You earn loyalty points by completing medical appointments and referring new users.</li>
+        <li>You can redeem points for discount vouchers with non-medical business partners.</li>
+        <li>Vouchers have limited validity and may not be combinable with other offers at the partner.</li>
+        <li>Business partners are responsible for honoring the discount on their products/services; DocSera is not responsible for the quality of partner products.</li>
+        <li>DocSera reserves the right to suspend or modify the loyalty program or revoke fraudulently earned points.</li>
+        <li>Points cannot be converted to cash or transferred between accounts.</li>
+    </ul>
+
+    <h2>8. Liability</h2>
+
+    <h3>8.1 What DocSera is responsible for</h3>
+    <ul>
+        <li>The technical availability, security, and stability of the App (with reasonable effort).</li>
+        <li>Protecting your data in accordance with the <a href="/privacy-policy/">Privacy Policy</a>.</li>
+        <li>Facilitating communication between you and doctors.</li>
+    </ul>
+
+    <h3>8.2 What we are NOT responsible for</h3>
+    <ul>
+        <li><strong>Medical content:</strong> the accuracy of medical information provided by doctors, prescriptions, or diagnoses. The doctor alone is responsible for their medical decisions.</li>
+        <li><strong>Quality of care:</strong> the quality of medical service delivered by the doctor or clinic.</li>
+        <li><strong>Doctor availability:</strong> we do not guarantee that a specific doctor will be available at a given time.</li>
+        <li><strong>Partner products:</strong> the quality or suitability of products from business partners offering deals through the loyalty program.</li>
+        <li><strong>Outages:</strong> we do not guarantee 100% uptime; we may perform scheduled maintenance or face technical issues outside our control.</li>
+        <li><strong>Medical decisions:</strong> any medical decision you make based on App content is at your own responsibility. The App is not medical advice.</li>
+    </ul>
+
+    <h3>8.3 Limitation of liability</h3>
+    <p>To the maximum extent permitted by law, our liability to you in any circumstance is limited to fixing the technical issue or refunding amounts you paid to DocSera (if any). <strong>DocSera is currently free for users, so there are no refundable amounts on our side.</strong></p>
+
+    <h2>9. Intellectual property</h2>
+    <ul>
+        <li>The "DocSera" name, logo, design, and code belong to DocSera.</li>
+        <li>Content you upload (documents, messages, images) remains yours. You grant us only a limited license to use it within the App to provide the service to you.</li>
+        <li>You may not use the DocSera logo or name commercially without written permission.</li>
+    </ul>
+
+    <h2>10. Account modification or termination</h2>
+    <h3>10.1 By you</h3>
+    <p>You can deactivate or delete your account at any time from account settings. Full deletion process details: <a href="/privacy-policy/">Privacy Policy — Section 8</a>.</p>
+
+    <h3>10.2 By us</h3>
+    <p>DocSera may deactivate or terminate your account in the following cases:</p>
+    <ul>
+        <li>Material breach of these Terms.</li>
+        <li>Fraudulent or abusive behavior.</li>
+        <li>Formal request from competent authorities.</li>
+        <li>Long-term inactivity (we will notify you before any action).</li>
+    </ul>
+    <p>We will give prior notice unless immediate termination is required for legal or security reasons.</p>
+
+    <h2>11. Changes to these Terms</h2>
+    <p>We may update these Terms from time to time. For any material change, we will notify you in-app and require your acceptance of the new version before continuing to use the service.</p>
+
+    <h2>12. Governing law and dispute resolution</h2>
+    <p>These Terms are governed by the laws of the Syrian Arab Republic. Any dispute arising from these Terms or your use of the App shall be referred to the competent courts of the Syrian Arab Republic, unless resolved amicably.</p>
+
+    <h2>13. Contact us</h2>
+    <ul>
+        <li>Email: <a href="mailto:support@docsera.app">support@docsera.app</a></li>
+        <li>To report abuse: <a href="mailto:abuse@docsera.app">abuse@docsera.app</a></li>
+    </ul>
+
+    <div class="footer">© 2026 DocSera. All rights reserved.</div>
+</div>
+
+<script>
+    function setLang(lang) {
+        document.getElementById('ar-container').style.display = lang === 'ar' ? 'block' : 'none';
+        document.getElementById('en-container').style.display = lang === 'en' ? 'block' : 'none';
+        document.documentElement.setAttribute('lang', lang);
+        document.documentElement.setAttribute('dir', lang === 'ar' ? 'rtl' : 'ltr');
+    }
+    (function() {
+        const params = new URLSearchParams(window.location.search);
+        const lang = params.get('lang');
+        if (lang === 'en' || lang === 'ar') setLang(lang);
+    })();
+</script>
+
 </body>
 </html>
