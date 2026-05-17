@@ -20,9 +20,10 @@
 // Device-aware CTA branches:
 //   - Mobile (iOS / Android): "Open in app" button using docsera:// scheme;
 //     OS handles the Universal/App Link if the app is installed, otherwise
-//     a "coming soon" hint for the stores (placeholder until launch).
-//   - Desktop: shows the current URL with a copy-to-clipboard button and
-//     instructs the user to open it on their phone.
+//     a pair of "Coming soon" App Store / Google Play badges (placeholder
+//     until launch).
+//   - Desktop: shows a QR code rendered client-side from the current URL,
+//     so the visitor can scan with their phone to open in the app.
 
 import Layout from '../layouts/Layout.astro';
 import Navbar from '../components/Navbar.astro';
@@ -51,14 +52,24 @@ const SUPABASE_ANON_KEY = 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJyb2xlIjoiYW5v
 				<div class="state state-doctor" data-state="doctor" hidden>
 					<div class="doctor-card fade-up visible">
 						<div class="doctor-photo">
-							<img data-doctor-image alt="" loading="lazy" />
-							<div class="photo-fallback" data-doctor-fallback hidden></div>
+							<!-- Initials fallback shown eagerly; the <img> is
+							     stacked on top and only un-hides on successful
+							     load. Avoids the "empty circle" intermediate
+							     state if the image fetch is slow or fails. -->
+							<div class="photo-fallback" data-doctor-fallback></div>
+							<img data-doctor-image alt="" />
 						</div>
 						<div class="doctor-info">
 							<span class="pill-badge specialty-badge" data-doctor-specialty></span>
 							<h1 class="name" data-doctor-name></h1>
 							<p class="clinic" data-doctor-clinic></p>
-							<p class="languages" data-doctor-languages></p>
+							<p class="address" data-doctor-address hidden>
+								<svg class="pin" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" aria-hidden="true">
+									<path d="M21 10c0 7-9 13-9 13s-9-6-9-13a9 9 0 0 1 18 0z"/>
+									<circle cx="12" cy="10" r="3"/>
+								</svg>
+								<span data-doctor-address-text></span>
+							</p>
 						</div>
 					</div>
 
@@ -66,34 +77,50 @@ const SUPABASE_ANON_KEY = 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJyb2xlIjoiYW5v
 						<h2 class="cta-title">احجز موعدك بسهولة عبر تطبيق DocSera</h2>
 						<p class="cta-sub">صحتك بين يديك — مواعيد ومراسلات وتقارير في تطبيق واحد.</p>
 
-						<!-- Mobile: open-in-app button + stores -->
+						<!-- Mobile branch: open-in-app + store badges -->
 						<div class="cta-mobile" data-cta-mobile>
 							<a class="btn-main btn-open-app" data-open-app href="#" rel="noopener">
 								افتح في التطبيق
 							</a>
-							<p class="cta-divider">حساب جديد؟</p>
-							<div class="cta-stores" data-cta-stores>
-								<!-- Pre-launch placeholder. Once stores go live, swap each div
-								     for an <a> with the real App Store / Google Play URL. -->
-								<div class="store-btn store-btn-disabled">
-									<span class="store-pre">قريباً</span>
-									<span class="store-name">App Store</span>
+							<p class="cta-divider">حساب جديد؟ حمّل التطبيق</p>
+							<div class="cta-stores">
+								<!-- Pre-launch placeholders. Once the apps ship, swap the
+								     outer <div class="store-link"> for an <a href="..."> with
+								     the real store URL, and remove the .is-coming-soon class
+								     + the قريباً pill overlay. The SVG bodies stay as-is. -->
+								<div class="store-link is-coming-soon" aria-label="App Store (قريباً)">
+									<span class="coming-pill">قريباً</span>
+									<svg class="store-badge" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 120 40">
+										<rect width="120" height="40" rx="6" fill="#000"/>
+										<path fill="#fff" d="M27.3 20.1c0-2.5 2-3.7 2.1-3.8-1.1-1.6-2.9-1.9-3.5-1.9-1.5-.2-2.9.9-3.6.9s-1.9-.9-3.1-.8c-1.6 0-3.1.9-3.9 2.4-1.7 2.9-.4 7.2 1.2 9.5.8 1.2 1.7 2.4 3 2.4 1.2 0 1.6-.8 3.1-.8s1.9.8 3.1.8c1.3 0 2.1-1.2 2.9-2.4.6-.8.9-1.6 1.3-2.5-2.9-1.1-3.6-3.9-3.6-3.8zM24.9 12.7c.6-.8 1.1-1.9.9-2.9-1 0-2.1.6-2.8 1.4-.6.7-1.2 1.8-1 2.8 1 .1 2.2-.5 2.9-1.3z"/>
+										<text x="38" y="17" fill="#fff" font-family="-apple-system,system-ui,sans-serif" font-size="6" font-weight="300">Download on the</text>
+										<text x="38" y="30" fill="#fff" font-family="-apple-system,system-ui,sans-serif" font-size="13" font-weight="600" letter-spacing="-0.3">App Store</text>
+									</svg>
 								</div>
-								<div class="store-btn store-btn-disabled">
-									<span class="store-pre">قريباً</span>
-									<span class="store-name">Google Play</span>
+								<div class="store-link is-coming-soon" aria-label="Google Play (قريباً)">
+									<span class="coming-pill">قريباً</span>
+									<svg class="store-badge" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 120 40">
+										<rect width="120" height="40" rx="6" fill="#000"/>
+										<g transform="translate(13 9)">
+											<path fill="#EA4335" d="M.6.4l11.3 11.6L5.6 18 .6.4z"/>
+											<path fill="#FBBC04" d="M11.9 12L.6.4l16.6 9.5L11.9 12z"/>
+											<path fill="#34A853" d="M17.2 9.9L.6.4 5.6 18 17.2 9.9z"/>
+											<path fill="#4285F4" d="M.6.4l5 17.6 11.6-8.1L.6.4z" opacity=".15"/>
+										</g>
+										<text x="38" y="17" fill="#fff" font-family="-apple-system,system-ui,sans-serif" font-size="6" font-weight="400">GET IT ON</text>
+										<text x="38" y="30" fill="#fff" font-family="-apple-system,system-ui,sans-serif" font-size="13" font-weight="500" letter-spacing="-0.3">Google Play</text>
+									</svg>
 								</div>
 							</div>
 						</div>
 
-						<!-- Desktop: copy URL + tip to open on phone -->
+						<!-- Desktop branch: QR code -->
 						<div class="cta-desktop" data-cta-desktop hidden>
-							<p class="cta-desk-instr">افتح هذا الرابط على هاتفك لمتابعة الحجز:</p>
-							<div class="url-box">
-								<span data-current-url></span>
-								<button type="button" class="copy-btn" data-copy-url>نسخ</button>
+							<p class="cta-desk-instr">امسح رمز QR من كاميرا هاتفك لفتح ملف الطبيب في تطبيق DocSera</p>
+							<div class="qr-frame">
+								<div class="qr-canvas" data-qr-canvas></div>
 							</div>
-							<p class="cta-desk-tip">أو امسح رمز QR من تطبيق DocSera على هاتفك.</p>
+							<p class="cta-desk-tip">إذا لم يكن لديك التطبيق، سيفتح الرابط على هاتفك بعد التثبيت.</p>
 						</div>
 					</div>
 				</div>
@@ -137,32 +164,41 @@ const SUPABASE_ANON_KEY = 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJyb2xlIjoiYW5v
 	<Footer />
 </Layout>
 
-<script define:vars={{ SUPABASE_URL, SUPABASE_ANON_KEY }}>
-	(function () {
-		// ----- Token extraction & validation ----------------------
-		const path = window.location.pathname;
-		const match = path.match(/^\/doctor\/([^/?#]+)/);
-		if (!match) { showState('invalid'); return; }
+<script>
+	import qrcode from 'qrcode-generator';
+
+	// Constants are injected at build time from the page frontmatter
+	// via a window global to keep this script type-clean for the bundler.
+	const SUPABASE_URL = 'https://api.docsera.app';
+	const SUPABASE_ANON_KEY = 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJyb2xlIjoiYW5vbiIsImlzcyI6InN1cGFiYXNlIiwiaWF0IjoxNzc0Mzg4NDY0LCJleHAiOjE5MzIwNjg0NjR9.Q9lVxKdVMbZge7vOgn_Ffroc8iVrpNtkFxqUugfwkPs';
+
+	// ----- Token extraction & validation ----------------------
+	const path = window.location.pathname;
+	const match = path.match(/^\/doctor\/([^/?#]+)/);
+	if (!match) {
+		showState('invalid');
+	} else {
 		const token = decodeURIComponent(match[1]);
 
-		// Same constraint the deep-link handler in the app uses
+		// Same constraint the deep-link handler in the patient app uses
 		// (services/navigation/deep_link_service.dart): alnum + - + _,
 		// max 64 chars. Reject anything else as malformed.
 		if (!/^[A-Za-z0-9_-]{1,64}$/.test(token)) {
 			showState('invalid');
-			return;
+		} else {
+			fetchDoctor(token);
 		}
+	}
 
-		// ----- Device detection -----------------------------------
+	function fetchDoctor(token: string) {
+		// ----- Device detection ----------------------------------
 		const ua = navigator.userAgent || '';
-		const isIOS = /iPad|iPhone|iPod/.test(ua) && !window.MSStream;
+		const isIOS = /iPad|iPhone|iPod/.test(ua) && !(window as any).MSStream;
 		const isAndroid = /Android/i.test(ua);
 		const isMobile = isIOS || isAndroid;
 
-		// ----- Fetch ----------------------------------------------
-		// We only select the columns we actually render. Avoids
-		// pulling internal/sensitive fields from the view even though
-		// RLS already gates them.
+		// Only the columns we actually render — avoids pulling internal
+		// fields from the view even though RLS already gates them.
 		const select = [
 			'id',
 			'public_token',
@@ -175,7 +211,7 @@ const SUPABASE_ANON_KEY = 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJyb2xlIjoiYW5v
 			'gender',
 			'doctor_image',
 			'clinic',
-			'languages',
+			'address',
 		].join(',');
 
 		const url = SUPABASE_URL + '/rest/v1/public_doctors' +
@@ -194,121 +230,153 @@ const SUPABASE_ANON_KEY = 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJyb2xlIjoiYW5v
 				if (!r.ok) throw new Error('HTTP ' + r.status);
 				return r.json();
 			})
-			.then((rows) => {
+			.then((rows: any[]) => {
 				if (!Array.isArray(rows) || rows.length === 0) {
 					showState('not-found');
 					return;
 				}
-				renderDoctor(rows[0]);
+				renderDoctor(rows[0], token, isMobile);
 			})
 			.catch((err) => {
-				// Network failure or 5xx — treat as not-found rather
-				// than crash. Surface a friendly error, not a stack.
 				console.error('[doctor page] fetch failed:', err);
 				showState('not-found');
 			});
+	}
 
-		// ----- Renderers ------------------------------------------
-		function renderDoctor(d) {
-			const titlePart = (d.title || '').trim();
-			const namePart = [d.first_name, d.middle_name, d.last_name]
-				.map((s) => (s || '').trim())
-				.filter(Boolean)
-				.join(' ');
-			const fullName = [titlePart, namePart].filter(Boolean).join(' ').trim();
+	function renderDoctor(d: any, token: string, isMobile: boolean) {
+		const titlePart = (d.title || '').trim();
+		const namePart = [d.first_name, d.middle_name, d.last_name]
+			.map((s: any) => (s || '').trim())
+			.filter(Boolean)
+			.join(' ');
+		const fullName = [titlePart, namePart].filter(Boolean).join(' ').trim();
 
-			byData('doctor-name').textContent = fullName || 'طبيب';
-			document.title = fullName ? (fullName + ' — DocSera') : 'DocSera — ملف الطبيب';
+		byData('doctor-name').textContent = fullName || 'طبيب';
+		document.title = fullName ? (fullName + ' — DocSera') : 'DocSera — ملف الطبيب';
 
-			const spec = d.specialty ||
-				(Array.isArray(d.specialties) && d.specialties.length > 0
-					? d.specialties[0]
-					: '');
-			byData('doctor-specialty').textContent = spec || 'طبيب';
+		const spec = d.specialty ||
+			(Array.isArray(d.specialties) && d.specialties.length > 0
+				? d.specialties[0]
+				: '');
+		byData('doctor-specialty').textContent = spec || 'طبيب';
 
-			byData('doctor-clinic').textContent = d.clinic || '';
+		byData('doctor-clinic').textContent = d.clinic || '';
 
-			// Languages line, omitted if empty so we don't show "يتحدث:" alone.
-			if (Array.isArray(d.languages) && d.languages.length > 0) {
-				byData('doctor-languages').textContent = 'يتحدث: ' + d.languages.join('، ');
-			}
-
-			renderImage(d, fullName);
-			renderCta(d);
-
-			showState('doctor');
+		// Address — formatted from the jsonb column, falls back gracefully
+		// when fields are missing. Hidden entirely if no address at all.
+		const addrText = formatAddress(d.address);
+		if (addrText) {
+			byData('doctor-address-text').textContent = addrText;
+			byData('doctor-address').hidden = false;
 		}
 
-		function renderImage(d, fullName) {
-			const img = byData('doctor-image');
-			const fb = byData('doctor-fallback');
+		renderImage(d, fullName);
+		renderCta(d, token, isMobile);
 
-			const filename = (d.doctor_image || '').trim();
-			if (filename) {
-				img.src = SUPABASE_URL + '/storage/v1/object/public/doctor/' +
-					encodeURIComponent(filename);
-				img.alt = fullName;
-				img.addEventListener('error', () => {
-					img.hidden = true;
-					fb.hidden = false;
-					fb.textContent = initialsFor(d);
-				}, { once: true });
-			} else {
-				img.hidden = true;
-				fb.hidden = false;
-				fb.textContent = initialsFor(d);
-			}
+		showState('doctor');
+	}
+
+	function formatAddress(addr: any): string {
+		if (!addr || typeof addr !== 'object') return '';
+		// Compose "street، neighborhood، city" with whichever parts exist,
+		// preferring the most specific. Strip neighborhood's parenthesised
+		// detail so we don't end up with "المزة (فيلات، أوتوستراد، شيخ سعد)"
+		// inline — the parens fight with the surrounding RTL comma-list.
+		const street = (addr.street || '').trim();
+		const rawHood = (addr.neighborhood || '').trim();
+		const hood = rawHood.replace(/\s*\([^)]*\)\s*$/, '').trim();
+		const city = (addr.city || '').trim();
+		const parts: string[] = [];
+		if (street) parts.push(street);
+		if (hood && hood !== street && hood !== city) parts.push(hood);
+		if (city) parts.push(city);
+		return parts.join('، ');
+	}
+
+	function renderImage(d: any, fullName: string) {
+		const img = byData('doctor-image') as HTMLImageElement;
+		const fb = byData('doctor-fallback');
+
+		// Always populate the fallback initials first, so the circle is
+		// never blank even if the image hasn't started loading yet.
+		fb.textContent = initialsFor(d);
+
+		const path = (d.doctor_image || '').trim();
+		if (!path) {
+			img.hidden = true;
+			return;
 		}
 
-		function initialsFor(d) {
-			const a = ((d.first_name || '').trim()[0] || '');
-			const b = ((d.last_name || '').trim()[0] || '');
-			return (a + b).toUpperCase() || '?';
-		}
+		// Preserve slashes in the path (it's typically uuid/profile/file.ext)
+		// while still escaping any unsafe characters within each segment.
+		const url = SUPABASE_URL + '/storage/v1/object/public/doctor/' +
+			path.split('/').map((seg: string) => encodeURIComponent(seg)).join('/');
 
-		function renderCta(d) {
-			// Always wire the in-app deep-link so installed users can
-			// "Open in app". OS routes docsera://doctor/<token> if the
-			// app is installed; if not, browsers just no-op (which is
-			// fine — the stores CTA is the fallback for new users).
-			const inAppUrl = 'docsera://doctor/' + encodeURIComponent(token);
-			const openBtn = byData('open-app');
-			openBtn.href = inAppUrl;
+		img.alt = fullName;
+		img.onload = () => {
+			// Reveal the image — it now sits on top of the initials fallback
+			// (z-index in CSS), so the fallback is hidden visually.
+			img.classList.add('is-loaded');
+		};
+		img.onerror = () => {
+			img.hidden = true;
+			// fallback initials are already populated and visible
+		};
+		img.src = url;
+	}
 
-			// Device-aware visibility
-			const ctaMobile = byData('cta-mobile');
-			const ctaDesktop = byData('cta-desktop');
-			if (isMobile) {
-				ctaMobile.hidden = false;
-				ctaDesktop.hidden = true;
-			} else {
-				ctaMobile.hidden = true;
-				ctaDesktop.hidden = false;
-				byData('current-url').textContent = window.location.href;
-				const copyBtn = byData('copy-url');
-				copyBtn.addEventListener('click', () => {
-					navigator.clipboard.writeText(window.location.href).then(() => {
-						const orig = copyBtn.textContent;
-						copyBtn.textContent = 'تم النسخ ✓';
-						setTimeout(() => { copyBtn.textContent = orig; }, 1500);
-					}).catch(() => {
-						copyBtn.textContent = 'انسخ يدويًا';
-					});
-				});
-			}
-		}
+	function initialsFor(d: any): string {
+		const a = ((d.first_name || '').trim().charAt(0) || '');
+		const b = ((d.last_name || '').trim().charAt(0) || '');
+		return (a + b).toUpperCase() || '?';
+	}
 
-		// ----- Tiny DOM helpers -----------------------------------
-		function byData(name) {
-			return document.querySelector('[data-' + name + ']');
-		}
+	function renderCta(d: any, token: string, isMobile: boolean) {
+		// Always wire the in-app deep-link so installed users can
+		// "Open in app". OS routes docsera://doctor/<token> if the
+		// app is installed; if not, browsers just no-op (which is
+		// fine — the stores badges are the fallback for new users).
+		const inAppUrl = 'docsera://doctor/' + encodeURIComponent(token);
+		const openBtn = byData('open-app') as HTMLAnchorElement;
+		openBtn.href = inAppUrl;
 
-		function showState(state) {
-			document.querySelectorAll('[data-state]').forEach((el) => {
-				el.hidden = el.dataset.state !== state;
-			});
+		// Device-aware visibility
+		const ctaMobile = byData('cta-mobile');
+		const ctaDesktop = byData('cta-desktop');
+		if (isMobile) {
+			ctaMobile.hidden = false;
+			ctaDesktop.hidden = true;
+		} else {
+			ctaMobile.hidden = true;
+			ctaDesktop.hidden = false;
+			renderQrCode();
 		}
-	})();
+	}
+
+	function renderQrCode() {
+		const container = byData('qr-canvas');
+		if (!container) return;
+		const url = window.location.href;
+		// Type 0 = auto-pick smallest QR version that fits the data.
+		// Error correction 'M' (~15%) balances density vs scannability —
+		// the doctor URL is short (~50 chars), 'M' is plenty robust.
+		const qr = qrcode(0, 'M');
+		qr.addData(url);
+		qr.make();
+		// Render as inline SVG, scalable to the container's CSS size.
+		container.innerHTML = qr.createSvgTag({ scalable: true, margin: 2 });
+	}
+
+	// ----- Tiny DOM helpers -----------------------------------
+	function byData(name: string): HTMLElement {
+		return document.querySelector('[data-' + name + ']') as HTMLElement;
+	}
+
+	function showState(state: string) {
+		document.querySelectorAll<HTMLElement>('[data-state]').forEach((el) => {
+			el.hidden = el.dataset.state !== state;
+		});
+	}
 </script>
 
 <style>
@@ -349,27 +417,38 @@ const SUPABASE_ANON_KEY = 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJyb2xlIjoiYW5v
 		max-width: 720px;
 		text-align: right;
 	}
+
+	/* Photo with initials-first fallback strategy.
+	   Stack: fallback initials at z-index 1, <img> at z-index 2.
+	   The img is invisible by default (opacity 0) so the fallback shows
+	   through; on successful load .is-loaded sets opacity 1, covering it. */
 	.doctor-photo {
 		width: 128px; height: 128px;
 		border-radius: 50%;
 		overflow: hidden;
-		background: var(--c-main-light);
 		position: relative;
 		flex-shrink: 0;
+		background: var(--c-main-light);
 	}
 	.doctor-photo img {
+		position: absolute; inset: 0;
 		width: 100%; height: 100%;
 		object-fit: cover;
 		display: block;
+		z-index: 2;
+		opacity: 0;
+		transition: opacity 0.25s ease-out;
 	}
+	.doctor-photo img.is-loaded { opacity: 1; }
 	.photo-fallback {
 		position: absolute; inset: 0;
 		display: flex; align-items: center; justify-content: center;
 		font-family: var(--font-en);
-		font-size: 2rem;
+		font-size: 2.2rem;
 		font-weight: 700;
 		color: var(--c-main);
 		background: var(--c-main-light);
+		z-index: 1;
 	}
 	.doctor-info .pill-badge {
 		display: inline-block;
@@ -393,10 +472,19 @@ const SUPABASE_ANON_KEY = 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJyb2xlIjoiYW5v
 		font-size: 1rem;
 		margin: 0 0 6px;
 	}
-	.doctor-info .languages {
+	.doctor-info .address {
 		color: var(--c-text-muted);
-		font-size: 0.9rem;
-		margin: 0;
+		font-size: 0.92rem;
+		margin: 6px 0 0;
+		display: inline-flex;
+		align-items: center;
+		gap: 6px;
+		line-height: 1.4;
+	}
+	.doctor-info .address .pin {
+		width: 14px; height: 14px;
+		color: var(--c-main);
+		flex-shrink: 0;
 	}
 
 	/* CTA block */
@@ -445,77 +533,74 @@ const SUPABASE_ANON_KEY = 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJyb2xlIjoiYW5v
 		font-size: 0.9rem;
 	}
 
+	/* App Store / Google Play badges — match the official store-badge
+	   look (rounded-rect black tile with brand mark + label). When stores
+	   ship, swap the outer <div class="store-link"> for an <a href="...">
+	   and remove .is-coming-soon + the قريباً pill in the markup. */
 	.cta-stores {
 		display: flex;
 		gap: 14px;
 		justify-content: center;
 		flex-wrap: wrap;
 	}
-	.store-btn {
-		display: inline-flex;
-		flex-direction: column;
-		align-items: flex-start;
-		text-align: right;
-		gap: 2px;
-		padding: 10px 22px;
-		border-radius: 12px;
-		border: 1.5px solid #eee;
-		min-width: 150px;
+	.store-link {
+		position: relative;
+		display: inline-block;
 		text-decoration: none;
+		line-height: 0;
+		transition: transform 0.15s ease-out;
 	}
-	.store-btn-disabled {
-		background: #f7f7f7;
-		color: var(--c-text-muted);
+	.store-link.is-coming-soon {
 		cursor: not-allowed;
+		opacity: 0.65;
 	}
-	.store-pre {
-		font-size: 0.7rem;
-		opacity: 0.7;
+	.store-link:not(.is-coming-soon):hover {
+		transform: translateY(-2px);
 	}
-	.store-name {
-		font-family: var(--font-en);
-		font-weight: 700;
-		font-size: 1rem;
+	.store-badge {
+		display: block;
+		width: 160px;
+		height: auto;
+		border-radius: 8px;
 	}
-
-	/* Desktop CTA */
-	.cta-desktop { text-align: center; }
-	.cta-desk-instr { color: var(--c-text); margin-bottom: 16px; font-weight: 600; }
-	.cta-desk-tip { color: var(--c-text-muted); font-size: 0.85rem; margin-top: 14px; }
-	.url-box {
-		display: inline-flex;
-		gap: 10px;
-		align-items: center;
-		background: #f6f6f6;
-		padding: 10px 14px;
-		border-radius: 12px;
-		max-width: 100%;
-		overflow: hidden;
-	}
-	.url-box span {
-		font-family: monospace;
-		font-size: 0.85rem;
-		overflow: hidden;
-		text-overflow: ellipsis;
-		white-space: nowrap;
-		direction: ltr;
-		min-width: 0;
-		max-width: 360px;
-	}
-	.copy-btn {
+	.coming-pill {
+		position: absolute;
+		top: -8px;
+		right: -8px;
 		background: var(--c-main);
 		color: white;
-		border: none;
-		padding: 8px 16px;
-		border-radius: 8px;
-		cursor: pointer;
-		font-weight: 600;
-		font-family: inherit;
-		font-size: 0.9rem;
-		flex-shrink: 0;
-		transition: background 0.2s;
+		font-family: var(--font-ar);
+		font-size: 0.7rem;
+		font-weight: 700;
+		padding: 3px 10px;
+		border-radius: 20px;
+		line-height: 1.4;
+		box-shadow: 0 2px 6px rgba(0, 0, 0, 0.15);
+		letter-spacing: 0;
 	}
-	.copy-btn:hover { background: var(--c-main-dark); }
+
+	/* Desktop CTA — QR code */
+	.cta-desktop { text-align: center; }
+	.cta-desk-instr { color: var(--c-text); margin: 0 0 18px; font-weight: 600; font-size: 1rem; }
+	.cta-desk-tip { color: var(--c-text-muted); font-size: 0.85rem; margin: 14px 0 0; }
+	.qr-frame {
+		display: inline-block;
+		padding: 18px;
+		background: white;
+		border-radius: 18px;
+		box-shadow: 0 8px 24px rgba(0, 0, 0, 0.08);
+		border: 1px solid #eee;
+	}
+	.qr-canvas {
+		width: 200px;
+		height: 200px;
+		display: block;
+	}
+	.qr-canvas svg {
+		width: 100%;
+		height: 100%;
+		display: block;
+	}
 
 	/* Error states */
 	.error-card {
@@ -556,7 +641,9 @@ const SUPABASE_ANON_KEY = 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJyb2xlIjoiYW5v
 			gap: 20px;
 		}
 		.doctor-info { text-align: center; }
+		.doctor-info .address { display: inline-flex; justify-content: center; }
 		.doctor-photo { width: 108px; height: 108px; }
+		.photo-fallback { font-size: 1.8rem; }
 		.cta-block { padding: 32px 22px; }
 	}
 </style>
