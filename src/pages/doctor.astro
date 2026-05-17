@@ -1,0 +1,562 @@
+---
+// Doctor landing page — rendered for every /doctor/<token> URL.
+//
+// Routing: this file builds to dist/doctor/index.html. The companion
+// nginx rule (see nginx/default.conf) maps any /doctor/<anything> URL
+// to this file via try_files fallback, so a single static page handles
+// every doctor's token without rebuilds when new doctors are added.
+//
+// The page renders a loading shell on the server, then a small inline
+// script reads the token from window.location.pathname, queries the
+// public_doctors view via Supabase REST (anon read access, RLS-gated),
+// and populates the DOM with the appropriate state:
+//
+//   - loading    initial state while the fetch is in-flight
+//   - doctor     doctor found → render preview + device-aware CTA
+//   - not-found  token didn't match an active doctor
+//   - invalid    URL path didn't contain a token, or token failed
+//                the safety regex (alnum + - + _, max 64 chars)
+//
+// Device-aware CTA branches:
+//   - Mobile (iOS / Android): "Open in app" button using docsera:// scheme;
+//     OS handles the Universal/App Link if the app is installed, otherwise
+//     a "coming soon" hint for the stores (placeholder until launch).
+//   - Desktop: shows the current URL with a copy-to-clipboard button and
+//     instructs the user to open it on their phone.
+
+import Layout from '../layouts/Layout.astro';
+import Navbar from '../components/Navbar.astro';
+import Footer from '../components/Footer.astro';
+
+// Same anon Supabase credentials the patient app uses (lib/app/const.dart).
+// Safe to embed client-side — RLS on public_doctors limits what anon reads.
+const SUPABASE_URL = 'https://api.docsera.app';
+const SUPABASE_ANON_KEY = 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJyb2xlIjoiYW5vbiIsImlzcyI6InN1cGFiYXNlIiwiaWF0IjoxNzc0Mzg4NDY0LCJleHAiOjE5MzIwNjg0NjR9.Q9lVxKdVMbZge7vOgn_Ffroc8iVrpNtkFxqUugfwkPs';
+---
+
+<Layout title="DocSera — ملف الطبيب">
+	<Navbar />
+
+	<main class="doctor-page">
+		<section class="doctor-section">
+			<div class="container">
+
+				<!-- Loading skeleton ------------------------------------ -->
+				<div class="state state-loading" data-state="loading">
+					<div class="spinner" aria-hidden="true"></div>
+					<p>جارٍ تحميل بيانات الطبيب…</p>
+				</div>
+
+				<!-- Doctor preview + CTA -------------------------------- -->
+				<div class="state state-doctor" data-state="doctor" hidden>
+					<div class="doctor-card fade-up visible">
+						<div class="doctor-photo">
+							<img data-doctor-image alt="" loading="lazy" />
+							<div class="photo-fallback" data-doctor-fallback hidden></div>
+						</div>
+						<div class="doctor-info">
+							<span class="pill-badge specialty-badge" data-doctor-specialty></span>
+							<h1 class="name" data-doctor-name></h1>
+							<p class="clinic" data-doctor-clinic></p>
+							<p class="languages" data-doctor-languages></p>
+						</div>
+					</div>
+
+					<div class="cta-block fade-up visible">
+						<h2 class="cta-title">احجز موعدك بسهولة عبر تطبيق DocSera</h2>
+						<p class="cta-sub">صحتك بين يديك — مواعيد ومراسلات وتقارير في تطبيق واحد.</p>
+
+						<!-- Mobile: open-in-app button + stores -->
+						<div class="cta-mobile" data-cta-mobile>
+							<a class="btn-main btn-open-app" data-open-app href="#" rel="noopener">
+								افتح في التطبيق
+							</a>
+							<p class="cta-divider">حساب جديد؟</p>
+							<div class="cta-stores" data-cta-stores>
+								<!-- Pre-launch placeholder. Once stores go live, swap each div
+								     for an <a> with the real App Store / Google Play URL. -->
+								<div class="store-btn store-btn-disabled">
+									<span class="store-pre">قريباً</span>
+									<span class="store-name">App Store</span>
+								</div>
+								<div class="store-btn store-btn-disabled">
+									<span class="store-pre">قريباً</span>
+									<span class="store-name">Google Play</span>
+								</div>
+							</div>
+						</div>
+
+						<!-- Desktop: copy URL + tip to open on phone -->
+						<div class="cta-desktop" data-cta-desktop hidden>
+							<p class="cta-desk-instr">افتح هذا الرابط على هاتفك لمتابعة الحجز:</p>
+							<div class="url-box">
+								<span data-current-url></span>
+								<button type="button" class="copy-btn" data-copy-url>نسخ</button>
+							</div>
+							<p class="cta-desk-tip">أو امسح رمز QR من تطبيق DocSera على هاتفك.</p>
+						</div>
+					</div>
+				</div>
+
+				<!-- Doctor not found ----------------------------------- -->
+				<div class="state state-not-found" data-state="not-found" hidden>
+					<div class="error-card fade-up visible">
+						<div class="error-icon" aria-hidden="true">
+							<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+								<circle cx="12" cy="12" r="10"/>
+								<line x1="12" y1="8" x2="12" y2="12"/>
+								<line x1="12" y1="16" x2="12.01" y2="16"/>
+							</svg>
+						</div>
+						<h1>لم نعثر على هذا الطبيب</h1>
+						<p>قد يكون الرابط منتهي الصلاحية أو حذف الطبيب ملفه. تحقق من الرابط وحاول مرة أخرى.</p>
+						<a href="/" class="btn-main">العودة للرئيسية</a>
+					</div>
+				</div>
+
+				<!-- Invalid token format ------------------------------- -->
+				<div class="state state-invalid" data-state="invalid" hidden>
+					<div class="error-card fade-up visible">
+						<div class="error-icon" aria-hidden="true">
+							<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+								<circle cx="12" cy="12" r="10"/>
+								<line x1="15" y1="9" x2="9" y2="15"/>
+								<line x1="9" y1="9" x2="15" y2="15"/>
+							</svg>
+						</div>
+						<h1>رابط غير صحيح</h1>
+						<p>الرابط لا يحتوي على معرّف طبيب صالح. الرجاء العودة للرئيسية.</p>
+						<a href="/" class="btn-main">العودة للرئيسية</a>
+					</div>
+				</div>
+
+			</div>
+		</section>
+	</main>
+
+	<Footer />
+</Layout>
+
+<script define:vars={{ SUPABASE_URL, SUPABASE_ANON_KEY }}>
+	(function () {
+		// ----- Token extraction & validation ----------------------
+		const path = window.location.pathname;
+		const match = path.match(/^\/doctor\/([^/?#]+)/);
+		if (!match) { showState('invalid'); return; }
+		const token = decodeURIComponent(match[1]);
+
+		// Same constraint the deep-link handler in the app uses
+		// (services/navigation/deep_link_service.dart): alnum + - + _,
+		// max 64 chars. Reject anything else as malformed.
+		if (!/^[A-Za-z0-9_-]{1,64}$/.test(token)) {
+			showState('invalid');
+			return;
+		}
+
+		// ----- Device detection -----------------------------------
+		const ua = navigator.userAgent || '';
+		const isIOS = /iPad|iPhone|iPod/.test(ua) && !window.MSStream;
+		const isAndroid = /Android/i.test(ua);
+		const isMobile = isIOS || isAndroid;
+
+		// ----- Fetch ----------------------------------------------
+		// We only select the columns we actually render. Avoids
+		// pulling internal/sensitive fields from the view even though
+		// RLS already gates them.
+		const select = [
+			'id',
+			'public_token',
+			'first_name',
+			'middle_name',
+			'last_name',
+			'title',
+			'specialty',
+			'specialties',
+			'gender',
+			'doctor_image',
+			'clinic',
+			'languages',
+		].join(',');
+
+		const url = SUPABASE_URL + '/rest/v1/public_doctors' +
+			'?select=' + encodeURIComponent(select) +
+			'&public_token=eq.' + encodeURIComponent(token) +
+			'&is_active=eq.true' +
+			'&limit=1';
+
+		fetch(url, {
+			headers: {
+				apikey: SUPABASE_ANON_KEY,
+				Authorization: 'Bearer ' + SUPABASE_ANON_KEY,
+			},
+		})
+			.then((r) => {
+				if (!r.ok) throw new Error('HTTP ' + r.status);
+				return r.json();
+			})
+			.then((rows) => {
+				if (!Array.isArray(rows) || rows.length === 0) {
+					showState('not-found');
+					return;
+				}
+				renderDoctor(rows[0]);
+			})
+			.catch((err) => {
+				// Network failure or 5xx — treat as not-found rather
+				// than crash. Surface a friendly error, not a stack.
+				console.error('[doctor page] fetch failed:', err);
+				showState('not-found');
+			});
+
+		// ----- Renderers ------------------------------------------
+		function renderDoctor(d) {
+			const titlePart = (d.title || '').trim();
+			const namePart = [d.first_name, d.middle_name, d.last_name]
+				.map((s) => (s || '').trim())
+				.filter(Boolean)
+				.join(' ');
+			const fullName = [titlePart, namePart].filter(Boolean).join(' ').trim();
+
+			byData('doctor-name').textContent = fullName || 'طبيب';
+			document.title = fullName ? (fullName + ' — DocSera') : 'DocSera — ملف الطبيب';
+
+			const spec = d.specialty ||
+				(Array.isArray(d.specialties) && d.specialties.length > 0
+					? d.specialties[0]
+					: '');
+			byData('doctor-specialty').textContent = spec || 'طبيب';
+
+			byData('doctor-clinic').textContent = d.clinic || '';
+
+			// Languages line, omitted if empty so we don't show "يتحدث:" alone.
+			if (Array.isArray(d.languages) && d.languages.length > 0) {
+				byData('doctor-languages').textContent = 'يتحدث: ' + d.languages.join('، ');
+			}
+
+			renderImage(d, fullName);
+			renderCta(d);
+
+			showState('doctor');
+		}
+
+		function renderImage(d, fullName) {
+			const img = byData('doctor-image');
+			const fb = byData('doctor-fallback');
+
+			const filename = (d.doctor_image || '').trim();
+			if (filename) {
+				img.src = SUPABASE_URL + '/storage/v1/object/public/doctor/' +
+					encodeURIComponent(filename);
+				img.alt = fullName;
+				img.addEventListener('error', () => {
+					img.hidden = true;
+					fb.hidden = false;
+					fb.textContent = initialsFor(d);
+				}, { once: true });
+			} else {
+				img.hidden = true;
+				fb.hidden = false;
+				fb.textContent = initialsFor(d);
+			}
+		}
+
+		function initialsFor(d) {
+			const a = ((d.first_name || '').trim()[0] || '');
+			const b = ((d.last_name || '').trim()[0] || '');
+			return (a + b).toUpperCase() || '?';
+		}
+
+		function renderCta(d) {
+			// Always wire the in-app deep-link so installed users can
+			// "Open in app". OS routes docsera://doctor/<token> if the
+			// app is installed; if not, browsers just no-op (which is
+			// fine — the stores CTA is the fallback for new users).
+			const inAppUrl = 'docsera://doctor/' + encodeURIComponent(token);
+			const openBtn = byData('open-app');
+			openBtn.href = inAppUrl;
+
+			// Device-aware visibility
+			const ctaMobile = byData('cta-mobile');
+			const ctaDesktop = byData('cta-desktop');
+			if (isMobile) {
+				ctaMobile.hidden = false;
+				ctaDesktop.hidden = true;
+			} else {
+				ctaMobile.hidden = true;
+				ctaDesktop.hidden = false;
+				byData('current-url').textContent = window.location.href;
+				const copyBtn = byData('copy-url');
+				copyBtn.addEventListener('click', () => {
+					navigator.clipboard.writeText(window.location.href).then(() => {
+						const orig = copyBtn.textContent;
+						copyBtn.textContent = 'تم النسخ ✓';
+						setTimeout(() => { copyBtn.textContent = orig; }, 1500);
+					}).catch(() => {
+						copyBtn.textContent = 'انسخ يدويًا';
+					});
+				});
+			}
+		}
+
+		// ----- Tiny DOM helpers -----------------------------------
+		function byData(name) {
+			return document.querySelector('[data-' + name + ']');
+		}
+
+		function showState(state) {
+			document.querySelectorAll('[data-state]').forEach((el) => {
+				el.hidden = el.dataset.state !== state;
+			});
+		}
+	})();
+</script>
+
+<style>
+	main { overflow-x: hidden; }
+
+	.doctor-section {
+		padding: 140px 0 80px;
+		min-height: 80vh;
+		background: radial-gradient(circle at 10% 10%, #fff 0%, #FAFAFA 100%);
+	}
+
+	/* ----- States ----- */
+	.state { text-align: center; }
+	.state[hidden] { display: none !important; }
+
+	/* Loading */
+	.state-loading p { color: var(--c-text-muted); margin-top: 16px; }
+	.spinner {
+		width: 44px; height: 44px; margin: 0 auto;
+		border: 3px solid var(--c-main-light);
+		border-top-color: var(--c-main);
+		border-radius: 50%;
+		animation: spin 0.8s linear infinite;
+	}
+	@keyframes spin { to { transform: rotate(360deg); } }
+
+	/* Doctor card */
+	.doctor-card {
+		display: grid;
+		grid-template-columns: auto 1fr;
+		gap: 32px;
+		align-items: center;
+		background: white;
+		padding: 36px;
+		border-radius: 28px;
+		box-shadow: 0 20px 60px rgba(0, 0, 0, 0.05);
+		margin: 0 auto 24px;
+		max-width: 720px;
+		text-align: right;
+	}
+	.doctor-photo {
+		width: 128px; height: 128px;
+		border-radius: 50%;
+		overflow: hidden;
+		background: var(--c-main-light);
+		position: relative;
+		flex-shrink: 0;
+	}
+	.doctor-photo img {
+		width: 100%; height: 100%;
+		object-fit: cover;
+		display: block;
+	}
+	.photo-fallback {
+		position: absolute; inset: 0;
+		display: flex; align-items: center; justify-content: center;
+		font-family: var(--font-en);
+		font-size: 2rem;
+		font-weight: 700;
+		color: var(--c-main);
+		background: var(--c-main-light);
+	}
+	.doctor-info .pill-badge {
+		display: inline-block;
+		background: rgba(0, 144, 146, 0.1);
+		color: var(--c-main);
+		padding: 6px 14px;
+		border-radius: 20px;
+		font-weight: 700;
+		font-size: 0.85rem;
+		margin-bottom: 10px;
+	}
+	.doctor-info .name {
+		font-size: clamp(1.5rem, 3.2vw, 2rem);
+		font-weight: 800;
+		line-height: 1.2;
+		margin: 0 0 8px;
+		color: var(--c-text);
+	}
+	.doctor-info .clinic {
+		color: var(--c-text-muted);
+		font-size: 1rem;
+		margin: 0 0 6px;
+	}
+	.doctor-info .languages {
+		color: var(--c-text-muted);
+		font-size: 0.9rem;
+		margin: 0;
+	}
+
+	/* CTA block */
+	.cta-block {
+		background: white;
+		padding: 40px 32px;
+		border-radius: 28px;
+		text-align: center;
+		max-width: 720px;
+		margin: 0 auto;
+		box-shadow: 0 20px 60px rgba(0, 0, 0, 0.04);
+	}
+	.cta-title {
+		font-size: clamp(1.2rem, 2.4vw, 1.6rem);
+		font-weight: 800;
+		margin-bottom: 10px;
+		color: var(--c-text);
+	}
+	.cta-sub {
+		color: var(--c-text-muted);
+		margin: 0 0 28px;
+		font-size: 1rem;
+	}
+
+	.btn-main {
+		background: var(--c-main);
+		color: white;
+		padding: 14px 32px;
+		border-radius: 12px;
+		font-weight: 700;
+		text-decoration: none;
+		display: inline-block;
+		font-size: 1rem;
+		transition: background 0.2s;
+	}
+	.btn-main:hover { background: var(--c-main-dark); }
+
+	.btn-open-app {
+		padding: 16px 40px;
+		font-size: 1.1rem;
+	}
+
+	.cta-divider {
+		margin: 22px 0 14px;
+		color: var(--c-text-muted);
+		font-size: 0.9rem;
+	}
+
+	.cta-stores {
+		display: flex;
+		gap: 14px;
+		justify-content: center;
+		flex-wrap: wrap;
+	}
+	.store-btn {
+		display: inline-flex;
+		flex-direction: column;
+		align-items: flex-start;
+		text-align: right;
+		gap: 2px;
+		padding: 10px 22px;
+		border-radius: 12px;
+		border: 1.5px solid #eee;
+		min-width: 150px;
+		text-decoration: none;
+	}
+	.store-btn-disabled {
+		background: #f7f7f7;
+		color: var(--c-text-muted);
+		cursor: not-allowed;
+	}
+	.store-pre {
+		font-size: 0.7rem;
+		opacity: 0.7;
+	}
+	.store-name {
+		font-family: var(--font-en);
+		font-weight: 700;
+		font-size: 1rem;
+	}
+
+	/* Desktop CTA */
+	.cta-desktop { text-align: center; }
+	.cta-desk-instr { color: var(--c-text); margin-bottom: 16px; font-weight: 600; }
+	.cta-desk-tip { color: var(--c-text-muted); font-size: 0.85rem; margin-top: 14px; }
+	.url-box {
+		display: inline-flex;
+		gap: 10px;
+		align-items: center;
+		background: #f6f6f6;
+		padding: 10px 14px;
+		border-radius: 12px;
+		max-width: 100%;
+		overflow: hidden;
+	}
+	.url-box span {
+		font-family: monospace;
+		font-size: 0.85rem;
+		overflow: hidden;
+		text-overflow: ellipsis;
+		white-space: nowrap;
+		direction: ltr;
+		min-width: 0;
+		max-width: 360px;
+	}
+	.copy-btn {
+		background: var(--c-main);
+		color: white;
+		border: none;
+		padding: 8px 16px;
+		border-radius: 8px;
+		cursor: pointer;
+		font-weight: 600;
+		font-family: inherit;
+		font-size: 0.9rem;
+		flex-shrink: 0;
+		transition: background 0.2s;
+	}
+	.copy-btn:hover { background: var(--c-main-dark); }
+
+	/* Error states */
+	.error-card {
+		background: white;
+		padding: 60px 40px;
+		border-radius: 28px;
+		box-shadow: 0 20px 60px rgba(0, 0, 0, 0.04);
+		max-width: 540px;
+		margin: 0 auto;
+	}
+	.error-card h1 {
+		font-size: clamp(1.5rem, 3vw, 2rem);
+		margin: 0 0 14px;
+		color: var(--c-text);
+	}
+	.error-card p {
+		color: var(--c-text-muted);
+		margin: 0 0 28px;
+		font-size: 1rem;
+		line-height: 1.6;
+	}
+	.error-icon {
+		width: 64px;
+		height: 64px;
+		margin: 0 auto 22px;
+		color: var(--c-main);
+		opacity: 0.85;
+	}
+	.error-icon svg { width: 100%; height: 100%; }
+
+	@media (max-width: 700px) {
+		.doctor-section { padding: 100px 0 60px; }
+		.doctor-card {
+			grid-template-columns: 1fr;
+			text-align: center;
+			justify-items: center;
+			padding: 28px 22px;
+			gap: 20px;
+		}
+		.doctor-info { text-align: center; }
+		.doctor-photo { width: 108px; height: 108px; }
+		.cta-block { padding: 32px 22px; }
+	}
+</style>
