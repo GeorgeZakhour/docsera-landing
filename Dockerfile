@@ -14,6 +14,13 @@ RUN npm run build
 # Stage 2: Runtime
 FROM nginx:alpine
 
+# Custom server config: adds a /.well-known/ location that serves
+# apple-app-site-association (no extension) + assetlinks.json as
+# application/json. Required for iOS Universal Links and Android
+# App Links verification to pass. Everything else stays identical
+# to the nginx:alpine default behaviour.
+COPY nginx/default.conf /etc/nginx/conf.d/default.conf
+
 # Copy built static files from builder stage
 COPY --from=builder /app/dist /usr/share/nginx/html
 

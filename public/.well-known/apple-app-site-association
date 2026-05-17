@@ -1,0 +1,18 @@
+{
+  "applinks": {
+    "details": [
+      {
+        "appIDs": ["6C9U988HWY.com.docsera.app"],
+        "components": [
+          {
+            "/": "/doctor/*",
+            "comment": "Match every doctor profile deep link"
+          }
+        ]
+      }
+    ]
+  },
+  "webcredentials": {
+    "apps": ["6C9U988HWY.com.docsera.app"]
+  }
+}

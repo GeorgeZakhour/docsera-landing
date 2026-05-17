@@ -1,0 +1,13 @@
+[
+  {
+    "relation": ["delegate_permission/common.handle_all_urls"],
+    "target": {
+      "namespace": "android_app",
+      "package_name": "com.docsera.app",
+      "sha256_cert_fingerprints": [
+        "62:20:33:6E:25:4F:37:75:2D:66:06:9D:AE:53:DD:8D:15:83:89:A8:1F:EF:19:6D:ED:FA:2A:02:1C:31:49:EF",
+        "CB:5A:6F:DD:B8:68:CC:7A:8E:67:A4:1A:DF:8C:D6:97:98:20:7C:5B:B5:2E:3D:0C:C7:59:6F:4B:A2:DC:40:9C"
+      ]
+    }
+  }
+]
