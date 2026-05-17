@@ -7,6 +7,10 @@
           {
             "/": "/doctor/*",
             "comment": "Match every doctor profile deep link"
+          },
+          {
+            "/": "/center/*",
+            "comment": "Match every medical center deep link"
           }
         ]
       }

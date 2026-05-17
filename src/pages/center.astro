@@ -1,0 +1,622 @@
+---
+// Medical-center landing page — rendered for every /center/<id> URL.
+//
+// Mirrors src/pages/doctor.astro exactly. Same single-shell + client-side
+// fetch pattern, same device-aware CTA, same store-badge / QR layout.
+// Differences from the doctor page:
+//   - Fetches public_centers instead of public_doctors.
+//   - Centers are addressed by their UUID id (no public_token).
+//   - The pill badge shows the center type (مركز طبي, عيادة, …) instead
+//     of a doctor specialty.
+//   - The photo fallback is a building/hospital icon (no obvious
+//     "initials" analog for a clinic name like "مركز الشفا الطبي").
+//
+// Routing: builds to dist/center/index.html. nginx serves this single
+// file for any /center/<anything> URL via try_files fallback (see
+// nginx/default.conf).
+
+import Layout from '../layouts/Layout.astro';
+import Navbar from '../components/Navbar.astro';
+import Footer from '../components/Footer.astro';
+---
+
+<Layout title="DocSera — ملف المركز">
+	<Navbar />
+
+	<main class="center-page">
+		<section class="center-section">
+			<div class="container">
+
+				<!-- Loading skeleton ------------------------------------ -->
+				<div class="state state-loading" data-state="loading">
+					<div class="spinner" aria-hidden="true"></div>
+					<p>جارٍ تحميل بيانات المركز…</p>
+				</div>
+
+				<!-- Center preview + CTA -------------------------------- -->
+				<div class="state state-center" data-state="center" hidden>
+					<div class="center-card fade-up visible">
+						<div class="center-photo">
+							<!-- Building icon shown eagerly so the circle is
+							     never empty. The <img> stacks on top and only
+							     un-hides on successful load. -->
+							<div class="photo-fallback" data-center-fallback>
+								<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" aria-hidden="true">
+									<path d="M3 21h18"/>
+									<path d="M5 21V7l8-4v18"/>
+									<path d="M19 21V11l-6-4"/>
+									<path d="M9 9v.01"/>
+									<path d="M9 12v.01"/>
+									<path d="M9 15v.01"/>
+									<path d="M9 18v.01"/>
+								</svg>
+							</div>
+							<img data-center-image alt="" />
+						</div>
+						<div class="center-info">
+							<span class="pill-badge type-badge" data-center-type></span>
+							<h1 class="name" data-center-name></h1>
+							<p class="description" data-center-description hidden></p>
+							<p class="address" data-center-address hidden>
+								<svg class="pin" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" aria-hidden="true">
+									<path d="M21 10c0 7-9 13-9 13s-9-6-9-13a9 9 0 0 1 18 0z"/>
+									<circle cx="12" cy="10" r="3"/>
+								</svg>
+								<span data-center-address-text></span>
+							</p>
+						</div>
+					</div>
+
+					<div class="cta-block fade-up visible">
+						<h2 class="cta-title">احجز موعدك في هذا المركز عبر تطبيق DocSera</h2>
+						<p class="cta-sub">صحتك بين يديك — مواعيد ومراسلات وتقارير في تطبيق واحد.</p>
+
+						<div class="cta-mobile" data-cta-mobile>
+							<a class="btn-main btn-open-app" data-open-app href="#" rel="noopener">
+								افتح في التطبيق
+							</a>
+							<p class="cta-divider">حساب جديد؟ حمّل التطبيق</p>
+							<div class="cta-stores">
+								<div class="store-link is-coming-soon" aria-label="App Store (قريباً)">
+									<span class="coming-pill">قريباً</span>
+									<svg class="store-badge" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 135 40" direction="ltr">
+										<rect width="135" height="40" rx="6" fill="#000"/>
+										<g fill="#fff" transform="translate(10 8) scale(1.5)">
+											<path d="M11.182.008C11.148-.03 9.923.023 8.857 1.18c-1.066 1.156-.902 2.482-.878 2.516.024.034 1.52.087 2.475-1.258.955-1.345.762-2.391.728-2.43zm3.314 11.733c-.048-.096-2.325-1.234-2.113-3.422.212-2.189 1.675-2.789 1.698-2.854.023-.065-.597-.79-1.254-1.157a3.692 3.692 0 0 0-1.563-.434c-.108-.003-.486-.096-1.273.198-.517.193-1.682.645-2.003.659-.322.014-1.276-.529-2.304-.678-.656-.142-1.351.105-1.851.299-.5.196-1.448.77-2.114 2.279-.667 1.509-.32 3.899.165 5.726.485 1.828 1.331 3.473 2.247 3.66.685.139 1.498-.317 2.069-.514.572-.198 1.572-.236 2.426-.041.853.194 2.286.722 3.236.428.5-.156 1.473-.572 1.998-1.514.526-.942.752-1.86 1.022-2.708.274-.847.448-1.61.394-1.847z"/>
+										</g>
+										<text x="40" y="17" fill="#fff" font-family="Helvetica, Arial, sans-serif" font-size="7" font-weight="400">Download on the</text>
+										<text x="40" y="31" fill="#fff" font-family="Helvetica, Arial, sans-serif" font-size="14" font-weight="600" letter-spacing="-0.4">App Store</text>
+									</svg>
+								</div>
+								<div class="store-link is-coming-soon" aria-label="Google Play (قريباً)">
+									<span class="coming-pill">قريباً</span>
+									<svg class="store-badge" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 135 40" direction="ltr">
+										<rect width="135" height="40" rx="6" fill="#000"/>
+										<defs>
+											<linearGradient id="dsPlayGradC" x1="0" y1="0" x2="1" y2="1">
+												<stop offset="0" stop-color="#EA4335"/>
+												<stop offset=".45" stop-color="#FBBC04"/>
+												<stop offset="1" stop-color="#34A853"/>
+											</linearGradient>
+										</defs>
+										<g transform="translate(13 9.5)">
+											<path fill="url(#dsPlayGradC)" d="M0 0 L0 21 L18 10.5 Z"/>
+										</g>
+										<text x="40" y="17" fill="#fff" font-family="Helvetica, Arial, sans-serif" font-size="6.5" font-weight="400">GET IT ON</text>
+										<text x="40" y="31" fill="#fff" font-family="Helvetica, Arial, sans-serif" font-size="14" font-weight="500" letter-spacing="-0.3">Google Play</text>
+									</svg>
+								</div>
+							</div>
+						</div>
+
+						<div class="cta-desktop" data-cta-desktop hidden>
+							<p class="cta-desk-instr">امسح رمز QR من كاميرا هاتفك لفتح ملف المركز في تطبيق DocSera</p>
+							<div class="qr-frame">
+								<div class="qr-canvas" data-qr-canvas></div>
+							</div>
+							<p class="cta-desk-tip">إذا لم يكن لديك التطبيق، سيفتح الرابط على هاتفك بعد التثبيت.</p>
+						</div>
+					</div>
+				</div>
+
+				<div class="state state-not-found" data-state="not-found" hidden>
+					<div class="error-card fade-up visible">
+						<div class="error-icon" aria-hidden="true">
+							<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+								<circle cx="12" cy="12" r="10"/>
+								<line x1="12" y1="8" x2="12" y2="12"/>
+								<line x1="12" y1="16" x2="12.01" y2="16"/>
+							</svg>
+						</div>
+						<h1>لم نعثر على هذا المركز</h1>
+						<p>قد يكون الرابط منتهي الصلاحية أو حذف المركز ملفه. تحقق من الرابط وحاول مرة أخرى.</p>
+						<a href="/" class="btn-main">العودة للرئيسية</a>
+					</div>
+				</div>
+
+				<div class="state state-invalid" data-state="invalid" hidden>
+					<div class="error-card fade-up visible">
+						<div class="error-icon" aria-hidden="true">
+							<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+								<circle cx="12" cy="12" r="10"/>
+								<line x1="15" y1="9" x2="9" y2="15"/>
+								<line x1="9" y1="9" x2="15" y2="15"/>
+							</svg>
+						</div>
+						<h1>رابط غير صحيح</h1>
+						<p>الرابط لا يحتوي على معرّف مركز صالح. الرجاء العودة للرئيسية.</p>
+						<a href="/" class="btn-main">العودة للرئيسية</a>
+					</div>
+				</div>
+
+			</div>
+		</section>
+	</main>
+
+	<Footer />
+</Layout>
+
+<script>
+	import qrcode from 'qrcode-generator';
+
+	const SUPABASE_URL = 'https://api.docsera.app';
+	const SUPABASE_ANON_KEY = 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJyb2xlIjoiYW5vbiIsImlzcyI6InN1cGFiYXNlIiwiaWF0IjoxNzc0Mzg4NDY0LCJleHAiOjE5MzIwNjg0NjR9.Q9lVxKdVMbZge7vOgn_Ffroc8iVrpNtkFxqUugfwkPs';
+
+	// Map raw type slugs from centers.type to human-readable Arabic labels.
+	// 'solo' and 'clinic' are the only values seen in real data today (most
+	// "centers" in this DB are actually single-doctor solo practices); the
+	// rest are anticipated multi-specialty / lab / pharmacy types kept here
+	// so future records render without code changes. Unknown/empty falls
+	// back to "عيادة" — the most common case in production today.
+	const TYPE_LABELS: Record<string, string> = {
+		solo: 'عيادة',
+		clinic: 'عيادة',
+		medical_center: 'مركز طبي',
+		hospital: 'مستشفى',
+		polyclinic: 'مجمع عيادات',
+		dental_center: 'مركز أسنان',
+		dental_clinic: 'عيادة أسنان',
+		lab: 'مختبر',
+		laboratory: 'مختبر',
+		imaging: 'مركز تصوير شعاعي',
+		pharmacy: 'صيدلية',
+	};
+
+	// ----- Token extraction & validation ----------------------
+	const path = window.location.pathname;
+	const match = path.match(/^\/center\/([^/?#]+)/);
+	if (!match) {
+		showState('invalid');
+	} else {
+		const centerId = decodeURIComponent(match[1]);
+
+		// Same broad bounds the patient app's isValidCenterId uses:
+		// [A-Za-z0-9_-], length 1..64. UUIDs always fit.
+		if (!/^[A-Za-z0-9_-]{1,64}$/.test(centerId)) {
+			showState('invalid');
+		} else {
+			fetchCenter(centerId);
+		}
+	}
+
+	function fetchCenter(id: string) {
+		const ua = navigator.userAgent || '';
+		const isIOS = /iPad|iPhone|iPod/.test(ua) && !(window as any).MSStream;
+		const isAndroid = /Android/i.test(ua);
+		const isMobile = isIOS || isAndroid;
+
+		const select = [
+			'id',
+			'name',
+			'type',
+			'description',
+			'address',
+			'center_image',
+			'logo_url',
+		].join(',');
+
+		const url = SUPABASE_URL + '/rest/v1/public_centers' +
+			'?select=' + encodeURIComponent(select) +
+			'&id=eq.' + encodeURIComponent(id) +
+			'&limit=1';
+
+		fetch(url, {
+			headers: {
+				apikey: SUPABASE_ANON_KEY,
+				Authorization: 'Bearer ' + SUPABASE_ANON_KEY,
+			},
+		})
+			.then((r) => {
+				if (!r.ok) throw new Error('HTTP ' + r.status);
+				return r.json();
+			})
+			.then((rows: any[]) => {
+				if (!Array.isArray(rows) || rows.length === 0) {
+					showState('not-found');
+					return;
+				}
+				renderCenter(rows[0], id, isMobile);
+			})
+			.catch((err) => {
+				console.error('[center page] fetch failed:', err);
+				showState('not-found');
+			});
+	}
+
+	function renderCenter(c: any, id: string, isMobile: boolean) {
+		const name = (c.name || '').trim() || 'مركز طبي';
+		byData('center-name').textContent = name;
+		document.title = name + ' — DocSera';
+
+		// Type label — map known slugs, fall back to the raw value if it
+		// looks readable (already Arabic), else "عيادة" (the most common
+		// real-world case in this DB).
+		const rawType = (c.type || '').trim();
+		const label = TYPE_LABELS[rawType] ||
+			(rawType && !/^[a-z_]+$/.test(rawType) ? rawType : 'عيادة');
+		byData('center-type').textContent = label;
+
+		// Description, truncated to a single visual paragraph. Hidden if
+		// no description so the layout doesn't show an empty line.
+		const desc = (c.description || '').trim();
+		if (desc) {
+			byData('center-description').textContent = desc;
+			byData('center-description').hidden = false;
+		}
+
+		const addrText = formatAddress(c.address);
+		if (addrText) {
+			byData('center-address-text').textContent = addrText;
+			byData('center-address').hidden = false;
+		}
+
+		renderImage(c, name);
+		renderCta(id, isMobile);
+
+		showState('center');
+	}
+
+	function formatAddress(addr: any): string {
+		if (!addr || typeof addr !== 'object') return '';
+		const street = (addr.street || '').trim();
+		const rawHood = (addr.neighborhood || '').trim();
+		const hood = rawHood.replace(/\s*\([^)]*\)\s*$/, '').trim();
+		const city = (addr.city || '').trim();
+		const parts: string[] = [];
+		if (street) parts.push(street);
+		if (hood && hood !== street && hood !== city) parts.push(hood);
+		if (city) parts.push(city);
+		return parts.join('، ');
+	}
+
+	function renderImage(c: any, name: string) {
+		const img = byData('center-image') as HTMLImageElement;
+
+		// Prefer center_image (storage path under the center bucket).
+		// Fall back to logo_url which is sometimes an absolute URL set by
+		// admin tools. If both are empty, the building-icon fallback in
+		// the markup stays visible.
+		const path = (c.center_image || '').trim();
+		const logo = (c.logo_url || '').trim();
+
+		let url = '';
+		if (path) {
+			url = SUPABASE_URL + '/storage/v1/object/public/center/' +
+				path.split('/').map((seg: string) => encodeURIComponent(seg)).join('/');
+		} else if (logo) {
+			// logo_url can be either an absolute URL or a relative storage path.
+			url = logo.startsWith('http')
+				? logo
+				: SUPABASE_URL + '/storage/v1/object/public/center/' +
+					logo.split('/').map((seg: string) => encodeURIComponent(seg)).join('/');
+		}
+
+		if (!url) {
+			img.hidden = true;
+			return;
+		}
+
+		img.alt = name;
+		img.onload = () => img.classList.add('is-loaded');
+		img.onerror = () => { img.hidden = true; };
+		img.src = url;
+	}
+
+	function renderCta(id: string, isMobile: boolean) {
+		const inAppUrl = 'docsera://center/' + encodeURIComponent(id);
+		(byData('open-app') as HTMLAnchorElement).href = inAppUrl;
+
+		const ctaMobile = byData('cta-mobile');
+		const ctaDesktop = byData('cta-desktop');
+		if (isMobile) {
+			ctaMobile.hidden = false;
+			ctaDesktop.hidden = true;
+		} else {
+			ctaMobile.hidden = true;
+			ctaDesktop.hidden = false;
+			renderQrCode();
+		}
+	}
+
+	function renderQrCode() {
+		const container = byData('qr-canvas');
+		if (!container) return;
+		const qr = qrcode(0, 'M');
+		qr.addData(window.location.href);
+		qr.make();
+		container.innerHTML = qr.createSvgTag({ scalable: true, margin: 2 });
+	}
+
+	function byData(name: string): HTMLElement {
+		return document.querySelector('[data-' + name + ']') as HTMLElement;
+	}
+
+	function showState(state: string) {
+		document.querySelectorAll<HTMLElement>('[data-state]').forEach((el) => {
+			el.hidden = el.dataset.state !== state;
+		});
+	}
+</script>
+
+<style>
+	main { overflow-x: hidden; }
+
+	.center-section {
+		padding: 140px 0 80px;
+		min-height: 80vh;
+		background: radial-gradient(circle at 10% 10%, #fff 0%, #FAFAFA 100%);
+	}
+
+	.state { text-align: center; }
+	.state[hidden] { display: none !important; }
+
+	.state-loading p { color: var(--c-text-muted); margin-top: 16px; }
+	.spinner {
+		width: 44px; height: 44px; margin: 0 auto;
+		border: 3px solid var(--c-main-light);
+		border-top-color: var(--c-main);
+		border-radius: 50%;
+		animation: spin 0.8s linear infinite;
+	}
+	@keyframes spin { to { transform: rotate(360deg); } }
+
+	.center-card {
+		display: grid;
+		grid-template-columns: auto 1fr;
+		gap: 32px;
+		align-items: center;
+		background: white;
+		padding: 36px;
+		border-radius: 28px;
+		box-shadow: 0 20px 60px rgba(0, 0, 0, 0.05);
+		margin: 0 auto 24px;
+		max-width: 720px;
+		text-align: right;
+	}
+
+	.center-photo {
+		width: 128px; height: 128px;
+		border-radius: 24px;
+		overflow: hidden;
+		position: relative;
+		flex-shrink: 0;
+		background: var(--c-main-light);
+	}
+	.center-photo img {
+		position: absolute; inset: 0;
+		width: 100%; height: 100%;
+		object-fit: cover;
+		display: block;
+		z-index: 2;
+		opacity: 0;
+		transition: opacity 0.25s ease-out;
+	}
+	.center-photo img.is-loaded { opacity: 1; }
+	.photo-fallback {
+		position: absolute; inset: 0;
+		display: flex; align-items: center; justify-content: center;
+		color: var(--c-main);
+		background: var(--c-main-light);
+		z-index: 1;
+	}
+	.photo-fallback svg {
+		width: 56px;
+		height: 56px;
+	}
+
+	.center-info .pill-badge {
+		display: inline-block;
+		background: rgba(0, 144, 146, 0.1);
+		color: var(--c-main);
+		padding: 6px 14px;
+		border-radius: 20px;
+		font-weight: 700;
+		font-size: 0.85rem;
+		margin-bottom: 10px;
+	}
+	.center-info .name {
+		font-size: clamp(1.5rem, 3.2vw, 2rem);
+		font-weight: 800;
+		line-height: 1.2;
+		margin: 0 0 8px;
+		color: var(--c-text);
+	}
+	.center-info .description {
+		color: var(--c-text-muted);
+		font-size: 0.95rem;
+		margin: 0 0 8px;
+		line-height: 1.5;
+		display: -webkit-box;
+		-webkit-line-clamp: 2;
+		line-clamp: 2;
+		-webkit-box-orient: vertical;
+		overflow: hidden;
+	}
+	.center-info .address {
+		color: var(--c-text-muted);
+		font-size: 0.92rem;
+		margin: 6px 0 0;
+		display: inline-flex;
+		align-items: center;
+		gap: 6px;
+		line-height: 1.4;
+	}
+	.center-info .address .pin {
+		width: 14px; height: 14px;
+		color: var(--c-main);
+		flex-shrink: 0;
+	}
+
+	.cta-block {
+		background: white;
+		padding: 40px 32px;
+		border-radius: 28px;
+		text-align: center;
+		max-width: 720px;
+		margin: 0 auto;
+		box-shadow: 0 20px 60px rgba(0, 0, 0, 0.04);
+	}
+	.cta-title {
+		font-size: clamp(1.2rem, 2.4vw, 1.6rem);
+		font-weight: 800;
+		margin-bottom: 10px;
+		color: var(--c-text);
+	}
+	.cta-sub {
+		color: var(--c-text-muted);
+		margin: 0 0 28px;
+		font-size: 1rem;
+	}
+
+	.btn-main {
+		background: var(--c-main);
+		color: white;
+		padding: 14px 32px;
+		border-radius: 12px;
+		font-weight: 700;
+		text-decoration: none;
+		display: inline-block;
+		font-size: 1rem;
+		transition: background 0.2s;
+	}
+	.btn-main:hover { background: var(--c-main-dark); }
+
+	.btn-open-app {
+		padding: 16px 40px;
+		font-size: 1.1rem;
+	}
+
+	.cta-divider {
+		margin: 22px 0 14px;
+		color: var(--c-text-muted);
+		font-size: 0.9rem;
+	}
+
+	.cta-stores {
+		display: flex;
+		gap: 14px;
+		justify-content: center;
+		flex-wrap: wrap;
+	}
+	.store-link {
+		position: relative;
+		display: inline-block;
+		text-decoration: none;
+		line-height: 0;
+		transition: transform 0.15s ease-out;
+	}
+	.store-link.is-coming-soon {
+		cursor: not-allowed;
+		opacity: 0.65;
+	}
+	.store-link:not(.is-coming-soon):hover {
+		transform: translateY(-2px);
+	}
+	.store-badge {
+		display: block;
+		width: 175px;
+		height: auto;
+		border-radius: 8px;
+	}
+	.coming-pill {
+		position: absolute;
+		top: -8px;
+		right: -8px;
+		background: var(--c-main);
+		color: white;
+		font-family: var(--font-ar);
+		font-size: 0.7rem;
+		font-weight: 700;
+		padding: 3px 10px;
+		border-radius: 20px;
+		line-height: 1.4;
+		box-shadow: 0 2px 6px rgba(0, 0, 0, 0.15);
+		letter-spacing: 0;
+	}
+
+	.cta-desktop { text-align: center; }
+	.cta-desk-instr { color: var(--c-text); margin: 0 0 18px; font-weight: 600; font-size: 1rem; }
+	.cta-desk-tip { color: var(--c-text-muted); font-size: 0.85rem; margin: 14px 0 0; }
+	.qr-frame {
+		display: inline-block;
+		padding: 18px;
+		background: white;
+		border-radius: 18px;
+		box-shadow: 0 8px 24px rgba(0, 0, 0, 0.08);
+		border: 1px solid #eee;
+	}
+	.qr-canvas {
+		width: 200px;
+		height: 200px;
+		display: block;
+	}
+	.qr-canvas svg {
+		width: 100%;
+		height: 100%;
+		display: block;
+	}
+
+	.error-card {
+		background: white;
+		padding: 60px 40px;
+		border-radius: 28px;
+		box-shadow: 0 20px 60px rgba(0, 0, 0, 0.04);
+		max-width: 540px;
+		margin: 0 auto;
+	}
+	.error-card h1 {
+		font-size: clamp(1.5rem, 3vw, 2rem);
+		margin: 0 0 14px;
+		color: var(--c-text);
+	}
+	.error-card p {
+		color: var(--c-text-muted);
+		margin: 0 0 28px;
+		font-size: 1rem;
+		line-height: 1.6;
+	}
+	.error-icon {
+		width: 64px;
+		height: 64px;
+		margin: 0 auto 22px;
+		color: var(--c-main);
+		opacity: 0.85;
+	}
+	.error-icon svg { width: 100%; height: 100%; }
+
+	@media (max-width: 700px) {
+		.center-section { padding: 100px 0 60px; }
+		.center-card {
+			grid-template-columns: 1fr;
+			text-align: center;
+			justify-items: center;
+			padding: 28px 22px;
+			gap: 20px;
+		}
+		.center-info { text-align: center; }
+		.center-info .address { display: inline-flex; justify-content: center; }
+		.center-photo { width: 108px; height: 108px; border-radius: 20px; }
+		.photo-fallback svg { width: 46px; height: 46px; }
+		.cta-block { padding: 32px 22px; }
+	}
+</style>
