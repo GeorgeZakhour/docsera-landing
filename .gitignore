@@ -1,0 +1,66 @@
+# DocSera-Landing — Astro project (Node-based)
+#
+# This repo had no .gitignore until 2026-05-19 (oversight from the original
+# scaffold), which is why `git status` had been showing build outputs and
+# node_modules churn as untracked noise for months. .dockerignore was the
+# only exclusion list, but that only affects Docker builds — git happily
+# tracked everything else.
+#
+# Note: a few files under .astro/, dist/, and node_modules/ are already
+# tracked from before this file existed (committed by accident before
+# anyone noticed the missing .gitignore). This file ONLY prevents NEW
+# files in those dirs from being tracked; the previously-tracked files
+# stay until someone explicitly untracks them:
+#     git rm --cached -r .astro/ dist/ node_modules/.package-lock.json
+#     git rm --cached -r node_modules/.vite/
+# Left as a future cleanup — running git rm --cached changes git tracking
+# but leaves on-disk files in place, so it's reversible if needed.
+
+# --------------------------------------------------------------------
+# Build outputs
+# --------------------------------------------------------------------
+dist/
+.astro/
+
+# --------------------------------------------------------------------
+# Dependencies
+# --------------------------------------------------------------------
+node_modules/
+
+# --------------------------------------------------------------------
+# Local secrets / env
+# --------------------------------------------------------------------
+.env
+.env.local
+.env.production
+.env.production.local
+.env.development.local
+
+# --------------------------------------------------------------------
+# Editor / IDE
+# --------------------------------------------------------------------
+.vscode/
+.idea/
+*.iml
+
+# --------------------------------------------------------------------
+# OS
+# --------------------------------------------------------------------
+.DS_Store
+Thumbs.db
+
+# --------------------------------------------------------------------
+# Logs
+# --------------------------------------------------------------------
+*.log
+npm-debug.log*
+yarn-debug.log*
+yarn-error.log*
+pnpm-debug.log*
+
+# --------------------------------------------------------------------
+# Caches
+# --------------------------------------------------------------------
+.vite/
+.cache/
+.parcel-cache/
