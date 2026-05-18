@@ -256,9 +256,12 @@ import Footer from '../components/Footer.astro';
 			(rawType && !/^[a-z_]+$/.test(rawType) ? rawType : 'عيادة');
 		byData('center-type').textContent = label;
 
-		// Description, truncated to a single visual paragraph. Hidden if
-		// no description so the layout doesn't show an empty line.
-		const desc = (c.description || '').trim();
+		// Description column is stored as a Quill Delta document, not plain
+		// text. Parse it; if parsing fails the value is already plain text
+		// (legacy rows). Trivially-empty content (just "…", whitespace, or
+		// empty after Delta extraction) → hide the line entirely so the
+		// layout doesn't carry an awkward placeholder.
+		const desc = extractDescription(c.description);
 		if (desc) {
 			byData('center-description').textContent = desc;
 			byData('center-description').hidden = false;
@@ -274,6 +277,44 @@ import Footer from '../components/Footer.astro';
 		renderCta(id, isMobile);
 
 		showState('center');
+	}
+
+	/// Pull plain text out of the description column. Centers store
+	/// descriptions as a Quill Delta document of the shape:
+	///   {"version":3,"parts":[{"title": ..., "delta": [{"insert": "..."}, ...]}, ...]}
+	/// Walk parts → delta → insert (string-typed only) and concatenate.
+	/// Falls back to the raw string if JSON parsing fails, then strips
+	/// trivial placeholder content (just an ellipsis or whitespace).
+	function extractDescription(raw: any): string {
+		if (!raw) return '';
+		const s = String(raw).trim();
+		if (!s) return '';
+
+		let text = '';
+		if (s.startsWith('{') || s.startsWith('[')) {
+			try {
+				const doc = JSON.parse(s);
+				const parts = Array.isArray(doc?.parts) ? doc.parts : [];
+				const pieces: string[] = [];
+				for (const part of parts) {
+					if (typeof part?.title === 'string') pieces.push(part.title);
+					const delta = Array.isArray(part?.delta) ? part.delta : [];
+					for (const op of delta) {
+						if (typeof op?.insert === 'string') pieces.push(op.insert);
+					}
+				}
+				text = pieces.join(' ');
+			} catch {
+				text = s; // not valid JSON → treat as plain text
+			}
+		} else {
+			text = s; // already plain text (legacy)
+		}
+
+		// Collapse whitespace, strip surrounding/standalone ellipsis chars.
+		text = text.replace(/\s+/g, ' ').trim();
+		if (!text || /^[…\.]+$/.test(text)) return '';
+		return text;
 	}
 
 	function formatAddress(addr: any): string {
@@ -299,15 +340,18 @@ import Footer from '../components/Footer.astro';
 		const path = (c.center_image || '').trim();
 		const logo = (c.logo_url || '').trim();
 
+		// Storage bucket for centers is "center-images" (plural, hyphenated)
+		// — the doctor convention is "doctor" (singular). Different bucket
+		// names per resource type; hardcode the right one here.
 		let url = '';
 		if (path) {
-			url = SUPABASE_URL + '/storage/v1/object/public/center/' +
+			url = SUPABASE_URL + '/storage/v1/object/public/center-images/' +
 				path.split('/').map((seg: string) => encodeURIComponent(seg)).join('/');
 		} else if (logo) {
 			// logo_url can be either an absolute URL or a relative storage path.
 			url = logo.startsWith('http')
 				? logo
-				: SUPABASE_URL + '/storage/v1/object/public/center/' +
+				: SUPABASE_URL + '/storage/v1/object/public/center-images/' +
 					logo.split('/').map((seg: string) => encodeURIComponent(seg)).join('/');
 		}
 
