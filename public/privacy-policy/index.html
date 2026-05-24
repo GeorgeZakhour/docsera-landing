@@ -35,7 +35,7 @@
         <button id="btn-en" onclick="setLang('en')">English</button>
     </div>
     <h1>سياسة الخصوصية</h1>
-    <div class="meta">الإصدار 1.0 — ساري المفعول من 5 أيار 2026</div>
+    <div class="meta">الإصدار 1.1 — ساري المفعول من 24 أيار 2026</div>
 
     <p>مرحباً بك في تطبيق <strong>DocSera</strong> ("التطبيق" أو "نحن"). تُحدّد هذه الوثيقة كيف نقوم بجمع بياناتك الشخصية والصحية، وكيف نستخدمها، وأين نحفظها، ومع مَن نشاركها، وما هي حقوقك تجاه هذه البيانات. باستخدامك للتطبيق وإنشاء حساب فيه، فإنك توافق على ممارسات الخصوصية الموضحة في هذه الوثيقة.</p>
 
@@ -110,7 +110,8 @@
     <h3>3.3 مع مزوّدي الخدمات التقنية</h3>
     <p>نستعين بمجموعة محدودة جداً من مزوّدي الخدمات التقنية لتشغيل التطبيق. هؤلاء المزوّدون مُلزَمون تعاقدياً بحماية بياناتك ولا يستخدمونها لأي غرض آخر:</p>
     <ul>
-        <li><strong>Pushy</strong> (الولايات المتحدة): مزوّد إشعارات Push. يستلم رمز جهازك ومحتوى الإشعار النصي القصير فقط (مثلاً: "لديك رد جديد من الطبيب"). <strong>لا يستلم أبداً محتوى الرسائل أو المستندات أو أي بيانات صحية.</strong></li>
+        <li><strong>Firebase Cloud Messaging</strong> (شركة Google Ireland Ltd، الاتحاد الأوروبي): مزوّد الإشعارات الأساسي على أجهزة أندرويد وأجهزة iOS التي تدعم خدمات Google Play. يستلم رمز جهازك ومحتوى الإشعار النصي القصير فقط (مثلاً: "لديك رد جديد من الطبيب"). <strong>لا يستلم أبداً محتوى الرسائل أو المستندات أو أي بيانات صحية.</strong></li>
+        <li><strong>Pushy</strong> (الولايات المتحدة): مزوّد إشعارات احتياطي للأجهزة التي لا تدعم خدمات Google Play (مثل أجهزة هواوي). نطاق البيانات نفسه — رمز الجهاز ومحتوى الإشعار النصي القصير فقط. <strong>لا يستلم أبداً محتوى الرسائل أو المستندات أو أي بيانات صحية.</strong></li>
         <li><strong>Sentry</strong> (الاتحاد الأوروبي - فرانكفورت): مزوّد تتبّع الأخطاء التقنية. يستلم تقارير الأعطال البرمجية مع نسخة مُموَّهة عن إصدار التطبيق ونوع الجهاز. <strong>تم تكوينه ليُزيل تلقائياً أيّ معلومات شخصية</strong> قبل إرسال أي تقرير.</li>
         <li><strong>Google Maps</strong>: لعرض الخرائط فقط. لا يستلم Google أي بيانات شخصية أو صحية — فقط إحداثيات الخريطة المعروضة، عبر وسيط على خادمنا.</li>
     </ul>
@@ -119,7 +120,7 @@
     <p>قد نُفصِح عن بياناتك للسلطات المختصة في الجمهورية العربية السورية إذا طُلب منا ذلك بموجب أمر قضائي صحيح أو التزام قانوني واضح، وضمن الحد الأدنى المطلوب فقط.</p>
 
     <h2>4. أين تُخزَّن بياناتك</h2>
-    <p>تُخزَّن جميع بياناتك الشخصية والصحية والمستندات والرسائل <strong>على خادم محلي داخل الجمهورية العربية السورية</strong> تابع لشركة الاتصالات السورية (سيريتل). لا تُغادر بياناتك الصحية الأراضي السورية أبداً. الاستثناءات الوحيدة هي تقارير الأعطال البرمجية المُرسلة إلى Sentry، والتي لا تحتوي على بيانات شخصية أو صحية.</p>
+    <p>تُخزَّن جميع بياناتك الشخصية والصحية والمستندات والرسائل <strong>على خادم محلي داخل الجمهورية العربية السورية</strong>، مُستضاف على بنية شركة سيريتل للاتصالات المتنقلة. لا تُغادر بياناتك الصحية الأراضي السورية أبداً. الاستثناءات الوحيدة هي تقارير الأعطال البرمجية المُرسلة إلى Sentry، والتي لا تحتوي على بيانات شخصية أو صحية.</p>
 
     <h2>5. كيف نحمي بياناتك</h2>
     <ul>
@@ -130,7 +131,7 @@
         <li><strong>الوصول الإداري:</strong> فريق DocSera الفني المحدود يصل إلى بياناتك فقط عند الضرورة لإصلاح مشكلة تقنية، وعبر نظام صلاحيات صارم ومُسجَّل.</li>
         <li><strong>كلمات المرور:</strong> لا نُخزّن كلمات مرورك بشكل قابل للقراءة.</li>
         <li><strong>تحديث أمني إلزامي:</strong> إذا اكتُشِفت ثغرة أمنية، يُمكننا إجبار جميع المستخدمين على تحديث التطبيق.</li>
-        <li><strong>المراجعة الأمنية:</strong> أجرينا مراجعة أمنية شاملة قبل الإطلاق.</li>
+        <li><strong>المراجعة الأمنية:</strong> أجرينا مراجعة أمنية داخلية قبل الإطلاق.</li>
     </ul>
 
     <h2>6. الإشعار في حال خرق البيانات</h2>
@@ -162,7 +163,7 @@
     <p>إذا لم تتراجع خلال الـ30 يوماً، نقوم تلقائياً بـ:</p>
     <ul>
         <li><strong>حذف معلوماتك الشخصية:</strong> اسمك، بريدك، رقم هاتفك، تاريخ ميلادك، عنوانك، أجهزتك الموثوقة، تفضيلاتك، رمز الإحالة، نقاط الولاء.</li>
-        <li><strong>تمويه السجلات الطبية المرتبطة:</strong> المواعيد، الرسائل، المستندات، التقارير. تُستبدل هويتك الشخصية في هذه السجلات بمعرّف مُموَّه (مثل "Patient_XXXXXXXX") وتبقى متاحة فقط للأطباء الذين عالجوك كجزء من ملفاتهم الطبية المهنية.</li>
+        <li><strong>تمويه السجلات الطبية المرتبطة:</strong> المواعيد، الرسائل، المستندات، التقارير. تُستبدل هويتك الشخصية في هذه السجلات بمُعرِّف غير قابل للتعريف ("مستخدم محذوف" / "Deleted User")، ويُستبدل بريدك الإلكتروني بمُعرِّف مُبهَم (مثلاً <code>deleted_a1b2c3d4@deleted.docsera.app</code>)، ويُستبدل رقم هاتفك بمُعرِّف مماثل غير قابل للاستخدام. تبقى السجلات متاحة فقط للأطباء الذين عالجوك كجزء من ملفاتهم الطبية المهنية.</li>
     </ul>
     <p>سبب احتفاظ الأطباء بسجلاتهم: الممارسة الطبية المعتمدة في الجمهورية العربية السورية تُلزم الطبيب بالاحتفاظ بسجلاته الإكلينيكية لأغراض المسؤولية القانونية والمراجعة المهنية.</p>
 
@@ -212,7 +213,7 @@
         <button class="active" onclick="setLang('en')">English</button>
     </div>
     <h1>Privacy Policy</h1>
-    <div class="meta">Version 1.0 — Effective 5 May 2026</div>
+    <div class="meta">Version 1.1 — Effective 24 May 2026</div>
 
     <p>Welcome to <strong>DocSera</strong> ("the App", or "we"). This document sets out exactly what personal and health data we collect, how we use it, where it is stored, with whom it is shared, and what rights you have over it. By using the App and creating an account, you accept the privacy practices described here.</p>
 
@@ -285,7 +286,8 @@
 
     <h3>3.3 With technical service providers</h3>
     <ul>
-        <li><strong>Pushy</strong> (United States): push notification provider. Receives only your device token and the short notification text (e.g. "You have a new reply from your doctor"). <strong>Never receives the content of messages, documents, or any health data.</strong></li>
+        <li><strong>Firebase Cloud Messaging</strong> (Google Ireland Ltd, EU): primary push notification provider on Android and on iOS devices with Google Play Services. Receives only your device token and the short notification text (e.g. "You have a new reply from your doctor"). <strong>Never receives the content of messages, documents, or any health data.</strong></li>
+        <li><strong>Pushy</strong> (United States): fallback push notification provider for devices without Google Play Services (e.g. Huawei devices). Same data scope as FCM — device token and short notification text only. <strong>Never receives the content of messages, documents, or any health data.</strong></li>
         <li><strong>Sentry</strong> (European Union — Frankfurt): technical error tracking provider. Receives crash reports along with a sanitized snapshot of app version and device type. <strong>Configured to automatically remove any personal information</strong> before sending any report.</li>
         <li><strong>Google Maps</strong>: solely to display maps. Google receives no personal or health data — only the map tile coordinates being displayed, routed via a proxy on our server.</li>
     </ul>
@@ -294,7 +296,7 @@
     <p>We may disclose your data to competent authorities in the Syrian Arab Republic if required by a valid court order or clear legal obligation, and only to the minimum necessary extent.</p>
 
     <h2>4. Where your data is stored</h2>
-    <p>All your personal data, health data, documents, and messages are stored <strong>on a local server inside the Syrian Arab Republic</strong>, operated through Syrian Telecom (Syriatel) infrastructure. Your health data never leaves Syrian territory. The only exceptions are technical crash reports sent to Sentry, which contain no personal or health data.</p>
+    <p>All your personal data, health data, documents, and messages are stored <strong>on a local server inside the Syrian Arab Republic</strong>, hosted on Syriatel Mobile Telecom infrastructure. Your health data never leaves Syrian territory. The only exceptions are technical crash reports sent to Sentry, which contain no personal or health data.</p>
 
     <h2>5. How we protect your data</h2>
     <ul>
@@ -305,7 +307,7 @@
         <li><strong>Administrative access:</strong> our small technical team accesses your data only when necessary to fix a technical issue, via a strict permission system with audit logging.</li>
         <li><strong>Passwords:</strong> we do not store your passwords in a readable form.</li>
         <li><strong>Forced security updates:</strong> if a security flaw is discovered, we can require all users to update to a patched version.</li>
-        <li><strong>Security review:</strong> we performed a comprehensive security review prior to launch.</li>
+        <li><strong>Security review:</strong> we conducted an internal security review prior to launch.</li>
     </ul>
 
     <h2>6. Breach notification</h2>
@@ -336,7 +338,7 @@
     <p>If you do not cancel within 30 days, we automatically:</p>
     <ul>
         <li><strong>Delete your personal information:</strong> name, email, phone, date of birth, address, trusted devices, preferences, referral code, loyalty points.</li>
-        <li><strong>Pseudonymize the related medical records:</strong> appointments, messages, documents, reports. Your personal identity is replaced in those records with a pseudonymous identifier (e.g. "Patient_XXXXXXXX"). The records remain accessible only to the doctors who treated you, as part of their professional medical files.</li>
+        <li><strong>Pseudonymize the related medical records:</strong> appointments, messages, documents, reports. Your personal identity is replaced in those records with a non-identifying placeholder ("Deleted User" / "مستخدم محذوف"), your email is replaced with an opaque identifier (e.g. <code>deleted_a1b2c3d4@deleted.docsera.app</code>), and your phone is replaced with a similar non-routable identifier. The records remain accessible only to the doctors who treated you, as part of their professional medical files.</li>
     </ul>
     <p>Why doctors keep their records: medical practice in the Syrian Arab Republic obliges physicians to retain their clinical records for legal-liability and professional-review purposes.</p>
 
