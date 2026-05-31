@@ -35,6 +35,26 @@
       "version": "1.0",
       "effective_date": "2026-05-05",
       "requires_consent": false
+    },
+    {
+      "code": "pro_privacy_policy",
+      "name_en": "Privacy Policy (DocSera Pro)",
+      "name_ar": "سياسة الخصوصية (دوكسيرا برو)",
+      "url": "https://docsera.app/pro/privacy-policy/",
+      "version": "1.0",
+      "effective_date": "2026-06-01",
+      "requires_consent": true,
+      "app_context": "pro"
+    },
+    {
+      "code": "pro_terms_of_service",
+      "name_en": "Terms of Use (DocSera Pro)",
+      "name_ar": "شروط الاستخدام (دوكسيرا برو)",
+      "url": "https://docsera.app/pro/terms-of-service/",
+      "version": "1.0",
+      "effective_date": "2026-06-01",
+      "requires_consent": true,
+      "app_context": "pro"
     }
   ]
 }
