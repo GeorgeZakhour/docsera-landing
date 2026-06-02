@@ -1,79 +1,107 @@
 """Generate public/og-image.png — a 1200x630 social share banner.
 
-Branded teal gradient + DocSera app icon on a soft plate + Latin wordmark + URL.
-Arabic text shaping in PIL is unreliable without a reshaper, so the banner uses
-the Latin wordmark; a designed Arabic banner can replace public/og-image.png
-later with no code change.
+Renders a self-contained HTML banner (real DocSera white logo + brand-shape
+watermark + premium teal gradient + app icon filling a rounded container +
+light slogan) and rasterizes it with Playwright for crisp, font-accurate output.
 
-Run once: python3 scripts/make_og_image.py
+Run: python3 scripts/make_og_image.py   (writes /tmp/og_builder.html, then
+screenshot it via scripts/shoot_og.mjs — or use the project's Playwright MCP).
+
+This script only ASSEMBLES the self-contained HTML at /tmp/og_builder.html.
+The actual screenshot is taken by the caller (Playwright) at 1200x630.
 """
+import base64
+import io
 import os
-from PIL import Image, ImageDraw, ImageFont
+from fontTools.ttLib import TTFont
 
 ROOT = os.path.dirname(os.path.dirname(os.path.abspath(__file__)))
-ICON = os.path.join(ROOT, "public", "images", "DocSera-app-icon.png")
-OUT = os.path.join(ROOT, "public", "og-image.png")
-
-W, H = 1200, 630
-TEAL = (0, 144, 146)
-TEAL_DARK = (0, 77, 77)
-
-# Vertical teal gradient background.
-img = Image.new("RGB", (W, H), TEAL)
-px = img.load()
-for y in range(H):
-    t = y / H
-    r = int(TEAL[0] + (TEAL_DARK[0] - TEAL[0]) * t)
-    g = int(TEAL[1] + (TEAL_DARK[1] - TEAL[1]) * t)
-    b = int(TEAL[2] + (TEAL_DARK[2] - TEAL[2]) * t)
-    for x in range(W):
-        px[x, y] = (r, g, b)
-
-draw = ImageDraw.Draw(img, "RGBA")
-
-# Soft rounded white plate behind the icon.
-icon_size = 200
-pad = 28
-plate = icon_size + pad * 2
-plate_x = (W - plate) // 2
-plate_y = 96
-draw.rounded_rectangle(
-    [plate_x, plate_y, plate_x + plate, plate_y + plate],
-    radius=44,
-    fill=(255, 255, 255, 28),
-)
-
-# App icon, centered on the plate.
-if os.path.exists(ICON):
-    icon = Image.open(ICON).convert("RGBA").resize((icon_size, icon_size))
-    img.paste(icon, ((W - icon_size) // 2, plate_y + pad), icon)
+IMG = os.path.join(ROOT, "public", "images")
+LIGHT_TTF = "/Users/georgezakhour/development/DocSera/assets/fonts/Montserrat-Light.ttf"
+OUT_HTML = "/tmp/og_builder.html"
 
 
-def load_font(size, bold=True):
-    candidates = [
-        "/System/Library/Fonts/Supplemental/Arial Bold.ttf" if bold
-        else "/System/Library/Fonts/Supplemental/Arial.ttf",
-        "/System/Library/Fonts/Helvetica.ttc",
-        "/Library/Fonts/Arial.ttf",
-    ]
-    for c in candidates:
-        if os.path.exists(c):
-            try:
-                return ImageFont.truetype(c, size)
-            except Exception:
-                pass
-    return ImageFont.load_default()
+def b64_file(path):
+    with open(path, "rb") as f:
+        return base64.b64encode(f.read()).decode()
 
 
-def centered(y, text, font, fill):
-    bbox = draw.textbbox((0, 0), text, font=font)
-    tw = bbox[2] - bbox[0]
-    draw.text(((W - tw) // 2, y), text, font=font, fill=fill)
+def ttf_to_woff2_b64(path):
+    f = TTFont(path)
+    f.flavor = "woff2"
+    buf = io.BytesIO()
+    f.save(buf)
+    return base64.b64encode(buf.getvalue()).decode()
 
 
-centered(396, "DocSera", load_font(92, bold=True), (255, 255, 255))
-centered(512, "Your health, simplified.", load_font(36, bold=False), (224, 242, 242))
-centered(570, "docsera.app", load_font(30, bold=True), (188, 236, 236))
+def inline_svg(path):
+    s = open(path, encoding="utf-8").read()
+    # Drop XML prolog / doctype so it embeds cleanly inside HTML.
+    out = []
+    for line in s.splitlines():
+        t = line.strip()
+        if t.startswith("<?xml") or t.startswith("<!DOCTYPE"):
+            continue
+        out.append(line)
+    return "\n".join(out)
 
-img.save(OUT, "PNG")
-print("wrote", OUT, img.size)
+
+logo_svg = inline_svg(os.path.join(IMG, "docsera_white.svg"))
+shape_svg = inline_svg(os.path.join(IMG, "DocSera-shape-white.svg"))
+icon_b64 = b64_file(os.path.join(IMG, "DocSera-app-icon.png"))
+light_b64 = ttf_to_woff2_b64(LIGHT_TTF)
+
+html = f"""<!doctype html>
+<html><head><meta charset="utf-8">
+<style>
+  @font-face {{ font-family:'MontLight'; src:url(data:font/woff2;base64,{light_b64}) format('woff2'); font-weight:300; }}
+  * {{ margin:0; padding:0; box-sizing:border-box; }}
+  html,body {{ width:1200px; height:630px; }}
+  .banner {{
+    position:relative; width:1200px; height:630px; overflow:hidden;
+    display:flex; flex-direction:column; align-items:center; justify-content:center;
+    background:
+      radial-gradient(ellipse 70% 55% at 50% -5%, rgba(150,255,248,0.22), rgba(150,255,248,0) 60%),
+      radial-gradient(ellipse 90% 80% at 50% 120%, rgba(0,40,42,0.55), rgba(0,40,42,0) 55%),
+      linear-gradient(145deg, #00a9ab 0%, #008789 40%, #005b5d 75%, #00484a 100%);
+  }}
+  /* Brand-shape watermark for identity — large, faint, off to one side. */
+  .wm {{ position:absolute; opacity:0.05; }}
+  .wm svg {{ display:block; }}
+  .wm-1 {{ width:760px; right:-200px; bottom:-230px; transform:rotate(-12deg); }}
+  .wm-2 {{ width:340px; left:-90px; top:-110px; transform:rotate(8deg); opacity:0.04; }}
+  /* Thin top sheen line for a premium edge. */
+  .sheen {{ position:absolute; top:0; left:0; right:0; height:2px;
+    background:linear-gradient(90deg, transparent, rgba(255,255,255,0.5), transparent); }}
+
+  .stack {{ position:relative; z-index:2; display:flex; flex-direction:column; align-items:center; }}
+  .icon {{
+    width:184px; height:184px; border-radius:42px; overflow:hidden;
+    box-shadow:0 26px 60px -12px rgba(0,0,0,0.45), 0 0 0 1px rgba(255,255,255,0.10) inset;
+    margin-bottom:46px;
+  }}
+  .icon img {{ width:100%; height:100%; object-fit:cover; display:block; }}
+  .logo {{ width:392px; height:auto; margin-bottom:26px; }}
+  .logo svg {{ display:block; width:100%; height:auto; }}
+  .slogan {{
+    font-family:'MontLight', sans-serif; font-weight:300;
+    font-size:30px; letter-spacing:3px; color:rgba(231,250,249,0.86);
+  }}
+</style></head>
+<body>
+  <div class="banner">
+    <div class="wm wm-1">{shape_svg}</div>
+    <div class="wm wm-2">{shape_svg}</div>
+    <div class="sheen"></div>
+    <div class="stack">
+      <div class="icon"><img src="data:image/png;base64,{icon_b64}" alt=""></div>
+      <div class="logo">{logo_svg}</div>
+      <div class="slogan">Your Health, Connected.</div>
+    </div>
+  </div>
+</body></html>
+"""
+
+with open(OUT_HTML, "w", encoding="utf-8") as f:
+    f.write(html)
+print("wrote", OUT_HTML, f"({len(html)//1024} KB self-contained)")
