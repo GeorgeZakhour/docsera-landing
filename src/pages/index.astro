@@ -6,7 +6,11 @@ import Footer from '../components/Footer.astro';
 import PhoneMockup from '../components/PhoneMockup.astro';
 ---
 
-<Layout title="DocSera - دوكسيرا">
+<Layout
+	title="DocSera — دوكسيرا | صحتك بكل بساطة"
+	description="دوكسيرا منصة الرعاية الصحية الرقمية في سوريا. احجز مواعيدك، تواصل مع طبيبك عبر الشات، واحفظ ملفك الطبي وملفات عائلتك في مكان واحد."
+	path="/"
+>
 	<Navbar />
 	<main>
 		<Hero />
@@ -300,7 +304,7 @@ import PhoneMockup from '../components/PhoneMockup.astro';
                         <p class="help-text">لقد جمعنا لك إجابات مفصلة عن كل ما يخص DocSera في مكان واحد.</p>
                     </div>
                     <div class="help-action">
-                        <a href="/faq" class="btn-help">
+                        <a href="/help" class="btn-help">
                             تصفح الأسئلة الشائعة
                             <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M19 12H5"/><path d="M12 19l-7-7 7-7"/></svg>
                         </a>
@@ -309,35 +313,51 @@ import PhoneMockup from '../components/PhoneMockup.astro';
             </div>
         </section>
 
-        <!-- CTA Wave -->
-        <section class="final-cta">
+        <!-- CTA Wave + Download Hub -->
+        <section class="final-cta" id="download">
             <div class="wave-top">
                 <svg viewBox="0 0 1440 180" preserveAspectRatio="none" xmlns="http://www.w3.org/2000/svg">
                     <path fill="#ffffff" fill-opacity="1" d="M0,0 L1440,0 L1440,180 Q720,60 0,180 Z"></path>
                 </svg>
             </div>
-            
+
             <div class="container cta-content">
                 <h2 class="text-huge" style="color:white">ابدأ رحلتك الصحية اليوم</h2>
                 <p>مستقبل الطب الرقمي، يبدأ في سوريا</p>
+
+                <div class="cta-actions">
+                    <a href="https://my.docsera.app" class="cta-btn primary">
+                        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="12" r="10"/><polygon points="10 8 16 12 10 16 10 8" fill="currentColor" stroke="none"/></svg>
+                        افتح تطبيق الويب
+                    </a>
+                    <a href="/downloads/docsera.apk" class="cta-btn secondary" download>
+                        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"/><polyline points="7 10 12 15 17 10"/><line x1="12" y1="15" x2="12" y2="3"/></svg>
+                        تحميل تطبيق أندرويد
+                    </a>
+                </div>
+
+                <p class="soon-label">متوفر قريباً على المتاجر الرسمية</p>
                 <div class="store-buttons">
-                    <!-- App Store -->
-                    <a href="#" class="official-badge">
+                    <!-- Pre-launch: non-clickable, glass قريباً badge. Swap each
+                         <div class="official-badge is-soon"> to <a href="STORE_URL">
+                         and remove the .is-soon class + the .soon-badge span when live. -->
+                    <div class="official-badge is-soon" aria-disabled="true" aria-label="App Store (قريباً)">
+                        <span class="soon-badge">قريباً</span>
                         <svg class="os-icon" viewBox="0 0 384 512" fill="white"><path d="M318.7 268.7c-.2-36.7 16.4-64.4 50-84.8-18.8-26.9-47.2-41.7-84.7-44.6-35.5-2.8-74.3 20.7-88.5 20.7-15 0-49.4-19.7-76.4-19.7C63.3 141.2 4 184.8 4 273.5q0 39.3 14.4 81.2c12.8 36.7 59 126.7 107.2 125.2 25.2-.6 43-17.9 75.8-17.9 31.8 0 48.3 17.9 76.4 17.9 48.6-.7 90.4-82.5 102.6-119.3-65.2-30.7-61.7-90-61.7-91.9zm-56.6-164.2c27.3-32.4 24.8-61.9 24-72.5-24.1 1.4-52 16.4-67.9 34.9-17.5 19.8-27.8 44.3-25.6 71.9 26.1 2 52.3-11.4 69.5-34.3z"/></svg>
                         <div class="badge-text">
                             <span class="small-txt">Download on the</span>
                             <span class="big-txt">App Store</span>
                         </div>
-                    </a>
-                    
-                    <!-- Google Play -->
-                    <a href="#" class="official-badge">
+                    </div>
+
+                    <div class="official-badge is-soon" aria-disabled="true" aria-label="Google Play (قريباً)">
+                        <span class="soon-badge">قريباً</span>
                         <svg class="os-icon" viewBox="0 0 512 512" fill="white"><path d="M325.3 234.3L104.6 13l280.8 161.2-60.1 60.1zM47 0C34 6.8 25.3 19.2 25.3 35.3v441.3c0 16.1 8.7 28.5 21.7 35.3l256.6-256L47 0zm425.2 225.6l-58.9-34.1-65.7 64.5 65.7 64.5 60.1-34.1c18-14.3 18-46.5-1.2-60.8zM104.6 499l280.8-161.2-60.1-60.1L104.6 499z"/></svg>
                         <div class="badge-text">
                             <span class="small-txt">GET IT ON</span>
                             <span class="big-txt">Google Play</span>
                         </div>
-                    </a>
+                    </div>
                 </div>
             </div>
         </section>
@@ -623,9 +643,51 @@ import PhoneMockup from '../components/PhoneMockup.astro';
            height: 600px;
         }
     }
+    /* Download Hub actions */
+    .cta-actions {
+        display: flex;
+        gap: 16px;
+        justify-content: center;
+        flex-wrap: wrap;
+        margin-bottom: 32px;
+    }
+    .cta-btn {
+        display: inline-flex;
+        align-items: center;
+        gap: 10px;
+        padding: 16px 32px;
+        border-radius: 14px;
+        font-weight: 700;
+        font-size: 1.05rem;
+        text-decoration: none;
+        transition: transform 0.2s ease, box-shadow 0.2s ease, background 0.2s ease;
+    }
+    .cta-btn svg { width: 20px; height: 20px; flex-shrink: 0; }
+    .cta-btn.primary {
+        background: white;
+        color: var(--c-main);
+        box-shadow: 0 10px 30px rgba(0,0,0,0.15);
+    }
+    .cta-btn.primary:hover { transform: translateY(-3px); box-shadow: 0 14px 36px rgba(0,0,0,0.22); }
+    .cta-btn.secondary {
+        background: rgba(255,255,255,0.10);
+        color: white;
+        border: 1.5px solid rgba(255,255,255,0.6);
+        backdrop-filter: blur(6px);
+        -webkit-backdrop-filter: blur(6px);
+    }
+    .cta-btn.secondary:hover { background: rgba(255,255,255,0.20); transform: translateY(-3px); }
+
+    .soon-label {
+        color: rgba(255,255,255,0.85) !important;
+        font-size: 0.95rem !important;
+        margin: 4px 0 16px !important;
+    }
+
     /* Official Store Badges */
     .store-buttons { display: flex; gap: 16px; justify-content: center; flex-wrap: wrap; }
     .official-badge {
+        position: relative;
         display: inline-flex;
         align-items: center;
         background: black;
@@ -638,11 +700,31 @@ import PhoneMockup from '../components/PhoneMockup.astro';
         transition: transform 0.2s, background 0.2s;
         min-width: 160px;
     }
-    .official-badge:hover { transform: translateY(-3px); background: #222; }
+    .official-badge:not(.is-soon):hover { transform: translateY(-3px); background: #222; }
+    .official-badge.is-soon { cursor: default; }
     .os-icon { width: 28px; height: 28px; margin-right: 10px; flex-shrink: 0; }
     .badge-text { display: flex; flex-direction: column; align-items: flex-start; line-height: 1.1; }
     .small-txt { font-size: 0.65rem; text-transform: uppercase; opacity: 0.8; }
     .big-txt { font-size: 1.1rem; font-weight: 600; font-family: -apple-system, BlinkMacSystemFont, sans-serif; }
+
+    /* Glass "soon" badge overlay */
+    .soon-badge {
+        position: absolute;
+        top: -10px;
+        right: -10px;
+        background: rgba(255,255,255,0.18);
+        backdrop-filter: blur(8px);
+        -webkit-backdrop-filter: blur(8px);
+        border: 1px solid rgba(255,255,255,0.45);
+        color: #fff;
+        font-family: var(--font-ar);
+        font-size: 0.7rem;
+        font-weight: 700;
+        padding: 3px 10px;
+        border-radius: 20px;
+        line-height: 1.4;
+        box-shadow: 0 2px 8px rgba(0,0,0,0.25);
+    }
 
     /* High-Impact Comparison (Light Theme) */
     .chaos-vs-clarity {
