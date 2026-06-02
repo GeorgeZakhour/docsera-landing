@@ -24,7 +24,7 @@ import HeroAnimation from '../components/HeroAnimation.astro';
             </p>
             <div class="cta-group">
                 <a href="https://my.docsera.app" class="btn-primary">
-                    <span class="btn-icon">▶</span>
+                    <svg class="btn-icon" viewBox="0 0 24 24" fill="currentColor" aria-hidden="true"><path d="M8 5v14l11-7z"/></svg>
                     افتح تطبيق الويب
                 </a>
                 
@@ -117,6 +117,7 @@ import HeroAnimation from '../components/HeroAnimation.astro';
         transition: transform 0.2s;
     }
     .btn-primary:hover { transform: translateY(-3px); background: var(--c-main-dark); }
+    .btn-icon { width: 18px; height: 18px; flex-shrink: 0; }
 
     .btn-text-anim {
         display: flex;
