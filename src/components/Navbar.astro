@@ -17,7 +17,8 @@
 
         <!-- Desktop Action -->
         <div class="actions desktop-only">
-            <a href="#download" class="btn-download">حمل التطبيق</a>
+            <a href="https://my.docsera.app" class="btn-webapp">افتح تطبيق الويب</a>
+            <a href="/download" class="btn-dl">تحميل</a>
         </div>
 
         <!-- Mobile Toggle -->
@@ -34,7 +35,8 @@
         <a href="/features" class="m-link">عن التطبيق</a>
         <a href="/about" class="m-link">من نحن</a>
         <a href="/help" class="m-link">دليلك</a>
-        <a href="#download" class="m-btn">حمل التطبيق</a>
+        <a href="https://my.docsera.app" class="m-btn">افتح تطبيق الويب</a>
+        <a href="/download" class="m-btn outline">تحميل التطبيق</a>
     </div>
 </nav>
 
@@ -136,15 +138,33 @@
     }
     .nav-item:hover { color: var(--c-main); }
 
-    .btn-download {
+    .actions { display: flex; align-items: center; gap: 12px; }
+
+    .btn-webapp {
         background: var(--c-main);
         color: white;
         text-decoration: none;
-        padding: 8px 24px;
+        padding: 8px 20px;
         border-radius: 100px; /* Pill shape */
         font-weight: 700;
         font-size: 0.9rem;
+        white-space: nowrap;
+        transition: background 0.2s;
     }
+    .btn-webapp:hover { background: var(--c-main-dark); }
+
+    .btn-dl {
+        color: var(--c-main);
+        text-decoration: none;
+        padding: 8px 18px;
+        border-radius: 100px;
+        font-weight: 700;
+        font-size: 0.9rem;
+        border: 1.5px solid var(--c-main);
+        white-space: nowrap;
+        transition: background 0.2s;
+    }
+    .btn-dl:hover { background: rgba(0,144,146,0.08); }
 
     /* Mobile Toggle - Default Hidden */
     .menu-toggle {
@@ -208,6 +228,12 @@
         border-radius: 8px;
         text-decoration: none;
         font-weight: 700;
+    }
+
+    .m-btn.outline {
+        background: transparent;
+        color: var(--c-main);
+        border: 1.5px solid var(--c-main);
     }
 
     /* Switch to Mobile menu earlier to prevent overlap on tablets */
