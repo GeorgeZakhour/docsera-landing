@@ -1,0 +1,2040 @@
+---
+const SITE = 'https://docsera.app';
+const title = 'DocSera Pro — عيادتك كلها في مكانٍ واحد';
+const description = 'منصّة DocSera Pro لإدارة العيادة: المواعيد، ملفات المرضى، التقارير، المراسلة، المحاسبة، والتحليلات في مكانٍ واحد. جرّب الباقة الكاملة ٤٥ يوماً مجاناً.';
+---
+<!doctype html>
+<html lang="ar" dir="rtl">
+<head>
+<script is:inline>document.documentElement.classList.add('js');</script>
+<meta charset="utf-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1" />
+<title>{title}</title>
+<meta name="description" content={description} />
+<link rel="canonical" href={SITE + '/pro'} />
+<link rel="icon" type="image/png" href="/images/DocSera-app-icon.png" />
+
+<meta property="og:type" content="website" />
+<meta property="og:site_name" content="DocSera Pro" />
+<meta property="og:locale" content="ar_AR" />
+<meta property="og:title" content={title} />
+<meta property="og:description" content={description} />
+<meta property="og:url" content={SITE + '/pro'} />
+<meta property="og:image" content={SITE + '/og-image.png'} />
+<meta name="twitter:card" content="summary_large_image" />
+<meta name="twitter:title" content={title} />
+<meta name="twitter:description" content={description} />
+<meta name="twitter:image" content={SITE + '/og-image.png'} />
+
+<link rel="preload" href="/fonts/pro/Cairo-Black.ttf" as="font" type="font/ttf" crossorigin />
+<link rel="preload" href="/fonts/Cairo-700.woff2" as="font" type="font/woff2" crossorigin />
+<link rel="preload" href="/images/pro/logo-icon-3d.webp" as="image" />
+
+<style is:global>
+/* ---------- Fonts: reuse site woff2 (400/600/700/800) + add Black 900 ---------- */
+@font-face{font-family:"Cairo";src:url("/fonts/Cairo-400.woff2") format("woff2");font-weight:400;font-display:swap;}
+@font-face{font-family:"Cairo";src:url("/fonts/Cairo-600.woff2") format("woff2");font-weight:600;font-display:swap;}
+@font-face{font-family:"Cairo";src:url("/fonts/Cairo-700.woff2") format("woff2");font-weight:700;font-display:swap;}
+@font-face{font-family:"Cairo";src:url("/fonts/Cairo-800.woff2") format("woff2");font-weight:800;font-display:swap;}
+@font-face{font-family:"Cairo";src:url("/fonts/pro/Cairo-Black.ttf") format("truetype");font-weight:900;font-display:swap;}
+@font-face{font-family:"Montserrat";src:url("/fonts/Montserrat-400.woff2") format("woff2");font-weight:400;font-display:swap;}
+@font-face{font-family:"Montserrat";src:url("/fonts/Montserrat-500.woff2") format("woff2");font-weight:500;font-display:swap;}
+@font-face{font-family:"Montserrat";src:url("/fonts/Montserrat-600.woff2") format("woff2");font-weight:600;font-display:swap;}
+@font-face{font-family:"Montserrat";src:url("/fonts/Montserrat-700.woff2") format("woff2");font-weight:700;font-display:swap;}
+@font-face{font-family:"Montserrat";src:url("/fonts/pro/Montserrat-Black.ttf") format("truetype");font-weight:900;font-display:swap;}
+
+/* ============================================================
+   DocSera Pro — Marketing document styles
+   Dark cinematic · RTL-first · print-ready (no backdrop-filter reliance)
+   ============================================================ */
+
+/* ---------- Fonts ---------- */
+
+:root {
+  --brand-primary:#00B5B7;
+  --brand-deep:#009092;
+  --brand-glow:#7DD3D4;
+  --brand-aura:rgba(0,181,183,0.18);
+
+  --bg-void:#001015;
+  --bg-base:#0F1A22;
+  --bg-paper:#1A252D;
+  --bg-elev:#243039;
+
+  --fg1:#E8EEF0;
+  --fg2:rgba(232,238,240,0.72);
+  --fg3:rgba(232,238,240,0.45);
+
+  --warm:#FFB494;
+  --warm-2:#FFA070;
+  --warm-deep:#5A2A0F;
+
+  --stroke:rgba(255,255,255,0.08);
+  --stroke-soft:rgba(255,255,255,0.06);
+  --stroke-strong:rgba(255,255,255,0.16);
+
+  --font-ar:"Cairo","Segoe UI",system-ui,sans-serif;
+  --font-en:"Montserrat","Inter",system-ui,sans-serif;
+
+  --shadow-md:0 8px 16px -4px rgba(0,16,21,0.50), 0 2px 6px rgba(0,181,183,0.06);
+  --shadow-lg:0 24px 48px -12px rgba(0,16,21,0.55), 0 8px 16px -8px rgba(0,16,21,0.6);
+  --shadow-xl:0 40px 80px -20px rgba(0,16,21,0.70), 0 24px 48px -12px rgba(0,181,183,0.18);
+
+  --r-sm:10px; --r-md:14px; --r-lg:20px; --r-xl:24px; --r-2xl:32px; --r-pill:999px;
+}
+
+* { box-sizing:border-box; }
+html { scroll-behavior:smooth; }
+body {
+  margin:0;
+  position:relative;
+  direction:rtl;
+  background:var(--bg-void);
+  color:var(--fg1);
+  font-family:var(--font-ar);
+  -webkit-font-smoothing:antialiased;
+  text-rendering:optimizeLegibility;
+  overflow-x:hidden;
+}
+
+/* ============================================================
+   Atmosphere
+   ============================================================ */
+.atmos { position:fixed; top:0; left:0; right:0; height:100vh; z-index:0; pointer-events:none; overflow:hidden;
+  background:
+    radial-gradient(1200px 560px at 50% -60px, #11303a 0%, #0c2129 26%, #06141b 52%, #02101500 100%),
+    linear-gradient(180deg,#04121a 0%, #041018 48%, #03121a 74%, #020d12 100%);
+}
+.atmos .orb { position:absolute; border-radius:999px; filter:blur(70px); mix-blend-mode:screen; opacity:0.9; }
+.atmos .grid {
+  position:absolute; inset:0;
+  background-image:
+    linear-gradient(rgba(255,255,255,0.022) 1px, transparent 1px),
+    linear-gradient(90deg, rgba(255,255,255,0.022) 1px, transparent 1px);
+  background-size:84px 84px;
+  -webkit-mask-image:radial-gradient(ellipse 70% 50% at 50% 0%, #000 20%, transparent 72%);
+  mask-image:radial-gradient(ellipse 70% 50% at 50% 0%, #000 20%, transparent 72%);
+}
+.atmos .noise { position:absolute; inset:0; opacity:0.05; mix-blend-mode:overlay; background-size:240px; }
+
+/* ============================================================
+   Layout
+   ============================================================ */
+.shell { position:relative; z-index:2; }
+.wrap { width:min(1180px, 92vw); margin-inline:auto; }
+.narrow { width:min(940px, 92vw); margin-inline:auto; }
+
+/* ---------- Top brand bar ---------- */
+.topbar { display:flex; align-items:center; justify-content:space-between; padding:30px 0 8px; }
+.brand { display:flex; align-items:center; gap:12px; }
+.brand img { height:34px; width:auto; filter:drop-shadow(0 6px 16px rgba(0,181,183,0.35)); }
+.brand .wm { font-family:var(--font-en); font-weight:900; font-size:20px; letter-spacing:-0.025em; color:var(--fg1); direction:ltr; }
+.brand .wm sup { font-size:0.5em; color:var(--brand-glow); font-weight:700; vertical-align:0.5em; margin-inline-start:3px; letter-spacing:0.06em; }
+.topbar .meta { font-family:var(--font-en); font-size:11px; letter-spacing:0.16em; text-transform:uppercase; color:var(--fg3); }
+
+/* ---------- Badge / eyebrow ---------- */
+.eyebrow { display:inline-flex; align-items:center; gap:9px; padding:8px 16px; border-radius:999px;
+  background:rgba(255,255,255,0.05); border:1px solid var(--stroke); 
+  font-family:var(--font-ar); font-weight:700; font-size:13.5px; color:var(--fg2); }
+.eyebrow .dot { width:7px; height:7px; border-radius:999px; background:var(--brand-glow); box-shadow:0 0 12px var(--brand-glow); flex:none; }
+.eyebrow.warm { background:rgba(255,180,148,0.12); border-color:rgba(255,180,148,0.28); color:#FFD9C4; }
+.eyebrow.warm .dot { background:var(--warm); box-shadow:0 0 12px var(--warm); }
+
+/* "First 100" seal */
+.seal { display:inline-flex; align-items:center; gap:9px; padding:8px 16px 8px 14px; border-radius:999px;
+  background:linear-gradient(135deg, rgba(255,180,148,0.20), rgba(255,160,112,0.10));
+  border:1px solid rgba(255,180,148,0.40); color:#FFD9C4;
+  font-family:var(--font-ar); font-weight:800; font-size:13.5px; }
+.seal svg { width:16px; height:16px; color:var(--warm); }
+
+/* ============================================================
+   Hero
+   ============================================================ */
+.hero { padding:46px 0 30px; }
+.hero-grid { display:grid; grid-template-columns:1.04fr 0.96fr; gap:54px; align-items:center; }
+.hero h1 { font-family:var(--font-ar); font-weight:900; font-size:clamp(40px,5vw,68px); line-height:1.18;
+  letter-spacing:-0.01em; color:var(--fg1); margin:22px 0 8px; max-width:15ch; text-wrap:balance; }
+.hero h1 .grad { background:linear-gradient(180deg,#E8EEF0 0%,#7DD3D4 92%); -webkit-background-clip:text; background-clip:text; color:transparent; }
+.hero .en-line { font-family:var(--font-en); font-weight:500; font-size:17px; letter-spacing:0.005em; color:var(--fg3); margin:0 0 22px; direction:ltr; }
+.hero .lede { font-family:var(--font-ar); font-weight:500; font-size:19px; line-height:1.7; color:var(--fg2); max-width:34ch; margin:0 0 30px; }
+.hero-cta-row { display:flex; align-items:center; gap:16px; flex-wrap:wrap; margin-bottom:22px; }
+.hero-badges { display:flex; align-items:center; gap:12px; flex-wrap:wrap; }
+
+/* ---------- Buttons ---------- */
+.btn { display:inline-flex; align-items:center; gap:10px; font-family:var(--font-ar); font-weight:800; white-space:nowrap;
+  border:none; cursor:pointer; text-decoration:none; transition:transform 160ms cubic-bezier(.32,.72,0,1), box-shadow 160ms; }
+.btn svg { width:19px; height:19px; flex:none; }
+.btn-wa { font-size:16.5px; color:#001015; padding:15px 26px; border-radius:12px;
+  background:linear-gradient(180deg,#7DD3D4,#00B5B7);
+  box-shadow:0 12px 28px -6px rgba(0,181,183,0.55), inset 0 1px 0 rgba(255,255,255,0.35); }
+.btn-wa:hover { transform:translateY(-2px); box-shadow:0 16px 34px -6px rgba(0,181,183,0.65), inset 0 1px 0 rgba(255,255,255,0.40); }
+.btn-wa.lg { font-size:18px; padding:18px 34px; }
+.btn-ghost { font-size:15px; color:var(--fg2); padding:14px 18px; border-radius:12px; background:transparent;
+  border:1px solid var(--stroke-strong); }
+.btn-ghost:hover { color:var(--fg1); border-color:rgba(255,255,255,0.3); background:rgba(255,255,255,0.04); }
+.wa-ico { color:#001015; }
+
+/* ============================================================
+   Section blocks
+   ============================================================ */
+.block { padding:54px 0; position:relative; }
+.block + .block { border-top:1px solid var(--stroke-soft); }
+.block-head { display:flex; align-items:flex-start; gap:18px; margin-bottom:34px; }
+.petal-idx { position:relative; flex:none; width:50px; height:50px; display:grid; place-items:center; }
+.petal-idx img { position:absolute; inset:0; width:100%; height:100%; opacity:0.92;
+  filter:drop-shadow(0 4px 10px rgba(0,181,183,0.3)); }
+.petal-idx span { position:relative; font-family:var(--font-ar); font-weight:900; font-size:19px; color:#001015; }
+.block-head .ht { flex:1; }
+.kicker { font-family:var(--font-en); font-weight:700; font-size:11.5px; letter-spacing:0.16em; text-transform:uppercase;
+  color:var(--brand-glow); direction:ltr; display:block; margin-bottom:8px; }
+.block-head h2 { font-family:var(--font-ar); font-weight:900; font-size:clamp(28px,3.4vw,42px); line-height:1.28;
+  color:var(--fg1); margin:0; letter-spacing:-0.005em; text-wrap:balance; }
+.block-head .en-sub { font-family:var(--font-en); font-weight:500; font-size:13.5px; color:var(--fg3); direction:ltr; margin-top:7px; }
+.lead { font-family:var(--font-ar); font-weight:500; font-size:18px; line-height:1.85; color:var(--fg2); max-width:60ch; }
+
+/* feature 2-col */
+.feature { display:grid; grid-template-columns:1fr 1fr; gap:48px; align-items:center; }
+.feature.flip .fviz { order:-1; }
+.fbody .lead { margin-bottom:22px; }
+
+/* ---------- Glass panel ---------- */
+.glass { position:relative; border-radius:var(--r-xl); overflow:hidden;
+  background:linear-gradient(150deg, rgba(255,255,255,0.085) 0%, rgba(255,255,255,0.028) 46%, rgba(255,255,255,0.06) 100%);
+  border:1px solid var(--stroke-strong);
+  box-shadow:inset 0 1px 0 rgba(255,255,255,0.16), inset 0 -1px 0 rgba(0,0,0,0.18), var(--shadow-lg); }
+.glass::after { content:""; position:absolute; top:0; left:0; right:0; height:1px;
+  background:linear-gradient(90deg, transparent, rgba(255,255,255,0.42), transparent); }
+.glass-soft { background:linear-gradient(150deg, rgba(36,48,57,0.55), rgba(15,26,34,0.55));
+  border:1px solid var(--stroke); box-shadow:inset 0 1px 0 rgba(255,255,255,0.06), var(--shadow-md); border-radius:var(--r-xl); }
+
+/* ---------- Feature bullet list ---------- */
+.checks { list-style:none; margin:0; padding:0; display:flex; flex-direction:column; gap:14px; }
+.checks li { display:flex; align-items:flex-start; gap:13px; font-family:var(--font-ar); font-weight:500;
+  font-size:16.5px; line-height:1.7; color:var(--fg1); }
+.checks li .tick { flex:none; width:15px; height:15px; margin-top:5px; padding:4px; box-sizing:content-box;
+  color:var(--brand-primary); background:rgba(0,181,183,0.14); border-radius:999px; }
+.checks li .tick svg { width:15px; height:15px; display:block; }
+.checks.warm li .tick { color:var(--warm); background:rgba(255,180,148,0.16); }
+
+.fineprint { font-family:var(--font-ar); font-weight:500; font-size:13.5px; line-height:1.7; color:var(--fg3);
+  margin-top:18px; padding-inline-start:14px; border-inline-start:2px solid var(--stroke-strong); }
+
+/* ============================================================
+   Block 2 — tools merging
+   ============================================================ */
+.merge-viz { padding:36px; display:flex; flex-direction:column; align-items:center; gap:22px; }
+.scatter { display:flex; flex-wrap:wrap; gap:11px; justify-content:center; max-width:330px; }
+.chip { display:inline-flex; align-items:center; gap:8px; padding:9px 14px; border-radius:12px;
+  background:rgba(255,255,255,0.04); border:1px solid var(--stroke); font-family:var(--font-ar); font-weight:600;
+  font-size:13.5px; color:var(--fg2); }
+.chip svg { width:15px; height:15px; color:var(--fg3); }
+.merge-arrow { color:var(--brand-glow); display:grid; place-items:center; }
+.merge-arrow svg { width:26px; height:26px; }
+.one-card { width:100%; display:flex; align-items:center; gap:14px; padding:18px 20px; border-radius:var(--r-lg);
+  background:linear-gradient(135deg, rgba(0,181,183,0.16), rgba(0,181,183,0.04)); border:1px solid rgba(0,181,183,0.35); }
+.one-card .mk { width:38px; height:38px; flex:none; }
+.one-card b { font-family:var(--font-ar); font-weight:800; font-size:17px; color:var(--fg1); display:block; }
+.one-card span { font-family:var(--font-en); font-size:11.5px; letter-spacing:0.04em; color:var(--brand-glow); direction:ltr; }
+
+/* ============================================================
+   Mock UI primitives (device screens)
+   ============================================================ */
+.mock { padding:18px; }
+.mock-bar { display:flex; align-items:center; justify-content:space-between; padding-bottom:14px; margin-bottom:14px;
+  border-bottom:1px solid var(--stroke); }
+.mock-title { font-family:var(--font-ar); font-weight:800; font-size:15px; color:var(--fg1); }
+.mock-dot { display:inline-flex; gap:5px; }
+.mock-dot i { width:8px; height:8px; border-radius:999px; background:var(--stroke-strong); display:block; }
+
+/* roster rows */
+.roster { display:flex; flex-direction:column; gap:9px; }
+.rrow { display:grid; grid-template-columns:auto 1fr auto; align-items:center; gap:12px; padding:12px 14px;
+  border-radius:var(--r-md); background:rgba(255,255,255,0.03); border:1px solid var(--stroke-soft); }
+.rrow .av { width:34px; height:34px; border-radius:999px; flex:none; display:grid; place-items:center;
+  font-family:var(--font-ar); font-weight:800; font-size:14px; color:#001015;
+  background:linear-gradient(135deg,#7DD3D4,#00B5B7); }
+.rrow .nm { font-family:var(--font-ar); font-weight:700; font-size:14.5px; color:var(--fg1); }
+.rrow .tm { font-family:var(--font-en); font-weight:700; font-size:13px; color:var(--fg3); direction:ltr; font-variant-numeric:tabular-nums; }
+.pill { font-family:var(--font-ar); font-weight:700; font-size:11.5px; padding:4px 10px; border-radius:999px; white-space:nowrap; }
+.pill.wait { background:rgba(255,193,7,0.16); color:#FFD66B; }
+.pill.now { background:rgba(0,181,183,0.18); color:var(--brand-glow); }
+.pill.done { background:rgba(255,255,255,0.06); color:var(--fg3); }
+
+/* invoice mock */
+.inv { display:flex; flex-direction:column; gap:11px; }
+.inv-line { display:flex; align-items:center; justify-content:space-between; font-family:var(--font-ar);
+  font-weight:600; font-size:14px; color:var(--fg2); }
+.inv-line .amt { font-family:var(--font-en); font-weight:800; font-variant-numeric:tabular-nums; color:var(--fg1); direction:ltr; }
+.inv-total { display:flex; align-items:center; justify-content:space-between; margin-top:6px; padding-top:14px;
+  border-top:1px dashed var(--stroke-strong); }
+.inv-total b { font-family:var(--font-ar); font-weight:800; font-size:16px; color:var(--fg1); }
+.inv-total .amt { font-family:var(--font-en); font-weight:900; font-size:22px; color:var(--brand-glow); direction:ltr; font-variant-numeric:tabular-nums; }
+.curr-tags { display:flex; gap:8px; margin-top:14px; }
+.curr-tags .ct { font-family:var(--font-ar); font-weight:700; font-size:12px; padding:5px 12px; border-radius:999px;
+  background:rgba(255,255,255,0.04); border:1px solid var(--stroke); color:var(--fg2); }
+
+/* chat mock */
+.chat { display:flex; flex-direction:column; gap:10px; }
+.bub { max-width:78%; padding:11px 15px; border-radius:16px; font-family:var(--font-ar); font-weight:500; font-size:14px; line-height:1.6; }
+.bub.them { align-self:flex-start; background:rgba(255,255,255,0.05); border:1px solid var(--stroke); color:var(--fg1); border-bottom-right-radius:5px; }
+.bub.me { align-self:flex-end; background:linear-gradient(180deg,#0c8a8c,#0a7173); color:#EAFEFE; border-bottom-left-radius:5px; }
+.bub .v { display:flex; align-items:center; gap:9px; }
+.bub .wave { display:inline-flex; gap:3px; align-items:center; }
+.bub .wave i { width:3px; border-radius:3px; background:currentColor; opacity:0.8; display:block; }
+.chat-meta { font-family:var(--font-en); font-size:11px; color:var(--fg3); text-align:center; direction:ltr; letter-spacing:0.04em; }
+
+/* KPI tiles + chart */
+.kpi-row { display:grid; grid-template-columns:repeat(3,1fr); gap:12px; margin-bottom:18px; }
+.kpi { padding:16px; border-radius:var(--r-md); background:rgba(255,255,255,0.03); border:1px solid var(--stroke-soft); }
+.kpi .n { font-family:var(--font-en); font-weight:900; font-size:30px; color:var(--fg1); line-height:1; font-variant-numeric:tabular-nums; direction:ltr; }
+.kpi .n small { font-size:14px; color:var(--fg3); font-weight:700; }
+.kpi .l { font-family:var(--font-ar); font-weight:600; font-size:12.5px; color:var(--fg3); margin-top:7px; }
+.bars { display:flex; align-items:flex-end; gap:9px; height:96px; padding-top:6px; }
+.bars .b { flex:1; border-radius:6px 6px 3px 3px; background:linear-gradient(180deg,#7DD3D4,#0a7173); opacity:0.85; }
+.bars .b.peak { background:linear-gradient(180deg,#FFC9AE,#FF9F70); opacity:1; }
+.bars-x { display:flex; gap:9px; margin-top:8px; }
+.bars-x span { flex:1; text-align:center; font-family:var(--font-en); font-size:10px; color:var(--fg3); direction:ltr; }
+
+/* dental chart */
+.teeth { display:flex; flex-direction:column; gap:10px; }
+.teeth-row { display:flex; gap:6px; justify-content:center; }
+.tooth { width:30px; height:38px; border-radius:7px 7px 9px 9px; background:rgba(255,255,255,0.05);
+  border:1px solid var(--stroke); display:grid; place-items:center; font-family:var(--font-en); font-size:10px; color:var(--fg3); }
+.tooth.fill { background:rgba(0,181,183,0.22); border-color:rgba(0,181,183,0.5); color:var(--brand-glow); }
+.tooth.warm { background:rgba(255,180,148,0.2); border-color:rgba(255,180,148,0.5); color:var(--warm); }
+.teeth-legend { display:flex; gap:16px; justify-content:center; margin-top:6px; font-family:var(--font-ar); font-size:12px; color:var(--fg3); }
+.teeth-legend span { display:inline-flex; align-items:center; gap:7px; }
+.teeth-legend i { width:11px; height:11px; border-radius:4px; display:block; }
+
+/* team rows */
+.team { display:flex; flex-direction:column; gap:10px; }
+.tmrow { display:grid; grid-template-columns:auto 1fr auto; align-items:center; gap:13px; padding:13px 15px;
+  border-radius:var(--r-md); background:rgba(255,255,255,0.03); border:1px solid var(--stroke-soft); }
+.tmrow .av { width:36px; height:36px; border-radius:999px; flex:none; display:grid; place-items:center;
+  font-family:var(--font-ar); font-weight:800; font-size:14px; color:#001015; background:linear-gradient(135deg,#7DD3D4,#00B5B7); }
+.tmrow .who b { font-family:var(--font-ar); font-weight:700; font-size:14.5px; color:var(--fg1); display:block; }
+.tmrow .who span { font-family:var(--font-ar); font-weight:500; font-size:12.5px; color:var(--fg3); }
+.toggle { width:42px; height:24px; border-radius:999px; background:rgba(0,181,183,0.3); position:relative; flex:none; }
+.toggle::after { content:""; position:absolute; top:3px; left:3px; width:18px; height:18px; border-radius:999px; background:#E8EEF0; }
+.toggle.off { background:rgba(255,255,255,0.08); }
+.toggle.off::after { left:auto; right:3px; background:var(--fg3); }
+
+/* ============================================================
+   Block 11 — Growth (warm accent)
+   ============================================================ */
+.growth { position:relative; border-radius:var(--r-2xl); padding:48px; overflow:hidden;
+  background:
+    radial-gradient(520px circle at 88% 6%, rgba(255,180,148,0.16), transparent 56%),
+    radial-gradient(520px circle at 6% 92%, rgba(0,181,183,0.14), transparent 56%),
+    linear-gradient(160deg, #20262b 0%, #161d23 100%);
+  border:1px solid rgba(255,180,148,0.22);
+  box-shadow:inset 0 1px 0 rgba(255,255,255,0.10), 0 40px 80px -24px rgba(0,16,21,0.7); }
+.growth-head { display:flex; align-items:flex-start; gap:18px; margin-bottom:32px; }
+.growth-head h2 { font-family:var(--font-ar); font-weight:900; font-size:clamp(28px,3.4vw,40px); line-height:1.3; margin:0; color:var(--fg1); }
+.growth-head .en-sub { font-family:var(--font-en); font-weight:600; font-size:13px; color:var(--warm); direction:ltr; margin-top:7px; letter-spacing:0.04em; }
+.growth-grid { display:grid; grid-template-columns:1.15fr 0.85fr; gap:40px; align-items:start; }
+.growth .checks li { font-size:16px; }
+.growth .checks li b { font-weight:800; color:var(--fg1); }
+
+/* offer card + gift reminder mocks */
+.gcard-stack { display:flex; flex-direction:column; gap:16px; }
+.offer-card { position:relative; border-radius:var(--r-lg); padding:22px; overflow:hidden;
+  background:linear-gradient(150deg, rgba(255,180,148,0.16), rgba(255,160,112,0.05));
+  border:1px solid rgba(255,180,148,0.4); }
+.offer-card .lbl { font-family:var(--font-en); font-weight:700; font-size:10.5px; letter-spacing:0.14em; text-transform:uppercase; color:var(--warm); direction:ltr; }
+.offer-card .big { font-family:var(--font-ar); font-weight:900; font-size:23px; color:#FFE3D2; margin:8px 0 4px; }
+.offer-card .sub { font-family:var(--font-ar); font-weight:500; font-size:13.5px; color:var(--fg2); }
+.offer-card .barcode { display:flex; gap:3px; margin-top:18px; height:34px; align-items:stretch; opacity:0.7; }
+.offer-card .barcode i { background:#FFE3D2; border-radius:1px; display:block; }
+.gift { display:flex; align-items:center; gap:14px; padding:16px 18px; border-radius:var(--r-lg);
+  background:rgba(255,255,255,0.04); border:1px solid var(--stroke); }
+.gift .gi { width:42px; height:42px; flex:none; border-radius:12px; display:grid; place-items:center;
+  background:rgba(255,180,148,0.16); color:var(--warm); }
+.gift .gi svg { width:22px; height:22px; }
+.gift .gt b { font-family:var(--font-ar); font-weight:700; font-size:15px; color:var(--fg1); display:block; }
+.gift .gt span { font-family:var(--font-ar); font-weight:500; font-size:13px; color:var(--fg3); }
+.loyalty { display:flex; align-items:center; gap:6px; padding:14px 18px; border-radius:var(--r-lg);
+  background:rgba(0,181,183,0.1); border:1px solid rgba(0,181,183,0.28); }
+.loyalty .dots { display:inline-flex; gap:5px; }
+.loyalty .dots i { width:13px; height:13px; border-radius:999px; background:var(--brand-glow); display:block; }
+.loyalty .dots i.empty { background:transparent; border:1.5px solid rgba(125,211,212,0.45); }
+.loyalty .lt { font-family:var(--font-ar); font-weight:700; font-size:14px; color:var(--fg1); margin-inline-end:auto; }
+
+/* ============================================================
+   Privacy / why / cards rows
+   ============================================================ */
+.cards-3 { display:grid; grid-template-columns:repeat(3,1fr); gap:20px; }
+.icard { padding:26px 24px; border-radius:var(--r-xl); background:linear-gradient(150deg, rgba(255,255,255,0.05), rgba(255,255,255,0.02));
+  border:1px solid var(--stroke); box-shadow:var(--shadow-md); }
+.icard .ic { width:46px; height:46px; border-radius:13px; display:grid; place-items:center; margin-bottom:16px;
+  background:rgba(0,181,183,0.14); color:var(--brand-primary); }
+.icard .ic svg { width:23px; height:23px; }
+.icard h3 { font-family:var(--font-ar); font-weight:800; font-size:18px; color:var(--fg1); margin:0 0 8px; }
+.icard p { font-family:var(--font-ar); font-weight:500; font-size:14.5px; line-height:1.7; color:var(--fg2); margin:0; }
+
+.compare { display:flex; flex-direction:column; gap:16px; }
+.crow { display:grid; grid-template-columns:1fr auto 1fr; align-items:center; gap:20px; padding:24px 26px;
+  border-radius:var(--r-xl); background:linear-gradient(150deg, rgba(255,255,255,0.05), rgba(255,255,255,0.02));
+  border:1px solid var(--stroke); }
+.crow .other { font-family:var(--font-ar); font-weight:500; font-size:16px; color:var(--fg3); line-height:1.6; }
+.crow .ours { font-family:var(--font-ar); font-weight:700; font-size:16.5px; color:var(--fg1); line-height:1.7; }
+.crow .vs { flex:none; width:40px; height:40px; border-radius:999px; display:grid; place-items:center;
+  background:rgba(0,181,183,0.14); color:var(--brand-glow); }
+.crow .vs svg { width:20px; height:20px; }
+
+/* try-it-free */
+.tryfree { display:grid; grid-template-columns:1fr auto; gap:40px; align-items:center; padding:44px;
+  border-radius:var(--r-2xl); position:relative; overflow:hidden;
+  background:radial-gradient(600px circle at 12% 0%, rgba(0,181,183,0.16), transparent 55%), linear-gradient(160deg,#172128,#0e171d);
+  border:1px solid var(--stroke); box-shadow:var(--shadow-xl); }
+.ribbon { position:absolute; top:22px; left:-44px; transform:rotate(-45deg); background:linear-gradient(135deg,#7DD3D4,#00B5B7);
+  color:#001015; font-family:var(--font-ar); font-weight:900; font-size:13px; padding:7px 56px; box-shadow:0 8px 18px -4px rgba(0,181,183,0.5); }
+.big-seal { flex:none; width:148px; height:148px; border-radius:999px; display:grid; place-items:center; text-align:center;
+  background:radial-gradient(circle at 50% 30%, rgba(255,180,148,0.25), rgba(255,160,112,0.06));
+  border:2px solid rgba(255,180,148,0.5); box-shadow:0 0 0 8px rgba(255,180,148,0.06), inset 0 2px 0 rgba(255,255,255,0.2); }
+.big-seal .num { font-family:var(--font-en); font-weight:900; font-size:46px; color:#FFE3D2; line-height:0.9; direction:ltr; }
+.big-seal .cap { font-family:var(--font-ar); font-weight:800; font-size:13px; color:var(--warm); margin-top:4px; }
+
+/* ============================================================
+   FAQ (static, open)
+   ============================================================ */
+.faq { display:flex; flex-direction:column; gap:14px; }
+.qa { padding:24px 26px; border-radius:var(--r-xl); background:linear-gradient(150deg, rgba(255,255,255,0.045), rgba(255,255,255,0.015));
+  border:1px solid var(--stroke); }
+.qa .q { display:flex; align-items:flex-start; gap:13px; font-family:var(--font-ar); font-weight:800; font-size:18px; color:var(--fg1); margin-bottom:11px; }
+.qa .q .qm { flex:none; width:26px; height:26px; border-radius:999px; display:grid; place-items:center; margin-top:1px;
+  background:rgba(0,181,183,0.16); color:var(--brand-glow); }
+.qa .q .qm svg { width:15px; height:15px; }
+.qa .a { font-family:var(--font-ar); font-weight:500; font-size:15.5px; line-height:1.85; color:var(--fg2); padding-inline-start:39px; }
+
+/* ============================================================
+   Closing CTA
+   ============================================================ */
+.closing { text-align:center; padding:80px 0 96px; position:relative; }
+.closing .mk { width:64px; height:64px; margin:0 auto 26px; filter:drop-shadow(0 10px 30px rgba(0,181,183,0.45)); }
+.closing h2 { font-family:var(--font-ar); font-weight:900; font-size:clamp(34px,4.6vw,58px); line-height:1.22;
+  color:var(--fg1); margin:0 auto 18px; max-width:18ch; text-wrap:balance; }
+.closing .en-line { font-family:var(--font-en); font-weight:500; font-size:15px; color:var(--fg3); direction:ltr; margin-bottom:10px; }
+.closing .body { font-family:var(--font-ar); font-weight:500; font-size:18px; line-height:1.8; color:var(--fg2);
+  max-width:52ch; margin:0 auto 34px; }
+.closing .cta-row { display:flex; align-items:center; justify-content:center; gap:18px; flex-wrap:wrap; margin-bottom:26px; }
+.quiet { font-family:var(--font-ar); font-weight:700; font-size:15px; color:var(--brand-glow); text-decoration:none; padding:14px 8px; white-space:nowrap; }
+.quiet:hover { text-decoration:underline; }
+.reassure { display:inline-flex; gap:26px; flex-wrap:wrap; justify-content:center; font-family:var(--font-ar);
+  font-weight:600; font-size:14px; color:var(--fg2); }
+.reassure span { display:inline-flex; align-items:center; gap:8px; }
+.reassure svg { width:16px; height:16px; color:var(--brand-glow); }
+
+/* footer */
+.foot { text-align:center; padding:30px 0 50px; border-top:1px solid var(--stroke-soft); }
+.foot .fb { display:flex; align-items:center; justify-content:center; gap:10px; margin-bottom:10px; }
+.foot .fb img { height:26px; }
+.foot .fn { font-family:var(--font-ar); font-size:13px; color:var(--fg3); line-height:1.8; }
+
+/* ============================================================
+   Responsive
+   ============================================================ */
+@media (max-width:880px) {
+  .hero-grid, .feature, .growth-grid, .tryfree, .growth-head { grid-template-columns:1fr; }
+  .feature.flip .fviz { order:0; }
+  .cards-3, .kpi-row { grid-template-columns:1fr; }
+  .crow { grid-template-columns:1fr; text-align:center; gap:12px; }
+  .crow .vs { margin:0 auto; transform:rotate(90deg); }
+  .tryfree { justify-items:center; text-align:center; }
+}
+
+/* ============================================================
+   Print — tall poster export
+   ============================================================ */
+/* ============================================================
+   Additions — hero mock, file/report/search mocks, misc
+   ============================================================ */
+
+/* hero device */
+.hero-viz { position:relative; }
+.hero-mock { padding:20px; }
+.hero-mock-foot { display:grid; grid-template-columns:repeat(3,1fr); gap:10px; margin-top:16px; padding-top:16px; border-top:1px solid var(--stroke); }
+.hmf-kpi { text-align:center; }
+.hmf-kpi b { font-family:var(--font-en); font-weight:900; font-size:26px; color:var(--brand-glow); line-height:1; direction:ltr; display:block; }
+.hmf-kpi span { font-family:var(--font-ar); font-weight:600; font-size:12.5px; color:var(--fg3); display:block; margin-top:5px; }
+.hero-float { position:absolute; inset-inline-start:-26px; bottom:-22px; display:flex; align-items:center; gap:12px;
+  padding:13px 17px; border-radius:var(--r-lg); max-width:240px; }
+.hero-float .mk { width:34px; height:34px; flex:none; }
+.hero-float b { font-family:var(--font-ar); font-weight:800; font-size:14.5px; color:var(--fg1); display:block; }
+.hero-float span { font-family:var(--font-ar); font-weight:600; font-size:12px; color:var(--brand-glow); direction:rtl; }
+
+/* patient file mock */
+.file-head { display:flex; align-items:center; gap:14px; padding-bottom:16px; margin-bottom:16px; border-bottom:1px solid var(--stroke); }
+.av.lg { width:48px; height:48px; border-radius:999px; flex:none; display:grid; place-items:center;
+  font-family:var(--font-ar); font-weight:800; font-size:18px; color:#001015; background:linear-gradient(135deg,#7DD3D4,#00B5B7); }
+.av.sm { width:30px; height:30px; border-radius:999px; flex:none; display:grid; place-items:center;
+  font-family:var(--font-ar); font-weight:800; font-size:13px; color:var(--fg3); background:rgba(255,255,255,0.06); }
+.file-id b { font-family:var(--font-ar); font-weight:800; font-size:17px; color:var(--fg1); display:block; }
+.file-id span { font-family:var(--font-ar); font-weight:600; font-size:13px; color:var(--fg3); }
+.file-tabs { display:flex; gap:8px; margin-bottom:16px; flex-wrap:wrap; }
+.file-tabs .ft { font-family:var(--font-ar); font-weight:700; font-size:12.5px; padding:7px 14px; border-radius:999px;
+  background:rgba(255,255,255,0.04); border:1px solid var(--stroke); color:var(--fg3); }
+.file-tabs .ft.active { background:rgba(0,181,183,0.16); border-color:rgba(0,181,183,0.4); color:var(--brand-glow); }
+.file-docs { display:grid; grid-template-columns:1fr 1fr; gap:10px; }
+.file-docs .doc { display:flex; align-items:center; gap:11px; padding:14px; border-radius:var(--r-md);
+  background:rgba(255,255,255,0.03); border:1px solid var(--stroke-soft); font-family:var(--font-ar); font-weight:600; font-size:13.5px; color:var(--fg1); }
+.file-docs .doc svg { width:18px; height:18px; color:var(--brand-glow); flex:none; }
+
+/* visit report mock */
+.report-pdf { display:inline-flex; align-items:center; gap:7px; font-family:var(--font-ar); font-weight:700; font-size:12.5px;
+  padding:6px 12px; border-radius:999px; background:rgba(0,181,183,0.14); color:var(--brand-glow); }
+.report-pdf svg { width:15px; height:15px; }
+.report-body { display:flex; flex-direction:column; gap:13px; }
+.report-body .rl { display:flex; gap:14px; }
+.report-body .rk { flex:none; width:58px; font-family:var(--font-ar); font-weight:700; font-size:13px; color:var(--fg3); padding-top:1px; }
+.report-body .rv { font-family:var(--font-ar); font-weight:600; font-size:14.5px; color:var(--fg1); line-height:1.6; }
+.score { display:flex; align-items:center; justify-content:space-between; padding:14px 16px; border-radius:var(--r-md);
+  background:rgba(0,181,183,0.1); border:1px solid rgba(0,181,183,0.26); }
+.score-k { font-family:var(--font-ar); font-weight:700; font-size:13px; color:var(--brand-glow); }
+.score-v b { font-family:var(--font-en); font-weight:900; font-size:30px; color:var(--fg1); direction:ltr; }
+.score-v small { font-family:var(--font-en); font-weight:700; font-size:14px; color:var(--fg3); }
+
+/* messaging lock tag */
+.lock-tag { display:inline-flex; align-items:center; gap:6px; font-family:var(--font-ar); font-weight:700; font-size:12px;
+  padding:5px 11px; border-radius:999px; background:rgba(255,255,255,0.05); border:1px solid var(--stroke); color:var(--fg2); }
+.lock-tag svg { width:13px; height:13px; color:var(--brand-glow); }
+
+/* dental muted tag */
+.muted-tag { font-family:var(--font-ar); font-weight:600; font-size:15px; color:var(--fg3); margin-inline-start:8px; }
+
+/* growth warm petal + fine */
+.petal-idx.warm img { filter:drop-shadow(0 4px 10px rgba(255,180,148,0.4)); }
+.petal-idx.warm span { color:#5A2A0F; font-size:22px; }
+.kicker.warm { color:var(--warm); }
+.fineprint.warm-fine { border-inline-start-color:rgba(255,180,148,0.5); color:#E9C3B0; }
+
+/* centered block head (block 12) */
+.block-head.center { flex-direction:column; align-items:center; text-align:center; gap:0; margin-bottom:20px; }
+.center-lead { margin-inline:auto; text-align:center; max-width:62ch; }
+
+/* search visibility mock (block 12) */
+.search-viz { max-width:560px; margin:34px auto 0; padding:22px; border-radius:var(--r-xl); }
+.search-bar { display:flex; align-items:center; gap:11px; padding:13px 16px; border-radius:var(--r-md);
+  background:rgba(255,255,255,0.04); border:1px solid var(--stroke); font-family:var(--font-ar); font-weight:600; font-size:14.5px; color:var(--fg2); margin-bottom:14px; }
+.search-bar svg { width:18px; height:18px; color:var(--fg3); flex:none; }
+.search-results { display:flex; flex-direction:column; gap:9px; }
+.sres { display:flex; align-items:center; gap:12px; padding:13px 15px; border-radius:var(--r-md);
+  background:rgba(255,255,255,0.025); border:1px solid var(--stroke-soft); }
+.sres.on { background:linear-gradient(135deg, rgba(0,181,183,0.16), rgba(0,181,183,0.04)); border-color:rgba(0,181,183,0.4); }
+.sres .mk { width:34px; height:34px; flex:none; }
+.sres b { font-family:var(--font-ar); font-weight:800; font-size:14.5px; color:var(--fg1); display:block; }
+.sres span { font-family:var(--font-ar); font-weight:500; font-size:12.5px; color:var(--fg3); }
+.sres .pill { margin-inline-start:auto; }
+
+/* try-it-free body */
+.tryfree-body .block-head { margin-bottom:22px; }
+.tryfree-body .checks li { font-size:16px; }
+
+/* footer logo */
+.foot .fb img { height:30px; opacity:0.9; }
+
+/* ============================================================
+   REVISION — section marker, app-accurate mocks
+   ============================================================ */
+
+/* header full logo */
+.brand img { height:32px; }
+
+/* section number marker (replaces logo+digit) */
+.sec-no { flex:none; width:52px; height:52px; border-radius:15px; display:grid; place-items:center;
+  font-family:var(--font-en); font-weight:900; font-size:20px; color:var(--brand-glow); direction:ltr;
+  font-variant-numeric:tabular-nums; letter-spacing:-0.02em;
+  background:linear-gradient(150deg, rgba(0,181,183,0.18), rgba(0,181,183,0.045));
+  border:1px solid rgba(0,181,183,0.32);
+  box-shadow:inset 0 1px 0 rgba(255,255,255,0.12), 0 6px 16px -8px rgba(0,181,183,0.5); }
+.sec-no svg { width:22px; height:22px; }
+.sec-no.warm { color:var(--warm);
+  background:linear-gradient(150deg, rgba(255,180,148,0.2), rgba(255,160,112,0.05));
+  border-color:rgba(255,180,148,0.36); box-shadow:inset 0 1px 0 rgba(255,255,255,0.12), 0 6px 16px -8px rgba(255,160,112,0.5); }
+
+/* founding strip (block 12) */
+.founding-strip { display:flex; flex-wrap:wrap; gap:12px; margin-top:26px; }
+.fchip { display:inline-flex; align-items:center; gap:9px; padding:11px 18px; border-radius:999px;
+  font-family:var(--font-ar); font-weight:700; font-size:14px; color:var(--fg1);
+  background:rgba(255,255,255,0.04); border:1px solid var(--stroke); }
+.fchip svg { width:17px; height:17px; color:var(--brand-glow); }
+.fchip.warm { background:linear-gradient(135deg, rgba(255,180,148,0.18), rgba(255,160,112,0.06));
+  border-color:rgba(255,180,148,0.4); color:#FFD9C4; }
+.fchip.warm svg { color:var(--warm); }
+
+/* ----- Patient file mock ----- */
+.pf { position:relative; }
+.pf-brand { position:absolute; top:16px; left:16px; right:auto; display:inline-flex; align-items:center; gap:7px;
+  padding:5px 11px 5px 8px; border-radius:999px; background:rgba(0,181,183,0.14); border:1px solid rgba(0,181,183,0.32);
+  font-family:var(--font-en); font-weight:700; font-size:11px; color:var(--brand-glow); direction:ltr; }
+.pf-brand img { width:14px; height:14px; }
+.pf-head { display:flex; justify-content:flex-start; padding-bottom:16px; margin-bottom:14px; border-bottom:1px solid var(--stroke); }
+.pf-id { display:flex; align-items:center; gap:13px; }
+.pf-id b { font-family:var(--font-ar); font-weight:800; font-size:17px; color:var(--fg1); display:block; }
+.pf-id span { font-family:var(--font-ar); font-weight:600; font-size:13px; color:var(--fg3); }
+.pf-tabs { display:flex; gap:7px; margin-bottom:16px; flex-wrap:wrap; }
+.pf-tabs .ft { font-family:var(--font-ar); font-weight:700; font-size:12px; padding:7px 13px; border-radius:999px;
+  background:rgba(255,255,255,0.04); border:1px solid var(--stroke); color:var(--fg3); white-space:nowrap; }
+.pf-tabs .ft.active { background:rgba(0,181,183,0.18); border-color:rgba(0,181,183,0.42); color:var(--brand-glow); }
+.pf-vitals { border-radius:var(--r-md); background:rgba(255,255,255,0.03); border:1px solid var(--stroke-soft); padding:16px; margin-bottom:14px; }
+.pf-sec-t { display:flex; align-items:center; gap:9px; font-family:var(--font-ar); font-weight:800; font-size:14px; color:var(--fg1); margin-bottom:14px; }
+.pf-sec-t svg { width:17px; height:17px; color:var(--brand-glow); }
+.pf-grid { display:grid; grid-template-columns:repeat(3,1fr); gap:10px; margin-bottom:14px; }
+.pf-vital { text-align:center; padding:12px 6px; border-radius:var(--r-sm); background:rgba(255,255,255,0.03); border:1px solid var(--stroke-soft); }
+.pf-vital .vk { display:block; font-family:var(--font-ar); font-weight:600; font-size:11.5px; color:var(--fg3); margin-bottom:5px; }
+.pf-vital .vv { font-family:var(--font-en); font-weight:900; font-size:23px; color:var(--fg1); direction:ltr; }
+.pf-vital .vv small { font-family:var(--font-ar); font-weight:700; font-size:11px; color:var(--fg3); margin-inline-start:2px; }
+.pf-life { display:flex; flex-wrap:wrap; gap:8px; }
+.pf-life .lp { font-family:var(--font-ar); font-weight:700; font-size:11.5px; padding:6px 12px; border-radius:999px;
+  background:rgba(255,255,255,0.05); border:1px solid var(--stroke); color:var(--fg2); }
+.pf-life .lp.warm { background:rgba(255,180,148,0.14); border-color:rgba(255,180,148,0.34); color:#FFD9C4; }
+.pf-life .lp.ok { background:rgba(0,181,183,0.14); border-color:rgba(0,181,183,0.34); color:var(--brand-glow); }
+.pf-acc { display:flex; flex-direction:column; gap:8px; }
+.pf-acc .acc { display:flex; align-items:center; justify-content:space-between; padding:13px 15px; border-radius:var(--r-md);
+  background:rgba(255,255,255,0.03); border:1px solid var(--stroke-soft); }
+.pf-acc .acc > span { display:flex; align-items:center; gap:10px; font-family:var(--font-ar); font-weight:700; font-size:13.5px; color:var(--fg1); }
+.pf-acc .acc > span svg { width:16px; height:16px; color:var(--brand-glow); }
+.pf-acc .acc > svg { width:17px; height:17px; color:var(--fg3); }
+
+/* ----- Visit report mock ----- */
+.vr-head { display:flex; align-items:center; justify-content:space-between; padding-bottom:14px; margin-bottom:14px; border-bottom:1px solid var(--stroke); }
+.vr-head b { font-family:var(--font-ar); font-weight:800; font-size:15px; color:var(--fg1); display:block; }
+.vr-head span { font-family:var(--font-en); font-weight:600; font-size:11.5px; color:var(--fg3); direction:ltr; }
+.vr-actions { display:inline-flex; gap:10px; }
+.vr-actions svg { width:17px; height:17px; color:var(--fg3); }
+.vr-sec { padding:14px 16px; border-radius:var(--r-md); background:rgba(255,255,255,0.03); border:1px solid var(--stroke-soft); margin-bottom:12px; }
+.vr-sec-t { display:flex; align-items:center; gap:9px; font-family:var(--font-ar); font-weight:800; font-size:13px; color:var(--fg3); margin-bottom:10px; }
+.vr-sec-t svg { width:16px; height:16px; color:var(--brand-glow); }
+.vr-val { font-family:var(--font-ar); font-weight:700; font-size:16px; color:var(--fg1); }
+.vr-scale { padding:14px 16px; border-radius:var(--r-md); background:rgba(0,181,183,0.08); border:1px solid rgba(0,181,183,0.24); margin-bottom:12px; }
+.vr-scale-h { display:flex; align-items:center; justify-content:space-between; }
+.vr-scale-h span { font-family:var(--font-ar); font-weight:700; font-size:13px; color:var(--brand-glow); }
+.vr-scale-h b { font-family:var(--font-en); font-weight:900; font-size:26px; color:var(--fg1); direction:ltr; }
+.vr-scale-h b small { font-family:var(--font-en); font-weight:700; font-size:13px; color:var(--fg3); margin-inline-start:3px; }
+.vr-bar { height:6px; border-radius:999px; background:rgba(255,255,255,0.08); margin:10px 0 8px; overflow:hidden; }
+.vr-bar i { display:block; height:100%; border-radius:999px; background:linear-gradient(90deg,#7DD3D4,#00B5B7); }
+.vr-scale-s { font-family:var(--font-ar); font-weight:500; font-size:11.5px; line-height:1.6; color:var(--fg3); }
+.vr-exam { padding:14px 16px; border-radius:var(--r-md); background:rgba(255,255,255,0.03); border:1px solid var(--stroke-soft); }
+.vr-row { display:flex; align-items:center; justify-content:space-between; padding:9px 0; border-bottom:1px solid var(--stroke-soft);
+  font-family:var(--font-ar); font-weight:600; font-size:13.5px; color:var(--fg1); }
+.vr-row:last-child { border-bottom:none; }
+.tag { font-family:var(--font-ar); font-weight:700; font-size:11px; padding:4px 11px; border-radius:999px; }
+.tag.ok { background:rgba(0,181,183,0.16); color:var(--brand-glow); }
+.tag.bad { background:rgba(255,120,100,0.18); color:#FF9E8A; }
+
+/* ----- Billing mock ----- */
+.cur-toggle { display:inline-flex; gap:4px; padding:3px; border-radius:999px; background:rgba(255,255,255,0.05); border:1px solid var(--stroke); }
+.cur-toggle i { font-family:var(--font-ar); font-style:normal; font-weight:700; font-size:11.5px; padding:4px 12px; border-radius:999px; color:var(--fg3); }
+.cur-toggle i.on { background:rgba(0,181,183,0.22); color:var(--brand-glow); }
+.bill-kpis { display:grid; grid-template-columns:repeat(3,1fr); gap:10px; margin-bottom:14px; }
+.bk { padding:13px 10px; border-radius:var(--r-md); background:rgba(255,255,255,0.03); border:1px solid var(--stroke-soft); text-align:center; }
+.bk .v { display:block; font-family:var(--font-en); font-weight:900; font-size:18px; color:var(--fg1); direction:ltr; font-variant-numeric:tabular-nums; }
+.bk .k { font-family:var(--font-ar); font-weight:600; font-size:10.5px; color:var(--fg3); margin-top:5px; display:block; }
+.bk.warm .v { color:var(--warm); }
+.bill-grid { display:grid; grid-template-columns:1fr 1fr; gap:10px; }
+.bill-card { position:relative; padding:14px; border-radius:var(--r-md); background:rgba(255,255,255,0.03); border:1px solid var(--stroke-soft); }
+.bill-card.part { grid-column:1 / -1; background:linear-gradient(150deg, rgba(255,180,148,0.1), rgba(255,255,255,0.02)); border-color:rgba(255,180,148,0.28); }
+.bc-top { display:flex; align-items:center; justify-content:space-between; margin-bottom:9px; }
+.bc-top .cat { font-family:var(--font-ar); font-weight:700; font-size:13.5px; color:var(--fg1); }
+.bc-top .bid { font-family:var(--font-en); font-weight:700; font-size:11px; color:var(--fg3); direction:ltr; }
+.bc-amt { font-family:var(--font-en); font-weight:900; font-size:20px; color:var(--brand-glow); direction:ltr; }
+.bc-amt small { font-family:var(--font-ar); font-weight:700; font-size:11px; color:var(--fg3); margin-inline-start:4px; }
+.pay-bar { height:6px; border-radius:999px; background:rgba(255,255,255,0.08); margin:10px 0 8px; overflow:hidden; }
+.pay-bar i { display:block; height:100%; border-radius:999px; background:linear-gradient(90deg,#FFC9AE,#FF9F70); }
+.bc-foot { display:flex; align-items:center; justify-content:space-between; font-family:var(--font-ar); font-weight:600; font-size:11.5px; color:var(--fg3); }
+.bc-foot .rem { color:var(--warm); }
+.st { display:inline-block; margin-top:9px; font-family:var(--font-ar); font-weight:700; font-size:11px; padding:4px 11px; border-radius:999px; }
+.st.done { background:rgba(0,181,183,0.16); color:var(--brand-glow); }
+.st.due { background:rgba(255,193,7,0.16); color:#FFD66B; }
+.bill-card.due { border-color:rgba(255,193,7,0.22); }
+
+/* ----- Analytics mock ----- */
+.an-top { display:flex; align-items:center; gap:18px; margin-bottom:14px; }
+.donut { position:relative; width:120px; height:120px; flex:none; }
+.donut-ring { position:absolute; inset:0; border-radius:999px;
+  background:conic-gradient(#00B5B7 0 53%, #7DD3D4 53% 77%, #FFB494 77% 88%, rgba(255,255,255,0.16) 88% 100%); }
+.donut-hole { position:absolute; inset:25px; border-radius:999px; background:#0f1c23; display:grid; place-items:center; text-align:center;
+  box-shadow:inset 0 1px 0 rgba(255,255,255,0.07); }
+.donut-hole b { font-family:var(--font-en); font-weight:900; font-size:26px; color:var(--fg1); direction:ltr; line-height:1; }
+.donut-hole span { font-family:var(--font-ar); font-weight:600; font-size:11px; color:var(--fg3); margin-top:3px; }
+.donut-legend { display:flex; flex-direction:column; gap:9px; }
+.donut-legend span { display:flex; align-items:center; gap:9px; font-family:var(--font-ar); font-weight:600; font-size:12.5px; color:var(--fg2); }
+.donut-legend i { width:11px; height:11px; border-radius:4px; flex:none; }
+.an-kpis { display:grid; grid-template-columns:1.4fr 1fr; gap:10px; margin-bottom:14px; }
+.ak { padding:13px 14px; border-radius:var(--r-md); background:rgba(255,255,255,0.03); border:1px solid var(--stroke-soft); }
+.ak .v { font-family:var(--font-en); font-weight:900; font-size:19px; color:var(--brand-glow); direction:ltr; font-variant-numeric:tabular-nums; }
+.ak .v small { font-family:var(--font-ar); font-weight:700; font-size:11px; color:var(--fg3); margin-inline-start:4px; }
+.ak .k { font-family:var(--font-ar); font-weight:600; font-size:11.5px; color:var(--fg3); margin-top:5px; display:block; }
+.an-trend { padding:14px 16px; border-radius:var(--r-md); background:rgba(255,255,255,0.03); border:1px solid var(--stroke-soft); }
+.an-trend-h { display:flex; align-items:center; justify-content:space-between; margin-bottom:8px; }
+.an-trend-h > span:first-child { font-family:var(--font-ar); font-weight:700; font-size:13px; color:var(--fg2); }
+.an-trend-h .lgnd { display:inline-flex; align-items:center; gap:7px; font-family:var(--font-ar); font-weight:600; font-size:11px; color:var(--fg3); }
+.an-trend-h .lgnd i { width:14px; height:3px; border-radius:3px; display:inline-block; }
+.an-trend-h .lgnd i.t { background:#00B5B7; }
+.an-trend-h .lgnd i.o { background:#FFB494; margin-inline-start:8px; }
+.an-trend svg { width:100%; height:64px; display:block; }
+.an-trend .ln { fill:none; stroke-width:2.5; vector-effect:non-scaling-stroke; stroke-linecap:round; stroke-linejoin:round; }
+.an-trend .ln.t { stroke:#00B5B7; }
+.an-trend .ln.o { stroke:#FFB494; }
+
+/* ----- Dental arch ----- */
+.dental-legend { display:flex; flex-wrap:wrap; gap:14px; justify-content:center; margin-bottom:6px;
+  font-family:var(--font-ar); font-weight:600; font-size:12px; color:var(--fg3); }
+.dental-legend span { display:inline-flex; align-items:center; gap:7px; }
+.dental-legend i { width:12px; height:12px; border-radius:4px; display:block; }
+.dental-legend .d-ok { background:rgba(255,255,255,0.14); border:1px solid var(--stroke-strong); }
+.dental-legend .d-done { background:#0d9a9c; }
+.dental-legend .d-prog { background:#FF9F70; }
+.dental-legend .d-plan { background:transparent; border:1.5px dashed rgba(125,211,212,0.6); }
+.dental { position:relative; width:100%; height:300px; margin:0 auto; }
+.dental .tooth { position:absolute; width:30px; height:34px; transform:translate(-50%,-50%);
+  border-radius:8px 8px 11px 11px; display:grid; place-items:center; box-sizing:border-box;
+  background:rgba(255,255,255,0.05); border:1px solid var(--stroke-strong);
+  font-family:var(--font-en); font-size:9px; font-weight:700; color:var(--fg3); font-variant-numeric:tabular-nums; }
+.dental .tooth.done { background:rgba(0,181,183,0.3); border-color:rgba(0,181,183,0.62); color:#EAFEFE; }
+.dental .tooth.prog { background:rgba(255,160,112,0.32); border-color:rgba(255,160,112,0.66); color:#FFE3D2; }
+.dental .tooth.plan { background:transparent; border:1.5px dashed rgba(125,211,212,0.55); color:var(--brand-glow); }
+
+/* ----- QR (offer) ----- */
+.offer-card { display:flex; align-items:center; gap:16px; }
+.offer-text { flex:1; }
+.qr { flex:none; width:80px; height:80px; padding:7px; border-radius:12px; background:#FFE9DC;
+  display:grid; grid-template-columns:repeat(11,1fr); grid-template-rows:repeat(11,1fr); gap:1.5px; }
+.qr i { background:transparent; border-radius:1px; }
+.qr i.on { background:#3a1a08; }
+
+/* loyalty label small */
+.loyalty .lt { display:flex; flex-direction:column; }
+.loyalty .lt small { font-family:var(--font-ar); font-weight:500; font-size:10.5px; color:var(--fg3); margin-top:2px; }
+
+/* ============================================================
+   REVISION 2 — 3D hero, app-accurate mocks
+   ============================================================ */
+
+/* ----- Hero 3D app-icon ----- */
+.hero-3d { position:relative; width:100%; max-width:460px; aspect-ratio:1/1; margin-inline:auto; display:grid; place-items:center; }
+.hero-3d .halo { position:absolute; width:80%; height:80%; border-radius:999px;
+  background:radial-gradient(circle, rgba(0,181,183,0.45), rgba(0,181,183,0.06) 58%, transparent 72%); filter:blur(10px); }
+.hero-3d .ring { position:absolute; border-radius:999px; border:1px solid rgba(125,211,212,0.14); }
+.hero-3d .ring.r1 { width:90%; height:90%; }
+.hero-3d .ring.r2 { width:66%; height:66%; border-color:rgba(125,211,212,0.10); }
+.hero-3d .appicon { position:relative; width:55%; aspect-ratio:1; border-radius:30px; overflow:hidden;
+  box-shadow:0 30px 60px -18px rgba(0,16,21,0.85), 0 0 0 1px rgba(255,255,255,0.07), 0 18px 44px -10px rgba(0,181,183,0.45);
+  animation:float3d 6s ease-in-out infinite; }
+.hero-3d .appicon img { display:block; width:100%; height:100%; object-fit:cover; }
+.hero-3d .appicon .gloss { position:absolute; inset:0; pointer-events:none;
+  background:linear-gradient(150deg, rgba(255,255,255,0.18), transparent 42%); }
+@keyframes float3d { 0%,100%{ transform:translateY(-7px); } 50%{ transform:translateY(7px); } }
+@media (prefers-reduced-motion:reduce){ .hero-3d .appicon{ animation:none; } }
+.orbit-chip { position:absolute; display:inline-flex; align-items:center; gap:8px; padding:9px 14px; border-radius:999px;
+  background:linear-gradient(150deg, rgba(26,37,45,0.9), rgba(15,26,34,0.9)); border:1px solid var(--stroke-strong);
+  box-shadow:var(--shadow-md); font-family:var(--font-ar); font-weight:700; font-size:13px; color:var(--fg1); white-space:nowrap; }
+.orbit-chip svg { width:16px; height:16px; color:var(--brand-glow); }
+.orbit-chip.oc1 { top:1%; left:50%; transform:translateX(-50%); }
+.orbit-chip.oc2 { top:23%; left:-4%; }
+.orbit-chip.oc3 { bottom:17%; left:1%; }
+.orbit-chip.oc4 { top:17%; right:-4%; }
+.orbit-chip.oc5 { bottom:9%; right:2%; }
+
+/* ----- Appointments table ----- */
+.appt-bar { display:flex; align-items:center; justify-content:space-between; padding-bottom:14px; margin-bottom:12px; border-bottom:1px solid var(--stroke); }
+.appt-bar .mock-title { display:flex; align-items:center; gap:9px; }
+.appt-bar .cnt { font-family:var(--font-en); font-weight:800; font-size:12px; color:var(--brand-glow); background:rgba(0,181,183,0.16); padding:2px 9px; border-radius:999px; }
+.seg { display:inline-flex; gap:3px; padding:3px; border-radius:999px; background:rgba(255,255,255,0.05); border:1px solid var(--stroke); }
+.seg i { font-style:normal; font-family:var(--font-ar); font-weight:700; font-size:11.5px; padding:5px 12px; border-radius:999px; color:var(--fg3); }
+.seg i.on { background:rgba(0,181,183,0.2); color:var(--brand-glow); }
+.appt-table { display:flex; flex-direction:column; }
+.ath, .atr { display:grid; grid-template-columns:auto 1fr auto auto; gap:12px; align-items:center; }
+.ath { padding:0 6px 10px; }
+.ath span { font-family:var(--font-ar); font-weight:700; font-size:11.5px; color:var(--fg3); }
+.atr { padding:12px 12px; border-radius:var(--r-md); background:rgba(255,255,255,0.03); border:1px solid var(--stroke-soft); margin-bottom:8px; }
+.atd { font-family:var(--font-ar); font-size:12.5px; color:var(--fg1); }
+.atd.date b { font-family:var(--font-en); font-weight:800; font-size:13px; color:var(--fg1); direction:ltr; display:block; }
+.atd.date i { font-style:normal; font-family:var(--font-en); font-weight:600; font-size:10.5px; color:var(--fg3); direction:ltr; }
+.atd.who b { font-family:var(--font-ar); font-weight:700; font-size:13.5px; color:var(--fg1); display:block; }
+.atd.who i { font-style:normal; font-family:var(--font-ar); font-weight:500; font-size:11.5px; color:var(--fg3); }
+.src { display:inline-flex; align-items:center; gap:6px; font-family:var(--font-ar); font-weight:700; font-size:11px; padding:5px 10px; border-radius:999px; white-space:nowrap; }
+.src svg { width:13px; height:13px; }
+.src.app { background:rgba(0,181,183,0.15); color:var(--brand-glow); }
+.src.hand { background:rgba(255,255,255,0.06); color:var(--fg2); }
+
+/* ----- Visit report procedure tags ----- */
+.vr-tags2 { display:flex; flex-wrap:wrap; gap:8px; }
+.vr-tags2 span { font-family:var(--font-ar); font-weight:700; font-size:12px; padding:6px 12px; border-radius:999px;
+  background:rgba(0,181,183,0.12); border:1px solid rgba(0,181,183,0.28); color:var(--brand-glow); }
+
+/* ----- Billing duo + add-payment ----- */
+.duo { display:grid; grid-template-columns:1fr 1fr; gap:24px; align-items:start; }
+.duo .bill-grid { grid-template-columns:1fr; }
+.bill-checks { display:grid; grid-template-columns:repeat(3,1fr); gap:14px 28px; max-width:none; margin-bottom:30px; }
+.bill-checks li { font-size:15px; }
+.pay-summary { display:flex; flex-direction:column; gap:9px; padding:14px 16px; border-radius:var(--r-md);
+  background:rgba(255,255,255,0.03); border:1px solid var(--stroke-soft); margin-bottom:14px; }
+.ps-row { display:flex; align-items:center; justify-content:space-between; font-family:var(--font-ar); font-size:12.5px; }
+.ps-row span { color:var(--fg3); font-weight:600; }
+.ps-row b { color:var(--fg1); font-weight:700; }
+.pay-amounts { padding:16px; border-radius:var(--r-md); background:linear-gradient(150deg, rgba(255,180,148,0.1), rgba(255,255,255,0.02));
+  border:1px solid rgba(255,180,148,0.28); margin-bottom:16px; }
+.pa-line { display:flex; align-items:center; justify-content:space-between; }
+.pa-line span { font-family:var(--font-ar); font-weight:600; font-size:13px; color:var(--fg2); }
+.pa-line .tot { font-family:var(--font-en); font-weight:900; font-size:22px; color:var(--fg1); direction:ltr; }
+.pa-line .tot small { font-family:var(--font-ar); font-weight:700; font-size:11px; color:var(--fg3); margin-inline-start:4px; }
+.pa-foot { display:flex; align-items:center; justify-content:space-between; margin-top:10px; font-family:var(--font-ar); font-weight:700; font-size:12px; }
+.pa-foot .paid { color:var(--brand-glow); }
+.pa-foot .rem { color:var(--warm); }
+.pay-field { margin-bottom:12px; }
+.pf-label { display:block; font-family:var(--font-ar); font-weight:700; font-size:12px; color:var(--fg3); margin-bottom:7px; }
+.pf-input { display:flex; align-items:center; gap:10px; padding:13px 15px; border-radius:var(--r-md);
+  background:rgba(255,255,255,0.04); border:1px solid var(--stroke-strong); }
+.pf-input .hash { font-family:var(--font-en); font-weight:700; color:var(--fg3); }
+.pf-input b { font-family:var(--font-en); font-weight:900; font-size:18px; color:var(--fg1); direction:ltr; flex:1; }
+.pf-input .unit { font-family:var(--font-ar); font-weight:700; font-size:12px; color:var(--brand-glow); background:rgba(0,181,183,0.14); padding:4px 10px; border-radius:8px; }
+.pay-method { display:flex; align-items:center; gap:10px; padding:13px 15px; border-radius:var(--r-md);
+  background:rgba(255,255,255,0.04); border:1px solid var(--stroke); font-family:var(--font-ar); font-weight:700; font-size:13.5px; color:var(--fg1); margin-bottom:16px; }
+.pay-method svg { width:17px; height:17px; color:var(--brand-glow); }
+.pay-method .ch { margin-inline-start:auto; color:var(--fg3); }
+.pay-confirm { width:100%; border:none; cursor:default; font-family:var(--font-ar); font-weight:800; font-size:15.5px; color:#001015;
+  padding:15px; border-radius:var(--r-md); background:linear-gradient(180deg,#7DD3D4,#00B5B7);
+  box-shadow:0 12px 26px -8px rgba(0,181,183,0.5), inset 0 1px 0 rgba(255,255,255,0.35); }
+
+/* ----- Accounting overview ----- */
+.acc-kpis { display:grid; grid-template-columns:repeat(3,1fr); gap:10px; margin-bottom:16px; }
+.ak2 { padding:13px 14px; border-radius:var(--r-md); background:rgba(255,255,255,0.03); border:1px solid var(--stroke-soft); }
+.ak2 .k { display:block; font-family:var(--font-ar); font-weight:600; font-size:11.5px; color:var(--fg3); margin-bottom:6px; }
+.ak2 .v { font-family:var(--font-en); font-weight:900; font-size:16px; direction:ltr; font-variant-numeric:tabular-nums; }
+.ak2 .v small { font-family:var(--font-ar); font-weight:700; font-size:10px; color:var(--fg3); margin-inline-start:3px; }
+.ak2.up .v { color:var(--brand-glow); }
+.ak2.down .v { color:#FF9E8A; }
+.ak2.net .v { color:#E8C36B; }
+.acc-ring { background:conic-gradient(#00B5B7 0 53%, #3FA89B 53% 73%, #6FBFA8 73% 89%, #FFB494 89% 100%) !important; }
+.an-trend .ln.g { stroke:#E8C36B; }
+.an-trend-h .lgnd i.g { background:#E8C36B; margin-inline-start:8px; }
+
+/* ----- Analytics gauges ----- */
+.gauges { display:flex; gap:18px; justify-content:center; margin:6px 0 16px; }
+.gauge { display:flex; flex-direction:column; align-items:center; gap:8px; }
+.g-ring { width:74px; height:74px; border-radius:999px; position:relative; display:grid; place-items:center; --gc:#FFB494;
+  background:conic-gradient(var(--gc) calc(var(--p)*1%), rgba(255,255,255,0.09) 0); }
+.g-ring::before { content:""; position:absolute; inset:9px; border-radius:999px; background:#0f1c23; }
+.g-ring.teal { --gc:#00B5B7; }
+.g-val { position:relative; font-family:var(--font-en); font-weight:900; font-size:16px; color:var(--fg1); direction:ltr; }
+.g-k { font-family:var(--font-ar); font-weight:600; font-size:12px; color:var(--fg3); text-align:center; }
+
+/* ----- Dental exact screenshot ----- */
+.dental-shot { padding:0 !important; }
+.dental-shot img { display:block; width:100%; height:auto; border-radius:var(--r-xl); }
+
+/* ----- Team enhanced ----- */
+.cap-card { padding:16px; border-radius:var(--r-md); margin-bottom:14px;
+  background:radial-gradient(420px circle at 90% 0%, rgba(0,181,183,0.16), transparent 60%), rgba(255,255,255,0.03);
+  border:1px solid rgba(0,181,183,0.22); }
+.cap-head { display:flex; align-items:center; justify-content:space-between; margin-bottom:14px; }
+.cap-t { font-family:var(--font-ar); font-weight:800; font-size:14px; color:var(--fg1); }
+.cap-badge { font-family:var(--font-ar); font-weight:700; font-size:11px; color:var(--brand-glow); background:rgba(0,181,183,0.14); padding:4px 11px; border-radius:999px; }
+.cap-row { display:flex; align-items:center; justify-content:space-between; font-family:var(--font-ar); font-weight:600; font-size:12px; color:var(--fg2); margin-bottom:6px; }
+.cap-row span:last-child { font-family:var(--font-en); font-weight:700; color:var(--fg3); direction:ltr; }
+.cap-bar { height:7px; border-radius:999px; background:rgba(255,255,255,0.07); overflow:hidden; margin-bottom:13px; }
+.cap-bar:last-child { margin-bottom:0; }
+.cap-bar i { display:block; height:100%; border-radius:999px; background:linear-gradient(90deg,#FF9F70,#00B5B7); }
+.cap-bar.sec i { background:linear-gradient(90deg,#0a7173,#00B5B7); }
+.mlist { display:flex; flex-direction:column; gap:9px; }
+.mrow { display:grid; grid-template-columns:auto 1fr auto; align-items:center; gap:13px; padding:12px 14px;
+  border-radius:var(--r-md); background:rgba(255,255,255,0.03); border:1px solid var(--stroke-soft); }
+.mrow .av { width:38px; height:38px; border-radius:999px; flex:none; display:grid; place-items:center;
+  font-family:var(--font-ar); font-weight:800; font-size:15px; color:#001015; background:linear-gradient(135deg,#7DD3D4,#00B5B7); }
+.mrow .who b { font-family:var(--font-ar); font-weight:700; font-size:14px; color:var(--fg1); display:block; }
+.mrow .who span { font-family:var(--font-ar); font-weight:500; font-size:12px; color:var(--fg3); }
+.mrow .role { font-family:var(--font-ar); font-weight:700; font-size:11px; padding:5px 12px; border-radius:999px;
+  background:rgba(0,181,183,0.14); color:var(--brand-glow); white-space:nowrap; }
+.mrow .role.owner { background:rgba(232,195,107,0.16); color:#E8C36B; }
+
+/* ----- Loyalty points badge ----- */
+.loyalty .pts { font-family:var(--font-en); font-weight:900; font-size:20px; color:#001015; direction:ltr;
+  background:linear-gradient(135deg,#7DD3D4,#00B5B7); padding:6px 14px; border-radius:999px; box-shadow:0 6px 14px -4px rgba(0,181,183,0.5); }
+
+/* responsive */
+@media (max-width:880px) {
+  .duo, .bill-checks, .acc-kpis { grid-template-columns:1fr; }
+}
+
+/* ============================================================
+   REVISION 2 — hero stage, appt table, payment, accounting,
+   analytics, dental image, team
+   ============================================================ */
+
+/* full-width stacked feature + inline bullets */
+.feature.stack { display:block; }
+.feature.stack .fbody { margin-bottom:26px; }
+.fviz.wide { width:100%; }
+.checks.inline3 { display:grid; grid-template-columns:repeat(3,1fr); gap:18px 26px; }
+.checks.inline3 li { font-size:15.5px; }
+@media (max-width:880px){ .checks.inline3 { grid-template-columns:1fr; } }
+
+/* ---------- Hero branded 3D stage ---------- */
+.hero-stage { position:relative; aspect-ratio:1/1; max-width:480px; margin-inline:auto;
+  display:grid; place-items:center; }
+.hero-stage .hs-glow { position:absolute; width:82%; height:74%; border-radius:999px;
+  background:radial-gradient(circle, rgba(0,181,183,0.28), rgba(0,181,183,0) 68%); filter:blur(56px); }
+.hero-stage .hs-ring { position:absolute; border-radius:999px; border:1px solid rgba(125,211,212,0.18); }
+.hero-stage .hs-ring.r1 { width:74%; height:74%; }
+.hero-stage .hs-ring.r2 { width:99%; height:99%; border-color:rgba(125,211,212,0.10);
+  border-style:dashed; }
+.hero-stage .hs-icon-wrap { position:relative; width:60%; aspect-ratio:1/1; z-index:2;
+  transform-style:preserve-3d;
+  transform:perspective(1100px) rotateX(9deg) rotateY(-11deg) rotateZ(-1.5deg); }
+/* contact shadow on the "floor" */
+.hero-stage .hs-icon-wrap::before { content:""; position:absolute; left:8%; right:8%; bottom:-13%; height:20%;
+  background:radial-gradient(ellipse at center, rgba(0,16,21,0.85), rgba(0,16,21,0) 72%);
+  filter:blur(14px); transform:translateZ(-40px); z-index:-1; }
+.hero-stage .hs-icon { display:block; width:100%; height:100%; object-fit:cover; border-radius:23%;
+  box-shadow:
+    0 3px 6px rgba(0,16,21,0.5),
+    0 24px 44px -10px rgba(0,16,21,0.85),
+    0 48px 90px -22px rgba(0,144,146,0.6),
+    0 0 0 1px rgba(255,255,255,0.05),
+    inset 0 3px 1px rgba(255,255,255,0.22),
+    inset 0 -8px 18px rgba(0,16,21,0.5); }
+/* glossy specular sheen across the top-left */
+.hero-stage .hs-sheen { position:absolute; inset:0; border-radius:23%; pointer-events:none;
+  background:linear-gradient(142deg, rgba(255,255,255,0.34) 0%, rgba(255,255,255,0.08) 22%, transparent 46%);
+  mix-blend-mode:screen; opacity:0.9; }
+@keyframes hsFloat {
+  0%,100% { transform:perspective(1100px) rotateX(9deg) rotateY(-11deg) rotateZ(-1.5deg) translateY(0); }
+  50%     { transform:perspective(1100px) rotateX(7deg) rotateY(-8deg)  rotateZ(-1deg)   translateY(-12px); }
+}
+@media (prefers-reduced-motion:reduce){ .hero-stage .hs-icon-wrap { animation:none; } }
+.hero-stage .hs-chip { position:absolute; display:inline-flex; align-items:center; gap:8px;
+  padding:9px 15px; border-radius:999px; z-index:3; white-space:nowrap;
+  font-family:var(--font-ar); font-weight:700; font-size:13px; color:var(--fg1);
+  background:linear-gradient(150deg, rgba(26,37,45,0.92), rgba(15,26,34,0.88));
+  border:1px solid var(--stroke-strong);
+  box-shadow:0 14px 30px -10px rgba(0,16,21,0.7), inset 0 1px 0 rgba(255,255,255,0.12);
+  backdrop-filter:blur(6px); }
+.hero-stage .hs-chip svg { width:15px; height:15px; color:var(--brand-glow); }
+.hero-stage .hs-chip.c1 { top:6%; inset-inline-start:2%; }
+.hero-stage .hs-chip.c2 { top:30%; inset-inline-end:-4%; }
+.hero-stage .hs-chip.c3 { bottom:30%; inset-inline-start:-6%; }
+.hero-stage .hs-chip.c4 { bottom:6%; inset-inline-end:4%; }
+.hero-stage .hs-chip.c5 { top:-2%; inset-inline-end:24%; }
+.hero-stage .hs-chip.c5 svg { color:var(--warm); }
+
+/* ---------- Appointments table ---------- */
+.appt .mock-title .cnt { display:inline-grid; place-items:center; min-width:20px; height:20px; padding:0 6px;
+  margin-inline-start:6px; border-radius:999px; background:rgba(0,181,183,0.2); color:var(--brand-glow);
+  font-family:var(--font-en); font-weight:800; font-size:11px; vertical-align:1px; }
+.seg { display:inline-flex; gap:3px; padding:3px; border-radius:999px; background:rgba(255,255,255,0.05); border:1px solid var(--stroke); }
+.seg i { font-family:var(--font-ar); font-style:normal; font-weight:700; font-size:12px; padding:5px 13px; border-radius:999px; color:var(--fg3); }
+.seg i.on { background:rgba(0,181,183,0.22); color:var(--brand-glow); }
+.atable { display:flex; flex-direction:column; }
+.ath, .atr { display:grid; grid-template-columns:0.7fr 1fr 1.3fr 1.7fr 1.1fr 1fr; align-items:center; gap:12px; }
+.ath { padding:0 14px 12px; border-bottom:1px solid var(--stroke); }
+.ath span { font-family:var(--font-ar); font-weight:700; font-size:12.5px; color:var(--fg3); }
+.atr { padding:15px 14px; border-radius:var(--r-md); margin-top:9px;
+  background:rgba(255,255,255,0.03); border:1px solid var(--stroke-soft); }
+.atr .ad { font-family:var(--font-en); font-weight:700; font-size:13px; color:var(--fg2); direction:ltr; font-variant-numeric:tabular-nums; }
+.atr .atime { display:flex; flex-direction:column; font-family:var(--font-en); font-weight:800; font-size:13.5px; color:var(--fg1); direction:rtl; }
+.atr .atime small { font-family:var(--font-ar); font-weight:600; font-size:11px; color:var(--fg3); margin-top:2px; }
+.atr .aname { display:flex; align-items:center; gap:8px; font-family:var(--font-ar); font-weight:700; font-size:14px; color:var(--fg1); }
+.atr .aname svg { width:16px; height:16px; color:var(--brand-glow); flex:none; }
+.atr .areason { font-family:var(--font-ar); font-weight:500; font-size:13.5px; color:var(--fg2); }
+.src { display:inline-flex; align-items:center; gap:6px; padding:5px 11px; border-radius:999px;
+  font-family:var(--font-ar); font-weight:700; font-size:11.5px; white-space:nowrap; }
+.src svg { width:13px; height:13px; }
+.src.app { background:rgba(0,181,183,0.16); color:var(--brand-glow); }
+.src.man { background:rgba(255,255,255,0.06); color:var(--fg2); }
+.ast { display:inline-block; font-family:var(--font-ar); font-weight:700; font-size:11.5px; padding:5px 12px; border-radius:999px; white-space:nowrap; }
+.ast.wait { background:rgba(255,193,7,0.16); color:#FFD66B; }
+.ast.now { background:rgba(0,181,183,0.18); color:var(--brand-glow); }
+.ast.done { background:rgba(125,211,212,0.14); color:var(--brand-glow); }
+@media (max-width:880px){ .appt { overflow-x:auto; } .atable { min-width:640px; } }
+
+/* ---------- Visit report procedures ---------- */
+.vr-proc { display:flex; flex-wrap:wrap; gap:8px; }
+.vr-proc .pc { font-family:var(--font-ar); font-weight:600; font-size:12.5px; padding:7px 13px; border-radius:999px;
+  background:rgba(0,181,183,0.1); border:1px solid rgba(0,181,183,0.26); color:var(--brand-glow); }
+
+/* ---------- Billing split + payment panel ---------- */
+.bill-split { display:grid; grid-template-columns:1.25fr 1fr; gap:18px; align-items:start; }
+@media (max-width:880px){ .bill-split { grid-template-columns:1fr; } }
+.pay-summary { padding:16px; border-radius:var(--r-md); background:linear-gradient(150deg, rgba(255,180,148,0.1), rgba(255,255,255,0.02));
+  border:1px solid rgba(255,180,148,0.28); margin-bottom:16px; }
+.ps-top { display:flex; align-items:center; justify-content:space-between; margin-bottom:10px; }
+.ps-top span { font-family:var(--font-ar); font-weight:600; font-size:13px; color:var(--fg2); }
+.ps-top b { font-family:var(--font-en); font-weight:900; font-size:22px; color:var(--fg1); direction:ltr; }
+.ps-top b small { font-family:var(--font-ar); font-weight:700; font-size:12px; color:var(--fg3); margin-inline-start:4px; }
+.pay-bar.lg { height:8px; }
+.ps-row { display:flex; align-items:center; justify-content:space-between; margin-top:9px;
+  font-family:var(--font-ar); font-weight:700; font-size:12px; }
+.ps-row .paid { color:var(--brand-glow); }
+.ps-row .rem { color:var(--warm); }
+.pay-field { margin-bottom:14px; }
+.pay-field .pf-lbl { display:block; font-family:var(--font-ar); font-weight:700; font-size:12.5px; color:var(--fg3); margin-bottom:8px; }
+.pay-field .pf-input { display:flex; align-items:center; gap:10px; padding:13px 15px; border-radius:var(--r-md);
+  background:rgba(255,255,255,0.04); border:1px solid var(--stroke-strong); }
+.pf-input .hash { font-family:var(--font-en); font-weight:700; color:var(--fg3); }
+.pf-input .pf-amt { flex:1; font-family:var(--font-en); font-weight:900; font-size:20px; color:var(--fg1); direction:ltr; }
+.pf-input .pf-cur { font-family:var(--font-ar); font-weight:700; font-size:13px; color:var(--brand-glow);
+  background:rgba(0,181,183,0.14); padding:5px 11px; border-radius:8px; }
+.pay-method { display:flex; gap:9px; margin-bottom:16px; }
+.pay-method .pm { flex:1; display:inline-flex; align-items:center; justify-content:center; gap:8px; padding:11px;
+  border-radius:var(--r-md); font-family:var(--font-ar); font-weight:700; font-size:13px; color:var(--fg2);
+  background:rgba(255,255,255,0.03); border:1px solid var(--stroke); }
+.pay-method .pm svg { width:16px; height:16px; }
+.pay-method .pm.active { background:rgba(0,181,183,0.16); border-color:rgba(0,181,183,0.4); color:var(--brand-glow); }
+.pay-btn { text-align:center; padding:15px; border-radius:12px; font-family:var(--font-ar); font-weight:800; font-size:15.5px;
+  color:#001015; background:linear-gradient(180deg,#7DD3D4,#00B5B7);
+  box-shadow:0 12px 26px -8px rgba(0,181,183,0.55), inset 0 1px 0 rgba(255,255,255,0.3); }
+.pay-note { display:flex; align-items:center; justify-content:center; gap:8px; margin-top:14px;
+  font-family:var(--font-ar); font-weight:600; font-size:12px; color:var(--fg3); }
+.pay-note svg { width:14px; height:14px; color:var(--brand-glow); }
+
+/* ---------- Accounting dashboard ---------- */
+.acct-grid { display:grid; grid-template-columns:1.1fr 0.9fr 1fr; gap:14px; align-items:stretch; }
+@media (max-width:980px){ .acct-grid { grid-template-columns:1fr; } }
+.acct-sub { padding:16px; border-radius:var(--r-md); background:rgba(255,255,255,0.03); border:1px solid var(--stroke-soft); }
+.sub-t { font-family:var(--font-ar); font-weight:800; font-size:13.5px; color:var(--fg2); margin-bottom:16px; }
+.acct-d .donut-ring { background:conic-gradient(#00B5B7 0 53%, #0d8a8c 53% 73%, #7DD3D4 73% 89%, #C9A88A 89% 100%); }
+.fin-bars { display:flex; gap:16px; align-items:flex-end; height:150px; padding:0 6px 26px; position:relative; }
+.fb-col { flex:1; height:100%; display:flex; flex-direction:column; justify-content:flex-end; align-items:center; position:relative; }
+.fb-bar { width:62%; border-radius:8px 8px 4px 4px; min-height:8px; }
+.fb-bar.t { background:linear-gradient(180deg,#7DD3D4,#0a7173); }
+.fb-bar.r { background:linear-gradient(180deg,#FF9F70,#C9603A); }
+.fb-bar.w { background:linear-gradient(180deg,#E8C36B,#B8923A); }
+.fb-v { font-family:var(--font-en); font-weight:800; font-size:13px; color:var(--fg1); direction:ltr; margin-bottom:7px; }
+.fb-l { position:absolute; bottom:-24px; left:0; right:0; text-align:center; font-family:var(--font-ar); font-weight:600; font-size:11.5px; color:var(--fg3); }
+.acct-kpis { display:flex; flex-direction:column; gap:10px; }
+.ak2 { display:flex; align-items:center; gap:12px; padding:12px 14px; border-radius:var(--r-md);
+  background:rgba(255,255,255,0.03); border:1px solid var(--stroke-soft); }
+.ak2 .ico { width:36px; height:36px; flex:none; border-radius:11px; display:grid; place-items:center;
+  background:rgba(255,255,255,0.05); color:var(--fg2); }
+.ak2 .ico svg { width:18px; height:18px; }
+.ak2 .ico.t { background:rgba(0,181,183,0.14); color:var(--brand-glow); }
+.ak2 .ico.w { background:rgba(232,195,107,0.14); color:#E8C36B; }
+.ak2 .ico.g { background:rgba(0,181,183,0.14); color:var(--brand-glow); }
+.ak2 .v { font-family:var(--font-en); font-weight:900; font-size:16px; color:var(--fg1); direction:ltr; font-variant-numeric:tabular-nums; display:block; }
+.ak2 .v small { font-family:var(--font-ar); font-weight:700; font-size:10.5px; color:var(--fg3); margin-inline-start:3px; }
+.ak2 .k { font-family:var(--font-ar); font-weight:600; font-size:11.5px; color:var(--fg3); margin-top:3px; display:block; }
+
+/* ---------- Analytics ---------- */
+.an-kpibar { display:grid; grid-template-columns:repeat(3,1fr); gap:12px; margin-bottom:14px; }
+.an-kpibar .ak { padding:14px 16px; border-radius:var(--r-md); background:rgba(255,255,255,0.03); border:1px solid var(--stroke-soft); }
+.an-kpibar .ak .v { font-family:var(--font-en); font-weight:900; font-size:24px; color:var(--brand-glow); direction:ltr; font-variant-numeric:tabular-nums; }
+.an-kpibar .ak .v small { font-family:var(--font-ar); font-weight:700; font-size:12px; color:var(--fg3); margin-inline-start:4px; }
+.an-kpibar .ak .k { font-family:var(--font-ar); font-weight:600; font-size:12px; color:var(--fg3); margin-top:5px; display:block; }
+.an-row2 { display:grid; grid-template-columns:1.3fr 1fr; gap:14px; margin-bottom:14px; align-items:stretch; }
+@media (max-width:980px){ .an-row2 { grid-template-columns:1fr; } }
+.an-gauges { display:flex; gap:14px; padding:16px; border-radius:var(--r-md); background:rgba(255,255,255,0.03); border:1px solid var(--stroke-soft); align-items:center; justify-content:space-around; }
+.gauge { display:flex; flex-direction:column; align-items:center; gap:12px; }
+.g-ring { position:relative; width:92px; height:92px; border-radius:999px; display:grid; place-items:center; }
+.g-ring::before { content:""; position:absolute; inset:0; border-radius:999px;
+  background:conic-gradient(var(--c) calc(var(--p)*1%), rgba(255,255,255,0.08) 0);
+  -webkit-mask:radial-gradient(farthest-side, transparent 64%, #000 65%);
+  mask:radial-gradient(farthest-side, transparent 64%, #000 65%); }
+.g-ring.miss { --c:#FFB494; --p:11; }
+.g-ring.full { --c:#00B5B7; --p:88; }
+.g-ring .g-val { position:relative; font-family:var(--font-en); font-weight:900; font-size:19px; color:var(--fg1); direction:ltr; }
+.gauge .g-lbl { font-family:var(--font-ar); font-weight:700; font-size:12px; color:var(--fg2); text-align:center; max-width:11ch; }
+.busy-bars { display:flex; align-items:flex-end; gap:10px; height:96px; padding-top:4px; }
+.bb { flex:1; display:flex; flex-direction:column; align-items:center; gap:8px; justify-content:flex-end; height:100%; }
+.bb-bar { width:100%; border-radius:6px 6px 3px 3px; background:linear-gradient(180deg,#7DD3D4,#0a7173); opacity:0.85; min-height:6px; }
+.bb-bar.peak { background:linear-gradient(180deg,#FFC9AE,#FF9F70); opacity:1; }
+.bb span { font-family:var(--font-ar); font-weight:600; font-size:11px; color:var(--fg3); }
+
+/* ---------- Dental image ---------- */
+.dental-img { display:block; width:100%; max-width:520px; height:auto; margin:0 auto;
+  border-radius:var(--r-xl); filter:drop-shadow(0 24px 48px rgba(0,16,21,0.55)); }
+
+/* ---------- Team (enhanced) ---------- */
+.teamx { padding:18px; }
+.tx-cap { padding:16px; border-radius:var(--r-md); margin-bottom:14px;
+  background:linear-gradient(150deg, rgba(0,181,183,0.1), rgba(255,255,255,0.02)); border:1px solid rgba(0,181,183,0.22); }
+.tx-cap-h { display:flex; align-items:center; justify-content:space-between; margin-bottom:14px; }
+.tx-cap-h > span:first-child { display:inline-flex; align-items:center; gap:9px; font-family:var(--font-ar); font-weight:800; font-size:14px; color:var(--fg1); }
+.tx-cap-h svg { width:17px; height:17px; color:var(--brand-glow); }
+.tx-center { font-family:var(--font-en); font-weight:700; font-size:11px; color:var(--brand-glow); background:rgba(0,181,183,0.16); padding:4px 11px; border-radius:999px; direction:ltr; }
+.tx-caprow { margin-bottom:12px; }
+.tx-caprow:last-child { margin-bottom:0; }
+.tx-cl { display:flex; align-items:center; justify-content:space-between; margin-bottom:7px; }
+.tx-cl b { font-family:var(--font-ar); font-weight:700; font-size:13px; color:var(--fg1); }
+.tx-cl span { font-family:var(--font-ar); font-weight:600; font-size:12px; color:var(--fg3); }
+.tx-bar { height:8px; border-radius:999px; background:rgba(255,255,255,0.07); overflow:hidden; }
+.tx-bar i { display:block; height:100%; border-radius:999px; background:linear-gradient(90deg,#0a7173,#00B5B7); }
+.tx-bar.warm i { background:linear-gradient(90deg,#FF9F70,#FFC9AE); }
+.tx-list { display:flex; flex-direction:column; gap:9px; }
+.tx-row { display:grid; grid-template-columns:auto 1fr auto; align-items:center; gap:13px; padding:13px 15px;
+  border-radius:var(--r-md); background:rgba(255,255,255,0.03); border:1px solid var(--stroke-soft); }
+.tx-row .av { width:40px; height:40px; border-radius:999px; flex:none; display:grid; place-items:center;
+  font-family:var(--font-ar); font-weight:800; font-size:15px; color:#001015; background:linear-gradient(135deg,#7DD3D4,#00B5B7); }
+.tx-who b { font-family:var(--font-ar); font-weight:700; font-size:14.5px; color:var(--fg1); display:block; }
+.tx-who span { font-family:var(--font-ar); font-weight:500; font-size:12.5px; color:var(--fg3); }
+.tx-tag { font-family:var(--font-ar); font-weight:700; font-size:11px; padding:5px 12px; border-radius:999px; white-space:nowrap;
+  background:rgba(0,181,183,0.14); color:var(--brand-glow); }
+.tx-tag.owner { background:rgba(232,195,107,0.16); color:#E8C36B; }
+.tx-tag.sec { background:rgba(255,180,148,0.16); color:#FFD9C4; }
+.tx-add { display:flex; align-items:center; justify-content:center; gap:9px; margin-top:13px; padding:13px;
+  border-radius:var(--r-md); border:1px dashed var(--stroke-strong); font-family:var(--font-ar); font-weight:700;
+  font-size:13.5px; color:var(--brand-glow); }
+.tx-add svg { width:16px; height:16px; }
+.tx-note { display:flex; align-items:flex-start; gap:8px; margin-top:13px; font-family:var(--font-ar); font-weight:500;
+  font-size:12.5px; line-height:1.6; color:var(--fg3); }
+.tx-note svg { width:15px; height:15px; color:var(--brand-glow); flex:none; margin-top:2px; }
+
+/* ============================================================
+   REVISION 3 — all-in-one merge, docs strip, billing 3-up,
+   accounting glassy donut, analytics tabs/trend, date align
+   ============================================================ */
+
+/* ---- All-in-One block ---- */
+.aio-sub { font-family:var(--font-en); font-weight:600; font-size:12.5px; letter-spacing:0.06em; color:var(--brand-glow); margin-top:8px; direction:ltr; }
+.grad-acc { background:linear-gradient(120deg,#7DD3D4,#00B5B7); -webkit-background-clip:text; background-clip:text; -webkit-text-fill-color:transparent; }
+.merge-viz { position:relative; padding:30px 26px; display:flex; flex-direction:column; align-items:center; gap:0; overflow:hidden; }
+.merge-viz .chaos { position:relative; width:100%; height:188px; }
+.chaos-label { position:absolute; top:0; inset-inline-start:50%; transform:translateX(50%);
+  font-family:var(--font-ar); font-weight:700; font-size:12px; color:var(--fg3); opacity:0.75;
+  display:inline-flex; align-items:center; gap:7px; }
+.chaos-label::before { content:""; width:6px; height:6px; border-radius:999px; background:#FF9E8A; box-shadow:0 0 10px #FF9E8A; }
+.mchip { position:absolute; display:inline-flex; align-items:center; gap:7px; padding:8px 13px; border-radius:11px;
+  font-family:var(--font-ar); font-weight:700; font-size:12.5px; color:var(--fg2); white-space:nowrap;
+  background:rgba(255,255,255,0.05); border:1px solid var(--stroke-soft);
+  box-shadow:0 8px 18px -8px rgba(0,16,21,0.6); filter:saturate(0.5); opacity:0.82; }
+.mchip svg { width:14px; height:14px; color:var(--fg3); }
+.mchip.m1 { top:34px; inset-inline-start:2%;  transform:rotate(-7deg); }
+.mchip.m2 { top:30px; inset-inline-start:38%; transform:rotate(5deg); }
+.mchip.m3 { top:40px; inset-inline-end:1%;   transform:rotate(8deg); }
+.mchip.m4 { top:96px; inset-inline-start:9%;  transform:rotate(6deg); }
+.mchip.m5 { top:104px; inset-inline-start:43%; transform:rotate(-5deg); }
+.mchip.m6 { top:100px; inset-inline-end:8%;   transform:rotate(-9deg); }
+.merge-funnel { display:flex; flex-direction:column; align-items:center; gap:3px; margin:2px 0 16px; }
+.merge-funnel .mf-line { width:1px; height:16px; background:linear-gradient(var(--brand-glow),transparent); }
+.merge-funnel .mf-line:last-child { background:linear-gradient(transparent,rgba(0,181,183,0.6)); }
+.merge-funnel .mf-ico { width:30px; height:30px; border-radius:999px; display:grid; place-items:center;
+  background:rgba(0,181,183,0.16); border:1px solid rgba(0,181,183,0.4); color:var(--brand-glow); }
+.merge-funnel .mf-ico svg { width:16px; height:16px; }
+.one-card { width:100%; position:relative; display:flex; align-items:center; gap:14px; padding:18px 20px; border-radius:var(--r-lg);
+  background:linear-gradient(135deg, rgba(0,181,183,0.2), rgba(0,181,183,0.05));
+  border:1px solid rgba(0,181,183,0.42); box-shadow:0 18px 40px -16px rgba(0,181,183,0.5), inset 0 1px 0 rgba(255,255,255,0.14); }
+.one-card .oc-check { margin-inline-start:auto; width:30px; height:30px; flex:none; border-radius:999px; display:grid; place-items:center;
+  background:linear-gradient(135deg,#7DD3D4,#00B5B7); color:#001015; box-shadow:0 6px 14px -4px rgba(0,181,183,0.6); }
+.one-card .oc-check svg { width:17px; height:17px; }
+
+/* ---- Patient documents strip ---- */
+.pf-docs { margin-top:14px; padding-top:14px; border-top:1px solid var(--stroke); }
+.pf-docs-h { display:flex; align-items:center; justify-content:space-between; margin-bottom:11px; }
+.pf-docs-h > span:first-child { display:inline-flex; align-items:center; gap:8px; font-family:var(--font-ar); font-weight:800; font-size:13px; color:var(--fg2); }
+.pf-docs-h svg { width:15px; height:15px; color:var(--brand-glow); }
+.pf-docs-h .cnt2 { font-family:var(--font-ar); font-weight:700; font-size:11px; color:var(--brand-glow); background:rgba(0,181,183,0.14); padding:3px 10px; border-radius:999px; }
+.pf-docs-row { display:grid; grid-template-columns:repeat(3,1fr); gap:9px; }
+.pdoc { display:flex; flex-direction:column; align-items:center; gap:7px; padding:13px 8px; border-radius:var(--r-md);
+  background:rgba(255,255,255,0.03); border:1px solid var(--stroke-soft); text-align:center; }
+.pdoc .pd-ic { width:32px; height:32px; border-radius:10px; display:grid; place-items:center;
+  background:rgba(0,181,183,0.12); color:var(--brand-glow); }
+.pdoc .pd-ic svg { width:16px; height:16px; }
+.pdoc .pd-n { font-family:var(--font-ar); font-weight:600; font-size:11px; color:var(--fg2); line-height:1.4; }
+.pdoc .pd-t { font-family:var(--font-en); font-weight:700; font-size:9px; letter-spacing:0.05em; color:var(--fg3);
+  background:rgba(255,255,255,0.06); padding:2px 8px; border-radius:6px; direction:ltr; }
+
+/* ---- Appointments date alignment ---- */
+.atr .ad { text-align:right; }
+.ath span:first-child { text-align:right; }
+
+/* ---- Billing 3-up bills grid ---- */
+.bill-grid.three { grid-template-columns:repeat(3,1fr); }
+@media (max-width:880px){ .bill-grid.three { grid-template-columns:1fr; } }
+
+/* ---- Accounting / Analytics tabs ---- */
+.acct-tabs { display:flex; gap:7px; margin-bottom:16px; }
+.acct-tabs .at { flex:1; text-align:center; font-family:var(--font-ar); font-weight:700; font-size:12.5px; padding:9px 10px;
+  border-radius:10px; background:rgba(255,255,255,0.035); border:1px solid var(--stroke-soft); color:var(--fg3); }
+.acct-tabs .at.on { background:rgba(0,181,183,0.18); border-color:rgba(0,181,183,0.42); color:var(--brand-glow); }
+
+/* ---- Glassy donut enhancement ---- */
+.donut.glassy { filter:drop-shadow(0 14px 26px rgba(0,16,21,0.5)); }
+.donut.glassy .donut-ring { box-shadow:inset 0 2px 6px rgba(255,255,255,0.14), inset 0 -8px 16px rgba(0,16,21,0.35); }
+.donut.glassy .donut-ring::after { content:""; position:absolute; inset:0; border-radius:999px;
+  background:radial-gradient(120px 80px at 30% 18%, rgba(255,255,255,0.28), transparent 60%);
+  -webkit-mask:radial-gradient(farthest-side, transparent 58%, #000 59%);
+  mask:radial-gradient(farthest-side, transparent 58%, #000 59%); pointer-events:none; }
+.donut.glassy .donut-hole { box-shadow:inset 0 2px 8px rgba(0,16,21,0.6), inset 0 0 0 1px rgba(255,255,255,0.05); }
+.donut.acct-d .donut-ring { background:conic-gradient(#00B5B7 0 57%, #0d8a8c 57% 79%, #7DD3D4 79% 89%, #C9A88A 89% 100%); }
+
+/* legend with amounts */
+.donut-legend.amt { gap:11px; }
+.donut-legend.amt span { display:grid; grid-template-columns:auto 1fr; align-items:center; gap:0 9px; }
+.donut-legend.amt em { font-style:normal; font-family:var(--font-ar); font-weight:700; font-size:12.5px; color:var(--fg2); }
+.donut-legend.amt b { grid-column:2; font-family:var(--font-en); font-weight:700; font-size:11px; color:var(--fg3); direction:ltr; font-variant-numeric:tabular-nums; margin-top:1px; }
+.donut-legend.amt i { grid-row:span 2; }
+
+/* ---- Analytics ---- */
+.an-kpibar.four { grid-template-columns:repeat(4,1fr); }
+@media (max-width:880px){ .an-kpibar.four { grid-template-columns:repeat(2,1fr); } }
+.an-svg { width:100%; height:72px; display:block; }
+.an-svg .ln { fill:none; stroke-width:2.5; vector-effect:non-scaling-stroke; stroke-linecap:round; stroke-linejoin:round; }
+.an-svg .ln.t { stroke:#00B5B7; }
+.an-svg .ln.o { stroke:#FFB494; }
+.reason-bars { display:flex; flex-direction:column; gap:13px; }
+.rb .rb-top { display:flex; align-items:center; justify-content:space-between; margin-bottom:7px; }
+.rb .rb-top span { font-family:var(--font-ar); font-weight:600; font-size:13px; color:var(--fg2); }
+.rb .rb-top b { font-family:var(--font-en); font-weight:800; font-size:12.5px; color:var(--brand-glow); direction:ltr; }
+.rb-bar { height:9px; border-radius:999px; background:rgba(255,255,255,0.07); overflow:hidden; }
+.rb-bar i { display:block; height:100%; border-radius:999px; background:linear-gradient(90deg,#0a7173,#00B5B7); }
+
+/* ============================================================
+   STATIC EXPORT — no motion (high-quality PNG + print)
+   ============================================================ */
+/* motion enabled for the live web page (was disabled only for PNG/print export) */
+
+/* ---- visible WhatsApp number ---- */
+.wa-number { display:inline-flex; align-items:center; gap:10px; margin-top:18px; padding:11px 20px; border-radius:999px;
+  text-decoration:none; font-family:var(--font-ar); font-weight:700; font-size:15px; color:var(--fg1);
+  background:rgba(0,181,183,0.1); border:1px solid rgba(0,181,183,0.32); }
+.wa-number i { width:18px; height:18px; color:var(--brand-glow); }
+.wa-number span { color:var(--fg2); font-weight:600; }
+.wa-number b { font-family:var(--font-en); font-weight:800; font-size:17px; color:var(--brand-glow);
+  letter-spacing:0.04em; font-variant-numeric:tabular-nums; }
+.foot-wa { display:inline-flex; align-items:center; gap:7px; margin-top:10px; white-space:nowrap; font-family:var(--font-ar);
+  font-weight:700; font-size:13px; color:var(--fg2); }
+.foot-wa i { width:15px; height:15px; color:var(--brand-glow); }
+.foot-wa b { font-family:var(--font-en); font-weight:800; color:var(--brand-glow); letter-spacing:0.04em; }
+
+/* ============================================================
+   Print — tall poster export
+   ============================================================ */
+@media print {
+  @page { margin:0; }
+  body { background:#021015; -webkit-print-color-adjust:exact; print-color-adjust:exact; }
+  .atmos { position:absolute; }
+  .block, .hero, .closing, .feature, .growth, .tryfree { break-inside:avoid; }
+  .no-print { display:none !important; }
+}
+
+/* ============================================================
+   WEB — restored motion, scroll reveal, hover interactions
+   ============================================================ */
+/* floating 3D hero icon */
+.hero-stage .hs-icon-wrap { animation:hsFloat 6s ease-in-out infinite; }
+
+/* slow, unsynchronized orb drift in the fixed atmosphere */
+@keyframes orbDrift { 0%,100%{ transform:translate(0,0) scale(1); } 50%{ transform:translate(20px,-26px) scale(1.06); } }
+.atmos .orb { animation:orbDrift 20s ease-in-out infinite; will-change:transform; }
+.atmos .orb:nth-child(2n) { animation-duration:25s; animation-direction:reverse; }
+.atmos .orb:nth-child(3n) { animation-duration:30s; }
+
+/* scroll-reveal (progressive enhancement: only hides when JS is on) */
+.js .reveal { opacity:0; transform:translateY(28px);
+  transition:opacity .7s cubic-bezier(.32,.72,0,1), transform .7s cubic-bezier(.32,.72,0,1); }
+.js .reveal.in { opacity:1; transform:none; }
+
+/* hover micro-interactions */
+.icard, .qa, .fchip, .hs-chip, .offer-card, .gift, .loyalty {
+  transition:transform .18s cubic-bezier(.32,.72,0,1), box-shadow .18s, border-color .18s; }
+.icard:hover { transform:translateY(-3px); border-color:rgba(0,181,183,0.34); box-shadow:var(--shadow-lg); }
+.qa:hover { border-color:rgba(0,181,183,0.3); }
+.hs-chip:hover { transform:translateY(-3px); }
+.btn-wa, .quiet { transition:transform .16s cubic-bezier(.32,.72,0,1), box-shadow .16s, color .16s; }
+
+@media (prefers-reduced-motion:reduce){
+  .hero-stage .hs-icon-wrap, .atmos .orb { animation:none !important; }
+  .js .reveal { opacity:1 !important; transform:none !important; }
+}
+
+</style>
+</head>
+<body>
+
+<!-- ============ ATMOSPHERE ============ -->
+<div class="atmos" aria-hidden="true">
+  <div class="orb" style="left:1%;top:-5%;width:460px;height:460px;background:radial-gradient(circle,rgba(0,181,183,0.15),transparent 70%);"></div>
+  <div class="orb" style="left:88%;top:9%;width:420px;height:420px;background:radial-gradient(circle,rgba(125,211,212,0.18),transparent 70%);"></div>
+  <div class="orb" style="left:40%;top:21%;width:480px;height:480px;background:radial-gradient(circle,rgba(0,144,146,0.22),transparent 70%);"></div>
+  <div class="orb" style="left:90%;top:32%;width:400px;height:400px;background:radial-gradient(circle,rgba(0,181,183,0.24),transparent 70%);"></div>
+  <div class="orb" style="left:10%;top:42%;width:520px;height:520px;background:radial-gradient(circle,rgba(125,211,212,0.22),transparent 70%);"></div>
+  <div class="orb" style="left:62%;top:52%;width:460px;height:460px;background:radial-gradient(circle,rgba(0,144,146,0.22),transparent 70%);"></div>
+  <div class="orb" style="left:8%;top:62%;width:420px;height:420px;background:radial-gradient(circle,rgba(0,181,183,0.20),transparent 70%);"></div>
+  <div class="orb" style="left:86%;top:72%;width:480px;height:480px;background:radial-gradient(circle,rgba(125,211,212,0.22),transparent 70%);"></div>
+  <div class="orb" style="left:34%;top:82%;width:440px;height:440px;background:radial-gradient(circle,rgba(0,144,146,0.20),transparent 70%);"></div>
+  <div class="orb" style="left:78%;top:92%;width:420px;height:420px;background:radial-gradient(circle,rgba(0,181,183,0.20),transparent 70%);"></div>
+  <div class="orb" style="left:16%;top:96%;width:340px;height:340px;background:radial-gradient(circle,rgba(255,180,148,0.10),transparent 70%);"></div>
+  <div class="grid"></div>
+  <div class="noise" id="noise"></div>
+</div>
+
+<div class="shell">
+<div class="wrap">
+
+  <!-- ============ TOP BRAND BAR ============ -->
+  <header class="topbar">
+    <div class="brand">
+      <img src="/images/pro/logo-full-teal.png" alt="DocSera Pro" />
+    </div>
+    <div class="meta">Practice platform · للأطباء</div>
+  </header>
+
+  <!-- ============ 1 · HERO ============ -->
+  <section class="hero reveal" data-screen-label="Hero">
+    <div class="hero-grid">
+      <div class="hero-copy">
+        <span class="eyebrow warm"><span class="dot"></span>عرض الإطلاق · لأول ١٠٠ طبيب</span>
+        <h1>كل ما تحتاجه عيادتك في <span class="grad">مكانٍ واحد</span>.</h1>
+        <div class="en-line">Everything your clinic needs — one quiet place.</div>
+        <p class="lede">أدِر عيادتك اليوم، وكن أوّل من يجده مرضاك غداً.</p>
+        <div class="hero-cta-row">
+          <a class="btn btn-wa lg" href="#" id="waHero"><i data-lucide="message-circle" class="wa-ico"></i>ابدأ تجربتك المجانية ٤٥ يوماً</a>
+        </div>
+        <div class="hero-badges">
+          <span class="seal"><i data-lucide="badge-check"></i>سعرٌ مخفّضٌ لأول ١٠٠ طبيب</span>
+          <span class="eyebrow"><span class="dot"></span>دون دفعٍ مسبق</span>
+        </div>
+      </div>
+
+      <!-- branded 3D hero graphic -->
+      <div class="hero-viz">
+        <div class="hero-stage">
+          <span class="hs-ring r1" aria-hidden="true"></span>
+          <span class="hs-ring r2" aria-hidden="true"></span>
+          <span class="hs-glow" aria-hidden="true"></span>
+          <div class="hs-icon-wrap">
+            <img class="hs-icon" src="/images/pro/logo-icon-3d.webp" alt="DocSera Pro" />
+            <span class="hs-sheen" aria-hidden="true"></span>
+          </div>
+          <span class="hs-chip c1"><i data-lucide="calendar-check"></i>المواعيد</span>
+          <span class="hs-chip c2"><i data-lucide="folder-heart"></i>ملفات المرضى</span>
+          <span class="hs-chip c3"><i data-lucide="message-circle"></i>المراسلة</span>
+          <span class="hs-chip c4"><i data-lucide="wallet"></i>المحاسبة</span>
+          <span class="hs-chip c5"><i data-lucide="trending-up"></i>النموّ</span>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- ============ 2 · ONE PLACE ============ -->
+  <section class="block reveal" data-screen-label="One place">
+    <div class="feature">
+      <div class="fbody">
+        <div class="block-head" style="margin-bottom:24px;">
+          <div class="ht">
+            <span class="kicker">All-in-One</span>
+            <h2>عيادتك <span class="grad-acc">كلّها</span> في مكانٍ واحد.</h2>
+            <div class="aio-sub">One app. Everything. Together.</div>
+          </div>
+        </div>
+        <p class="lead">بدل دفترٍ للمواعيد، وتطبيق دردشةٍ للمراسلة، ودفترٍ للحسابات، وملفاتٍ متناثرة — دوكسيرا يجمعها كلها. تحجز الموعد، تكتب التقرير، ترسل رسالة، وتُصدر الفاتورة من نفس المكان، دون أن تكرّر أي شيء.</p>
+      </div>
+      <div class="fviz">
+        <div class="glass-soft merge-viz">
+          <div class="chaos">
+            <span class="chaos-label">أدواتٌ متفرّقة</span>
+            <span class="mchip m1"><i data-lucide="calendar"></i>دفتر مواعيد</span>
+            <span class="mchip m2"><i data-lucide="message-square"></i>تطبيق دردشة</span>
+            <span class="mchip m3"><i data-lucide="wallet"></i>دفتر حسابات</span>
+            <span class="mchip m4"><i data-lucide="folder"></i>ملفات متناثرة</span>
+            <span class="mchip m5"><i data-lucide="file-text"></i>أوراق التقارير</span>
+            <span class="mchip m6"><i data-lucide="sticky-note"></i>ورقة ملاحظات</span>
+          </div>
+          <div class="merge-funnel"><span class="mf-line"></span><span class="mf-ico"><i data-lucide="chevron-down"></i></span><span class="mf-line"></span></div>
+          <div class="one-card">
+            <img class="mk" src="/images/pro/logo-mark.png" alt="" />
+            <div><b>دوكسيرا · الكل في مكانٍ واحد</b><span>All-in-one · one calm workspace</span></div>
+            <span class="oc-check"><i data-lucide="check"></i></span>
+          </div>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- ============ 3 · APPOINTMENTS ============ -->
+  <section class="block reveal" data-screen-label="Appointments">
+    <div class="block-head">
+      <div class="sec-no">01</div>
+      <div class="ht">
+        <span class="kicker">Appointments &amp; booking</span>
+        <h2>المواعيد والحجز</h2>
+      </div>
+    </div>
+    <div class="feature stack">
+      <div class="fbody">
+        <ul class="checks grid2">
+          <li><span class="tick"><i data-lucide="check"></i></span>تقويمٌ واضح لكل مواعيدك، تتابع فيه من في الانتظار ومن في المعاينة ومن انتهى.</li>
+          <li><span class="tick"><i data-lucide="check"></i></span>تدير غرفة الانتظار مباشرةً: من وصل، ومن ينتظر دوره، ومن دخل المعاينة الآن.</li>
+          <li><span class="tick"><i data-lucide="check"></i></span>مرضاك يحجزون بأنفسهم في الأوقات المتاحة — تقلّ المكالمات.</li>
+          <li><span class="tick"><i data-lucide="check"></i></span>تضبط أوقات عملك وإجازاتك، ويمكنك منع المتغيّبين المتكرّرين تلقائياً.</li>
+        </ul>
+      </div>
+      <div class="fviz wide">
+        <div class="glass mock appt">
+          <div class="mock-bar"><div class="mock-title"><i data-lucide="clock" style="width:16px;height:16px;vertical-align:-2px;color:var(--brand-glow);"></i> المواعيد القادمة <span class="cnt">3</span></div><span class="seg"><i class="on">الأسبوع</i><i>الشهر</i></span></div>
+          <div class="atable">
+            <div class="ath">
+              <span>التاريخ</span><span>الوقت</span><span>الاسم</span><span>السبب</span><span>الحجز</span><span>الحالة</span>
+            </div>
+            <div class="atr">
+              <span class="ad">04/06</span>
+              <span class="atime">10:00 ص<small>٣٠ دقيقة</small></span>
+              <span class="aname"><i data-lucide="user-round"></i>منى درويش</span>
+              <span class="areason">تنظيف وتلميع الأسنان</span>
+              <span><span class="src app"><i data-lucide="smartphone"></i>عبر التطبيق</span></span>
+              <span><span class="ast wait">في الانتظار</span></span>
+            </div>
+            <div class="atr">
+              <span class="ad">04/06</span>
+              <span class="atime">11:15 ص<small>٢٠ دقيقة</small></span>
+              <span class="aname"><i data-lucide="user-round"></i>كريم سعد</span>
+              <span class="areason">مراجعة بعد المعالجة</span>
+              <span><span class="src man"><i data-lucide="hand"></i>يدويّاً</span></span>
+              <span><span class="ast now">في المعاينة</span></span>
+            </div>
+            <div class="atr">
+              <span class="ad">05/06</span>
+              <span class="atime">09:30 ص<small>٤٥ دقيقة</small></span>
+              <span class="aname"><i data-lucide="user-round"></i>نور حدّاد</span>
+              <span class="areason">استشارة أولى</span>
+              <span><span class="src app"><i data-lucide="smartphone"></i>عبر التطبيق</span></span>
+              <span><span class="ast done">مؤكّد</span></span>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- ============ 4 · PATIENT FILES ============ -->
+  <section class="block reveal" data-screen-label="Patient files">
+    <div class="block-head">
+      <div class="sec-no">02</div>
+      <div class="ht">
+        <span class="kicker">Patient files</span>
+        <h2>ملفات المرضى ووثائقهم</h2>
+      </div>
+    </div>
+    <div class="feature">
+      <div class="fbody">
+        <ul class="checks">
+          <li><span class="tick"><i data-lucide="check"></i></span>كل مريضٍ له ملفٌّ كامل: تاريخه، زياراته، وملاحظاتك.</li>
+          <li><span class="tick"><i data-lucide="check"></i></span>احفظ تحاليله وصوره ووصفاته في مكانٍ واحد، بدل الأوراق المتناثرة.</li>
+        </ul>
+        <p class="lead" style="margin-top:18px;">يفتح الملف على لمحةٍ واحدة: عمر المريض، طوله ووزنه ومؤشّر كتلته، ونمط حياته — التدخين والرياضة والكحول. وتحته أقسامٌ تفتحها عند الحاجة: الحساسيّات، التاريخ العائلي، والأدوية. كل ما تكتبه يبقى منظّماً تحت اسم المريض، جاهزاً في زيارته القادمة دون أن تبحث في أوراق.</p>
+      </div>
+      <div class="fviz">
+        <div class="glass mock pf">
+          <span class="pf-brand"><img src="/images/pro/logo-mark.png" alt="" />DocSera</span>
+          <div class="pf-head">
+            <div class="pf-id">
+              <div class="av lg">س</div>
+              <div><b>سامي الخطيب</b><span>ذكر · ٣١ عام</span></div>
+            </div>
+          </div>
+          <div class="pf-tabs">
+            <span class="ft active">التاريخ الطبي</span>
+            <span class="ft">سجل الزيارات</span>
+            <span class="ft">الملفات</span>
+            <span class="ft">معلومات المريض</span>
+          </div>
+          <div class="pf-vitals">
+            <div class="pf-sec-t"><i data-lucide="heart-pulse"></i>العلامات الحيوية ونمط الحياة</div>
+            <div class="pf-grid">
+              <div class="pf-vital"><span class="vk">الطول</span><span class="vv">185<small>سم</small></span></div>
+              <div class="pf-vital"><span class="vk">الوزن</span><span class="vv">100<small>كغ</small></span></div>
+              <div class="pf-vital"><span class="vk">كتلة الجسم</span><span class="vv">29.2</span></div>
+            </div>
+            <div class="pf-life">
+              <span class="lp warm">التدخين · أحياناً</span>
+              <span class="lp ok">الرياضة · مرة/أسبوع</span>
+              <span class="lp">الكحول · لا</span>
+            </div>
+          </div>
+          <div class="pf-acc">
+            <div class="acc"><span><i data-lucide="flower"></i>الحساسيّات</span><i data-lucide="chevron-down"></i></div>
+            <div class="acc"><span><i data-lucide="users"></i>التاريخ العائلي</span><i data-lucide="chevron-down"></i></div>
+            <div class="acc"><span><i data-lucide="pill"></i>الأدوية</span><i data-lucide="chevron-down"></i></div>
+          </div>
+          <div class="pf-docs">
+            <div class="pf-docs-h"><span><i data-lucide="folder-open"></i>الملفات والوثائق</span><span class="cnt2">١٢</span></div>
+            <div class="pf-docs-row">
+              <div class="pdoc"><span class="pd-ic"><i data-lucide="flask-conical"></i></span><span class="pd-n">تحليل دم — CBC</span><span class="pd-t">PDF</span></div>
+              <div class="pdoc"><span class="pd-ic"><i data-lucide="image"></i></span><span class="pd-n">صورة شعاعية</span><span class="pd-t">JPG</span></div>
+              <div class="pdoc"><span class="pd-ic"><i data-lucide="file-text"></i></span><span class="pd-n">وصفة دوائية</span><span class="pd-t">PDF</span></div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- ============ 5 · VISIT REPORTS ============ -->
+  <section class="block reveal" data-screen-label="Visit reports">
+    <div class="block-head">
+      <div class="sec-no">03</div>
+      <div class="ht">
+        <span class="kicker">Visit reports</span>
+        <h2>تقارير الزيارات</h2>
+      </div>
+    </div>
+    <div class="feature flip">
+      <div class="fbody">
+        <ul class="checks">
+          <li><span class="tick"><i data-lucide="check"></i></span>اكتب تقرير الزيارة بسرعة باستخدام قوالب جاهزة.</li>
+          <li><span class="tick"><i data-lucide="check"></i></span>صدّره PDF، أو شاركه مع المريض إن أردت.</li>
+          <li><span class="tick"><i data-lucide="check"></i></span>أقسامٌ جاهزة لكل تقرير: الشكوى، والتشخيص، والإجراءات — توثّق بسرعة ووضوح.</li>
+        </ul>
+      </div>
+      <div class="fviz">
+        <div class="glass mock vr">
+          <div class="vr-head">
+            <div><b>عرض التقرير</b><span>REP-4597D988 · 15/04</span></div>
+            <span class="vr-actions"><i data-lucide="printer"></i><i data-lucide="share-2"></i></span>
+          </div>
+          <div class="vr-sec">
+            <div class="vr-sec-t"><i data-lucide="message-square-warning"></i>الشكوى الرئيسية</div>
+            <div class="vr-val">صداع متكرّر منذ أسبوعين</div>
+          </div>
+          <div class="vr-sec">
+            <div class="vr-sec-t"><i data-lucide="clipboard-list"></i>التشخيص</div>
+            <div class="vr-val">صداع توتّري — متابعة</div>
+          </div>
+          <div class="vr-sec">
+            <div class="vr-sec-t"><i data-lucide="list-checks"></i>الإجراءات العلاجية</div>
+            <div class="vr-proc">
+              <span class="pc">راحة وتنظيم النوم</span>
+              <span class="pc">مسكّن عند اللزوم</span>
+              <span class="pc">مراجعة بعد أسبوع</span>
+            </div>
+          </div>
+          <div class="vr-exam">
+            <div class="vr-sec-t"><i data-lucide="stethoscope"></i>قائمة الفحص</div>
+            <div class="vr-row"><span>أصوات القلب</span><span class="tag ok">طبيعي</span></div>
+            <div class="vr-row"><span>التنسيق الحركي</span><span class="tag ok">طبيعي</span></div>
+            <div class="vr-row"><span>المنعكسات</span><span class="tag ok">طبيعي</span></div>
+            <div class="vr-row"><span>أصوات الرئة</span><span class="tag bad">غير طبيعي</span></div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- ============ 6 · MESSAGING ============ -->
+  <section class="block reveal" data-screen-label="Messaging">
+    <div class="block-head">
+      <div class="sec-no">04</div>
+      <div class="ht">
+        <span class="kicker">Patient messaging</span>
+        <h2>مراسلة المرضى</h2>
+      </div>
+    </div>
+    <div class="feature">
+      <div class="fbody">
+        <ul class="checks">
+          <li><span class="tick"><i data-lucide="check"></i></span>راسل مرضاك بأمانٍ بين الزيارات: نصوص، صور، وملاحظات صوتية.</li>
+          <li><span class="tick"><i data-lucide="check"></i></span>محادثاتك خاصة ومحفوظة داخل ملفّ المريض، لا في تطبيقٍ شخصي.</li>
+          <li><span class="tick"><i data-lucide="check"></i></span>أنت تتحكّم: تستقبل الرسائل فوراً أو بموافقتك.</li>
+        </ul>
+        <p class="fineprint">المراسلة للتنظيم والتواصل قبل الزيارة، لا تُغني عن الكشف.</p>
+      </div>
+      <div class="fviz">
+        <div class="glass mock">
+          <div class="mock-bar"><div class="mock-title">محادثة · لمى خوري</div><span class="pill done"><i data-lucide="lock" style="width:11px;height:11px;vertical-align:-1px;"></i> خاصّة</span></div>
+          <div class="chat">
+            <div class="chat-meta">داخل ملف المريض</div>
+            <div class="bub them">دكتور، بضل عالدوا نفسو؟</div>
+            <div class="bub me">آه كمّل جمعة وبعدين منعيد التحليل.</div>
+            <div class="bub them"><div class="v"><span class="wave"><i style="height:9px"></i><i style="height:16px"></i><i style="height:22px"></i><i style="height:13px"></i><i style="height:8px"></i></span>0:12</div></div>
+            <div class="bub me">تمام، بعتلك موعد المراجعة.</div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- ============ 7 · BILLING ============ -->
+  <section class="block reveal" data-screen-label="Billing">
+    <div class="block-head">
+      <div class="sec-no">05</div>
+      <div class="ht">
+        <span class="kicker">Billing</span>
+        <h2>المحاسبة والفوترة</h2>
+      </div>
+    </div>
+    <div class="feature stack">
+      <div class="fbody">
+        <ul class="checks inline3">
+          <li><span class="tick"><i data-lucide="check"></i></span>فواتير واضحة، دفعات كاملة أو جزئية، وخصومات.</li>
+          <li><span class="tick"><i data-lucide="check"></i></span>تابع من دفع ومن بقي عليه مبلغ، واطبع الفواتير بسهولة.</li>
+          <li><span class="tick"><i data-lucide="check"></i></span>يدعم الليرة والدولار.</li>
+        </ul>
+      </div>
+      <div class="fviz wide">
+        <div class="bill-split">
+          <!-- container 1: bills grid -->
+          <div class="glass mock bill">
+            <div class="mock-bar"><div class="mock-title">الفواتير والدفعات</div><span class="cur-toggle"><i class="on">ل.س</i><i>$</i></span></div>
+            <div class="bill-kpis">
+              <div class="bk"><span class="v">3,763,000</span><span class="k">إجمالي المدفوع · ل.س</span></div>
+              <div class="bk"><span class="v">27</span><span class="k">عدد الفواتير</span></div>
+              <div class="bk warm"><span class="v">172,500</span><span class="k">غير مكتملة · ل.س</span></div>
+            </div>
+            <div class="bill-grid three">
+              <div class="bill-card">
+                <div class="bc-top"><span class="cat">تحاليل مخبرية</span><span class="bid">#92</span></div>
+                <div class="bc-amt">65,000<small>ل.س</small></div>
+                <span class="st done">مكتملة</span>
+              </div>
+              <div class="bill-card">
+                <div class="bc-top"><span class="cat">استشارة</span><span class="bid">#81</span></div>
+                <div class="bc-amt">37,500<small>ل.س</small></div>
+                <span class="st done">مكتملة</span>
+              </div>
+              <div class="bill-card due">
+                <div class="bc-top"><span class="cat">فحص عام</span><span class="bid">#83</span></div>
+                <div class="bc-amt">32,500<small>ل.س</small></div>
+                <span class="st due">للدفع</span>
+              </div>
+            </div>
+          </div>
+          <!-- container 2: add payment -->
+          <div class="glass mock pay">
+            <div class="mock-bar"><div class="mock-title">إضافة دفعة</div><span class="bid">#88 · مراجعة</span></div>
+            <div class="pay-summary">
+              <div class="ps-top"><span>المبلغ الإجمالي</span><b>90,000<small>ل.س</small></b></div>
+              <div class="pay-bar lg"><i style="width:45%"></i></div>
+              <div class="ps-row"><span class="paid">المدفوع · 40,000</span><span class="rem">المتبقّي · 50,000 ل.س</span></div>
+            </div>
+            <div class="pay-field">
+              <span class="pf-lbl">المبلغ</span>
+              <div class="pf-input"><span class="hash">#</span><span class="pf-amt">50,000</span><span class="pf-cur">ل.س</span></div>
+            </div>
+            <div class="pay-method">
+              <span class="pm active"><i data-lucide="banknote"></i>نقداً</span>
+              <span class="pm"><i data-lucide="credit-card"></i>تحويل</span>
+            </div>
+            <div class="pay-btn">تأكيد الدفع</div>
+            <div class="pay-note"><i data-lucide="globe"></i>يدعم الليرة السورية والدولار</div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- ============ 6 · ACCOUNTING ============ -->
+  <section class="block reveal" data-screen-label="Accounting">
+    <div class="block-head">
+      <div class="sec-no">06</div>
+      <div class="ht">
+        <span class="kicker">Accounting</span>
+        <h2>محاسبة العيادة</h2>
+      </div>
+    </div>
+    <div class="feature stack">
+      <div class="fbody">
+        <ul class="checks inline3">
+          <li><span class="tick"><i data-lucide="check"></i></span>لوحةٌ ماليّة واضحة: إيراداتك، ومصاريفك، وصافي ربحك — معاً في صورةٍ واحدة.</li>
+          <li><span class="tick"><i data-lucide="check"></i></span>تعرف توزيع دخلك حسب نوع الخدمة، وكم حصّلت فعلاً من فواتيرك.</li>
+          <li><span class="tick"><i data-lucide="check"></i></span>بالليرة أو بالدولار، وعلى المدة التي تختارها.</li>
+        </ul>
+      </div>
+      <div class="fviz wide">
+        <div class="glass mock acct">
+          <div class="mock-bar"><div class="mock-title">المحاسبة</div><span class="cur-toggle"><i class="on">ل.س</i><i>$</i></span></div>
+          <div class="acct-tabs"><span class="at on">نظرة عامة</span><span class="at">الفواتير</span><span class="at">المصاريف</span></div>
+          <div class="acct-grid">
+            <div class="acct-sub">
+              <div class="sub-t">التوزيع حسب التصنيف</div>
+              <div class="an-top">
+                <div class="donut acct-d glassy">
+                  <div class="donut-ring"></div>
+                  <div class="donut-hole"><b>8.2M</b><span>الإيرادات</span></div>
+                </div>
+                <div class="donut-legend amt">
+                  <span><i style="background:#00B5B7"></i><em>معالجة · 57%</em><b>4,709,500</b></span>
+                  <span><i style="background:#0d8a8c"></i><em>استشارة · 22%</em><b>1,802,000</b></span>
+                  <span><i style="background:#7DD3D4"></i><em>تحاليل · 10%</em><b>819,300</b></span>
+                  <span><i style="background:#C9A88A"></i><em>أخرى · 11%</em><b>911,850</b></span>
+                </div>
+              </div>
+            </div>
+            <div class="acct-sub">
+              <div class="sub-t">الملخّص المالي</div>
+              <div class="fin-bars">
+                <div class="fb-col"><span class="fb-v">8.2M</span><div class="fb-bar t" style="height:120px"></div><span class="fb-l">الإيرادات</span></div>
+                <div class="fb-col"><span class="fb-v">550K</span><div class="fb-bar r" style="height:14px"></div><span class="fb-l">المصاريف</span></div>
+                <div class="fb-col"><span class="fb-v">7.7M</span><div class="fb-bar w" style="height:112px"></div><span class="fb-l">صافي الربح</span></div>
+              </div>
+            </div>
+            <div class="acct-kpis">
+              <div class="ak2"><span class="ico t"><i data-lucide="trending-up"></i></span><div><span class="v">7,692,650<small>ل.س</small></span><span class="k">صافي الربح</span></div></div>
+              <div class="ak2"><span class="ico g"><i data-lucide="badge-check"></i></span><div><span class="v">99.9%</span><span class="k">نسبة التحصيل</span></div></div>
+              <div class="ak2"><span class="ico"><i data-lucide="receipt"></i></span><div><span class="v">206,066<small>ل.س</small></span><span class="k">متوسط الفاتورة</span></div></div>
+              <div class="ak2"><span class="ico w"><i data-lucide="banknote"></i></span><div><span class="v">42</span><span class="k">عدد المعاملات</span></div></div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- ============ 7 · ANALYTICS ============ -->
+  <section class="block reveal" data-screen-label="Clinic insights">
+    <div class="block-head">
+      <div class="sec-no">07</div>
+      <div class="ht">
+        <span class="kicker">Analytics</span>
+        <h2>نظرة على عيادتك</h2>
+      </div>
+    </div>
+    <div class="feature stack">
+      <div class="fbody">
+        <ul class="checks inline3">
+          <li><span class="tick"><i data-lucide="check"></i></span>تعرف كيف تسير عيادتك: كم موعداً، كم مريضاً، وكم دخلاً.</li>
+          <li><span class="tick"><i data-lucide="check"></i></span>ترى أكثر أوقاتك ازدحاماً ونسبة المتغيّبين — فتنظّم وقتك أفضل.</li>
+        </ul>
+      </div>
+      <div class="fviz wide">
+        <div class="glass mock an">
+          <div class="mock-bar"><div class="mock-title">الإحصائيات</div><span class="seg"><i>الشهر</i><i class="on">مخصّص</i></span></div>
+          <div class="acct-tabs three"><span class="at on">نظرة عامة</span><span class="at">المواعيد</span><span class="at">المرضى</span></div>
+          <div class="an-kpibar four">
+            <div class="ak"><span class="v">248</span><span class="k">إجمالي المواعيد</span></div>
+            <div class="ak"><span class="v">9.0M<small>ل.س</small></span><span class="k">صافي الإيرادات</span></div>
+            <div class="ak"><span class="v">36</span><span class="k">مرضى جدد</span></div>
+            <div class="ak"><span class="v">8.3</span><span class="k">متوسط المواعيد / يوم</span></div>
+          </div>
+          <div class="an-row2">
+            <div class="acct-sub">
+              <div class="sub-t">ملخّص المواعيد</div>
+              <div class="an-top">
+                <div class="donut glassy">
+                  <div class="donut-ring"></div>
+                  <div class="donut-hole"><b>248</b><span>موعد</span></div>
+                </div>
+                <div class="donut-legend">
+                  <span><i style="background:#00B5B7"></i>مكتمل · 53%</span>
+                  <span><i style="background:#7DD3D4"></i>قادم · 24%</span>
+                  <span><i style="background:#FFB494"></i>لم يحضر · 11%</span>
+                  <span><i style="background:rgba(255,255,255,0.18)"></i>ملغى · 12%</span>
+                </div>
+              </div>
+            </div>
+            <div class="an-gauges">
+              <div class="gauge">
+                <div class="g-ring miss"><span class="g-val">11%</span></div>
+                <span class="g-lbl">نسبة عدم الحضور</span>
+              </div>
+              <div class="gauge">
+                <div class="g-ring full"><span class="g-val">88%</span></div>
+                <span class="g-lbl">نسبة إلمام المواعيد</span>
+              </div>
+            </div>
+          </div>
+          <div class="acct-sub" style="margin-bottom:14px;">
+            <div class="an-trend-h"><span style="font-family:var(--font-ar);font-weight:800;font-size:13.5px;color:var(--fg2);">اتجاه النشاط</span><span class="lgnd"><i class="t"></i>المواعيد<i class="o"></i>الإيرادات</span></div>
+            <svg class="an-svg" viewBox="0 0 300 72" preserveAspectRatio="none">
+              <polyline class="ln o" points="0,54 43,46 86,50 129,22 172,30 215,14 258,28 300,20"></polyline>
+              <polyline class="ln t" points="0,62 43,58 86,52 129,54 172,42 215,46 258,32 300,36"></polyline>
+            </svg>
+          </div>
+          <div class="acct-sub">
+            <div class="sub-t">المواعيد حسب السبب</div>
+            <div class="reason-bars">
+              <div class="rb"><div class="rb-top"><span>استشارة أولى</span><b>34%</b></div><div class="rb-bar"><i style="width:34%"></i></div></div>
+              <div class="rb"><div class="rb-top"><span>متابعة</span><b>41%</b></div><div class="rb-bar"><i style="width:41%"></i></div></div>
+              <div class="rb"><div class="rb-top"><span>علاج وإجراء</span><b>25%</b></div><div class="rb-bar"><i style="width:25%"></i></div></div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- ============ 9 · DENTAL ============ -->
+  <section class="block reveal" data-screen-label="Dental chart">
+    <div class="block-head">
+      <div class="sec-no">08</div>
+      <div class="ht">
+        <span class="kicker">Dental chart · لأطباء الأسنان</span>
+        <h2>مخطط الأسنان</h2>      </div>
+    </div>
+    <div class="feature flip">
+      <div class="fbody">
+        <ul class="checks">
+          <li><span class="tick"><i data-lucide="check"></i></span>مخطّطٌ تفاعليٌ لكامل الفكّين، تسجّل عليه حالة كل سنٍّ على حدة: سليم، محشوّ، مُعالَج، مخلوع، أو مخطّطٌ للعلاج.</li>
+          <li><span class="tick"><i data-lucide="check"></i></span>لكل سنٍّ سجلّه الخاصّ: الإجراء الذي تمّ، وتاريخه، وملاحظاتك — مرتبطةً بملفّ المريض وتقاريره.</li>
+          <li><span class="tick"><i data-lucide="check"></i></span>ترميزٌ لونيّ واضح يجعل خطّة العلاج مفهومةً للمريض بلمحة، وأسرع لك من الكتابة الطويلة.</li>
+        </ul>
+      </div>
+      <div class="fviz">
+        <img class="dental-img" src="/images/pro/dental-chart.png" alt="مخطّط الأسنان — حالة كل سنّ والعلاج الذي تمّ" />
+      </div>
+    </div>
+  </section>
+
+  <!-- ============ 10 · TEAM ============ -->
+  <section class="block reveal" data-screen-label="Team">
+    <div class="block-head">
+      <div class="sec-no">09</div>
+      <div class="ht">
+        <span class="kicker">Your team</span>
+        <h2>فريق العيادة</h2>
+      </div>
+    </div>
+    <div class="feature">
+      <div class="fbody">
+        <ul class="checks">
+          <li><span class="tick"><i data-lucide="check"></i></span>أضِف سكرتيرك وزملاءك (طبيب، سكرتير، أخصائي) بدعوةٍ بسيطة.</li>
+          <li><span class="tick"><i data-lucide="check"></i></span>تتحكّم بالتفصيل بما يراه كل فرد — تفوّض الحجز والفوترة وتحمي ما هو حسّاس.</li>
+        </ul>
+      </div>
+      <div class="fviz">
+        <div class="glass mock teamx">
+          <div class="tx-cap">
+            <div class="tx-cap-h"><span><i data-lucide="users-round"></i>سعة الفريق</span><span class="tx-center">Center</span></div>
+            <div class="tx-caprow">
+              <div class="tx-cl"><b>الأطباء والأخصائيون</b><span>٣ من ٤ مقاعد</span></div>
+              <div class="tx-bar"><i style="width:75%"></i></div>
+            </div>
+            <div class="tx-caprow">
+              <div class="tx-cl"><b>السكرتارية</b><span>١ من ٢ مقعد</span></div>
+              <div class="tx-bar warm"><i style="width:50%"></i></div>
+            </div>
+          </div>
+          <div class="tx-list">
+            <div class="tx-row">
+              <div class="av">ر</div>
+              <div class="tx-who"><b>د. ريم منصور</b><span>غدد وسكّري</span></div>
+              <span class="tx-tag owner">المالك</span>
+            </div>
+            <div class="tx-row">
+              <div class="av" style="background:linear-gradient(135deg,#7DD3D4,#0d8a8c);">ك</div>
+              <div class="tx-who"><b>د. كريم النابلسي</b><span>طب الأطفال</span></div>
+              <span class="tx-tag">طبيب</span>
+            </div>
+            <div class="tx-row">
+              <div class="av" style="background:linear-gradient(135deg,#FFC9AE,#FF9F70);">ر</div>
+              <div class="tx-who"><b>ريم · السكرتارية</b><span>الحجز والفوترة</span></div>
+              <span class="tx-tag sec">سكرتيرة</span>
+            </div>
+          </div>
+          <div class="tx-add"><i data-lucide="user-plus"></i>إضافة عضو بدعوة بسيطة</div>
+          <div class="tx-note"><i data-lucide="shield"></i>تتحكّم بالتفصيل بما يراه كل فرد — الملف المالي محميّ ويظهر بإذنك فقط.</div>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- ============ 11 · GROWTH (star, warm) ============ -->
+  <section class="block reveal" data-screen-label="Growth">
+    <div class="growth">
+      <div class="growth-head">
+        <div class="sec-no warm"><i data-lucide="sparkles"></i></div>
+        <div class="ht">
+          <span class="en-sub">★ Grow your practice</span>
+          <h2>لا يحفظ عملك فقط — بل يساعدك على النموّ.</h2>
+        </div>
+      </div>
+      <div class="growth-grid">
+        <ul class="checks warm">
+          <li><span class="tick"><i data-lucide="map-pin"></i></span><span><b>ظهورك للمرضى:</b> جهّز صفحتك الآن لتكون أوّل من يجده المرضى فور انطلاق التطبيق، ولك رمزٌ ورابطٌ خاص تشاركه على واتساب فيفتح صفحتك مباشرة.</span></li>
+          <li><span class="tick"><i data-lucide="tag"></i></span><span><b>عروض وخصومات:</b> أنشئ عرضاً (استشارة أولى مجانية، مراجعة مجانية، أو خصم) يستخدمه المريض ويُحسب تلقائياً عند الفاتورة.</span></li>
+          <li><span class="tick"><i data-lucide="gift"></i></span><span><b>هدايا للمرضى:</b> يذكّرك دوكسيرا بالمناسبات — مريضٌ جديد، عيد ميلاد، مرور عام، مريضٌ لم يعد منذ مدة، ومرضاك المميّزون — لترسل هديةً أو كلمةً لطيفة بضغطة.</span></li>
+          <li><span class="tick"><i data-lucide="star"></i></span><span><b>نقاط الولاء:</b> يكسب المريض ٥ نقاط مع كل زيارةٍ عبر تطبيق دوكسيرا — ما يشجّعه على العودة إليك.</span></li>
+          <li><span class="tick"><i data-lucide="line-chart"></i></span><span><b>تعرف النتيجة:</b> ترى كم عرضاً استُخدم وكم جلب لك من دخل — فتُبقي ما ينفع.</span></li>
+        </ul>
+        <div class="gcard-stack">
+          <div class="offer-card">
+            <div class="offer-text">
+              <div class="lbl">Offer · عرض</div>
+              <div class="big">استشارة أولى مجاناً</div>
+              <div class="sub">يُحسب تلقائياً عند الفاتورة</div>
+            </div>
+            <div class="qr" id="qr"></div>
+          </div>
+          <div class="gift">
+            <span class="gi"><i data-lucide="cake"></i></span>
+            <div class="gt"><b>عيد ميلاد لمى غداً</b><span>أرسل كلمةً لطيفة بضغطة</span></div>
+          </div>
+          <div class="loyalty">
+            <span class="lt">نقاط المريض<small>٥ نقاط مع كل زيارة عبر التطبيق</small></span>
+            <span class="dots"><i></i><i></i><i></i><i></i><i></i></span>
+          </div>
+        </div>
+      </div>
+      <p class="fineprint" style="margin-top:28px;border-color:rgba(255,180,148,0.4);color:#FFD9C4;">دوكسيرا لا يَعِدك بمرضى من العدم — يمنحك أدواتٍ حقيقية ويُريك أثرها.</p>
+    </div>
+  </section>
+
+  <!-- ============ 12 · FOUNDING DOCTORS ============ -->
+  <section class="block reveal" data-screen-label="Founding doctors">
+    <div class="block-head">
+      <div class="sec-no warm"><i data-lucide="flag"></i></div>
+      <div class="ht">
+        <span class="kicker warm">Be a founding doctor</span>
+        <h2>كن من الأطباء المؤسّسين</h2>
+      </div>
+    </div>
+    <p class="lead">دوكسيرا يُطلق قريباً تطبيق المرضى. انضمّ الآن لتكون حاضراً ومجهَّزاً من اليوم الأول — لا أن تلحق بالركب لاحقاً.</p>
+    <div class="founding-strip">
+      <span class="fchip"><i data-lucide="rocket"></i>تطبيق المرضى — قريباً</span>
+      <span class="fchip"><i data-lucide="user-check"></i>صفحتك جاهزة قبل الانطلاق</span>
+      <span class="fchip warm"><i data-lucide="star"></i>سعرٌ مخفّضٌ لأول ١٠٠ طبيب</span>
+    </div>
+  </section>
+
+  <!-- ============ 13 · PRIVACY ============ -->
+  <section class="block reveal" data-screen-label="Privacy">
+    <div class="block-head">
+      <div class="ht">
+        <span class="kicker">Privacy &amp; safety</span>
+        <h2>خصوصية مرضاك وأمانهم</h2>
+      </div>
+    </div>
+    <div class="cards-3">
+      <div class="icard"><div class="ic"><i data-lucide="lock"></i></div><h3>محميّة وخاصّة</h3><p>محادثاتك وملفات مرضاك محميّة وخاصة تماماً.</p></div>
+      <div class="icard"><div class="ic"><i data-lucide="shield"></i></div><h3>بيانات منفصلة</h3><p>بيانات عيادتك منفصلة — لا تصل إليها أي عيادةٍ أخرى.</p></div>
+      <div class="icard"><div class="ic"><i data-lucide="user-check"></i></div><h3>أنت موضع ثقة مرضاك</h3><p>خصوصيتهم محفوظةٌ في عيادتك — فيشاركونك تاريخهم الصحّي بثقةٍ واطمئنان.</p></div>
+      <div class="icard"><div class="ic"><i data-lucide="wifi-off"></i></div><h3>يعمل دون إنترنت قوي</h3><p>يعمل حتى لو ضعُف الإنترنت: تفتح مواعيدك وملفاتك ومحادثاتك دائماً.</p></div>
+      <div class="icard"><div class="ic"><i data-lucide="monitor-smartphone"></i></div><h3>على كل أجهزتك</h3><p>على هاتفك أو جهازك اللوحي أو الكمبيوتر، وكل شيء محدّثٌ في كل مكان.</p></div>
+      <div class="icard" style="display:flex;flex-direction:column;justify-content:center;background:linear-gradient(150deg,rgba(0,181,183,0.12),rgba(0,181,183,0.03));border-color:rgba(0,181,183,0.3);">
+        <img src="/images/pro/logo-mark.png" alt="" style="width:40px;height:40px;margin-bottom:14px;" />
+        <h3 style="font-size:16px;">أمانٌ بهدوء.</h3><p>صُمّم ليحمي ثقة مرضاك بك.</p>
+      </div>
+    </div>
+  </section>
+
+  <!-- ============ 14 · WHY DOCSERA ============ -->
+  <section class="block reveal" data-screen-label="Why DocSera">
+    <div class="block-head">
+      <div class="ht">
+        <span class="kicker">Why DocSera</span>
+        <h2>ما الذي يميّز دوكسيرا</h2>
+      </div>
+    </div>
+    <div class="cards-3 why">
+      <div class="icard"><div class="ic"><i data-lucide="layers"></i></div><h3>نظامٌ واحدٌ متكامل</h3><p>من الموعد إلى الملف إلى الفاتورة، كل شيءٍ متّصلٌ في مكانٍ واحد؛ لا أدواتٌ متفرّقة تجمعها بنفسك.</p></div>
+      <div class="icard"><div class="ic"><i data-lucide="stethoscope"></i></div><h3>مبنيٌّ حول الطبيب</h3><p>صُمِّم ليتبع طريقة عملك اليومية، لا قالبٌ عامٌّ تُكيّف نفسك عليه.</p></div>
+      <div class="icard"><div class="ic"><i data-lucide="trending-up"></i></div><h3>منصّةٌ تنمو معك</h3><p>أكثر من برنامجٍ يحفظ عملك؛ منصّةٌ ترافق عيادتك وتتّسع مع طموحك.</p></div>
+    </div>
+  </section>
+
+  <!-- ============ 15 · TRY IT FREE ============ -->
+  <section class="block reveal" data-screen-label="Try it free">
+    <div class="block-head">
+      <div class="ht">
+        <span class="kicker">Try it free</span>
+        <h2>جرّبها مجاناً</h2>
+      </div>
+    </div>
+    <div class="tryfree">
+      <div class="ribbon">تجربة مجانية</div>
+      <div>
+        <ul class="checks">
+          <li><span class="tick"><i data-lucide="check"></i></span>جرّب الباقة الكاملة ٤٥ يوماً، دون أي دفع.</li>
+          <li><span class="tick"><i data-lucide="check"></i></span>ابدأ بما تحتاجه اليوم وأضِف المزيد متى شئت.</li>
+          <li><span class="tick"><i data-lucide="check"></i></span>من أوائل ١٠٠ طبيب؟ تحصل على سعرٍ مخفّضٍ خاصٍّ بعرض الإطلاق.</li>
+          <li><span class="tick"><i data-lucide="check"></i></span>إن توقّفت يوماً، بياناتك تبقى محفوظة وتعود متى أردت.</li>
+        </ul>
+        <p class="fineprint" style="margin-top:18px;">تفاصيل الباقات عند الطلب.</p>
+      </div>
+      <div class="big-seal">
+        <div><div class="num">100</div><div class="cap">لأول ١٠٠ طبيب</div></div>
+      </div>
+    </div>
+  </section>
+
+  <!-- ============ 16 · FAQ ============ -->
+  <section class="block reveal" data-screen-label="FAQ">
+    <div class="block-head">
+      <div class="ht">
+        <span class="kicker">FAQ · أسئلة شائعة</span>
+        <h2>أسئلة شائعة</h2>
+      </div>
+    </div>
+    <div class="faq">
+      <div class="qa">
+        <div class="q"><span class="qm"><i data-lucide="help-circle"></i></span>«ليس لديّ وقتٌ لتعلّم نظامٍ جديد.»</div>
+        <div class="a">لا تبدأ وحدك — نحن نُهيّئ النظام لك ونرافقك خطوةً بخطوة. تكفيك دقائق لتبدأ بالمواعيد، وتضيف الباقي حين تطمئنّ إليه. والأهمّ: دوكسيرا لا يزيد عبء وقتك، بل يعيد إليك الساعات التي تتبدّد اليوم بين دفترٍ وتطبيقٍ وأوراقٍ متناثرة.</div>
+      </div>
+      <div class="qa">
+        <div class="q"><span class="qm"><i data-lucide="help-circle"></i></span>«هل بيانات مرضاي آمنة؟»</div>
+        <div class="a">نعم — كل شيءٍ محميٌّ وخاص، وبيانات كل عيادةٍ منفصلة لا يصل إليها غيرها.</div>
+      </div>
+      <div class="qa">
+        <div class="q"><span class="qm"><i data-lucide="help-circle"></i></span>«هل سيجلب لي مرضى فعلاً؟»</div>
+        <div class="a">عند انطلاق تطبيق المرضى تكون صفحتك جاهزة ليجدك الباحثون، ولديك أدوات لجذبهم وإعادتهم — ونُريك أيُّها نجح. لا نَعِد بمرضى من العدم.</div>
+      </div>
+      <div class="qa">
+        <div class="q"><span class="qm"><i data-lucide="help-circle"></i></span>«ماذا لو توقّفت؟»</div>
+        <div class="a">بياناتك تبقى محفوظة، وتعود متى شئت.</div>
+      </div>
+      <div class="qa">
+        <div class="q"><span class="qm"><i data-lucide="help-circle"></i></span>«أعمل حيث الإنترنت ضعيف.»</div>
+        <div class="a">تفتح مواعيدك وملفاتك ومحادثاتك حتى مع ضعف الشبكة.</div>
+      </div>
+    </div>
+  </section>
+
+</div><!-- /wrap -->
+
+  <!-- ============ 17 · CLOSING CTA ============ -->
+  <section class="closing reveal" data-screen-label="Closing CTA">
+    <div class="narrow">
+      <img class="mk" src="/images/pro/logo-mark.png" alt="DocSera Pro" />
+      <h2>بدايةٌ تليق بعيادتك.</h2>
+      <div class="en-line">A beginning worthy of your practice.</div>
+      <p class="body">قريباً يبحث المرضى عن طبيبٍ مثلك على دوكسيرا. جهّز صفحتك الآن، أدِر عيادتك كلها من مكانٍ واحد، ودع دوكسيرا يساعدك على النموّ.</p>
+      <div class="cta-row">
+        <a class="btn btn-wa lg" href="#" id="waClose"><i data-lucide="message-circle" class="wa-ico"></i>ابدأ على واتساب — نوثّق ترخيصك ونفعّل باقتك</a>
+        <a class="quiet" href="#">تحدّث إلينا</a>
+      </div>
+      <div class="reassure">
+        <span><i data-lucide="check-circle"></i>دون دفعٍ مسبق</span>
+        <span><i data-lucide="database"></i>بياناتك محفوظة دائماً</span>
+        <span><i data-lucide="lock"></i>سعرٌ مخفّضٌ لأول ١٠٠</span>
+      </div>
+    </div>
+  </section>
+
+  <footer class="foot">
+    <div class="fb"><img src="/images/pro/logo-full-teal.png" alt="DocSera Pro" /></div>
+    <div class="fn">دوكسيرا برو · منصّة إدارة العيادة للأطباء<br/>الأدوات تساعدك على التوثيق — والقرار يبقى لك دائماً.<br/><span class="foot-wa"><i data-lucide="message-circle"></i> واتساب · <b dir="ltr">0983 322 665</b></span></div>
+  </footer>
+
+</div><!-- /shell -->
+
+<script is:inline src="/js/lucide.min.js"></script>
+<script is:inline>
+  (function(){
+    // subtle film grain
+    var svg = '<svg xmlns="http://www.w3.org/2000/svg" width="240" height="240"><filter id="n"><feTurbulence type="fractalNoise" baseFrequency="0.9" numOctaves="2" stitchTiles="stitch"/><feColorMatrix values="0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0.55 0"/></filter><rect width="100%" height="100%" filter="url(%23n)" opacity="0.5"/></svg>';
+    var el = document.getElementById('noise');
+    if(el) el.style.backgroundImage = "url(\"data:image/svg+xml;utf8," + encodeURIComponent(svg).replace(/%2523/g,'%23') + "\")";
+
+    // WhatsApp links
+    var WA = "https://wa.me/963983322665?text=" + encodeURIComponent("مرحباً، أودّ تجربة DocSera Pro لعيادتي.");
+    ["waHero","waClose"].forEach(function(id){ var a=document.getElementById(id); if(a) a.href=WA; });
+
+    // QR code (offer) — finder squares + deterministic modules
+    function buildQR(){
+      var el=document.getElementById('qr'); if(!el) return; el.innerHTML='';
+      var N=11, seed=7;
+      function finder(r,c){ return (r<3&&c<3)||(r<3&&c>=N-3)||(r>=N-3&&c<3); }
+      for(var r=0;r<N;r++){ for(var c=0;c<N;c++){
+        var on;
+        if(finder(r,c)){ on=true; }
+        else { seed=(seed*1103515245+12345)&0x7fffffff; on=(seed%100)<42; }
+        var i=document.createElement('i'); if(on) i.className='on'; el.appendChild(i);
+      }}
+    }
+
+    // scroll reveal
+    function initReveal(){
+      var els = document.querySelectorAll('.reveal');
+      if(!('IntersectionObserver' in window)){ els.forEach(function(e){ e.classList.add('in'); }); return; }
+      var io = new IntersectionObserver(function(ents){
+        ents.forEach(function(en){ if(en.isIntersecting){ en.target.classList.add('in'); io.unobserve(en.target); } });
+      }, { rootMargin:'0px 0px -8% 0px', threshold:0.06 });
+      els.forEach(function(e){ io.observe(e); });
+    }
+
+    function init(){ buildQR(); if(window.lucide) lucide.createIcons(); initReveal(); }
+    if(document.readyState !== 'loading') init();
+    else document.addEventListener('DOMContentLoaded', init);
+  })();
+</script>
+</body>
+</html>
