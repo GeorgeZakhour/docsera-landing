@@ -1979,7 +1979,7 @@ body {
       <p class="body">قريباً يبحث المرضى عن طبيبٍ مثلك على دوكسيرا. جهّز صفحتك الآن، أدِر عيادتك كلها من مكانٍ واحد، ودع دوكسيرا يساعدك على النموّ.</p>
       <div class="cta-row">
         <a class="btn btn-wa lg" href="#" id="waClose"><i data-lucide="message-circle" class="wa-ico"></i>ابدأ على واتساب — نوثّق ترخيصك ونفعّل باقتك</a>
-        <a class="quiet" href="#">تحدّث إلينا</a>
+        <a class="quiet" href="#" id="waTalk">تحدّث إلينا</a>
       </div>
       <div class="reassure">
         <span><i data-lucide="check-circle"></i>دون دفعٍ مسبق</span>
@@ -2006,7 +2006,7 @@ body {
 
     // WhatsApp links
     var WA = "https://wa.me/963983322665?text=" + encodeURIComponent("مرحباً، أودّ تجربة DocSera Pro لعيادتي.");
-    ["waHero","waClose"].forEach(function(id){ var a=document.getElementById(id); if(a) a.href=WA; });
+    ["waHero","waClose","waTalk"].forEach(function(id){ var a=document.getElementById(id); if(a) a.href=WA; });
 
     // QR code (offer) — finder squares + deterministic modules
     function buildQR(){
