@@ -75,6 +75,17 @@ import Footer from '../components/Footer.astro';
 							<a class="btn-main btn-open-app" data-open-app href="#" rel="noopener">
 								افتح في التطبيق
 							</a>
+							<!-- Web-app fallback for users without the native app installed.
+							     One tap from the QR/social-link → reads the center in the
+							     hosted Flutter web build at my.docsera.app/center/<id>. -->
+							<a class="cta-webapp" data-webapp-link href="#" rel="noopener">
+								<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" aria-hidden="true">
+									<rect x="3" y="4" width="18" height="14" rx="2"/>
+									<line x1="8" y1="20" x2="16" y2="20"/>
+									<line x1="12" y1="18" x2="12" y2="20"/>
+								</svg>
+								<span>افتح في تطبيق الويب</span>
+							</a>
 							<p class="cta-divider">حساب جديد؟ حمّل التطبيق</p>
 							<div class="cta-stores">
 								<div class="store-link is-coming-soon" aria-label="App Store (قريباً)">
@@ -107,6 +118,17 @@ import Footer from '../components/Footer.astro';
 									</svg>
 								</div>
 							</div>
+							<!-- Direct APK / download-hub link. Stores are still "coming
+							     soon" pre-launch; this is the practical path to get the
+							     Android app on a real device. -->
+							<a class="btn-download" href="/download">
+								<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" aria-hidden="true">
+									<path d="M12 3v12"/>
+									<polyline points="7 10 12 15 17 10"/>
+									<line x1="5" y1="21" x2="19" y2="21"/>
+								</svg>
+								<span>تحميل تطبيق DocSera على هاتفك</span>
+							</a>
 						</div>
 
 						<div class="cta-desktop" data-cta-desktop hidden>
@@ -115,6 +137,20 @@ import Footer from '../components/Footer.astro';
 								<div class="qr-canvas" data-qr-canvas></div>
 							</div>
 							<p class="cta-desk-tip">إذا لم يكن لديك التطبيق، سيفتح الرابط على هاتفك بعد التثبيت.</p>
+							<!-- Or — open the center profile right here, in tab, no scan needed. -->
+							<div class="cta-desk-actions">
+								<a class="btn-main cta-webapp" data-webapp-link href="#" rel="noopener">
+									افتح في تطبيق الويب
+								</a>
+								<a class="btn-download" href="/download">
+									<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" aria-hidden="true">
+										<path d="M12 3v12"/>
+										<polyline points="7 10 12 15 17 10"/>
+										<line x1="5" y1="21" x2="19" y2="21"/>
+									</svg>
+									<span>تحميل التطبيق</span>
+								</a>
+							</div>
 						</div>
 					</div>
 				</div>
@@ -367,8 +403,34 @@ import Footer from '../components/Footer.astro';
 	}
 
 	function renderCta(id: string, isMobile: boolean) {
-		const inAppUrl = 'docsera://center/' + encodeURIComponent(id);
-		(byData('open-app') as HTMLAnchorElement).href = inAppUrl;
+		// Mirror of doctor.astro's renderCta — see the doctor file for
+		// the full rationale of the smart-fallback (1.5s + visibilitychange
+		// cancel) and the web-app entry point wiring.
+		const encodedId = encodeURIComponent(id);
+		const inAppUrl = 'docsera://center/' + encodedId;
+		const webAppUrl = 'https://my.docsera.app/center/' + encodedId;
+
+		const openBtn = byData('open-app') as HTMLAnchorElement;
+		openBtn.href = inAppUrl;
+
+		openBtn.addEventListener('click', () => {
+			const timer = window.setTimeout(() => {
+				if (document.visibilityState === 'visible') {
+					window.location.href = '/download';
+				}
+			}, 1500);
+			const onHide = () => {
+				if (document.visibilityState === 'hidden') {
+					window.clearTimeout(timer);
+					document.removeEventListener('visibilitychange', onHide);
+				}
+			};
+			document.addEventListener('visibilitychange', onHide);
+		});
+
+		document.querySelectorAll<HTMLAnchorElement>('[data-webapp-link]').forEach((a) => {
+			a.href = webAppUrl;
+		});
 
 		const ctaMobile = byData('cta-mobile');
 		const ctaDesktop = byData('cta-desktop');
@@ -548,6 +610,72 @@ import Footer from '../components/Footer.astro';
 	.btn-open-app {
 		padding: 16px 40px;
 		font-size: 1.1rem;
+	}
+
+	/* Mirror of doctor.astro's web-app + download styles. See that file
+	   for the rationale of each color/spacing choice. */
+	.cta-webapp {
+		display: inline-flex;
+		align-items: center;
+		gap: 8px;
+		background: white;
+		color: var(--c-main);
+		border: 2px solid var(--c-main);
+		padding: 12px 28px;
+		border-radius: 12px;
+		font-weight: 700;
+		font-size: 1rem;
+		text-decoration: none;
+		margin-top: 14px;
+		transition: background 0.2s, color 0.2s;
+	}
+	.cta-webapp:hover {
+		background: var(--c-main);
+		color: white;
+	}
+	.cta-webapp svg {
+		width: 18px;
+		height: 18px;
+		flex-shrink: 0;
+	}
+	.cta-desk-actions .cta-webapp {
+		background: var(--c-main);
+		color: white;
+		border-color: var(--c-main);
+		margin-top: 0;
+	}
+	.cta-desk-actions .cta-webapp:hover {
+		background: var(--c-main-dark);
+	}
+
+	.btn-download {
+		display: inline-flex;
+		align-items: center;
+		gap: 6px;
+		color: var(--c-text-muted);
+		font-weight: 600;
+		font-size: 0.92rem;
+		text-decoration: none;
+		margin-top: 18px;
+		padding-bottom: 2px;
+		border-bottom: 1px dashed currentColor;
+		transition: color 0.2s, border-bottom-color 0.2s;
+	}
+	.btn-download:hover {
+		color: var(--c-main);
+	}
+	.btn-download svg {
+		width: 14px;
+		height: 14px;
+		flex-shrink: 0;
+	}
+
+	.cta-desk-actions {
+		display: flex;
+		flex-direction: column;
+		align-items: center;
+		gap: 4px;
+		margin-top: 22px;
 	}
 
 	.cta-divider {

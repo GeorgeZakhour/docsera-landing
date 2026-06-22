@@ -77,10 +77,21 @@ const SUPABASE_ANON_KEY = 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJyb2xlIjoiYW5v
 						<h2 class="cta-title">احجز موعدك بسهولة عبر تطبيق DocSera</h2>
 						<p class="cta-sub">صحتك بين يديك — مواعيد ومراسلات وتقارير في تطبيق واحد.</p>
 
-						<!-- Mobile branch: open-in-app + store badges -->
+						<!-- Mobile branch: open-in-app + web-app fallback + store badges + download -->
 						<div class="cta-mobile" data-cta-mobile>
 							<a class="btn-main btn-open-app" data-open-app href="#" rel="noopener">
 								افتح في التطبيق
+							</a>
+							<!-- Web-app fallback for users without the native app installed.
+							     One tap from the QR/social-link → reads the doctor in the
+							     hosted Flutter web build at my.docsera.app/doctor/<token>. -->
+							<a class="cta-webapp" data-webapp-link href="#" rel="noopener">
+								<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" aria-hidden="true">
+									<rect x="3" y="4" width="18" height="14" rx="2"/>
+									<line x1="8" y1="20" x2="16" y2="20"/>
+									<line x1="12" y1="18" x2="12" y2="20"/>
+								</svg>
+								<span>افتح في تطبيق الويب</span>
 							</a>
 							<p class="cta-divider">حساب جديد؟ حمّل التطبيق</p>
 							<div class="cta-stores">
@@ -133,15 +144,40 @@ const SUPABASE_ANON_KEY = 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJyb2xlIjoiYW5v
 									</svg>
 								</div>
 							</div>
+							<!-- Direct APK / download-hub link. Stores are still "coming
+							     soon" pre-launch; this is the practical path to get the
+							     Android app on a real device. -->
+							<a class="btn-download" href="/download">
+								<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" aria-hidden="true">
+									<path d="M12 3v12"/>
+									<polyline points="7 10 12 15 17 10"/>
+									<line x1="5" y1="21" x2="19" y2="21"/>
+								</svg>
+								<span>تحميل تطبيق DocSera على هاتفك</span>
+							</a>
 						</div>
 
-						<!-- Desktop branch: QR code -->
+						<!-- Desktop branch: QR code + parallel web-app entry point -->
 						<div class="cta-desktop" data-cta-desktop hidden>
 							<p class="cta-desk-instr">امسح رمز QR من كاميرا هاتفك لفتح ملف الطبيب في تطبيق DocSera</p>
 							<div class="qr-frame">
 								<div class="qr-canvas" data-qr-canvas></div>
 							</div>
 							<p class="cta-desk-tip">إذا لم يكن لديك التطبيق، سيفتح الرابط على هاتفك بعد التثبيت.</p>
+							<!-- Or — open the doctor profile right here, in tab, no scan needed. -->
+							<div class="cta-desk-actions">
+								<a class="btn-main cta-webapp" data-webapp-link href="#" rel="noopener">
+									افتح في تطبيق الويب
+								</a>
+								<a class="btn-download" href="/download">
+									<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" aria-hidden="true">
+										<path d="M12 3v12"/>
+										<polyline points="7 10 12 15 17 10"/>
+										<line x1="5" y1="21" x2="19" y2="21"/>
+									</svg>
+									<span>تحميل التطبيق</span>
+								</a>
+							</div>
 						</div>
 					</div>
 				</div>
@@ -355,11 +391,45 @@ const SUPABASE_ANON_KEY = 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJyb2xlIjoiYW5v
 	function renderCta(d: any, token: string, isMobile: boolean) {
 		// Always wire the in-app deep-link so installed users can
 		// "Open in app". OS routes docsera://doctor/<token> if the
-		// app is installed; if not, browsers just no-op (which is
-		// fine — the stores badges are the fallback for new users).
-		const inAppUrl = 'docsera://doctor/' + encodeURIComponent(token);
+		// app is installed; if not, the smart-fallback handler below
+		// redirects to /download after 1.5s so new users land on
+		// the install hub instead of staring at a no-op tap.
+		const encodedToken = encodeURIComponent(token);
+		const inAppUrl = 'docsera://doctor/' + encodedToken;
+		const webAppUrl = 'https://my.docsera.app/doctor/' + encodedToken;
+
 		const openBtn = byData('open-app') as HTMLAnchorElement;
 		openBtn.href = inAppUrl;
+
+		// Smart deep-link fallback: when the user taps "open in app",
+		// browsers try the docsera:// scheme. If the app is installed
+		// the OS swaps to it and our tab becomes document.hidden = true.
+		// If not installed, nothing visible happens — the tab stays
+		// foregrounded. So: 1.5s after the tap, if we're still visible,
+		// the install didn't happen → send the user to /download.
+		// The visibilitychange listener cancels the redirect cleanly
+		// when the app DID open, so returning to the tab doesn't
+		// surprise the user with /download.
+		openBtn.addEventListener('click', () => {
+			const timer = window.setTimeout(() => {
+				if (document.visibilityState === 'visible') {
+					window.location.href = '/download';
+				}
+			}, 1500);
+			const onHide = () => {
+				if (document.visibilityState === 'hidden') {
+					window.clearTimeout(timer);
+					document.removeEventListener('visibilitychange', onHide);
+				}
+			};
+			document.addEventListener('visibilitychange', onHide);
+		});
+
+		// Wire every web-app entry point (mobile + desktop) to the
+		// hosted Flutter web build's per-doctor deep route.
+		document.querySelectorAll<HTMLAnchorElement>('[data-webapp-link]').forEach((a) => {
+			a.href = webAppUrl;
+		});
 
 		// Device-aware visibility
 		const ctaMobile = byData('cta-mobile');
@@ -546,6 +616,81 @@ const SUPABASE_ANON_KEY = 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJyb2xlIjoiYW5v
 	.btn-open-app {
 		padding: 16px 40px;
 		font-size: 1.1rem;
+	}
+
+	/* Outline-teal pill matching the brand language of btn-main, used for
+	   the "open in web app" secondary CTA on both mobile (below the primary
+	   open-in-app button) and desktop (below the QR). Sits visually below
+	   the primary action without competing with it for attention. */
+	.cta-webapp {
+		display: inline-flex;
+		align-items: center;
+		gap: 8px;
+		background: white;
+		color: var(--c-main);
+		border: 2px solid var(--c-main);
+		padding: 12px 28px;
+		border-radius: 12px;
+		font-weight: 700;
+		font-size: 1rem;
+		text-decoration: none;
+		margin-top: 14px;
+		transition: background 0.2s, color 0.2s;
+	}
+	.cta-webapp:hover {
+		background: var(--c-main);
+		color: white;
+	}
+	.cta-webapp svg {
+		width: 18px;
+		height: 18px;
+		flex-shrink: 0;
+	}
+	/* When the web-app button sits inside the desktop actions row, it
+	   reuses .btn-main's filled-teal background and only needs spacing. */
+	.cta-desk-actions .cta-webapp {
+		background: var(--c-main);
+		color: white;
+		border-color: var(--c-main);
+		margin-top: 0;
+	}
+	.cta-desk-actions .cta-webapp:hover {
+		background: var(--c-main-dark);
+	}
+
+	/* Subtle, tertiary "download the app" link used both below the mobile
+	   store badges and as the desktop tail action. Reads as a quiet link,
+	   not a third button competing with the two primary CTAs above. */
+	.btn-download {
+		display: inline-flex;
+		align-items: center;
+		gap: 6px;
+		color: var(--c-text-muted);
+		font-weight: 600;
+		font-size: 0.92rem;
+		text-decoration: none;
+		margin-top: 18px;
+		padding-bottom: 2px;
+		border-bottom: 1px dashed currentColor;
+		transition: color 0.2s, border-bottom-color 0.2s;
+	}
+	.btn-download:hover {
+		color: var(--c-main);
+	}
+	.btn-download svg {
+		width: 14px;
+		height: 14px;
+		flex-shrink: 0;
+	}
+
+	/* Desktop row that pairs the web-app button with the download link
+	   beneath the QR. Kept centred to match the QR alignment above. */
+	.cta-desk-actions {
+		display: flex;
+		flex-direction: column;
+		align-items: center;
+		gap: 4px;
+		margin-top: 22px;
 	}
 
 	.cta-divider {
