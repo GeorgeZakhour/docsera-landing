@@ -195,7 +195,7 @@ import Footer from '../components/Footer.astro';
 <script>
 	import qrcode from 'qrcode-generator';
 
-	const SUPABASE_URL = 'https://api.docsera.app';
+	const SUPABASE_URL = import.meta.env.PUBLIC_SUPABASE_URL || 'https://api.docsera.app';
 	const SUPABASE_ANON_KEY = 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJyb2xlIjoiYW5vbiIsImlzcyI6InN1cGFiYXNlIiwiaWF0IjoxNzc0Mzg4NDY0LCJleHAiOjE5MzIwNjg0NjR9.Q9lVxKdVMbZge7vOgn_Ffroc8iVrpNtkFxqUugfwkPs';
 
 	// Map raw type slugs from centers.type to human-readable Arabic labels.

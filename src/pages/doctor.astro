@@ -31,7 +31,7 @@ import Footer from '../components/Footer.astro';
 
 // Same anon Supabase credentials the patient app uses (lib/app/const.dart).
 // Safe to embed client-side — RLS on public_doctors limits what anon reads.
-const SUPABASE_URL = 'https://api.docsera.app';
+const SUPABASE_URL = import.meta.env.PUBLIC_SUPABASE_URL || 'https://api.docsera.app';
 const SUPABASE_ANON_KEY = 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJyb2xlIjoiYW5vbiIsImlzcyI6InN1cGFiYXNlIiwiaWF0IjoxNzc0Mzg4NDY0LCJleHAiOjE5MzIwNjg0NjR9.Q9lVxKdVMbZge7vOgn_Ffroc8iVrpNtkFxqUugfwkPs';
 ---
 
@@ -226,7 +226,7 @@ const SUPABASE_ANON_KEY = 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJyb2xlIjoiYW5v
 
 	// Constants are injected at build time from the page frontmatter
 	// via a window global to keep this script type-clean for the bundler.
-	const SUPABASE_URL = 'https://api.docsera.app';
+	const SUPABASE_URL = import.meta.env.PUBLIC_SUPABASE_URL || 'https://api.docsera.app';
 	const SUPABASE_ANON_KEY = 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJyb2xlIjoiYW5vbiIsImlzcyI6InN1cGFiYXNlIiwiaWF0IjoxNzc0Mzg4NDY0LCJleHAiOjE5MzIwNjg0NjR9.Q9lVxKdVMbZge7vOgn_Ffroc8iVrpNtkFxqUugfwkPs';
 
 	// ----- Token extraction & validation ----------------------
