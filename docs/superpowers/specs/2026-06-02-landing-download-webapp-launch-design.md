@@ -124,7 +124,7 @@ Implementation uses the **frontend-design** skill's quality standard — the new
 
 ## Out of scope / follow-ups
 
-- **Pro URL discrepancy** — landing links to `https://pro.docsera.app` (`index.astro:251`, `help.astro:404`), but the Pro readiness doc references `app.docsera.app`. Confirm the canonical Pro web URL and align (separate, non-blocking).
+- ~~Pro URL discrepancy~~ — **Resolved:** `https://pro.docsera.app` is the correct DocSera Pro web URL (confirmed by user 2026-06-02). Landing links are correct; no change needed.
 - Designing a richer App-Store-style screenshots gallery for `/download` (later).
 
 ## Success criteria
