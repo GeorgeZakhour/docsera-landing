@@ -17,9 +17,10 @@ FROM nginx:alpine
 # Custom server config: adds a /.well-known/ location that serves
 # apple-app-site-association (no extension) + assetlinks.json as
 # application/json. Required for iOS Universal Links and Android
-# App Links verification to pass. Everything else stays identical
-# to the nginx:alpine default behaviour.
+# App Links verification to pass. Also sets cache-control tiers,
+# baseline security headers (via the snippet), and a branded 404.
 COPY nginx/default.conf /etc/nginx/conf.d/default.conf
+COPY nginx/security-headers.conf /etc/nginx/snippets/security-headers.conf
 
 # Copy built static files from builder stage
 COPY --from=builder /app/dist /usr/share/nginx/html

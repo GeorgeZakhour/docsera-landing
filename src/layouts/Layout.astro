@@ -25,12 +25,18 @@ const ogImage = image.startsWith('http') ? image : SITE + image;
 		<meta name="viewport" content="width=device-width, initial-scale=1" />
 		<meta name="description" content={description} />
 		<link rel="canonical" href={canonical} />
-		<link rel="icon" type="image/png" href="/images/DocSera-app-icon.png" />
+		<link rel="icon" type="image/png" sizes="48x48" href="/favicon-48.png" />
+		<link rel="apple-touch-icon" href="/apple-touch-icon.png" />
+
+		<!-- Marker for scroll-reveal animations: without JS the sections must stay
+		     visible (flaky connections in Syria drop scripts more often than HTML),
+		     so the hidden state only applies when this class is present. -->
+		<script is:inline>document.documentElement.classList.add('js');</script>
 
 		<!-- Open Graph -->
 		<meta property="og:type" content="website" />
 		<meta property="og:site_name" content="DocSera" />
-		<meta property="og:locale" content="ar_AR" />
+		<meta property="og:locale" content="ar_SY" />
 		<meta property="og:title" content={title} />
 		<meta property="og:description" content={description} />
 		<meta property="og:url" content={canonical} />
@@ -136,16 +142,33 @@ const ogImage = image.startsWith('http') ? image : SITE + image;
 		padding: 0 24px; /* More breathing room on mobile */
 	}
 
-	/* Animation Classes */
-	.fade-up {
+	/* Animation Classes — hidden state only when JS is running (html.js is set
+	   by the inline script in <head>). Without JS everything stays visible. */
+	html.js .fade-up {
 		opacity: 0;
 		transform: translateY(30px);
 		transition: opacity 0.8s ease-out, transform 0.8s ease-out;
 	}
 
-	.fade-up.visible {
+	html.js .fade-up.visible {
 		opacity: 1;
 		transform: translateY(0);
+	}
+
+	/* Same no-JS guard for the scroll-revealed feature rows (FeaturesList.astro
+	   defines their hidden state in a scoped style; this override wins when JS
+	   is absent). Also disable reveal motion for reduced-motion users. */
+	html:not(.js) .feature-item {
+		opacity: 1 !important;
+		transform: none !important;
+	}
+
+	@media (prefers-reduced-motion: reduce) {
+		.fade-up, .feature-item {
+			opacity: 1 !important;
+			transform: none !important;
+			transition: none !important;
+		}
 	}
 
 	.float {

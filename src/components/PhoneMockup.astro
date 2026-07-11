@@ -22,7 +22,7 @@ const { src, alt, className = "" } = Astro.props;
         <div class="screen-area">
              <div class="dynamic-island"></div>
              <slot>
-                <img src={src} alt={alt} class="screen-img" />
+                <img src={src} alt={alt} class="screen-img" loading="lazy" decoding="async" />
              </slot>
              <!-- Subtle Screen Glare -->
              <div class="glass-glare"></div>
