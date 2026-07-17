@@ -35,7 +35,7 @@
         <button id="btn-en" onclick="setLang('en')">English</button>
     </div>
     <h1>سياسة الخصوصية</h1>
-    <div class="meta">الإصدار 1.2 — ساري المفعول من 31 أيار 2026</div>
+    <div class="meta">الإصدار 1.2.1 — ساري المفعول من 17 تموز 2026</div>
 
     <p>مرحباً بك في تطبيق <strong>DocSera</strong> ("التطبيق" أو "نحن"). تُحدّد هذه الوثيقة كيف نقوم بجمع بياناتك الشخصية والصحية، وكيف نستخدمها، وأين نحفظها، ومع مَن نشاركها، وما هي حقوقك تجاه هذه البيانات. باستخدامك للتطبيق وإنشاء حساب فيه، فإنك توافق على ممارسات الخصوصية الموضحة في هذه الوثيقة.</p>
 
@@ -112,7 +112,6 @@
     <ul>
         <li><strong>Firebase Cloud Messaging</strong> (شركة Google Ireland Ltd، الاتحاد الأوروبي): مزوّد الإشعارات الأساسي على أجهزة أندرويد وأجهزة iOS التي تدعم خدمات Google Play. يستلم رمز جهازك ومحتوى الإشعار النصي القصير فقط (مثلاً: "لديك رد جديد من الطبيب"). <strong>لا يستلم أبداً محتوى الرسائل أو المستندات أو أي بيانات صحية.</strong></li>
         <li><strong>Pushy</strong> (الولايات المتحدة): مزوّد إشعارات احتياطي للأجهزة التي لا تدعم خدمات Google Play (مثل أجهزة هواوي). نطاق البيانات نفسه — رمز الجهاز ومحتوى الإشعار النصي القصير فقط. <strong>لا يستلم أبداً محتوى الرسائل أو المستندات أو أي بيانات صحية.</strong></li>
-        <li><strong>Sentry</strong> (الاتحاد الأوروبي - فرانكفورت): مزوّد تتبّع الأخطاء التقنية. يستلم تقارير الأعطال البرمجية مع نسخة مُموَّهة عن إصدار التطبيق ونوع الجهاز. <strong>تم تكوينه ليُزيل تلقائياً أيّ معلومات شخصية</strong> قبل إرسال أي تقرير.</li>
         <li><strong>Google Maps</strong>: لعرض الخرائط فقط. لا يستلم Google أي بيانات شخصية أو صحية — فقط إحداثيات الخريطة المعروضة، عبر وسيط على خادمنا.</li>
     </ul>
 
@@ -120,7 +119,7 @@
     <p>قد نُفصِح عن بياناتك للسلطات المختصة في الجمهورية العربية السورية إذا طُلب منا ذلك بموجب أمر قضائي صحيح أو التزام قانوني واضح، وضمن الحد الأدنى المطلوب فقط.</p>
 
     <h2>4. أين تُخزَّن بياناتك</h2>
-    <p>تُخزَّن جميع بياناتك الشخصية والصحية والمستندات والرسائل <strong>على خادم محلي داخل الجمهورية العربية السورية</strong>، مُستضاف على بنية شركة سيريتل للاتصالات المتنقلة. لا تُغادر بياناتك الصحية الأراضي السورية أبداً. الاستثناءات الوحيدة هي تقارير الأعطال البرمجية المُرسلة إلى Sentry، والتي لا تحتوي على بيانات شخصية أو صحية.</p>
+    <p>تُخزَّن جميع بياناتك الشخصية والصحية والمستندات والرسائل <strong>على خادم محلي داخل الجمهورية العربية السورية</strong>، مُستضاف على بنية شركة سيريتل للاتصالات المتنقلة. لا تُغادر بياناتك الصحية الأراضي السورية أبداً. وتُسجَّل تقارير الأعطال التقنية وتُعالَج بالكامل داخل بنية التطبيق في سورية، بعد تنقية تلقائية لأي معرّفات شخصية.</p>
 
     <h2>5. كيف نحمي بياناتك</h2>
     <ul>
@@ -176,8 +175,8 @@
     <ul>
         <li><strong>بيانات الحساب الشخصية:</strong> طوال فترة استخدامك للتطبيق + 30 يوماً بعد طلب الحذف.</li>
         <li><strong>السجلات الطبية:</strong> تُمَوَّه بعد 30 يوماً من طلب الحذف، ثم تُحذف نهائياً بعد 7 سنوات.</li>
-        <li><strong>سجلات الأنشطة (Analytics):</strong> 24 شهراً كحدّ أقصى، ثم تُحذف تلقائياً.</li>
-        <li><strong>تقارير الأعطال:</strong> 90 يوماً عند مزوّد الخدمة (Sentry).</li>
+        <li><strong>سجلات الأنشطة (Analytics):</strong> تُفصَل هوية المستخدم عنها بعد 90 يوماً، وتُحتفَظ الإحصاءات مجهولة الهوية لأغراض التشغيل والتحسين.</li>
+        <li><strong>تقارير الأعطال التقنية:</strong> تُسجَّل داخل بنية التطبيق في سورية، وتُحذف بعد 24 شهراً كحدّ أقصى.</li>
         <li><strong>سجلات التدقيق الإدارية:</strong> طوال فترة الالتزام القانوني المعمول به.</li>
     </ul>
 
@@ -260,7 +259,7 @@
         <button class="active" onclick="setLang('en')">English</button>
     </div>
     <h1>Privacy Policy</h1>
-    <div class="meta">Version 1.2 — Effective 31 May 2026</div>
+    <div class="meta">Version 1.2.1 — Effective 17 July 2026</div>
 
     <p>Welcome to <strong>DocSera</strong> ("the App", or "we"). This document sets out exactly what personal and health data we collect, how we use it, where it is stored, with whom it is shared, and what rights you have over it. By using the App and creating an account, you accept the privacy practices described here.</p>
 
@@ -335,7 +334,6 @@
     <ul>
         <li><strong>Firebase Cloud Messaging</strong> (Google Ireland Ltd, EU): primary push notification provider on Android and on iOS devices with Google Play Services. Receives only your device token and the short notification text (e.g. "You have a new reply from your doctor"). <strong>Never receives the content of messages, documents, or any health data.</strong></li>
         <li><strong>Pushy</strong> (United States): fallback push notification provider for devices without Google Play Services (e.g. Huawei devices). Same data scope as FCM — device token and short notification text only. <strong>Never receives the content of messages, documents, or any health data.</strong></li>
-        <li><strong>Sentry</strong> (European Union — Frankfurt): technical error tracking provider. Receives crash reports along with a sanitized snapshot of app version and device type. <strong>Configured to automatically remove any personal information</strong> before sending any report.</li>
         <li><strong>Google Maps</strong>: solely to display maps. Google receives no personal or health data — only the map tile coordinates being displayed, routed via a proxy on our server.</li>
     </ul>
 
@@ -343,7 +341,7 @@
     <p>We may disclose your data to competent authorities in the Syrian Arab Republic if required by a valid court order or clear legal obligation, and only to the minimum necessary extent.</p>
 
     <h2>4. Where your data is stored</h2>
-    <p>All your personal data, health data, documents, and messages are stored <strong>on a local server inside the Syrian Arab Republic</strong>, hosted on Syriatel Mobile Telecom infrastructure. Your health data never leaves Syrian territory. The only exceptions are technical crash reports sent to Sentry, which contain no personal or health data.</p>
+    <p>All your personal data, health data, documents, and messages are stored <strong>on a local server inside the Syrian Arab Republic</strong>, hosted on Syriatel Mobile Telecom infrastructure. Your health data never leaves Syrian territory. Technical crash reports are recorded and processed entirely within the app’s infrastructure in Syria, with personal identifiers automatically scrubbed.</p>
 
     <h2>5. How we protect your data</h2>
     <ul>
@@ -398,8 +396,8 @@
     <ul>
         <li><strong>Personal account data:</strong> while you use the app + 30 days after deletion is requested.</li>
         <li><strong>Medical records:</strong> pseudonymized 30 days after deletion request, fully purged 7 years after that.</li>
-        <li><strong>Activity logs (analytics):</strong> a maximum of 24 months, then automatically deleted.</li>
-        <li><strong>Crash reports:</strong> 90 days at the provider (Sentry).</li>
+        <li><strong>Activity logs (analytics):</strong> de-identified after 90 days; anonymized statistics are retained for operational purposes.</li>
+        <li><strong>Technical crash reports:</strong> recorded within the app’s infrastructure in Syria; deleted after a maximum of 24 months.</li>
         <li><strong>Administrative audit logs:</strong> for as long as legally required.</li>
     </ul>
 
