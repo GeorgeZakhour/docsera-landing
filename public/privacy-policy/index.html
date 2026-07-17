@@ -113,6 +113,7 @@
         <li><strong>Firebase Cloud Messaging</strong> (شركة Google Ireland Ltd، الاتحاد الأوروبي): مزوّد الإشعارات الأساسي على أجهزة أندرويد وأجهزة iOS التي تدعم خدمات Google Play. يستلم رمز جهازك ومحتوى الإشعار النصي القصير فقط (مثلاً: "لديك رد جديد من الطبيب"). <strong>لا يستلم أبداً محتوى الرسائل أو المستندات أو أي بيانات صحية.</strong></li>
         <li><strong>Pushy</strong> (الولايات المتحدة): مزوّد إشعارات احتياطي للأجهزة التي لا تدعم خدمات Google Play (مثل أجهزة هواوي). نطاق البيانات نفسه — رمز الجهاز ومحتوى الإشعار النصي القصير فقط. <strong>لا يستلم أبداً محتوى الرسائل أو المستندات أو أي بيانات صحية.</strong></li>
         <li><strong>Google Maps</strong>: لعرض الخرائط فقط. لا يستلم Google أي بيانات شخصية أو صحية — فقط إحداثيات الخريطة المعروضة، عبر وسيط على خادمنا.</li>
+        <li><strong>Mailgun</strong> (الولايات المتحدة): بوابة إرسال البريد الإلكتروني. تُستخدم لإرسال رموز التحقق والرسائل الحسابية إلى بريدك عند إضافته — تستلم عنوان بريدك ومحتوى رسالة التحقق فقط. <strong>لا تستلم أي بيانات صحية.</strong></li>
     </ul>
 
     <h3>3.4 الإفصاح بموجب القانون</h3>
@@ -335,6 +336,7 @@
         <li><strong>Firebase Cloud Messaging</strong> (Google Ireland Ltd, EU): primary push notification provider on Android and on iOS devices with Google Play Services. Receives only your device token and the short notification text (e.g. "You have a new reply from your doctor"). <strong>Never receives the content of messages, documents, or any health data.</strong></li>
         <li><strong>Pushy</strong> (United States): fallback push notification provider for devices without Google Play Services (e.g. Huawei devices). Same data scope as FCM — device token and short notification text only. <strong>Never receives the content of messages, documents, or any health data.</strong></li>
         <li><strong>Google Maps</strong>: solely to display maps. Google receives no personal or health data — only the map tile coordinates being displayed, routed via a proxy on our server.</li>
+        <li><strong>Mailgun</strong> (United States): email delivery gateway. Used to send verification codes and account emails to your address when you add one — receives only your email address and the verification message content. <strong>Never receives any health data.</strong></li>
     </ul>
 
     <h3>3.4 Disclosure required by law</h3>
