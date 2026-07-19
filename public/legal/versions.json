@@ -24,7 +24,7 @@
       "name_ar": "الإقرار الطبي",
       "url": "https://docsera.app/medical-disclaimer/",
       "version": "1.0",
-      "effective_date": "2026-05-05",
+      "effective_date": "2026-07-19",
       "requires_consent": true
     },
     {
@@ -33,7 +33,7 @@
       "name_ar": "الإبلاغ عن محتوى مخالف",
       "url": "https://docsera.app/report-illicit-content/",
       "version": "1.0",
-      "effective_date": "2026-05-05",
+      "effective_date": "2026-07-19",
       "requires_consent": false
     }
   ]
