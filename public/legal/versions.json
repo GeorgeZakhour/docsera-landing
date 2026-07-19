@@ -5,8 +5,8 @@
       "name_en": "Privacy Policy",
       "name_ar": "سياسة الخصوصية",
       "url": "https://docsera.app/privacy-policy/",
-      "version": "1.2",
-      "effective_date": "2026-05-31",
+      "version": "1.0",
+      "effective_date": "2026-07-19",
       "requires_consent": true
     },
     {
@@ -14,8 +14,8 @@
       "name_en": "Terms of Use",
       "name_ar": "شروط الاستخدام",
       "url": "https://docsera.app/terms-of-service/",
-      "version": "1.2",
-      "effective_date": "2026-05-31",
+      "version": "1.0",
+      "effective_date": "2026-07-19",
       "requires_consent": true
     },
     {
