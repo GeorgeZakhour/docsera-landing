@@ -44,10 +44,10 @@
     <h2>1. تعريف الخدمة</h2>
     <p>DocSera منصّة وسيطة تربط المرضى بالأطباء المسجَّلين في المنصّة. الميزات الأساسية المتاحة لك:</p>
     <ul>
-        <li>البحث عن الأطباء وفقاً للتخصّص والموقع.</li>
+        <li>البحث عن الأطباء وفقاً للاسم والتخصّص والموقع.</li>
         <li>حجز المواعيد، إعادة جدولتها، وإلغاؤها.</li>
         <li>إدارة سجل طبي شخصي (مستندات، تقارير، ملف صحي).</li>
-        <li>مراسلة مباشرة مع الأطباء الذين فعّلوا ميزة مراسلة المرضى في حسابهم — جميع الرسائل مُشفّرة بمعيار AES-256-GCM.</li>
+        <li>مراسلة إدارية وتنظيمية (لا طبية) مع الأطباء الذين فعّلوها — جميع الرسائل مُشفّرة بمعيار AES-256-GCM.</li>
         <li>إدارة ملفات أفراد العائلة (الأقارب) من حسابك.</li>
         <li>برنامج ولاء وعروض من شركاء تجاريين معتمدين.</li>
         <li>إشعارات تذكير بالمواعيد والاتصالات التشغيلية.</li>
@@ -103,7 +103,7 @@
 
     <h2>7. برنامج الولاء والعروض</h2>
     <ul>
-        <li>تكسب نقاط ولاء عند إكمال مواعيد طبية وعند إحالة مستخدمين جدد.</li>
+        <li>تكسب نقاط ولاء عند إكمال المواعيد، وإحالة مستخدمين جدد، وخطوات استخدام أخرى.</li>
         <li>يمكنك استبدال النقاط بقسائم خصم لدى شركاء تجاريين معتمدين، ولا تشمل القسائم أدوية.</li>
         <li>القسائم لها صلاحية محدودة، وقد لا تُجمع مع عروض أخرى لدى الشريك.</li>
         <li>الشركاء التجاريون مسؤولون عن تطبيق العرض على منتجاتهم/خدماتهم؛ DocSera ليس مسؤولاً عن جودة منتجات الشريك.</li>
@@ -176,7 +176,7 @@
     <ul>
         <li><strong>وزارة الصحّة في الجمهورية العربية السورية</strong> — بموجب <strong>القرار التنظيميّ رقم 24/ت لعام 2025</strong> (الضوابط والنواظم العامّة للتطبيقات الطبّية الإلكترونية).</li>
         <li><strong>الجهات النقابية ذات الصلة</strong> — نقابة الأطبّاء، نقابة الصيادلة، نقابة أطبّاء الأسنان، نقابة المهن الصحّية — وفقاً للالتزامات المنصوص عليها في نموذج الطلب الموقَّع للوزارة.</li>
-        <li><strong>وزارة الاتصالات والتقانة</strong> — وفق قوانين حماية البيانات وأمن المعلومات المعمول بها.</li>
+        <li><strong>الهيئة الوطنية لخدمات تقانة المعلومات</strong> — وفق قوانين حماية البيانات وأمن المعلومات المعمول بها.</li>
     </ul>
 
     <h3>14.1 تصنيف التطبيق</h3>
@@ -246,7 +246,7 @@
     <h3>17.3 الإبلاغ الإلزاميّ للسلطات</h3>
     <p>تلتزم DocSera بإبلاغ السلطات المختصّة في الحالات التالية:</p>
     <ul>
-        <li><strong>خرق بيانات صحّية:</strong> إخطار وزارة الصحّة ووزارة الاتصالات ضمن الجدول الزمنيّ المنصوص عليه + إخطار المستخدمين المتأثّرين خلال 72 ساعة.</li>
+        <li><strong>خرق بيانات صحّية:</strong> إخطار وزارة الصحّة ووزارة الاتصالات ضمن الجدول الزمنيّ المنصوص عليه + إخطار المستخدمين المتأثّرين دون تأخير غير مبرَّر.</li>
         <li><strong>اشتباه احتيال طبّيّ:</strong> إبلاغ نقابة الأطبّاء وأيّ جهة مختصّة.</li>
         <li><strong>طلب رسميّ من السلطات القضائية:</strong> الاستجابة بالحدّ الأدنى المطلوب قانوناً، مع إخطار المستخدم إن سمح القانون بذلك.</li>
     </ul>
@@ -273,10 +273,10 @@
     <h2>1. Service definition</h2>
     <p>DocSera is an intermediary platform connecting patients with doctors registered on the platform. Core features available to you:</p>
     <ul>
-        <li>Doctor search by specialty and location.</li>
+        <li>Doctor search by name, specialty, and location.</li>
         <li>Booking, rescheduling, and cancelling appointments.</li>
         <li>Personal medical record management (documents, reports, health profile).</li>
-        <li>Direct messaging with doctors who have enabled patient messaging on their account — all messages encrypted with AES-256-GCM.</li>
+        <li>Administrative and organizational messaging (not medical) with doctors who have enabled it — all messages encrypted with AES-256-GCM.</li>
         <li>Managing relatives' files from your account.</li>
         <li>Loyalty and offers program from approved commercial partners.</li>
         <li>Appointment reminders and operational notifications.</li>
@@ -332,7 +332,7 @@
 
     <h2>7. Loyalty and offers program</h2>
     <ul>
-        <li>You earn loyalty points by completing medical appointments and referring new users.</li>
+        <li>You earn loyalty points by completing appointments, referring new users, and other usage actions.</li>
         <li>You can redeem points for discount vouchers with approved commercial partners; vouchers never include medicines.</li>
         <li>Vouchers have limited validity and may not be combinable with other offers at the partner.</li>
         <li>Business partners are responsible for honoring the discount on their products/services; DocSera is not responsible for the quality of partner products.</li>
@@ -402,7 +402,7 @@
     <ul>
         <li><strong>Ministry of Health of the Syrian Arab Republic</strong> — under <strong>Regulatory Decision No. 24/T of 2025</strong> (General Controls and Regulations for Electronic Medical Applications).</li>
         <li><strong>Relevant professional bodies</strong> — Syrian Medical Association, Syrian Pharmacists Association, Syrian Dental Association, Syrian Health Professions Association — in line with commitments set out in the signed Ministry application form.</li>
-        <li><strong>Ministry of Communications and Technology</strong> — in line with applicable data-protection and information-security laws.</li>
+        <li><strong>National Authority for Information Technology Services</strong> — in line with applicable data-protection and information-security laws.</li>
     </ul>
 
     <h3>14.1 Application classification</h3>
@@ -472,7 +472,7 @@
     <h3>17.3 Mandatory reporting to authorities</h3>
     <p>DocSera commits to reporting to competent authorities in the following cases:</p>
     <ul>
-        <li><strong>Health-data breach:</strong> notification of the Ministry of Health and the Ministry of Communications within the stipulated timeframe + notification of affected users within 72 hours.</li>
+        <li><strong>Health-data breach:</strong> notification of the Ministry of Health and the Ministry of Communications within the stipulated timeframe + notification of affected users without undue delay.</li>
         <li><strong>Suspected medical fraud:</strong> reporting to the Syrian Medical Association and any competent body.</li>
         <li><strong>Formal judicial-authority request:</strong> response to the minimum legally required extent, with user notification where legally permitted.</li>
     </ul>
