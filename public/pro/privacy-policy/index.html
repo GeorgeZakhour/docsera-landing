@@ -39,7 +39,7 @@
         <button id="btn-en" onclick="setLang('en')">English</button>
     </div>
     <h1>سياسة الخصوصية — دوكسيرا برو</h1>
-    <div class="meta">الإصدار 1.0 — ساري المفعول من 1 حزيران 2026</div>
+    <div class="meta">الإصدار 1.0 — ساري المفعول من 19 تموز 2026</div>
 
     <div class="callout"><strong>ملاحظة:</strong> دوكسيرا برو تطبيق موجَّه للأطبّاء المرخَّصين. هذه السياسة تختلف عن <a href="/privacy-policy/">سياسة خصوصية تطبيق المرضى</a> لأنّ علاقتنا بكلٍّ من بيانات الطبيب وبيانات المرضى مختلفة جوهريًّا (انظر القسم 1).</div>
 
@@ -75,7 +75,7 @@
         <li><strong>معلومات الجهاز:</strong> نظام التشغيل، الإصدار، طراز الجهاز، إصدار التطبيق، اللغة.</li>
         <li><strong>معرّفات المنصّة:</strong> معرّف مجهول لكلّ تثبيت؛ معرّف الجهاز المستقرّ على iOS و Android (لإزالة تكرار توجيه الإشعارات).</li>
         <li><strong>تحليلات استخدام الخدمة:</strong> زيارات الشاشات، نقرات الأزرار، استخدام الميزات، مقاييس الأداء. <strong>لا تُرسَل بيانات المرضى عبر خطّ التحليلات</strong> (انظر القسم 6.3).</li>
-        <li><strong>بيانات الأعطال والأخطاء:</strong> مكدِّسات استدعاء، أنواع الاستثناءات. تُنقَّى بيانات المرضى قبل الإرسال إلى Sentry.</li>
+        <li><strong>بيانات الأعطال والأخطاء:</strong> مكدِّسات استدعاء، أنواع الاستثناءات. تُنقَّى بيانات المرضى تلقائياً، وتُسجَّل وتُعالَج بالكامل داخل بنية التطبيق في سورية.</li>
         <li><strong>رموز الإشعارات:</strong> رمز FCM أو Pushy. تُستخدم حصرًا لتوجيه الإشعارات إلى جهازك.</li>
         <li><strong>بيانات الشبكة:</strong> عنوان IP، مسارات HTTP، أكواد حالة الاستجابة، التوقيت.</li>
     </ul>
@@ -83,7 +83,6 @@
     <h3>2.3 المعلومات من أطراف ثالثة</h3>
     <ul>
         <li><strong>Apple App Store / Google Play:</strong> حالة الاشتراك، إيصالات الشراء داخل التطبيق.</li>
-        <li><strong>Sentry:</strong> مكدِّسات الاستدعاء وتشخيصات الأعطال (نتحكّم في ما يُرسَل).</li>
         <li><strong>Pushy / Firebase:</strong> إيصالات تسليم الإشعارات التي أرسلتها إلى المرضى.</li>
     </ul>
 
@@ -139,7 +138,7 @@
         <li><strong>Firebase Cloud Messaging (Google):</strong> تسليم الإشعارات. رموز الأجهزة وبيانات الإشعار (لا PHI).</li>
         <li><strong>Pushy.me:</strong> تسليم الإشعارات للأجهزة بدون Google Play. رموز الأجهزة وبيانات الإشعار (لا PHI).</li>
         <li><strong>Apple Push Notification Service:</strong> تسليم إشعارات iOS. رموز الأجهزة وبيانات الإشعار (لا PHI).</li>
-        <li><strong>Sentry (الاتحاد الأوروبي):</strong> تقارير الأعطال والأخطاء. PHI تُنقَّى قبل الإرسال.</li>
+        <li><strong>Mailgun:</strong> بوابة إرسال رسائل الخدمة المتعلّقة بالحساب (رموز التحقّق، دعوات الفريق). عنوان البريد ومحتوى الرسالة فقط — لا PHI.</li>
         <li><strong>Google Maps Platform:</strong> الترميز الجغرافيّ لعناوين العيادات. نصّ العنوان والإحداثيّات.</li>
         <li><strong>App Store Connect / Google Play Console:</strong> توزيع التطبيقات وفوترة الاشتراكات. حالة الاشتراك ومراجع دفع مرمَّزة.</li>
     </ul>
@@ -157,7 +156,7 @@
     <h3>6.3 صحّة خطّ التحليلات وتقارير الأخطاء</h3>
     <ul>
         <li><strong>التحليلات:</strong> كتالوج الأحداث يحدّد الخصائص المسموح إرسالها. وتُحذف معرّفات مثل <code>patient_id</code> و <code>conversation_id</code> من أحداث التحليلات في الطابور غير المتّصل.</li>
-        <li><strong>Sentry:</strong> خطّاف <code>beforeSend</code> يحذف أجسام الطلبات وسلاسل الاستعلام وملفّات تعريف الارتباط ورؤوس HTTP وأنماط PII (الهواتف السورية، الإيميلات) من الأحداث الصادرة. ومُحفِّز قاعدة بيانات <code>pro_error_events</code> يطبّق طبقة ثانية من إخفاء PII على جانب الخادم.</li>
+        <li><strong>مراقبة الأعطال داخل سورية:</strong> يُسجَّل كلّ عُطل تقنيّ في قاعدة بيانات التطبيق داخل سورية (جدول <code>pro_error_events</code>) بعد تنقية تلقائية لأي معرّفات شخصية — أجسام الطلبات وسلاسل الاستعلام ورؤوس HTTP وأنماط الهواتف والإيميلات — قبل التسجيل وعلى جانب الخادم معاً. ولا تُرسَل بيانات الأعطال إلى أي خدمة خارج سورية.</li>
     </ul>
 
     <h2>7. الأمن</h2>
@@ -179,8 +178,7 @@
         <li>الهوية والمؤهّلات: طوال مدّة الحساب + 7 سنوات بعد الإنهاء.</li>
         <li>سجلّات الفوترة: 7 سنوات (احتفاظ السجلّات الضريبية).</li>
         <li>تحليلات استخدام الخدمة: 24 شهرًا مجمَّعة؛ التفاصيل القابلة للتعريف تُحذف بعد 90 يومًا.</li>
-        <li>بيانات الأعطال والأخطاء: 90 يومًا (ثمّ تُحذف تلقائيًّا).</li>
-        <li>أحداث Sentry: 30–90 يومًا.</li>
+        <li>تقارير الأعطال التقنية: تُسجَّل داخل بنية التطبيق في سورية، وتُحذف بعد 24 شهرًا كحدّ أقصى.</li>
         <li>سجلّات تدقيق المصادقة: 12 شهرًا.</li>
     </ul>
     <h3>8.2 بيانات المرضى</h3>
@@ -202,9 +200,9 @@
     <h3>9.1 حقوق المرضى عبرك</h3>
     <p>المرضى الذين يمارسون حقوق خصوصيّتهم بشأن بيانات تخزّنها يجب أن يتواصلوا <strong>معك</strong> كمتحكِّم بالبيانات. وإذا تلقّينا طلبًا مباشرًا من مريض بشأن بيانات تتحكّم بها، نُحيله إليك ونتعاون بصورة معقولة مع ردّك.</p>
 
-    <h2>10. النقل الدوليّ</h2>
-    <p>بنيتنا التحتية الأساسية مستضافة في الجمهورية العربية السورية. ويعمل بعض المعالجين الفرعيّين (Apple، Google، Firebase، Sentry) عالميًّا وقد يعالجون البيانات في ولايات قضائية خارج سوريا. وتُجرى هذه التحويلات وفق الضمانات التعاقدية القياسية لهؤلاء المعالجين.</p>
-    <p>حيث يطبّق القانون السوريّ قيودًا معيَّنة على نقل بيانات الرعاية الصحية خارج سوريا، نضمن الامتثال، بما في ذلك بنقل المعالجة إلى معالجين داخل البلاد عند اللزوم.</p>
+    <h2>10. مكان تخزين البيانات وإقامتها</h2>
+    <p>تُستضاف بنيتنا التحتية وتُخزَّن جميع بيانات الطبيب وبيانات المرضى والوثائق والرسائل بالكامل <strong>داخل الجمهورية العربية السورية</strong> (بنية سيريتل)، ولا تغادر بيانات الرعاية الصحية الأراضي السورية. وتُراقَب الأعطال التقنية وتُعالَج داخل سورية بالكامل.</p>
+    <p>تقتصر الخدمات ذات النطاق العالميّ على تسليم الإشعارات (Apple، Google/Firebase، Pushy) وعرض الخرائط (Google Maps) وبوابة البريد (Mailgun) — وهي <strong>لا تتلقّى أي بيانات صحية إطلاقاً</strong>، بل رمز الجهاز ونصّ الإشعار القصير، أو إحداثيات الخريطة، أو عنوان البريد ومحتوى رسالة التحقّق فقط.</p>
 
     <h2>11. إشعار خرق البيانات</h2>
     <p>إذا علمنا بوصول مؤكَّد غير مصرَّح به إلى — أو إفصاح عن — بيانات الطبيب أو بيانات المرضى، فإنّنا:</p>
@@ -234,7 +232,7 @@
         <li><strong>مسؤول حماية البيانات (DPO):</strong> <a href="mailto:privacy@docsera.app">privacy@docsera.app</a> — جورج بن فادي زخور</li>
         <li><strong>الإبلاغ الأمنيّ:</strong> <a href="mailto:security@docsera.app">security@docsera.app</a></li>
         <li><strong>العنوان:</strong> جرمانا، مكتب 171، عقار 1181، برج بنا — ريف دمشق، الجمهورية العربية السورية</li>
-        <li><strong>الهاتف:</strong> 0945781111</li>
+        <li><strong>الهاتف:</strong> 0983322665</li>
     </ul>
 
     <h2>17. اللغة</h2>
@@ -280,7 +278,7 @@
         <button class="active" onclick="setLang('en')">English</button>
     </div>
     <h1>Privacy Policy — DocSera Pro</h1>
-    <div class="meta">Version 1.0 — Effective 1 June 2026</div>
+    <div class="meta">Version 1.0 — Effective 19 July 2026</div>
 
     <div class="callout callout-ltr"><strong>Note:</strong> DocSera Pro is intended for licensed healthcare professionals. This Policy differs from the <a href="/privacy-policy/">DocSera Patient app Privacy Policy</a> because our relationship with Doctor Data and Patient Data is fundamentally different (see §1).</div>
 
@@ -316,7 +314,7 @@
         <li><strong>Device information:</strong> OS, version, device model, app version, locale.</li>
         <li><strong>Platform identifiers:</strong> Per-install anonymous ID; stable per-device fingerprint on iOS and Android (used to deduplicate push routing).</li>
         <li><strong>Service-usage analytics:</strong> Screen visits, button taps, feature usage, performance metrics. <strong>PHI is never sent through the analytics pipeline</strong> (see §6.3).</li>
-        <li><strong>Error and crash data:</strong> Stack traces, exception types. PHI is filtered before transmission to Sentry.</li>
+        <li><strong>Error and crash data:</strong> Stack traces, exception types. Patient data is filtered automatically, and the data is logged and processed entirely within the app's infrastructure inside Syria.</li>
         <li><strong>Push-notification tokens:</strong> FCM or Pushy. Used solely for routing notifications to your device.</li>
         <li><strong>Network metadata:</strong> IP address, HTTP paths, response codes, timing.</li>
     </ul>
@@ -324,7 +322,6 @@
     <h3>2.3 Information from third parties</h3>
     <ul>
         <li><strong>Apple App Store / Google Play:</strong> Subscription state, in-app purchase receipts.</li>
-        <li><strong>Sentry:</strong> Stack traces and crash diagnostics (we control what is sent).</li>
         <li><strong>Pushy / Firebase:</strong> Delivery receipts for push notifications you sent.</li>
     </ul>
 
@@ -379,7 +376,7 @@
         <li><strong>Firebase Cloud Messaging (Google):</strong> Push notification delivery. Device tokens; notification metadata (no PHI).</li>
         <li><strong>Pushy.me:</strong> Push delivery for devices without Google Play Services. Device tokens; notification metadata (no PHI).</li>
         <li><strong>Apple Push Notification Service:</strong> iOS push delivery. Device tokens; notification metadata (no PHI).</li>
-        <li><strong>Sentry (EU):</strong> Crash and error reporting. PHI scrubbed before transmission.</li>
+        <li><strong>Mailgun:</strong> Email gateway for account-related service messages (verification codes, team invites). Email address and message content only — no PHI.</li>
         <li><strong>Google Maps Platform:</strong> Geocoding for clinic addresses. Address text, coordinates.</li>
         <li><strong>App Store Connect / Google Play Console:</strong> App distribution, subscription billing. Subscription state, tokenized payment references.</li>
     </ul>
@@ -397,7 +394,7 @@
     <h3>6.3 Analytics and crash-reporting hygiene</h3>
     <ul>
         <li><strong>Analytics:</strong> The event catalog whitelists which properties may be sent. Identifier properties such as <code>patient_id</code>, <code>conversation_id</code>, <code>appointment_id</code> are stripped from analytics events in the offline queue.</li>
-        <li><strong>Sentry:</strong> Our <code>beforeSend</code> hook strips request bodies, query strings, cookies, headers, and PII patterns (Syrian phone shapes, email shapes) from outgoing events. The <code>pro_error_events</code> database trigger applies a second layer of PII redaction server-side.</li>
+        <li><strong>In-Syria crash monitoring:</strong> every technical error is logged to the app's database inside Syria (the <code>pro_error_events</code> table) after automatic redaction of any personal identifiers — request bodies, query strings, HTTP headers, and phone/email patterns — both before logging and server-side. Crash data is never sent to any service outside Syria.</li>
     </ul>
 
     <h2>7. Security</h2>
@@ -419,8 +416,7 @@
         <li>Identity and credentials: Account duration + 7 years post-termination.</li>
         <li>Billing records: 7 years (tax retention).</li>
         <li>Service-usage analytics: 24 months in aggregate; identifiable detail purged after 90 days.</li>
-        <li>Crash and error data: 90 days (then auto-deleted).</li>
-        <li>Sentry events: 30–90 days.</li>
+        <li>Technical crash reports: logged within the app's infrastructure inside Syria, and deleted after a maximum of 24 months.</li>
         <li>Authentication audit logs: 12 months.</li>
     </ul>
     <h3>8.2 Patient Data</h3>
@@ -442,9 +438,9 @@
     <h3>9.1 Patient rights flow-through</h3>
     <p>Patients exercising privacy rights with respect to data you store should contact <strong>you</strong> as the data controller. If we receive a direct request from a patient regarding data you control, we will forward it to you and reasonably cooperate with your response.</p>
 
-    <h2>10. International Transfers</h2>
-    <p>Our primary infrastructure is hosted in the Syrian Arab Republic. Certain Subprocessors (Apple, Google, Firebase, Sentry) operate globally and may process data outside Syria. Such transfers are conducted under those Subprocessors' standard contractual safeguards.</p>
-    <p>Where Syrian law applies specific restrictions on the transfer of healthcare data outside Syria, we will ensure compliance, including by relocating processing to in-country Subprocessors where required.</p>
+    <h2>10. Where data is stored and its residency</h2>
+    <p>Our infrastructure is hosted, and all Doctor Data, Patient Data, documents, and messages are stored, entirely <strong>within the Syrian Arab Republic</strong> (Syriatel infrastructure); healthcare data never leaves Syrian territory. Technical errors are monitored and processed entirely inside Syria.</p>
+    <p>The only globally-scoped services are push-notification delivery (Apple, Google/Firebase, Pushy), map display (Google Maps), and the email gateway (Mailgun) — these <strong>receive no health data whatsoever</strong>, only a device token and short notification text, map-tile coordinates, or an email address and verification-message content.</p>
 
     <h2>11. Data Breach Notification</h2>
     <p>If we become aware of a confirmed unauthorized access to or disclosure of Doctor Data or Patient Data, we will:</p>
@@ -474,7 +470,7 @@
         <li><strong>Data Protection Officer (DPO):</strong> <a href="mailto:privacy@docsera.app">privacy@docsera.app</a> — George Zakhour</li>
         <li><strong>Security reporting:</strong> <a href="mailto:security@docsera.app">security@docsera.app</a></li>
         <li><strong>Address:</strong> Jaramana, Office 171, Property 1181, Burj Banna — Damascus Countryside, Syrian Arab Republic</li>
-        <li><strong>Phone:</strong> 0945781111</li>
+        <li><strong>Phone:</strong> 0983322665</li>
     </ul>
 
     <h2>17. Language</h2>
