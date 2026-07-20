@@ -125,7 +125,7 @@
     </ul>
 
     <h3>5.1 موافقة المريض</h3>
-    <p>أنت المسؤول عن الحصول على الموافقة المستنيرة لكلّ مريض وتوثيقها بشأن تخزين بياناته ومعالجتها عبر الخدمة، وفق القوانين المعمول بها ومدوّنة مهنتك. ونوفّر داخل الخدمة قوالب إشعار للموافقة؛ مسؤوليّتك في الحصول على الموافقة لا تنتقل إلينا.</p>
+    <p>أنت المسؤول عن الحصول على موافقة كلّ مريض وتوثيقها بشأن تخزين بياناته ومعالجتها عبر الخدمة، وفق القوانين المعمول بها ومدوّنة مهنتك، ولا تنتقل هذه المسؤولية إلينا.</p>
 
     <h3>5.2 المحتوى المشفَّر في الراحة</h3>
     <p>تُشفَّر فئات معيَّنة من بيانات المرضى — الرسائل، الملاحظات، الملفّات المرفقة — باستخدام <strong>AES-256-GCM</strong> (تشفير مصدَّق). يحدث فكّ التشفير على جهاز المستقبِل. النصّ الصريح لا يُخزَّن بشكل دائم على خوادمنا.</p>
@@ -168,7 +168,7 @@
         <li><strong>سجلّ التدقيق:</strong> يُسجَّل الوصول إلى سجلّات المرضى؛ وتُسجَّل الإجراءات الإدارية.</li>
         <li><strong>تحديد المعدّل:</strong> حدود معدّل على البحث الاستهلاليّ؛ حدود على RPCs التحليلات لكلّ مستخدم.</li>
         <li><strong>إدارة الثغرات:</strong> تحديثات منتظمة للتبعيّات؛ مراجعة أمنية للتغييرات الكبرى.</li>
-        <li><strong>النسخ الاحتياطي:</strong> نسخ احتياطي منتظم لقاعدة البيانات؛ إجراءات التعافي موثَّقة.</li>
+        <li><strong>النسخ الاحتياطي:</strong> نسخ احتياطية منتظمة ومشفَّرة لقاعدة البيانات داخل البنية التحتية في سورية.</li>
     </ul>
     <p>لا يوجد نظام منيع. ولا يمكننا ضمان ألّا تُعترَض البيانات أو تُفقَد أو تُغيَّر دون إذن. وأنت تتحمّل مخاطر أيّ حدث من هذا القبيل إلى الحدّ الذي يسمح به القانون.</p>
 
@@ -183,8 +183,8 @@
     </ul>
     <h3>8.2 بيانات المرضى</h3>
     <p>يحدِّد احتفاظ بيانات المرضى أنت، كمتحكِّم بالبيانات، وفق قانون حفظ السجلّات الطبّية المعمول به. وعند إنهاء الحساب، نُصدِّر البيانات إليك ثمّ نحذفها من بنيتنا التحتية في غضون 60 يومًا، ما لم يقتضِ إجراء قانونيّ ملزم الاحتفاظ.</p>
-    <h3>8.3 المحتوى المحذوف ناعمًا</h3>
-    <p>عندما تحذف سجلًّا، قد نحذفه ناعمًا لفترة استرداد (عادةً 30 يومًا) قبل الحذف النهائيّ. لا تكون السجلّات المحذوفة ناعمًا متاحة عبر واجهة الخدمة لكنّها موجودة في قاعدة البيانات وفي النسخ الاحتياطية.</p>
+    <h3>8.3 الحذف المؤقت قبل الحذف النهائي</h3>
+    <p>عندما تحذف سجلًّا، قد نُبقيه محذوفًا مؤقتًا لفترة استرداد (عادةً 30 يومًا) قبل الحذف النهائيّ. ولا تكون السجلّات المحذوفة مؤقتًا متاحة عبر واجهة الخدمة.</p>
 
     <h2>9. حقوقك</h2>
     <ul>
@@ -363,7 +363,7 @@
     </ul>
 
     <h3>5.1 Patient consent</h3>
-    <p>You are responsible for obtaining and documenting the informed consent of each patient to your storage and processing of their data through the Service, in accordance with the applicable laws of the Syrian Arab Republic and your professional code of conduct. We provide template consent notices within the Service; your responsibility does not transfer to us.</p>
+    <p>You are responsible for obtaining and documenting the consent of each patient to your storage and processing of their data through the Service, in accordance with the applicable laws of the Syrian Arab Republic and your professional code of conduct; this responsibility does not transfer to us.</p>
 
     <h3>5.2 Encrypted-at-rest content</h3>
     <p>Certain Patient Data categories — messages, memo notes, encrypted file attachments — are encrypted using <strong>AES-256-GCM</strong> (authenticated encryption). Decryption happens client-side. The plaintext is not stored persistently on our servers.</p>
@@ -406,7 +406,7 @@
         <li><strong>Audit logging:</strong> Patient-record access logged; admin actions logged.</li>
         <li><strong>Rate limiting and abuse prevention:</strong> Per-identifier rate limits on signup-lookup RPCs; per-user rate limits on telemetry RPCs.</li>
         <li><strong>Vulnerability management:</strong> Regular dependency updates; security review of major changes.</li>
-        <li><strong>Backups:</strong> Regular backups; recovery procedures documented.</li>
+        <li><strong>Backups:</strong> Regular, encrypted database backups within the infrastructure inside Syria.</li>
     </ul>
     <p>No system is impenetrable. We cannot guarantee that data will never be intercepted, lost, or altered without authorization. You assume the risk to the extent permitted by law.</p>
 
@@ -421,8 +421,8 @@
     </ul>
     <h3>8.2 Patient Data</h3>
     <p>Retention is determined by you, as data controller, in accordance with applicable medical-records retention law. On Account termination, we export the data to you and then delete it from our infrastructure within 60 days, unless retention is required by binding legal process.</p>
-    <h3>8.3 Soft-deleted content</h3>
-    <p>When you delete a record, we may soft-delete it for a recoverability period (typically 30 days) before permanent purge. Soft-deleted records are not accessible through the Service UI but exist in the database and in backups.</p>
+    <h3>8.3 Temporary deletion before permanent purge</h3>
+    <p>When you delete a record, we may retain it in a temporarily-deleted state for a recoverability period (typically 30 days) before permanent purge. Temporarily-deleted records are not accessible through the Service UI.</p>
 
     <h2>9. Your Rights</h2>
     <ul>
