@@ -229,6 +229,58 @@ const SUPABASE_ANON_KEY = 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJyb2xlIjoiYW5v
 	const SUPABASE_URL = import.meta.env.PUBLIC_SUPABASE_URL || 'https://api.docsera.app';
 	const SUPABASE_ANON_KEY = 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJyb2xlIjoiYW5vbiIsImlzcyI6InN1cGFiYXNlIiwiaWF0IjoxNzc0Mzg4NDY0LCJleHAiOjE5MzIwNjg0NjR9.Q9lVxKdVMbZge7vOgn_Ffroc8iVrpNtkFxqUugfwkPs';
 
+	// ----- Reach beacon (anonymous scan counter) ---------------
+	// Counts landing opens even when the visitor never installs the
+	// app. Fire-and-forget: failures must never affect rendering.
+	// Session-deduped (HTTP cache never suppresses this script, so we
+	// dedupe ourselves). anonymous_id is a device-scoped random UUID —
+	// no fingerprinting, no PII.
+	function attributionSource(): string {
+		const s = new URLSearchParams(window.location.search).get('s') || '';
+		return /^[a-z_]{1,24}$/.test(s) ? s : 'direct';
+	}
+
+	function anonymousId(): string {
+		try {
+			let id = localStorage.getItem('ds_aid');
+			if (!id) {
+				id = crypto.randomUUID();
+				localStorage.setItem('ds_aid', id);
+			}
+			return id;
+		} catch {
+			return crypto.randomUUID(); // storage blocked → still count, less dedup
+		}
+	}
+
+	function fireBeacon(eventName: string, dedupeKey: string, properties: Record<string, string>) {
+		try {
+			if (sessionStorage.getItem(dedupeKey)) return;
+			sessionStorage.setItem(dedupeKey, '1');
+		} catch { /* storage blocked → fire anyway */ }
+		try {
+			fetch(SUPABASE_URL + '/rest/v1/rpc/rpc_track_events_batch', {
+				method: 'POST',
+				headers: {
+					apikey: SUPABASE_ANON_KEY,
+					Authorization: 'Bearer ' + SUPABASE_ANON_KEY,
+					'Content-Type': 'application/json',
+				},
+				keepalive: true,
+				body: JSON.stringify({
+					p_events: [{
+						event_name: eventName,
+						category: 'reach',
+						occurred_at: new Date().toISOString(),
+						anonymous_id: anonymousId(),
+						platform: 'web_landing',
+						properties: properties,
+					}],
+				}),
+			}).catch(() => {});
+		} catch { /* never break the page */ }
+	}
+
 	// ----- Token extraction & validation ----------------------
 	const path = window.location.pathname;
 	const match = path.match(/^\/doctor\/([^/?#]+)/);
@@ -243,6 +295,11 @@ const SUPABASE_ANON_KEY = 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJyb2xlIjoiYW5v
 		if (!/^[A-Za-z0-9_-]{1,64}$/.test(token)) {
 			showState('invalid');
 		} else {
+			fireBeacon('doctor_qr_scanned', 'ds_beacon_doctor_' + token, {
+				token: token,
+				source: attributionSource(),
+				surface: 'landing',
+			});
 			fetchDoctor(token);
 		}
 	}
@@ -395,8 +452,10 @@ const SUPABASE_ANON_KEY = 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJyb2xlIjoiYW5v
 		// redirects to /download after 1.5s so new users land on
 		// the install hub instead of staring at a no-op tap.
 		const encodedToken = encodeURIComponent(token);
-		const inAppUrl = 'docsera://doctor/' + encodedToken;
-		const webAppUrl = 'https://my.docsera.app/doctor/' + encodedToken;
+		const src = attributionSource();
+		const suffix = src !== 'direct' ? '?s=' + encodeURIComponent(src) : '';
+		const inAppUrl = 'docsera://doctor/' + encodedToken + suffix;
+		const webAppUrl = 'https://my.docsera.app/doctor/' + encodedToken + suffix;
 
 		const openBtn = byData('open-app') as HTMLAnchorElement;
 		openBtn.href = inAppUrl;
@@ -413,7 +472,7 @@ const SUPABASE_ANON_KEY = 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJyb2xlIjoiYW5v
 		openBtn.addEventListener('click', () => {
 			const timer = window.setTimeout(() => {
 				if (document.visibilityState === 'visible') {
-					window.location.href = '/download';
+					window.location.href = '/download' + suffix;
 				}
 			}, 1500);
 			const onHide = () => {
@@ -430,6 +489,13 @@ const SUPABASE_ANON_KEY = 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJyb2xlIjoiYW5v
 		document.querySelectorAll<HTMLAnchorElement>('[data-webapp-link]').forEach((a) => {
 			a.href = webAppUrl;
 		});
+
+		// Keep the attribution tag alive into the download hub too.
+		if (suffix) {
+			document.querySelectorAll<HTMLAnchorElement>('a.btn-download').forEach((a) => {
+				a.href = '/download' + suffix;
+			});
+		}
 
 		// Device-aware visibility
 		const ctaMobile = byData('cta-mobile');
