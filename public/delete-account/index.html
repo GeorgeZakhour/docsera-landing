@@ -1,0 +1,111 @@
+<!DOCTYPE html>
+<html lang="ar" dir="rtl">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>حذف الحساب - DocSera</title>
+    <link rel="stylesheet" href="/fonts/fonts.css">
+    <style>
+        body { font-family: 'Cairo', 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif; font-size: 13px; line-height: 1.65; color: #333; max-width: 900px; margin: 0 auto; padding: 40px 20px; background-color: #f9f9f9; }
+        .container { background: white; padding: 40px; border-radius: 15px; box-shadow: 0 4px 20px rgba(0, 0, 0, 0.05); }
+        h1 { color: #009092; font-size: 1.5em; margin-bottom: 8px; text-align: center; }
+        .meta { text-align: center; color: #666; margin-bottom: 40px; font-style: italic; font-size: 0.95em; }
+        h2 { color: #007474; border-bottom: 2px solid #eef2f2; padding-bottom: 10px; margin-top: 40px; font-size: 1.1em; }
+        p { margin-bottom: 14px; text-align: justify; }
+        ul, ol { padding-right: 20px; padding-left: 20px; }
+        li { margin-bottom: 10px; }
+        strong { color: #005f5f; }
+        .callout { background-color: #e8f6f6; border-right: 5px solid #009092; padding: 15px; margin: 20px 0; border-radius: 4px; }
+        .callout-ltr { border-right: none; border-left: 5px solid #009092; }
+        .footer { margin-top: 50px; text-align: center; font-size: 0.9em; color: #888; border-top: 1px solid #ddd; padding-top: 20px; }
+        a { color: #009092; text-decoration: none; }
+        a:hover { text-decoration: underline; }
+        .lang-switcher { text-align: center; margin-bottom: 20px; display: flex; justify-content: center; gap: 10px; }
+        .lang-switcher button { background: none; border: 1px solid #009092; color: #009092; padding: 6px 14px; margin: 0; border-radius: 20px; cursor: pointer; font-weight: 600; font-family: inherit; transition: all 0.3s ease; }
+        .lang-switcher button:hover { background-color: rgba(0, 144, 146, 0.1); }
+        .lang-switcher button.active { background-color: #009092; color: white; }
+    </style>
+</head>
+<body>
+
+<div class="container" id="ar-container" lang="ar" dir="rtl">
+    <div class="lang-switcher">
+        <button id="btn-ar" class="active" onclick="setLang('ar')">العربية</button>
+        <button id="btn-en" onclick="setLang('en')">English</button>
+    </div>
+    <h1>حذف حسابك في DocSera</h1>
+    <div class="meta">آخر تحديث: 2 أيلول 2026</div>
+
+    <p>هذه الصفحة تشرح كيف تحذف حسابك في تطبيق <strong>DocSera</strong> (الناشر: DocSera — George Zakhour) وما الذي يحدث لبياناتك عند الحذف.</p>
+
+    <h2>1. الحذف من داخل التطبيق (الطريقة الأسرع)</h2>
+    <ol>
+        <li>افتح تطبيق DocSera وسجّل الدخول.</li>
+        <li>اذهب إلى: <strong>الحساب &larr; الإعدادات &larr; الأمان &larr; حذف الحساب</strong>.</li>
+        <li>أكّد هويتك ثم أكّد طلب الحذف.</li>
+    </ol>
+
+    <h2>2. الحذف عبر البريد الإلكتروني</h2>
+    <p>إذا لم تعد قادراً على الوصول إلى التطبيق، أرسل طلب حذف من بريدك الإلكتروني المسجَّل في الحساب إلى <a href="mailto:support@docsera.app">support@docsera.app</a> بعنوان «حذف الحساب»، مع ذكر رقم هاتفك المسجَّل للتحقق. نعالج الطلب خلال <strong>30 يوماً</strong> كحد أقصى.</p>
+
+    <h2>3. ما الذي يُحذف وما الذي يُحتفظ به</h2>
+    <ul>
+        <li><strong>تُحذف نهائياً:</strong> بيانات حسابك التعريفية (الاسم، الهاتف، البريد، العنوان)، ملفك الصحي الذي أدخلته بنفسك، مفضلاتك، وأجهزتك المسجلة.</li>
+        <li><strong>تُموَّه (تُجهَّل):</strong> السجلات المرتبطة بأطباء عالجوك (المواعيد، الرسائل، المستندات) تُفصل عن هويتك وتُستبدل بمعرّف «مستخدم محذوف»، وتبقى متاحة فقط للأطباء كجزء من ملفاتهم المهنية، ثم تُحذف نهائياً بعد انقضاء مدة الاحتفاظ القانونية (7 سنوات).</li>
+    </ul>
+    <div class="callout">التفاصيل الكاملة لعملية الحذف والاحتفاظ موضحة في <a href="/privacy-policy/">سياسة الخصوصية — القسم 8</a>.</div>
+
+    <h2>4. تواصل معنا</h2>
+    <p>لأي استفسار حول الحذف أو بياناتك: <a href="mailto:support@docsera.app">support@docsera.app</a></p>
+
+    <div class="footer">© 2026 DocSera. جميع الحقوق محفوظة.</div>
+</div>
+
+<div class="container" id="en-container" lang="en" dir="ltr" style="display:none;">
+    <div class="lang-switcher">
+        <button id="btn-ar-en" onclick="setLang('ar')">العربية</button>
+        <button id="btn-en-en" class="active" onclick="setLang('en')">English</button>
+    </div>
+    <h1>Delete your DocSera account</h1>
+    <div class="meta">Last updated: September 2, 2026</div>
+
+    <p>This page explains how to delete your account in the <strong>DocSera</strong> app (publisher: DocSera — George Zakhour) and what happens to your data when you do.</p>
+
+    <h2>1. Delete from inside the app (fastest)</h2>
+    <ol>
+        <li>Open the DocSera app and sign in.</li>
+        <li>Go to: <strong>Account &rarr; Settings &rarr; Security &rarr; Delete Account</strong>.</li>
+        <li>Confirm your identity, then confirm the deletion request.</li>
+    </ol>
+
+    <h2>2. Delete by email</h2>
+    <p>If you can no longer access the app, send a deletion request from the email address registered on your account to <a href="mailto:support@docsera.app">support@docsera.app</a> with the subject "Delete Account", including your registered phone number for verification. Requests are processed within <strong>30 days</strong> at most.</p>
+
+    <h2>3. What is deleted and what is retained</h2>
+    <ul>
+        <li><strong>Permanently deleted:</strong> your identifying account data (name, phone, email, address), the health profile you entered yourself, your favorites, and your registered devices.</li>
+        <li><strong>Pseudonymized:</strong> records connected to doctors who treated you (appointments, messages, documents) are detached from your identity and replaced with a "Deleted User" placeholder; they remain accessible only to those doctors as part of their professional files, then are permanently deleted after the legal retention period (7 years).</li>
+    </ul>
+    <div class="callout callout-ltr">The full deletion and retention process is described in the <a href="/privacy-policy/">Privacy Policy — Section 8</a>.</div>
+
+    <h2>4. Contact us</h2>
+    <p>For any question about deletion or your data: <a href="mailto:support@docsera.app">support@docsera.app</a></p>
+
+    <div class="footer">© 2026 DocSera. All rights reserved.</div>
+</div>
+
+<script>
+    function setLang(lang) {
+        var ar = document.getElementById('ar-container');
+        var en = document.getElementById('en-container');
+        if (lang === 'ar') { ar.style.display = 'block'; en.style.display = 'none'; document.documentElement.setAttribute('lang','ar'); document.documentElement.setAttribute('dir','rtl'); }
+        else { ar.style.display = 'none'; en.style.display = 'block'; document.documentElement.setAttribute('lang','en'); document.documentElement.setAttribute('dir','ltr'); }
+    }
+    (function () {
+        var p = new URLSearchParams(window.location.search);
+        if ((p.get('lang') || '').toLowerCase() === 'en') setLang('en');
+    })();
+</script>
+
+</body>
+</html>
