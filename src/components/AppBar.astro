@@ -1,0 +1,113 @@
+---
+// "Get the app" bar for phones where Apple's Smart App Banner never shows:
+// every Android browser, and in-app browsers on iPhone (Instagram, Facebook…).
+// Layout.astro decides before first paint whether it applies and sets
+// <html class="has-appbar">; the bar is display:none otherwise, so desktop
+// and no-JS visitors never see it.
+import { PLAY_URL } from '../config/links';
+---
+
+<aside class="appbar" data-appbar aria-label="تطبيق دوكسيرا">
+	<img class="appbar-icon" src="/apple-touch-icon.png" alt="" width="40" height="40" />
+	<div class="appbar-text">
+		<strong class="font-en">DocSera</strong>
+		<span data-appbar-sub>مجاناً على Google Play</span>
+	</div>
+	<a class="appbar-cta" data-appbar-cta href={PLAY_URL} rel="noopener">تحميل</a>
+	<button class="appbar-x" type="button" data-appbar-close aria-label="إخفاء شريط التطبيق">
+		<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" aria-hidden="true">
+			<line x1="6" y1="6" x2="18" y2="18" /><line x1="18" y1="6" x2="6" y2="18" />
+		</svg>
+	</button>
+</aside>
+
+<script>
+	import { APP_STORE_URL, playUrl } from '../config/links';
+
+	const root = document.documentElement;
+	const bar = document.querySelector<HTMLElement>('[data-appbar]');
+	if (bar && root.classList.contains('has-appbar')) {
+		const cta = bar.querySelector<HTMLAnchorElement>('[data-appbar-cta]')!;
+		const sub = bar.querySelector<HTMLElement>('[data-appbar-sub]')!;
+		if (root.getAttribute('data-os') === 'ios') {
+			cta.href = APP_STORE_URL;
+			sub.textContent = 'مجاناً على App Store';
+		} else {
+			cta.href = playUrl('app_bar');
+		}
+		bar.querySelector('[data-appbar-close]')?.addEventListener('click', () => {
+			root.classList.remove('has-appbar');
+			try { localStorage.setItem('ds_appbar_x', String(Date.now())); } catch { /* fine */ }
+		});
+	}
+</script>
+
+<style is:global>
+	:root { --appbar-h: 60px; }
+
+	.appbar {
+		display: none;
+		position: fixed;
+		top: 0; right: 0; left: 0;
+		height: var(--appbar-h);
+		z-index: 1100; /* above the fixed navbar (1000) */
+		align-items: center;
+		gap: 12px;
+		padding: 0 14px;
+		background: #fff;
+		border-bottom: 1px solid rgba(0, 0, 0, 0.07);
+	}
+	html.has-appbar .appbar { display: flex; }
+	/* Make room: push the page and the fixed navbar down by the bar's height. */
+	html.has-appbar body { padding-top: var(--appbar-h); }
+	html.has-appbar .navbar { top: var(--appbar-h); }
+
+	.appbar-icon {
+		width: 40px; height: 40px;
+		border-radius: 10px;
+		flex-shrink: 0;
+		box-shadow: 0 0 0 1px rgba(0, 0, 0, 0.06);
+	}
+	.appbar-text {
+		display: flex;
+		flex-direction: column;
+		min-width: 0;
+		flex: 1;
+		line-height: 1.25;
+	}
+	.appbar-text strong { font-size: 15px; font-weight: 700; color: var(--c-text); }
+	.appbar-text span {
+		font-size: 12.5px;
+		color: var(--c-text-muted);
+		white-space: nowrap;
+		overflow: hidden;
+		text-overflow: ellipsis;
+	}
+	.appbar-cta {
+		flex-shrink: 0;
+		background: var(--c-main);
+		color: #fff;
+		font-weight: 700;
+		font-size: 14px;
+		text-decoration: none;
+		padding: 8px 20px;
+		border-radius: 100px;
+	}
+	.appbar-cta:active { background: var(--c-main-dark); }
+	.appbar-x {
+		flex-shrink: 0;
+		width: 32px; height: 32px;
+		display: grid;
+		place-items: center;
+		background: none;
+		border: 0;
+		padding: 0;
+		color: #9aa3a6;
+		cursor: pointer;
+	}
+	.appbar-x svg { width: 16px; height: 16px; }
+	.appbar-cta:focus-visible, .appbar-x:focus-visible {
+		outline: 3px solid var(--c-main);
+		outline-offset: 2px;
+	}
+</style>

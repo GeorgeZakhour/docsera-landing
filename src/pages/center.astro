@@ -2,7 +2,8 @@
 // Medical-center landing page — rendered for every /center/<id> URL.
 //
 // Mirrors src/pages/doctor.astro exactly. Same single-shell + client-side
-// fetch pattern, same device-aware CTA, same store-badge / QR layout.
+// fetch pattern, same instant CTA (EntityCta) that does not wait for the
+// profile request, same skeleton / offline-retry card.
 // Differences from the doctor page:
 //   - Fetches public_centers instead of public_doctors.
 //   - Centers are addressed by their UUID id (no public_token).
@@ -18,9 +19,10 @@
 import Layout from '../layouts/Layout.astro';
 import Navbar from '../components/Navbar.astro';
 import Footer from '../components/Footer.astro';
+import EntityCta from '../components/EntityCta.astro';
 ---
 
-<Layout title="DocSera — ملف المركز">
+<Layout title="DocSera — ملف المركز" appBanner="entity" appBar={false}>
 	<Navbar />
 
 	<main class="center-page">
@@ -35,7 +37,7 @@ import Footer from '../components/Footer.astro';
 
 				<!-- Center preview + CTA -------------------------------- -->
 				<div class="state state-center" data-state="center" hidden>
-					<div class="center-card fade-up visible">
+					<div class="center-card is-loading" data-center-card>
 						<div class="center-photo">
 							<!-- Building icon shown eagerly so the circle is
 							     never empty. The <img> stacks on top and only
@@ -64,95 +66,14 @@ import Footer from '../components/Footer.astro';
 								</svg>
 								<span data-center-address-text></span>
 							</p>
+							<p class="card-offline" data-center-offline hidden>
+								تعذّر تحميل بيانات المركز. تحقق من اتصالك بالإنترنت.
+								<button type="button" data-center-retry>إعادة المحاولة</button>
+							</p>
 						</div>
 					</div>
 
-					<div class="cta-block fade-up visible">
-						<h2 class="cta-title">احجز موعدك في هذا المركز عبر تطبيق DocSera</h2>
-						<p class="cta-sub">صحتك بين يديك — مواعيد ومراسلات وتقارير في تطبيق واحد.</p>
-
-						<div class="cta-mobile" data-cta-mobile>
-							<a class="btn-main btn-open-app" data-open-app href="#" rel="noopener">
-								افتح في التطبيق
-							</a>
-							<!-- Web-app fallback for users without the native app installed.
-							     One tap from the QR/social-link → reads the center in the
-							     hosted Flutter web build at my.docsera.app/center/<id>. -->
-							<a class="cta-webapp" data-webapp-link href="#" rel="noopener">
-								<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" aria-hidden="true">
-									<rect x="3" y="4" width="18" height="14" rx="2"/>
-									<line x1="8" y1="20" x2="16" y2="20"/>
-									<line x1="12" y1="18" x2="12" y2="20"/>
-								</svg>
-								<span>افتح في تطبيق الويب</span>
-							</a>
-							<p class="cta-divider">حساب جديد؟ حمّل التطبيق</p>
-							<div class="cta-stores">
-								<div class="store-link is-coming-soon" aria-label="App Store (قريباً)">
-									<span class="coming-pill">قريباً</span>
-									<svg class="store-badge" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 135 40" direction="ltr">
-										<rect width="135" height="40" rx="6" fill="#000"/>
-										<g fill="#fff" transform="translate(8 8)" shape-rendering="geometricPrecision">
-											<path d="M18.71 19.5c-.83 1.24-1.71 2.45-3.05 2.47-1.34.03-1.77-.79-3.29-.79-1.53 0-2 .77-3.27.82-1.31.05-2.3-1.32-3.14-2.53C4.25 17 2.94 12.45 4.7 9.39c.87-1.52 2.43-2.48 4.12-2.51 1.28-.02 2.5.87 3.29.87.78 0 2.26-1.07 3.81-.91.65.03 2.47.26 3.64 1.98-.09.06-2.17 1.28-2.15 3.81.03 3.02 2.65 4.03 2.68 4.04-.03.07-.42 1.44-1.38 2.83M13 3.5c.73-.83 1.94-1.46 2.94-1.5.13 1.17-.34 2.35-1.04 3.19-.69.85-1.83 1.51-2.95 1.42-.15-1.15.41-2.35 1.05-3.11z"/>
-										</g>
-										<text x="40" y="17" fill="#fff" font-family="Helvetica, Arial, sans-serif" font-size="7" font-weight="400">Download on the</text>
-										<text x="40" y="31" fill="#fff" font-family="Helvetica, Arial, sans-serif" font-size="14" font-weight="600" letter-spacing="-0.4">App Store</text>
-									</svg>
-								</div>
-								<div class="store-link is-coming-soon" aria-label="Google Play (قريباً)">
-									<span class="coming-pill">قريباً</span>
-									<svg class="store-badge" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 135 40" direction="ltr">
-										<rect width="135" height="40" rx="6" fill="#000"/>
-										<defs>
-											<linearGradient id="dsPlayGradC" x1="0" y1="0" x2="1" y2="1">
-												<stop offset="0" stop-color="#EA4335"/>
-												<stop offset=".45" stop-color="#FBBC04"/>
-												<stop offset="1" stop-color="#34A853"/>
-											</linearGradient>
-										</defs>
-										<g transform="translate(13 9.5)">
-											<path fill="url(#dsPlayGradC)" d="M0 0 L0 21 L18 10.5 Z"/>
-										</g>
-										<text x="40" y="17" fill="#fff" font-family="Helvetica, Arial, sans-serif" font-size="6.5" font-weight="400">GET IT ON</text>
-										<text x="40" y="31" fill="#fff" font-family="Helvetica, Arial, sans-serif" font-size="14" font-weight="500" letter-spacing="-0.3">Google Play</text>
-									</svg>
-								</div>
-							</div>
-							<!-- Direct APK / download-hub link. Stores are still "coming
-							     soon" pre-launch; this is the practical path to get the
-							     Android app on a real device. -->
-							<a class="btn-download" href="/download">
-								<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" aria-hidden="true">
-									<path d="M12 3v12"/>
-									<polyline points="7 10 12 15 17 10"/>
-									<line x1="5" y1="21" x2="19" y2="21"/>
-								</svg>
-								<span>تحميل تطبيق DocSera على هاتفك</span>
-							</a>
-						</div>
-
-						<div class="cta-desktop" data-cta-desktop hidden>
-							<p class="cta-desk-instr">امسح رمز QR من كاميرا هاتفك لفتح ملف المركز في تطبيق DocSera</p>
-							<div class="qr-frame">
-								<div class="qr-canvas" data-qr-canvas></div>
-							</div>
-							<p class="cta-desk-tip">إذا لم يكن لديك التطبيق، سيفتح الرابط على هاتفك بعد التثبيت.</p>
-							<!-- Or — open the center profile right here, in tab, no scan needed. -->
-							<div class="cta-desk-actions">
-								<a class="btn-main cta-webapp" data-webapp-link href="#" rel="noopener">
-									افتح في تطبيق الويب
-								</a>
-								<a class="btn-download" href="/download">
-									<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" aria-hidden="true">
-										<path d="M12 3v12"/>
-										<polyline points="7 10 12 15 17 10"/>
-										<line x1="5" y1="21" x2="19" y2="21"/>
-									</svg>
-									<span>تحميل التطبيق</span>
-								</a>
-							</div>
-						</div>
-					</div>
+					<EntityCta kind="center" />
 				</div>
 
 				<div class="state state-not-found" data-state="not-found" hidden>
@@ -193,62 +114,8 @@ import Footer from '../components/Footer.astro';
 </Layout>
 
 <script>
-	import qrcode from 'qrcode-generator';
-
-	const SUPABASE_URL = import.meta.env.PUBLIC_SUPABASE_URL || 'https://api.docsera.app';
-	const SUPABASE_ANON_KEY = 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJyb2xlIjoiYW5vbiIsImlzcyI6InN1cGFiYXNlIiwiaWF0IjoxNzc0Mzg4NDY0LCJleHAiOjE5MzIwNjg0NjR9.Q9lVxKdVMbZge7vOgn_Ffroc8iVrpNtkFxqUugfwkPs';
-
-	// ----- Reach beacon (anonymous scan counter) ---------------
-	// Counts landing opens even when the visitor never installs the
-	// app. Fire-and-forget: failures must never affect rendering.
-	// Session-deduped (HTTP cache never suppresses this script, so we
-	// dedupe ourselves). anonymous_id is a device-scoped random UUID —
-	// no fingerprinting, no PII.
-	function attributionSource(): string {
-		const s = new URLSearchParams(window.location.search).get('s') || '';
-		return /^[a-z_]{1,24}$/.test(s) ? s : 'direct';
-	}
-
-	function anonymousId(): string {
-		try {
-			let id = localStorage.getItem('ds_aid');
-			if (!id) {
-				id = crypto.randomUUID();
-				localStorage.setItem('ds_aid', id);
-			}
-			return id;
-		} catch {
-			return crypto.randomUUID(); // storage blocked → still count, less dedup
-		}
-	}
-
-	function fireBeacon(eventName: string, dedupeKey: string, properties: Record<string, string>) {
-		try {
-			if (sessionStorage.getItem(dedupeKey)) return;
-			sessionStorage.setItem(dedupeKey, '1');
-		} catch { /* storage blocked → fire anyway */ }
-		try {
-			fetch(SUPABASE_URL + '/rest/v1/rpc/rpc_track_events_batch', {
-				method: 'POST',
-				headers: {
-					apikey: SUPABASE_ANON_KEY,
-					Authorization: 'Bearer ' + SUPABASE_ANON_KEY,
-					'Content-Type': 'application/json',
-				},
-				keepalive: true,
-				body: JSON.stringify({
-					p_events: [{
-						event_name: eventName,
-						category: 'reach',
-						occurred_at: new Date().toISOString(),
-						anonymous_id: anonymousId(),
-						platform: 'web_landing',
-						properties: properties,
-					}],
-				}),
-			}).catch(() => {});
-		} catch { /* never break the page */ }
-	}
+	import { SUPABASE_URL, SUPABASE_ANON_KEY, attributionSource, fireBeacon } from '../scripts/reach';
+	import { initEntityCta } from '../scripts/entity-cta';
 
 	// Map raw type slugs from centers.type to human-readable Arabic labels.
 	// 'solo' and 'clinic' are the only values seen in real data today (most
@@ -270,33 +137,32 @@ import Footer from '../components/Footer.astro';
 		pharmacy: 'صيدلية',
 	};
 
-	// ----- Token extraction & validation ----------------------
-	const path = window.location.pathname;
-	const match = path.match(/^\/center\/([^/?#]+)/);
-	if (!match) {
+	// ----- Id extraction & validation -------------------------
+	const match = window.location.pathname.match(/^\/center\/([^/?#]+)/);
+	let centerId = '';
+	try {
+		centerId = match ? decodeURIComponent(match[1]) : '';
+	} catch { /* malformed %-escape → invalid */ }
+
+	// Same broad bounds the patient app's isValidCenterId uses:
+	// [A-Za-z0-9_-], length 1..64. UUIDs always fit.
+	if (!/^[A-Za-z0-9_-]{1,64}$/.test(centerId)) {
 		showState('invalid');
 	} else {
-		const centerId = decodeURIComponent(match[1]);
-
-		// Same broad bounds the patient app's isValidCenterId uses:
-		// [A-Za-z0-9_-], length 1..64. UUIDs always fit.
-		if (!/^[A-Za-z0-9_-]{1,64}$/.test(centerId)) {
-			showState('invalid');
-		} else {
-			fireBeacon('center_qr_scanned', 'ds_beacon_center_' + centerId, {
-				center_id: centerId,
-				source: attributionSource(),
-				surface: 'landing',
-			});
-			fetchCenter(centerId);
-		}
+		fireBeacon('center_qr_scanned', 'reach', 'ds_beacon_center_' + centerId, {
+			center_id: centerId,
+			source: attributionSource(),
+			surface: 'landing',
+		});
+		// Buttons first, profile second — see doctor.astro.
+		initEntityCta('center', centerId);
+		showState('center');
+		byData('center-retry').addEventListener('click', () => fetchCenter(centerId));
+		fetchCenter(centerId);
 	}
 
 	function fetchCenter(id: string) {
-		const ua = navigator.userAgent || '';
-		const isIOS = /iPad|iPhone|iPod/.test(ua) && !(window as any).MSStream;
-		const isAndroid = /Android/i.test(ua);
-		const isMobile = isIOS || isAndroid;
+		setCardState('loading');
 
 		const select = [
 			'id',
@@ -313,11 +179,16 @@ import Footer from '../components/Footer.astro';
 			'&id=eq.' + encodeURIComponent(id) +
 			'&limit=1';
 
+		// Slow networks: give up after 15 s and offer a retry.
+		const ctrl = new AbortController();
+		const timer = window.setTimeout(() => ctrl.abort(), 15000);
+
 		fetch(url, {
 			headers: {
 				apikey: SUPABASE_ANON_KEY,
 				Authorization: 'Bearer ' + SUPABASE_ANON_KEY,
 			},
+			signal: ctrl.signal,
 		})
 			.then((r) => {
 				if (!r.ok) throw new Error('HTTP ' + r.status);
@@ -325,18 +196,29 @@ import Footer from '../components/Footer.astro';
 			})
 			.then((rows: any[]) => {
 				if (!Array.isArray(rows) || rows.length === 0) {
+					// The server answered and there is no such center.
 					showState('not-found');
 					return;
 				}
-				renderCenter(rows[0], id, isMobile);
+				renderCenter(rows[0]);
 			})
 			.catch((err) => {
+				// Network failure, timeout or a server error: keep the CTA
+				// usable and say what happened.
 				console.error('[center page] fetch failed:', err);
-				showState('not-found');
-			});
+				setCardState('offline');
+			})
+			.finally(() => window.clearTimeout(timer));
 	}
 
-	function renderCenter(c: any, id: string, isMobile: boolean) {
+	function setCardState(state: 'loading' | 'ready' | 'offline') {
+		const card = byData('center-card');
+		card.classList.toggle('is-loading', state === 'loading');
+		card.classList.toggle('is-offline', state === 'offline');
+		byData('center-offline').hidden = state !== 'offline';
+	}
+
+	function renderCenter(c: any) {
 		const name = (c.name || '').trim() || 'مركز طبي';
 		byData('center-name').textContent = name;
 		document.title = name + ' — DocSera';
@@ -367,9 +249,7 @@ import Footer from '../components/Footer.astro';
 		}
 
 		renderImage(c, name);
-		renderCta(id, isMobile);
-
-		showState('center');
+		setCardState('ready');
 	}
 
 	/// Pull plain text out of the description column. Centers store
@@ -457,66 +337,6 @@ import Footer from '../components/Footer.astro';
 		img.onload = () => img.classList.add('is-loaded');
 		img.onerror = () => { img.hidden = true; };
 		img.src = url;
-	}
-
-	function renderCta(id: string, isMobile: boolean) {
-		// Mirror of doctor.astro's renderCta — see the doctor file for
-		// the full rationale of the smart-fallback (1.5s + visibilitychange
-		// cancel) and the web-app entry point wiring.
-		const encodedId = encodeURIComponent(id);
-		const src = attributionSource();
-		const suffix = src !== 'direct' ? '?s=' + encodeURIComponent(src) : '';
-		const inAppUrl = 'docsera://center/' + encodedId + suffix;
-		const webAppUrl = 'https://my.docsera.app/center/' + encodedId + suffix;
-
-		const openBtn = byData('open-app') as HTMLAnchorElement;
-		openBtn.href = inAppUrl;
-
-		openBtn.addEventListener('click', () => {
-			const timer = window.setTimeout(() => {
-				if (document.visibilityState === 'visible') {
-					window.location.href = '/download' + suffix;
-				}
-			}, 1500);
-			const onHide = () => {
-				if (document.visibilityState === 'hidden') {
-					window.clearTimeout(timer);
-					document.removeEventListener('visibilitychange', onHide);
-				}
-			};
-			document.addEventListener('visibilitychange', onHide);
-		});
-
-		document.querySelectorAll<HTMLAnchorElement>('[data-webapp-link]').forEach((a) => {
-			a.href = webAppUrl;
-		});
-
-		// Keep the attribution tag alive into the download hub too.
-		if (suffix) {
-			document.querySelectorAll<HTMLAnchorElement>('a.btn-download').forEach((a) => {
-				a.href = '/download' + suffix;
-			});
-		}
-
-		const ctaMobile = byData('cta-mobile');
-		const ctaDesktop = byData('cta-desktop');
-		if (isMobile) {
-			ctaMobile.hidden = false;
-			ctaDesktop.hidden = true;
-		} else {
-			ctaMobile.hidden = true;
-			ctaDesktop.hidden = false;
-			renderQrCode();
-		}
-	}
-
-	function renderQrCode() {
-		const container = byData('qr-canvas');
-		if (!container) return;
-		const qr = qrcode(0, 'M');
-		qr.addData(window.location.href);
-		qr.make();
-		container.innerHTML = qr.createSvgTag({ scalable: true, margin: 2 });
 	}
 
 	function byData(name: string): HTMLElement {
@@ -633,32 +453,49 @@ import Footer from '../components/Footer.astro';
 		gap: 6px;
 		line-height: 1.4;
 	}
+	.center-info .address[hidden] { display: none; }
 	.center-info .address .pin {
 		width: 14px; height: 14px;
 		color: var(--c-main);
 		flex-shrink: 0;
 	}
 
-	.cta-block {
-		background: white;
-		padding: 40px 32px;
-		border-radius: 28px;
-		text-align: center;
-		max-width: 720px;
-		margin: 0 auto;
-		box-shadow: 0 20px 60px rgba(0, 0, 0, 0.04);
+	/* Skeleton while the profile request is in flight (CTA is already live). */
+	.center-card.is-loading .pill-badge,
+	.center-card.is-loading .name {
+		display: block;
+		color: transparent;
+		background: #EEF4F4;
+		border-radius: 8px;
+		animation: card-pulse 1.1s ease-in-out infinite alternate;
 	}
-	.cta-title {
-		font-size: clamp(1.2rem, 2.4vw, 1.6rem);
-		font-weight: 800;
-		margin-bottom: 10px;
-		color: var(--c-text);
-	}
-	.cta-sub {
-		color: var(--c-text-muted);
-		margin: 0 0 28px;
+	.center-card.is-loading .pill-badge { width: 92px; height: 28px; }
+	.center-card.is-loading .name { width: min(260px, 70vw); height: 1.25em; }
+	@keyframes card-pulse { from { opacity: 1; } to { opacity: 0.45; } }
+
+	/* Profile request failed (weak connection). Buttons below still work. */
+	.center-card.is-offline .pill-badge,
+	.center-card.is-offline .name { display: none; }
+	.card-offline {
+		margin: 0;
 		font-size: 1rem;
+		line-height: 1.7;
+		color: var(--c-text-muted);
 	}
+	.card-offline button {
+		display: block;
+		margin-top: 10px;
+		padding: 0;
+		background: none;
+		border: 0;
+		font: inherit;
+		font-weight: 700;
+		color: var(--c-main);
+		cursor: pointer;
+		text-decoration: underline;
+		text-underline-offset: 4px;
+	}
+	.card-offline button:focus-visible { outline: 3px solid var(--c-main); outline-offset: 3px; border-radius: 4px; }
 
 	.btn-main {
 		background: var(--c-main);
@@ -672,147 +509,6 @@ import Footer from '../components/Footer.astro';
 		transition: background 0.2s;
 	}
 	.btn-main:hover { background: var(--c-main-dark); }
-
-	.btn-open-app {
-		padding: 16px 40px;
-		font-size: 1.1rem;
-	}
-
-	/* Mirror of doctor.astro's web-app + download styles. See that file
-	   for the rationale of each color/spacing choice. */
-	.cta-webapp {
-		display: inline-flex;
-		align-items: center;
-		gap: 8px;
-		background: white;
-		color: var(--c-main);
-		border: 2px solid var(--c-main);
-		padding: 12px 28px;
-		border-radius: 12px;
-		font-weight: 700;
-		font-size: 1rem;
-		text-decoration: none;
-		margin-top: 14px;
-		transition: background 0.2s, color 0.2s;
-	}
-	.cta-webapp:hover {
-		background: var(--c-main);
-		color: white;
-	}
-	.cta-webapp svg {
-		width: 18px;
-		height: 18px;
-		flex-shrink: 0;
-	}
-	.cta-desk-actions .cta-webapp {
-		background: var(--c-main);
-		color: white;
-		border-color: var(--c-main);
-		margin-top: 0;
-	}
-	.cta-desk-actions .cta-webapp:hover {
-		background: var(--c-main-dark);
-	}
-
-	.btn-download {
-		display: inline-flex;
-		align-items: center;
-		gap: 6px;
-		color: var(--c-text-muted);
-		font-weight: 600;
-		font-size: 0.92rem;
-		text-decoration: none;
-		margin-top: 18px;
-		padding-bottom: 2px;
-		border-bottom: 1px dashed currentColor;
-		transition: color 0.2s, border-bottom-color 0.2s;
-	}
-	.btn-download:hover {
-		color: var(--c-main);
-	}
-	.btn-download svg {
-		width: 14px;
-		height: 14px;
-		flex-shrink: 0;
-	}
-
-	.cta-desk-actions {
-		display: flex;
-		flex-direction: column;
-		align-items: center;
-		gap: 4px;
-		margin-top: 22px;
-	}
-
-	.cta-divider {
-		margin: 22px 0 14px;
-		color: var(--c-text-muted);
-		font-size: 0.9rem;
-	}
-
-	.cta-stores {
-		display: flex;
-		gap: 14px;
-		justify-content: center;
-		flex-wrap: wrap;
-	}
-	.store-link {
-		position: relative;
-		display: inline-block;
-		text-decoration: none;
-		line-height: 0;
-		transition: transform 0.15s ease-out;
-	}
-	.store-link.is-coming-soon {
-		cursor: not-allowed;
-		opacity: 0.65;
-	}
-	.store-link:not(.is-coming-soon):hover {
-		transform: translateY(-2px);
-	}
-	.store-badge {
-		display: block;
-		width: 175px;
-		height: auto;
-		border-radius: 8px;
-	}
-	.coming-pill {
-		position: absolute;
-		top: -8px;
-		right: -8px;
-		background: var(--c-main);
-		color: white;
-		font-family: var(--font-ar);
-		font-size: 0.7rem;
-		font-weight: 700;
-		padding: 3px 10px;
-		border-radius: 20px;
-		line-height: 1.4;
-		box-shadow: 0 2px 6px rgba(0, 0, 0, 0.15);
-		letter-spacing: 0;
-	}
-
-	.cta-desktop { text-align: center; }
-	.cta-desk-instr { color: var(--c-text); margin: 0 0 18px; font-weight: 600; font-size: 1rem; }
-	.cta-desk-tip { color: var(--c-text-muted); font-size: 0.85rem; margin: 14px 0 0; }
-	.qr-frame {
-		display: inline-block;
-		padding: 18px;
-		background: white;
-		border-radius: 18px;
-		box-shadow: 0 8px 24px rgba(0, 0, 0, 0.08);
-		border: 1px solid #eee;
-	}
-	.qr-canvas {
-		width: 200px;
-		height: 200px;
-		display: block;
-	}
-	.qr-canvas svg {
-		width: 100%;
-		height: 100%;
-		display: block;
-	}
 
 	.error-card {
 		background: white;
@@ -855,6 +551,12 @@ import Footer from '../components/Footer.astro';
 		.center-info .address { display: inline-flex; justify-content: center; }
 		.center-photo { width: 108px; height: 108px; border-radius: 20px; }
 		.photo-fallback svg { width: 46px; height: 46px; }
-		.cta-block { padding: 32px 22px; }
+		.center-card.is-loading .pill-badge,
+		.center-card.is-loading .name { margin-inline: auto; }
+		.card-offline button { margin-inline: auto; }
+	}
+	@media (prefers-reduced-motion: reduce) {
+		.center-card.is-loading .pill-badge,
+		.center-card.is-loading .name { animation: none; }
 	}
 </style>

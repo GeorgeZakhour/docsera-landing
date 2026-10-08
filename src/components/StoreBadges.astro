@@ -1,0 +1,128 @@
+---
+// The two official store badges — Apple's "Download on the App Store" and
+// Google's "Get it on Google Play" — exactly as the two companies publish
+// them (public/images/badges/*.svg). Both brands' badge guidelines forbid
+// redrawing or recolouring the artwork, so this component only sizes and
+// links it: equal heights (neither badge may be smaller than the other) and
+// a quarter-height of clear space around each.
+//
+// `adaptive`: on a phone, show only the badge for that phone. Layout.astro
+// sets <html data-os="ios|android|desktop"> before first paint; desktop and
+// no-JS visitors always see both.
+import { APP_STORE_URL, playUrl } from '../config/links';
+
+interface Props {
+	adaptive?: boolean;
+	size?: 'sm' | 'md' | 'lg';
+	align?: 'start' | 'center';
+	// Start-aligned on wide screens, centred once the section stacks.
+	centerOnMobile?: boolean;
+	medium?: string;
+	class?: string;
+}
+
+const {
+	adaptive = false,
+	size = 'md',
+	align = 'center',
+	centerOnMobile = false,
+	medium = 'site',
+	class: className = '',
+} = Astro.props;
+---
+
+<div
+	class:list={[
+		'store-badges', `sb-${size}`, `sb-${align}`,
+		{ 'sb-adaptive': adaptive, 'sb-mcenter': centerOnMobile },
+		className,
+	]}
+	data-store-badges
+>
+	<a
+		class="sb-link"
+		href={APP_STORE_URL}
+		data-store="ios"
+		rel="noopener"
+		aria-label="حمّل دوكسيرا من App Store"
+	>
+		<img src="/images/badges/app-store.svg" alt="Download on the App Store" width="120" height="40" />
+	</a>
+	<a
+		class="sb-link"
+		href={playUrl(medium)}
+		data-store="android"
+		data-play-link
+		rel="noopener"
+		aria-label="حمّل دوكسيرا من Google Play"
+	>
+		<img src="/images/badges/google-play.svg" alt="Get it on Google Play" width="135" height="40" />
+	</a>
+</div>
+
+<style>
+	.store-badges {
+		--sb-h: 52px;
+		display: flex;
+		flex-wrap: wrap;
+		align-items: center;
+		/* Clear space: a quarter of the badge height on every side. */
+		gap: calc(var(--sb-h) / 4) calc(var(--sb-h) / 3.2);
+		/* The artwork is Latin and left-to-right; keep App Store first even
+		   inside the page's RTL flow so the pair reads the way it does on
+		   every other site. */
+		direction: ltr;
+	}
+	.sb-center { justify-content: center; }
+	.sb-start { justify-content: flex-end; } /* "start" of an RTL page = right */
+
+	.sb-sm { --sb-h: 42px; }
+	.sb-md { --sb-h: 52px; }
+	.sb-lg { --sb-h: 60px; }
+
+	.sb-link {
+		display: inline-block;
+		line-height: 0;
+		border-radius: calc(var(--sb-h) / 6.2);
+		transition: transform 0.18s ease, box-shadow 0.18s ease;
+		box-shadow: 0 6px 18px -8px rgba(0, 0, 0, 0.45);
+		-webkit-tap-highlight-color: transparent;
+	}
+	.sb-link img {
+		display: block;
+		height: var(--sb-h);
+		width: auto;
+	}
+	.sb-link:hover {
+		transform: translateY(-2px);
+		box-shadow: 0 14px 28px -10px rgba(0, 0, 0, 0.5);
+	}
+	.sb-link:active {
+		transform: translateY(0) scale(0.98);
+		box-shadow: 0 4px 12px -6px rgba(0, 0, 0, 0.45);
+	}
+	/* Two-tone ring so focus stays visible on white, on teal, and on black. */
+	.sb-link:focus-visible {
+		outline: 3px solid #fff;
+		outline-offset: 2px;
+		box-shadow: 0 0 0 7px var(--c-main-dark);
+	}
+
+	/* Phone visitors see the one badge that works on their phone. */
+	:global(html[data-os='ios']) .sb-adaptive [data-store='android'],
+	:global(html[data-os='android']) .sb-adaptive [data-store='ios'] {
+		display: none;
+	}
+
+	@media (max-width: 900px) {
+		.sb-mcenter { justify-content: center; }
+	}
+	@media (max-width: 420px) {
+		.sb-lg { --sb-h: 56px; }
+	}
+
+	@media (prefers-reduced-motion: reduce) {
+		.sb-link { transition: none; }
+		.sb-link:hover, .sb-link:active { transform: none; }
+	}
+</style>

@@ -1,9 +1,20 @@
 ---
+import AppBar from '../components/AppBar.astro';
+import { APP_STORE_ID } from '../config/links';
+
 interface Props {
 	title: string;
 	description?: string;
 	image?: string;
 	path?: string;
+	// iOS Smart App Banner. 'site' = plain banner; 'entity' = the doctor /
+	// center shells, where the banner's Open button carries the current
+	// profile URL into the app; 'none' = no banner.
+	appBanner?: 'site' | 'entity' | 'none';
+	// Our own "get the app" bar for phones where Apple's banner never shows
+	// (Android, and in-app browsers on iPhone). Pages that are themselves a
+	// download surface turn it off.
+	appBar?: boolean;
 }
 
 const {
@@ -11,6 +22,8 @@ const {
 	description = 'دوكسيرا — منصة الرعاية الصحية الرقمية في سوريا. احجز مواعيدك، تواصل مع طبيبك، واحفظ ملفك الطبي في مكان واحد.',
 	image = '/og-image.png',
 	path = '',
+	appBanner = 'site',
+	appBar = true,
 } = Astro.props;
 
 const SITE = 'https://docsera.app';
@@ -32,6 +45,57 @@ const ogImage = image.startsWith('http') ? image : SITE + image;
 		     visible (flaky connections in Syria drop scripts more often than HTML),
 		     so the hidden state only applies when this class is present. -->
 		<script is:inline>document.documentElement.classList.add('js');</script>
+
+		<!-- Which phone is this? Decided before first paint so the store
+		     badges and the app bar never flash the wrong state. Without JS
+		     the page simply shows both stores. -->
+		<script is:inline define:vars={{ appBar }}>
+			(function () {
+				var d = document.documentElement, u = navigator.userAgent || '';
+				var ios = /iPad|iPhone|iPod/.test(u) && !window.MSStream;
+				// iPadOS 13+ presents itself as a Mac.
+				if (!ios && /Macintosh/.test(u) && navigator.maxTouchPoints > 1) ios = true;
+				var android = /Android/i.test(u);
+				d.setAttribute('data-os', ios ? 'ios' : android ? 'android' : 'desktop');
+				if (!appBar || (!ios && !android)) return;
+				// Real Safari shows Apple's own Smart App Banner — don't stack ours
+				// on top of it. In-app browsers (Instagram, Facebook…) and other
+				// iOS browsers never show Apple's, so they get ours.
+				var realSafari = ios && /Version\//.test(u) && /Safari\//.test(u) &&
+					!/CriOS|FxiOS|EdgiOS|OPiOS|Instagram|FBAN|FBAV|FB_IAB/.test(u);
+				if (realSafari) return;
+				try {
+					var t = +localStorage.getItem('ds_appbar_x') || 0;
+					if (t && Date.now() - t < 14 * 864e5) return; // dismissed in the last 14 days
+				} catch (e) { /* storage blocked → show */ }
+				d.classList.add('has-appbar');
+			})();
+		</script>
+
+		{appBanner === 'site' && (
+			<meta name="apple-itunes-app" content={`app-id=${APP_STORE_ID}`} />
+		)}
+		{appBanner === 'entity' && (
+			<Fragment>
+				<!-- /doctor/<token> and /center/<id> are one static shell each, so
+				     the profile URL is only known in the browser. Written while the
+				     head is still parsing, which is when Safari reads this tag. Both
+				     interpolated values are matched against strict patterns first. -->
+				<script is:inline define:vars={{ appId: APP_STORE_ID }}>
+					(function () {
+						var c = 'app-id=' + appId;
+						var m = location.pathname.match(/^\/(doctor|center)\/([A-Za-z0-9_-]{1,64})\/?$/);
+						if (m) {
+							var s = new URLSearchParams(location.search).get('s') || '';
+							c += ', app-argument=https://docsera.app/' + m[1] + '/' + m[2] +
+								(/^[a-z_]{1,24}$/.test(s) ? '?s=' + s : '');
+						}
+						document.write('<meta name="apple-itunes-app" content="' + c + '">');
+					})();
+				</script>
+				<noscript><meta name="apple-itunes-app" content={`app-id=${APP_STORE_ID}`} /></noscript>
+			</Fragment>
+		)}
 
 		<!-- Open Graph -->
 		<meta property="og:type" content="website" />
@@ -59,9 +123,35 @@ const ogImage = image.startsWith('http') ? image : SITE + image;
 		<title>{title}</title>
 	</head>
 	<body>
+		{appBar && <AppBar />}
 		<slot />
 	</body>
 </html>
+
+<script>
+	import { APP_STORE_URL, playUrl } from '../config/links';
+
+	// Every link below already works without this script (/download, or a
+	// plain store URL). This only sharpens them for the visitor's phone.
+	const os = document.documentElement.getAttribute('data-os');
+	const s = new URLSearchParams(window.location.search).get('s') || '';
+	const medium = /^[a-z_]{1,24}$/.test(s) ? s : 'site';
+
+	// Keep the visitor's source (?s=instagram, ?s=qr…) on the Play links so
+	// it reaches Play Console and, through the install referrer, the app.
+	// Pages that build a richer link themselves mark it data-play-fixed.
+	if (medium !== 'site') {
+		document.querySelectorAll<HTMLAnchorElement>('a[data-play-link]:not([data-play-fixed])')
+			.forEach((a) => { a.href = playUrl(medium); });
+	}
+
+	// "حمّل التطبيق" buttons: straight to the right store on a phone, the
+	// download page everywhere else.
+	document.querySelectorAll<HTMLAnchorElement>('a[data-store-smart]').forEach((a) => {
+		if (os === 'ios') a.href = APP_STORE_URL;
+		else if (os === 'android') a.href = playUrl(medium);
+	});
+</script>
 
 <style is:global>
 	/* ---- Self-hosted fonts (Cairo = Arabic, Montserrat = Latin) ----

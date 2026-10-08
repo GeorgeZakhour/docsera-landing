@@ -1,4 +1,7 @@
 ---
+import StoreBadges from './StoreBadges.astro';
+import { INSTAGRAM_URL } from '../config/links';
+
 const year = new Date().getFullYear();
 ---
 <footer>
@@ -7,11 +10,13 @@ const year = new Date().getFullYear();
             <div class="brand">
                 <img src="/images/docsera_main.svg" alt="DocSera" height="18" />
                 <p>مستقبلك الصحي، بين يديك.</p>
+                <StoreBadges adaptive size="sm" align="start" centerOnMobile />
             </div>
             
             <div class="links-group">
                 <h4>روابط مهمة</h4>
                 <ul>
+                    <li><a href="/download">تحميل التطبيق</a></li>
                     <li><a href="/help">مركز المساعدة</a></li>
                     <li><a href="/privacy-policy/">سياسة الخصوصية</a></li>
                     <li><a href="/terms-of-service/">شروط الاستخدام</a></li>
@@ -23,6 +28,12 @@ const year = new Date().getFullYear();
                 <h4>تواصل معنا</h4>
                 <ul>
                     <li><a href="mailto:support@docsera.app">support@docsera.app</a></li>
+                    <li>
+                        <a href={INSTAGRAM_URL} class="social" rel="noopener" target="_blank">
+                            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><rect x="3" y="3" width="18" height="18" rx="5"/><circle cx="12" cy="12" r="4"/><circle cx="17.3" cy="6.7" r="0.6" fill="currentColor" stroke="none"/></svg>
+                            إنستغرام
+                        </a>
+                    </li>
                 </ul>
             </div>
         </div>
@@ -56,7 +67,11 @@ const year = new Date().getFullYear();
     .brand p {
         color: var(--c-text-muted);
         max-width: 300px;
+        margin-bottom: 22px;
     }
+
+    .social { display: inline-flex; align-items: center; gap: 8px; }
+    .social svg { width: 18px; height: 18px; flex-shrink: 0; }
 
     h4 {
         color: var(--c-text);
@@ -95,6 +110,6 @@ const year = new Date().getFullYear();
             text-align: center;
             gap: 40px;
         }
-        .brand p { margin: 0 auto; }
+        .brand p { margin: 0 auto 22px; }
     }
 </style>

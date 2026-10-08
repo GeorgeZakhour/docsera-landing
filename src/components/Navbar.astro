@@ -1,4 +1,5 @@
 ---
+import { WEB_APP_URL } from '../config/links';
 ---
 <nav class="navbar">
     <div class="container navbar-content">
@@ -17,8 +18,8 @@
 
         <!-- Desktop Action -->
         <div class="actions desktop-only">
-            <a href="https://my.docsera.app" class="btn-webapp">افتح تطبيق الويب</a>
-            <a href="/download" class="btn-dl">تحميل</a>
+            <a href={WEB_APP_URL} class="btn-webapp">تطبيق الويب</a>
+            <a href="/download" class="btn-dl" data-store-smart>حمّل التطبيق</a>
         </div>
 
         <!-- Mobile Toggle -->
@@ -35,8 +36,8 @@
         <a href="/features" class="m-link">عن التطبيق</a>
         <a href="/about" class="m-link">من نحن</a>
         <a href="/help" class="m-link">دليلك</a>
-        <a href="https://my.docsera.app" class="m-btn">افتح تطبيق الويب</a>
-        <a href="/download" class="m-btn outline">تحميل التطبيق</a>
+        <a href="/download" class="m-btn" data-store-smart>حمّل التطبيق</a>
+        <a href={WEB_APP_URL} class="m-btn outline">افتح تطبيق الويب</a>
     </div>
 </nav>
 
@@ -140,7 +141,8 @@
 
     .actions { display: flex; align-items: center; gap: 12px; }
 
-    .btn-webapp {
+    /* Primary action: get the app (filled). Secondary: web app (outline). */
+    .btn-dl {
         background: var(--c-main);
         color: white;
         text-decoration: none;
@@ -151,9 +153,9 @@
         white-space: nowrap;
         transition: background 0.2s;
     }
-    .btn-webapp:hover { background: var(--c-main-dark); }
+    .btn-dl:hover { background: var(--c-main-dark); }
 
-    .btn-dl {
+    .btn-webapp {
         color: var(--c-main);
         text-decoration: none;
         padding: 8px 18px;
@@ -164,7 +166,7 @@
         white-space: nowrap;
         transition: background 0.2s;
     }
-    .btn-dl:hover { background: rgba(0,144,146,0.08); }
+    .btn-webapp:hover { background: rgba(0,144,146,0.08); }
 
     /* Mobile Toggle - Default Hidden */
     .menu-toggle {

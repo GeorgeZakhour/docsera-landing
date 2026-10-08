@@ -11,31 +11,25 @@
 // public_doctors view via Supabase REST (anon read access, RLS-gated),
 // and populates the DOM with the appropriate state:
 //
-//   - loading    initial state while the fetch is in-flight
-//   - doctor     doctor found → render preview + device-aware CTA
+//   - loading    placeholder until the script runs
+//   - doctor     valid token → profile card (skeleton first) + EntityCta
 //   - not-found  token didn't match an active doctor
 //   - invalid    URL path didn't contain a token, or token failed
 //                the safety regex (alnum + - + _, max 64 chars)
 //
-// Device-aware CTA branches:
-//   - Mobile (iOS / Android): "Open in app" button using docsera:// scheme;
-//     OS handles the Universal/App Link if the app is installed, otherwise
-//     a pair of "Coming soon" App Store / Google Play badges (placeholder
-//     until launch).
-//   - Desktop: shows a QR code rendered client-side from the current URL,
-//     so the visitor can scan with their phone to open in the app.
+// The CTA (install / open in app / web app) is wired from the URL alone and
+// shown at once — it does not wait for the profile request. A patient who
+// scans a clinic QR on a weak connection can still install and open the
+// doctor even when the profile data never arrives; in that case the card
+// says so and offers a retry instead of a dead-end "not found".
 
 import Layout from '../layouts/Layout.astro';
 import Navbar from '../components/Navbar.astro';
 import Footer from '../components/Footer.astro';
-
-// Same anon Supabase credentials the patient app uses (lib/app/const.dart).
-// Safe to embed client-side — RLS on public_doctors limits what anon reads.
-const SUPABASE_URL = import.meta.env.PUBLIC_SUPABASE_URL || 'https://api.docsera.app';
-const SUPABASE_ANON_KEY = 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJyb2xlIjoiYW5vbiIsImlzcyI6InN1cGFiYXNlIiwiaWF0IjoxNzc0Mzg4NDY0LCJleHAiOjE5MzIwNjg0NjR9.Q9lVxKdVMbZge7vOgn_Ffroc8iVrpNtkFxqUugfwkPs';
+import EntityCta from '../components/EntityCta.astro';
 ---
 
-<Layout title="DocSera — ملف الطبيب">
+<Layout title="DocSera — ملف الطبيب" appBanner="entity" appBar={false}>
 	<Navbar />
 
 	<main class="doctor-page">
@@ -50,7 +44,7 @@ const SUPABASE_ANON_KEY = 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJyb2xlIjoiYW5v
 
 				<!-- Doctor preview + CTA -------------------------------- -->
 				<div class="state state-doctor" data-state="doctor" hidden>
-					<div class="doctor-card fade-up visible">
+					<div class="doctor-card is-loading" data-doctor-card>
 						<div class="doctor-photo">
 							<!-- Initials fallback shown eagerly; the <img> is
 							     stacked on top and only un-hides on successful
@@ -70,116 +64,14 @@ const SUPABASE_ANON_KEY = 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJyb2xlIjoiYW5v
 								</svg>
 								<span data-doctor-address-text></span>
 							</p>
+							<p class="card-offline" data-doctor-offline hidden>
+								تعذّر تحميل بيانات الطبيب. تحقق من اتصالك بالإنترنت.
+								<button type="button" data-doctor-retry>إعادة المحاولة</button>
+							</p>
 						</div>
 					</div>
 
-					<div class="cta-block fade-up visible">
-						<h2 class="cta-title">احجز موعدك بسهولة عبر تطبيق DocSera</h2>
-						<p class="cta-sub">صحتك بين يديك — مواعيد ومراسلات وتقارير في تطبيق واحد.</p>
-
-						<!-- Mobile branch: open-in-app + web-app fallback + store badges + download -->
-						<div class="cta-mobile" data-cta-mobile>
-							<a class="btn-main btn-open-app" data-open-app href="#" rel="noopener">
-								افتح في التطبيق
-							</a>
-							<!-- Web-app fallback for users without the native app installed.
-							     One tap from the QR/social-link → reads the doctor in the
-							     hosted Flutter web build at my.docsera.app/doctor/<token>. -->
-							<a class="cta-webapp" data-webapp-link href="#" rel="noopener">
-								<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" aria-hidden="true">
-									<rect x="3" y="4" width="18" height="14" rx="2"/>
-									<line x1="8" y1="20" x2="16" y2="20"/>
-									<line x1="12" y1="18" x2="12" y2="20"/>
-								</svg>
-								<span>افتح في تطبيق الويب</span>
-							</a>
-							<p class="cta-divider">حساب جديد؟ حمّل التطبيق</p>
-							<div class="cta-stores">
-								<!-- Pre-launch placeholders. Once the apps ship, swap the
-								     outer <div class="store-link"> for an <a href="..."> with
-								     the real store URL and remove the .is-coming-soon class
-								     + the قريباً pill overlay. The SVG bodies stay as-is.
-
-								     direction="ltr" on each SVG is required because the page
-								     inherits dir="rtl" from <html> for Arabic content; without
-								     the override the <text> elements paint right-to-left and
-								     the label runs off the badge's left edge. -->
-								<div class="store-link is-coming-soon" aria-label="App Store (قريباً)">
-									<span class="coming-pill">قريباً</span>
-									<svg class="store-badge" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 135 40" direction="ltr">
-										<rect width="135" height="40" rx="6" fill="#000"/>
-										<!-- Apple logo, clean 24x24 silhouette. Smoother
-										     curves than the Bootstrap-Icons "apple" — the
-										     leaf reads as one continuous shape with the
-										     body instead of an angular separate triangle.
-										     shape-rendering hint keeps edges crisp at the
-										     wide zoom range users hit on iOS Safari. -->
-										<g fill="#fff" transform="translate(8 8)" shape-rendering="geometricPrecision">
-											<path d="M18.71 19.5c-.83 1.24-1.71 2.45-3.05 2.47-1.34.03-1.77-.79-3.29-.79-1.53 0-2 .77-3.27.82-1.31.05-2.3-1.32-3.14-2.53C4.25 17 2.94 12.45 4.7 9.39c.87-1.52 2.43-2.48 4.12-2.51 1.28-.02 2.5.87 3.29.87.78 0 2.26-1.07 3.81-.91.65.03 2.47.26 3.64 1.98-.09.06-2.17 1.28-2.15 3.81.03 3.02 2.65 4.03 2.68 4.04-.03.07-.42 1.44-1.38 2.83M13 3.5c.73-.83 1.94-1.46 2.94-1.5.13 1.17-.34 2.35-1.04 3.19-.69.85-1.83 1.51-2.95 1.42-.15-1.15.41-2.35 1.05-3.11z"/>
-										</g>
-										<text x="40" y="17" fill="#fff" font-family="Helvetica, Arial, sans-serif" font-size="7" font-weight="400">Download on the</text>
-										<text x="40" y="31" fill="#fff" font-family="Helvetica, Arial, sans-serif" font-size="14" font-weight="600" letter-spacing="-0.4">App Store</text>
-									</svg>
-								</div>
-								<div class="store-link is-coming-soon" aria-label="Google Play (قريباً)">
-									<span class="coming-pill">قريباً</span>
-									<svg class="store-badge" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 135 40" direction="ltr">
-										<rect width="135" height="40" rx="6" fill="#000"/>
-										<!-- Google Play play-triangle with the four official
-										     brand colours rendered as a 3-stop gradient. Cleaner
-										     than slicing the triangle into 4 sub-paths and reads
-										     unmistakably as the Play badge mark. -->
-										<defs>
-											<linearGradient id="dsPlayGrad" x1="0" y1="0" x2="1" y2="1">
-												<stop offset="0" stop-color="#EA4335"/>
-												<stop offset=".45" stop-color="#FBBC04"/>
-												<stop offset="1" stop-color="#34A853"/>
-											</linearGradient>
-										</defs>
-										<g transform="translate(13 9.5)">
-											<path fill="url(#dsPlayGrad)" d="M0 0 L0 21 L18 10.5 Z"/>
-										</g>
-										<text x="40" y="17" fill="#fff" font-family="Helvetica, Arial, sans-serif" font-size="6.5" font-weight="400">GET IT ON</text>
-										<text x="40" y="31" fill="#fff" font-family="Helvetica, Arial, sans-serif" font-size="14" font-weight="500" letter-spacing="-0.3">Google Play</text>
-									</svg>
-								</div>
-							</div>
-							<!-- Direct APK / download-hub link. Stores are still "coming
-							     soon" pre-launch; this is the practical path to get the
-							     Android app on a real device. -->
-							<a class="btn-download" href="/download">
-								<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" aria-hidden="true">
-									<path d="M12 3v12"/>
-									<polyline points="7 10 12 15 17 10"/>
-									<line x1="5" y1="21" x2="19" y2="21"/>
-								</svg>
-								<span>تحميل تطبيق DocSera على هاتفك</span>
-							</a>
-						</div>
-
-						<!-- Desktop branch: QR code + parallel web-app entry point -->
-						<div class="cta-desktop" data-cta-desktop hidden>
-							<p class="cta-desk-instr">امسح رمز QR من كاميرا هاتفك لفتح ملف الطبيب في تطبيق DocSera</p>
-							<div class="qr-frame">
-								<div class="qr-canvas" data-qr-canvas></div>
-							</div>
-							<p class="cta-desk-tip">إذا لم يكن لديك التطبيق، سيفتح الرابط على هاتفك بعد التثبيت.</p>
-							<!-- Or — open the doctor profile right here, in tab, no scan needed. -->
-							<div class="cta-desk-actions">
-								<a class="btn-main cta-webapp" data-webapp-link href="#" rel="noopener">
-									افتح في تطبيق الويب
-								</a>
-								<a class="btn-download" href="/download">
-									<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" aria-hidden="true">
-										<path d="M12 3v12"/>
-										<polyline points="7 10 12 15 17 10"/>
-										<line x1="5" y1="21" x2="19" y2="21"/>
-									</svg>
-									<span>تحميل التطبيق</span>
-								</a>
-							</div>
-						</div>
-					</div>
+					<EntityCta kind="doctor" />
 				</div>
 
 				<!-- Doctor not found ----------------------------------- -->
@@ -222,94 +114,38 @@ const SUPABASE_ANON_KEY = 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJyb2xlIjoiYW5v
 </Layout>
 
 <script>
-	import qrcode from 'qrcode-generator';
-
-	// Constants are injected at build time from the page frontmatter
-	// via a window global to keep this script type-clean for the bundler.
-	const SUPABASE_URL = import.meta.env.PUBLIC_SUPABASE_URL || 'https://api.docsera.app';
-	const SUPABASE_ANON_KEY = 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJyb2xlIjoiYW5vbiIsImlzcyI6InN1cGFiYXNlIiwiaWF0IjoxNzc0Mzg4NDY0LCJleHAiOjE5MzIwNjg0NjR9.Q9lVxKdVMbZge7vOgn_Ffroc8iVrpNtkFxqUugfwkPs';
-
-	// ----- Reach beacon (anonymous scan counter) ---------------
-	// Counts landing opens even when the visitor never installs the
-	// app. Fire-and-forget: failures must never affect rendering.
-	// Session-deduped (HTTP cache never suppresses this script, so we
-	// dedupe ourselves). anonymous_id is a device-scoped random UUID —
-	// no fingerprinting, no PII.
-	function attributionSource(): string {
-		const s = new URLSearchParams(window.location.search).get('s') || '';
-		return /^[a-z_]{1,24}$/.test(s) ? s : 'direct';
-	}
-
-	function anonymousId(): string {
-		try {
-			let id = localStorage.getItem('ds_aid');
-			if (!id) {
-				id = crypto.randomUUID();
-				localStorage.setItem('ds_aid', id);
-			}
-			return id;
-		} catch {
-			return crypto.randomUUID(); // storage blocked → still count, less dedup
-		}
-	}
-
-	function fireBeacon(eventName: string, dedupeKey: string, properties: Record<string, string>) {
-		try {
-			if (sessionStorage.getItem(dedupeKey)) return;
-			sessionStorage.setItem(dedupeKey, '1');
-		} catch { /* storage blocked → fire anyway */ }
-		try {
-			fetch(SUPABASE_URL + '/rest/v1/rpc/rpc_track_events_batch', {
-				method: 'POST',
-				headers: {
-					apikey: SUPABASE_ANON_KEY,
-					Authorization: 'Bearer ' + SUPABASE_ANON_KEY,
-					'Content-Type': 'application/json',
-				},
-				keepalive: true,
-				body: JSON.stringify({
-					p_events: [{
-						event_name: eventName,
-						category: 'reach',
-						occurred_at: new Date().toISOString(),
-						anonymous_id: anonymousId(),
-						platform: 'web_landing',
-						properties: properties,
-					}],
-				}),
-			}).catch(() => {});
-		} catch { /* never break the page */ }
-	}
+	import { SUPABASE_URL, SUPABASE_ANON_KEY, attributionSource, fireBeacon } from '../scripts/reach';
+	import { initEntityCta } from '../scripts/entity-cta';
 
 	// ----- Token extraction & validation ----------------------
-	const path = window.location.pathname;
-	const match = path.match(/^\/doctor\/([^/?#]+)/);
-	if (!match) {
+	const match = window.location.pathname.match(/^\/doctor\/([^/?#]+)/);
+	let token = '';
+	try {
+		token = match ? decodeURIComponent(match[1]) : '';
+	} catch { /* malformed %-escape → invalid */ }
+
+	// Same constraint the deep-link handler in the patient app uses
+	// (services/navigation/deep_link_service.dart): alnum + - + _,
+	// max 64 chars. Reject anything else as malformed.
+	if (!/^[A-Za-z0-9_-]{1,64}$/.test(token)) {
 		showState('invalid');
 	} else {
-		const token = decodeURIComponent(match[1]);
-
-		// Same constraint the deep-link handler in the patient app uses
-		// (services/navigation/deep_link_service.dart): alnum + - + _,
-		// max 64 chars. Reject anything else as malformed.
-		if (!/^[A-Za-z0-9_-]{1,64}$/.test(token)) {
-			showState('invalid');
-		} else {
-			fireBeacon('doctor_qr_scanned', 'ds_beacon_doctor_' + token, {
-				token: token,
-				source: attributionSource(),
-				surface: 'landing',
-			});
-			fetchDoctor(token);
-		}
+		// Anonymous scan counter — counts landing opens even when the
+		// visitor never installs the app.
+		fireBeacon('doctor_qr_scanned', 'reach', 'ds_beacon_doctor_' + token, {
+			token: token,
+			source: attributionSource(),
+			surface: 'landing',
+		});
+		// Buttons first, profile second.
+		initEntityCta('doctor', token);
+		showState('doctor');
+		byData('doctor-retry').addEventListener('click', () => fetchDoctor(token));
+		fetchDoctor(token);
 	}
 
 	function fetchDoctor(token: string) {
-		// ----- Device detection ----------------------------------
-		const ua = navigator.userAgent || '';
-		const isIOS = /iPad|iPhone|iPod/.test(ua) && !(window as any).MSStream;
-		const isAndroid = /Android/i.test(ua);
-		const isMobile = isIOS || isAndroid;
+		setCardState('loading');
 
 		// Only the columns we actually render — avoids pulling internal
 		// fields from the view even though RLS already gates them.
@@ -334,11 +170,17 @@ const SUPABASE_ANON_KEY = 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJyb2xlIjoiYW5v
 			'&is_active=eq.true' +
 			'&limit=1';
 
+		// Slow networks: give up after 15 s and offer a retry rather than
+		// leaving the card on its skeleton forever.
+		const ctrl = new AbortController();
+		const timer = window.setTimeout(() => ctrl.abort(), 15000);
+
 		fetch(url, {
 			headers: {
 				apikey: SUPABASE_ANON_KEY,
 				Authorization: 'Bearer ' + SUPABASE_ANON_KEY,
 			},
+			signal: ctrl.signal,
 		})
 			.then((r) => {
 				if (!r.ok) throw new Error('HTTP ' + r.status);
@@ -346,18 +188,29 @@ const SUPABASE_ANON_KEY = 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJyb2xlIjoiYW5v
 			})
 			.then((rows: any[]) => {
 				if (!Array.isArray(rows) || rows.length === 0) {
+					// The server answered and there is no such doctor.
 					showState('not-found');
 					return;
 				}
-				renderDoctor(rows[0], token, isMobile);
+				renderDoctor(rows[0]);
 			})
 			.catch((err) => {
+				// Network failure, timeout or a server error: the token may
+				// well be fine, so keep the CTA usable and say what happened.
 				console.error('[doctor page] fetch failed:', err);
-				showState('not-found');
-			});
+				setCardState('offline');
+			})
+			.finally(() => window.clearTimeout(timer));
 	}
 
-	function renderDoctor(d: any, token: string, isMobile: boolean) {
+	function setCardState(state: 'loading' | 'ready' | 'offline') {
+		const card = byData('doctor-card');
+		card.classList.toggle('is-loading', state === 'loading');
+		card.classList.toggle('is-offline', state === 'offline');
+		byData('doctor-offline').hidden = state !== 'offline';
+	}
+
+	function renderDoctor(d: any) {
 		const titlePart = (d.title || '').trim();
 		const namePart = [d.first_name, d.middle_name, d.last_name]
 			.map((s: any) => (s || '').trim())
@@ -385,9 +238,7 @@ const SUPABASE_ANON_KEY = 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJyb2xlIjoiYW5v
 		}
 
 		renderImage(d, fullName);
-		renderCta(d, token, isMobile);
-
-		showState('doctor');
+		setCardState('ready');
 	}
 
 	function formatAddress(addr: any): string {
@@ -443,85 +294,6 @@ const SUPABASE_ANON_KEY = 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJyb2xlIjoiYW5v
 		const a = ((d.first_name || '').trim().charAt(0) || '');
 		const b = ((d.last_name || '').trim().charAt(0) || '');
 		return (a + b).toUpperCase() || '?';
-	}
-
-	function renderCta(d: any, token: string, isMobile: boolean) {
-		// Always wire the in-app deep-link so installed users can
-		// "Open in app". OS routes docsera://doctor/<token> if the
-		// app is installed; if not, the smart-fallback handler below
-		// redirects to /download after 1.5s so new users land on
-		// the install hub instead of staring at a no-op tap.
-		const encodedToken = encodeURIComponent(token);
-		const src = attributionSource();
-		const suffix = src !== 'direct' ? '?s=' + encodeURIComponent(src) : '';
-		const inAppUrl = 'docsera://doctor/' + encodedToken + suffix;
-		const webAppUrl = 'https://my.docsera.app/doctor/' + encodedToken + suffix;
-
-		const openBtn = byData('open-app') as HTMLAnchorElement;
-		openBtn.href = inAppUrl;
-
-		// Smart deep-link fallback: when the user taps "open in app",
-		// browsers try the docsera:// scheme. If the app is installed
-		// the OS swaps to it and our tab becomes document.hidden = true.
-		// If not installed, nothing visible happens — the tab stays
-		// foregrounded. So: 1.5s after the tap, if we're still visible,
-		// the install didn't happen → send the user to /download.
-		// The visibilitychange listener cancels the redirect cleanly
-		// when the app DID open, so returning to the tab doesn't
-		// surprise the user with /download.
-		openBtn.addEventListener('click', () => {
-			const timer = window.setTimeout(() => {
-				if (document.visibilityState === 'visible') {
-					window.location.href = '/download' + suffix;
-				}
-			}, 1500);
-			const onHide = () => {
-				if (document.visibilityState === 'hidden') {
-					window.clearTimeout(timer);
-					document.removeEventListener('visibilitychange', onHide);
-				}
-			};
-			document.addEventListener('visibilitychange', onHide);
-		});
-
-		// Wire every web-app entry point (mobile + desktop) to the
-		// hosted Flutter web build's per-doctor deep route.
-		document.querySelectorAll<HTMLAnchorElement>('[data-webapp-link]').forEach((a) => {
-			a.href = webAppUrl;
-		});
-
-		// Keep the attribution tag alive into the download hub too.
-		if (suffix) {
-			document.querySelectorAll<HTMLAnchorElement>('a.btn-download').forEach((a) => {
-				a.href = '/download' + suffix;
-			});
-		}
-
-		// Device-aware visibility
-		const ctaMobile = byData('cta-mobile');
-		const ctaDesktop = byData('cta-desktop');
-		if (isMobile) {
-			ctaMobile.hidden = false;
-			ctaDesktop.hidden = true;
-		} else {
-			ctaMobile.hidden = true;
-			ctaDesktop.hidden = false;
-			renderQrCode();
-		}
-	}
-
-	function renderQrCode() {
-		const container = byData('qr-canvas');
-		if (!container) return;
-		const url = window.location.href;
-		// Type 0 = auto-pick smallest QR version that fits the data.
-		// Error correction 'M' (~15%) balances density vs scannability —
-		// the doctor URL is short (~50 chars), 'M' is plenty robust.
-		const qr = qrcode(0, 'M');
-		qr.addData(url);
-		qr.make();
-		// Render as inline SVG, scalable to the container's CSS size.
-		container.innerHTML = qr.createSvgTag({ scalable: true, margin: 2 });
 	}
 
 	// ----- Tiny DOM helpers -----------------------------------
@@ -638,33 +410,53 @@ const SUPABASE_ANON_KEY = 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJyb2xlIjoiYW5v
 		gap: 6px;
 		line-height: 1.4;
 	}
+	.doctor-info .address[hidden] { display: none; }
 	.doctor-info .address .pin {
 		width: 14px; height: 14px;
 		color: var(--c-main);
 		flex-shrink: 0;
 	}
 
-	/* CTA block */
-	.cta-block {
-		background: white;
-		padding: 40px 32px;
-		border-radius: 28px;
-		text-align: center;
-		max-width: 720px;
-		margin: 0 auto;
-		box-shadow: 0 20px 60px rgba(0, 0, 0, 0.04);
+	/* Skeleton while the profile request is in flight. The CTA below is
+	   already live, so this is only the card's own text. */
+	.doctor-card.is-loading .pill-badge,
+	.doctor-card.is-loading .name,
+	.doctor-card.is-loading .clinic {
+		display: block;
+		color: transparent;
+		background: #EEF4F4;
+		border-radius: 8px;
+		animation: card-pulse 1.1s ease-in-out infinite alternate;
 	}
-	.cta-title {
-		font-size: clamp(1.2rem, 2.4vw, 1.6rem);
-		font-weight: 800;
-		margin-bottom: 10px;
-		color: var(--c-text);
-	}
-	.cta-sub {
-		color: var(--c-text-muted);
-		margin: 0 0 28px;
+	.doctor-card.is-loading .pill-badge { width: 92px; height: 28px; }
+	.doctor-card.is-loading .name { width: min(260px, 70vw); height: 1.25em; }
+	.doctor-card.is-loading .clinic { width: min(170px, 48vw); height: 1em; }
+	@keyframes card-pulse { from { opacity: 1; } to { opacity: 0.45; } }
+
+	/* Profile request failed (weak connection). Buttons below still work. */
+	.doctor-card.is-offline .pill-badge,
+	.doctor-card.is-offline .name,
+	.doctor-card.is-offline .clinic { display: none; }
+	.card-offline {
+		margin: 0;
 		font-size: 1rem;
+		line-height: 1.7;
+		color: var(--c-text-muted);
 	}
+	.card-offline button {
+		display: block;
+		margin-top: 10px;
+		padding: 0;
+		background: none;
+		border: 0;
+		font: inherit;
+		font-weight: 700;
+		color: var(--c-main);
+		cursor: pointer;
+		text-decoration: underline;
+		text-underline-offset: 4px;
+	}
+	.card-offline button:focus-visible { outline: 3px solid var(--c-main); outline-offset: 3px; border-radius: 4px; }
 
 	.btn-main {
 		background: var(--c-main);
@@ -678,161 +470,6 @@ const SUPABASE_ANON_KEY = 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJyb2xlIjoiYW5v
 		transition: background 0.2s;
 	}
 	.btn-main:hover { background: var(--c-main-dark); }
-
-	.btn-open-app {
-		padding: 16px 40px;
-		font-size: 1.1rem;
-	}
-
-	/* Outline-teal pill matching the brand language of btn-main, used for
-	   the "open in web app" secondary CTA on both mobile (below the primary
-	   open-in-app button) and desktop (below the QR). Sits visually below
-	   the primary action without competing with it for attention. */
-	.cta-webapp {
-		display: inline-flex;
-		align-items: center;
-		gap: 8px;
-		background: white;
-		color: var(--c-main);
-		border: 2px solid var(--c-main);
-		padding: 12px 28px;
-		border-radius: 12px;
-		font-weight: 700;
-		font-size: 1rem;
-		text-decoration: none;
-		margin-top: 14px;
-		transition: background 0.2s, color 0.2s;
-	}
-	.cta-webapp:hover {
-		background: var(--c-main);
-		color: white;
-	}
-	.cta-webapp svg {
-		width: 18px;
-		height: 18px;
-		flex-shrink: 0;
-	}
-	/* When the web-app button sits inside the desktop actions row, it
-	   reuses .btn-main's filled-teal background and only needs spacing. */
-	.cta-desk-actions .cta-webapp {
-		background: var(--c-main);
-		color: white;
-		border-color: var(--c-main);
-		margin-top: 0;
-	}
-	.cta-desk-actions .cta-webapp:hover {
-		background: var(--c-main-dark);
-	}
-
-	/* Subtle, tertiary "download the app" link used both below the mobile
-	   store badges and as the desktop tail action. Reads as a quiet link,
-	   not a third button competing with the two primary CTAs above. */
-	.btn-download {
-		display: inline-flex;
-		align-items: center;
-		gap: 6px;
-		color: var(--c-text-muted);
-		font-weight: 600;
-		font-size: 0.92rem;
-		text-decoration: none;
-		margin-top: 18px;
-		padding-bottom: 2px;
-		border-bottom: 1px dashed currentColor;
-		transition: color 0.2s, border-bottom-color 0.2s;
-	}
-	.btn-download:hover {
-		color: var(--c-main);
-	}
-	.btn-download svg {
-		width: 14px;
-		height: 14px;
-		flex-shrink: 0;
-	}
-
-	/* Desktop row that pairs the web-app button with the download link
-	   beneath the QR. Kept centred to match the QR alignment above. */
-	.cta-desk-actions {
-		display: flex;
-		flex-direction: column;
-		align-items: center;
-		gap: 4px;
-		margin-top: 22px;
-	}
-
-	.cta-divider {
-		margin: 22px 0 14px;
-		color: var(--c-text-muted);
-		font-size: 0.9rem;
-	}
-
-	/* App Store / Google Play badges — match the official store-badge
-	   look (rounded-rect black tile with brand mark + label). When stores
-	   ship, swap the outer <div class="store-link"> for an <a href="...">
-	   and remove .is-coming-soon + the قريباً pill in the markup. */
-	.cta-stores {
-		display: flex;
-		gap: 14px;
-		justify-content: center;
-		flex-wrap: wrap;
-	}
-	.store-link {
-		position: relative;
-		display: inline-block;
-		text-decoration: none;
-		line-height: 0;
-		transition: transform 0.15s ease-out;
-	}
-	.store-link.is-coming-soon {
-		cursor: not-allowed;
-		opacity: 0.65;
-	}
-	.store-link:not(.is-coming-soon):hover {
-		transform: translateY(-2px);
-	}
-	.store-badge {
-		display: block;
-		width: 175px;
-		height: auto;
-		border-radius: 8px;
-	}
-	.coming-pill {
-		position: absolute;
-		top: -8px;
-		right: -8px;
-		background: var(--c-main);
-		color: white;
-		font-family: var(--font-ar);
-		font-size: 0.7rem;
-		font-weight: 700;
-		padding: 3px 10px;
-		border-radius: 20px;
-		line-height: 1.4;
-		box-shadow: 0 2px 6px rgba(0, 0, 0, 0.15);
-		letter-spacing: 0;
-	}
-
-	/* Desktop CTA — QR code */
-	.cta-desktop { text-align: center; }
-	.cta-desk-instr { color: var(--c-text); margin: 0 0 18px; font-weight: 600; font-size: 1rem; }
-	.cta-desk-tip { color: var(--c-text-muted); font-size: 0.85rem; margin: 14px 0 0; }
-	.qr-frame {
-		display: inline-block;
-		padding: 18px;
-		background: white;
-		border-radius: 18px;
-		box-shadow: 0 8px 24px rgba(0, 0, 0, 0.08);
-		border: 1px solid #eee;
-	}
-	.qr-canvas {
-		width: 200px;
-		height: 200px;
-		display: block;
-	}
-	.qr-canvas svg {
-		width: 100%;
-		height: 100%;
-		display: block;
-	}
 
 	/* Error states */
 	.error-card {
@@ -876,6 +513,14 @@ const SUPABASE_ANON_KEY = 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJyb2xlIjoiYW5v
 		.doctor-info .address { display: inline-flex; justify-content: center; }
 		.doctor-photo { width: 108px; height: 108px; }
 		.photo-fallback { font-size: 1.8rem; }
-		.cta-block { padding: 32px 22px; }
+		.doctor-card.is-loading .pill-badge,
+		.doctor-card.is-loading .name,
+		.doctor-card.is-loading .clinic { margin-inline: auto; }
+		.card-offline button { margin-inline: auto; }
+	}
+	@media (prefers-reduced-motion: reduce) {
+		.doctor-card.is-loading .pill-badge,
+		.doctor-card.is-loading .name,
+		.doctor-card.is-loading .clinic { animation: none; }
 	}
 </style>

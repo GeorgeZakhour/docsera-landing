@@ -1,0 +1,230 @@
+---
+// The "get to this doctor / center in the app" block shared by the two
+// profile landing pages (/doctor/<token>, /center/<id>). Wired in the
+// browser by src/scripts/entity-cta.ts.
+//
+// Phone: two real steps. The stores cannot hand the profile to a freshly
+// installed app (Apple offers no way at all; Google only once the app reads
+// the install referrer), so step 2 is how a new patient lands on *this*
+// profile after installing — and how the app learns who sent them. When the
+// visitor comes back from the store, step 2 lights up.
+//
+// Desktop: a code to scan, the web app, and both store badges.
+import StoreBadges from './StoreBadges.astro';
+
+interface Props {
+	kind: 'doctor' | 'center';
+}
+
+const { kind } = Astro.props;
+const noun = kind === 'doctor' ? 'الطبيب' : 'المركز';
+const title = kind === 'doctor'
+	? 'احجز موعدك عبر تطبيق DocSera'
+	: 'احجز موعدك في هذا المركز عبر تطبيق DocSera';
+---
+
+<div class="cta-block" data-entity-cta>
+	<h2 class="cta-title">{title}</h2>
+
+	<div class="cta-mobile" data-cta-mobile>
+		<ol class="cta-steps">
+			<li class="cta-step" data-step-install>
+				<span class="cta-step-n font-en" aria-hidden="true">1</span>
+				<div class="cta-step-body">
+					<p class="cta-step-label">حمّل تطبيق DocSera</p>
+					<StoreBadges adaptive size="lg" align="start" />
+				</div>
+			</li>
+			<li class="cta-step" data-step-open>
+				<span class="cta-step-n font-en" aria-hidden="true">2</span>
+				<div class="cta-step-body">
+					<p class="cta-step-label" data-open-label data-ready-text={`ثبّتّ التطبيق؟ افتح ملف ${noun} الآن`}>
+						ثم افتح ملف {noun} في التطبيق
+					</p>
+					<a class="cta-open" data-open-app href="#" rel="noopener">افتح في التطبيق</a>
+					<p class="cta-step-hint" data-open-hint role="status" hidden>
+						التطبيق غير مثبّت على هذا الهاتف بعد. حمّله من الخطوة 1 ثم اضغط هنا.
+					</p>
+				</div>
+			</li>
+		</ol>
+		<a class="cta-weblink" data-webapp-link href="#" rel="noopener">أو تابع في المتصفح دون تثبيت</a>
+	</div>
+
+	<div class="cta-desktop" data-cta-desktop hidden>
+		<p class="cta-desk-instr">وجّه كاميرا هاتفك إلى الرمز لفتح ملف {noun} في تطبيق DocSera</p>
+		<div class="qr-frame">
+			<div class="qr-canvas" data-qr-canvas></div>
+		</div>
+		<div class="cta-desk-actions">
+			<a class="cta-desk-web" data-webapp-link href="#" rel="noopener">افتح في تطبيق الويب</a>
+		</div>
+		<p class="cta-desk-get">التطبيق متوفر مجاناً على</p>
+		<StoreBadges size="sm" />
+	</div>
+</div>
+
+<style>
+	.cta-block {
+		background: white;
+		padding: 40px 36px;
+		border-radius: 28px;
+		text-align: center;
+		max-width: 720px;
+		margin: 0 auto;
+		box-shadow: 0 20px 60px rgba(0, 0, 0, 0.04);
+	}
+	.cta-title {
+		font-size: clamp(1.2rem, 2.4vw, 1.6rem);
+		font-weight: 800;
+		margin-bottom: 28px;
+		color: var(--c-text);
+	}
+	[hidden] { display: none !important; }
+
+	/* ----- Phone: the two steps ----- */
+	.cta-steps {
+		list-style: none;
+		padding: 0;
+		margin: 0 auto;
+		max-width: 340px;
+		text-align: start;
+		display: grid;
+		gap: 26px;
+	}
+	.cta-step {
+		position: relative;
+		display: grid;
+		grid-template-columns: 36px 1fr;
+		gap: 14px;
+	}
+	/* The line that joins step 1 to step 2. */
+	.cta-step:first-child::after {
+		content: '';
+		position: absolute;
+		inset-inline-start: 17px;
+		top: 42px;
+		bottom: -20px;
+		width: 2px;
+		background: var(--c-main-light);
+		border-radius: 2px;
+	}
+	.cta-step-n {
+		width: 36px; height: 36px;
+		border-radius: 50%;
+		display: grid;
+		place-items: center;
+		background: var(--c-main-light);
+		color: var(--c-main-dark);
+		font-weight: 700;
+		font-size: 1rem;
+		transition: background 0.25s, color 0.25s;
+	}
+	.cta-step-label {
+		margin: 5px 0 14px;
+		font-size: 1.08rem;
+		line-height: 1.5;
+		font-weight: 700;
+		color: var(--c-text);
+	}
+
+	.cta-open {
+		display: inline-block;
+		padding: 13px 30px;
+		border-radius: 14px;
+		border: 2px solid var(--c-main);
+		background: #fff;
+		color: var(--c-main);
+		font-weight: 700;
+		font-size: 1.05rem;
+		text-decoration: none;
+		transition: background 0.25s, color 0.25s, box-shadow 0.25s;
+	}
+	.cta-open:hover { background: var(--c-main); color: #fff; }
+	.cta-open:focus-visible, .cta-weblink:focus-visible, .cta-desk-web:focus-visible {
+		outline: 3px solid var(--c-main);
+		outline-offset: 3px;
+	}
+	.cta-step-hint {
+		margin: 12px 0 0;
+		font-size: 0.95rem;
+		line-height: 1.6;
+		color: var(--c-main-dark);
+		background: rgba(0, 144, 146, 0.07);
+		border-radius: 12px;
+		padding: 10px 14px;
+	}
+
+	/* Back from the store: step 1 is done, step 2 is the thing to press. */
+	.cta-step.is-done .cta-step-n {
+		background: var(--c-main);
+		color: #fff;
+	}
+	.cta-step.is-ready .cta-step-n {
+		background: var(--c-main);
+		color: #fff;
+	}
+	.cta-step.is-ready .cta-open {
+		background: var(--c-main);
+		color: #fff;
+		box-shadow: 0 0 0 0 rgba(0, 144, 146, 0.45);
+		animation: cta-ring 1.6s ease-out 2;
+	}
+	@keyframes cta-ring {
+		0% { box-shadow: 0 0 0 0 rgba(0, 144, 146, 0.45); }
+		100% { box-shadow: 0 0 0 16px rgba(0, 144, 146, 0); }
+	}
+
+	.cta-weblink {
+		display: inline-block;
+		margin-top: 30px;
+		color: var(--c-text-muted);
+		font-weight: 600;
+		font-size: 0.98rem;
+		text-decoration: underline;
+		text-decoration-color: rgba(0, 144, 146, 0.35);
+		text-underline-offset: 5px;
+		transition: color 0.2s;
+	}
+	.cta-weblink:hover { color: var(--c-main); }
+
+	/* ----- Desktop: scan, or continue here ----- */
+	.cta-desk-instr { color: var(--c-text); margin: 0 0 18px; font-weight: 600; font-size: 1rem; }
+	.qr-frame {
+		display: inline-block;
+		padding: 18px;
+		background: white;
+		border-radius: 18px;
+		box-shadow: 0 8px 24px rgba(0, 0, 0, 0.08);
+		border: 1px solid #eee;
+	}
+	.qr-canvas { width: 200px; height: 200px; display: block; }
+	.qr-canvas :global(svg) { width: 100%; height: 100%; display: block; }
+	.cta-desk-actions { margin-top: 24px; }
+	.cta-desk-web {
+		display: inline-block;
+		background: var(--c-main);
+		color: #fff;
+		padding: 13px 30px;
+		border-radius: 12px;
+		font-weight: 700;
+		font-size: 1rem;
+		text-decoration: none;
+		transition: background 0.2s;
+	}
+	.cta-desk-web:hover { background: var(--c-main-dark); }
+	.cta-desk-get {
+		margin: 30px 0 14px;
+		padding-top: 26px;
+		border-top: 1px solid rgba(0, 0, 0, 0.07);
+		color: var(--c-text-muted);
+		font-size: 0.95rem;
+	}
+
+	@media (max-width: 700px) {
+		.cta-block { padding: 32px 22px; }
+	}
+	@media (prefers-reduced-motion: reduce) {
+		.cta-step.is-ready .cta-open { animation: none; }
+	}
+</style>
