@@ -344,6 +344,8 @@ export function initProJoin(env: JoinPageEnv): void {
 	let busy = false;
 	let scheduling = '';
 	let doneCode = '';
+	/** Set while the browser's Forward button is being turned back from a step not reached yet. */
+	let turnedBack = false;
 
 	// ---------------------------------------------------------- answers
 
@@ -523,7 +525,7 @@ export function initProJoin(env: JoinPageEnv): void {
 		bars.forEach((bar, index) => bar.classList.toggle('on', index < target));
 		stepName.textContent = stepLabel(target); // aria-live announces the change
 		backButton.hidden = target === 1;
-		nextLabel.textContent = target === 3 ? SEND_LABEL : NEXT_LABEL;
+		labelNext();
 		consent.hidden = target !== 3;
 		hideFailure();
 		if (!moved) return;
@@ -626,7 +628,11 @@ export function initProJoin(env: JoinPageEnv): void {
 		backButton.disabled = on;
 		retryButton.disabled = on;
 		form!.setAttribute('aria-busy', String(on));
-		nextLabel.textContent = on ? SENDING_LABEL : step === 3 ? SEND_LABEL : NEXT_LABEL;
+		labelNext();
+	}
+
+	function labelNext(): void {
+		nextLabel.textContent = busy ? SENDING_LABEL : step === 3 ? SEND_LABEL : NEXT_LABEL;
 	}
 
 	// ---------------------------------------------------------- sending
@@ -637,6 +643,10 @@ export function initProJoin(env: JoinPageEnv): void {
 		if (target !== null && target !== step) moveInPlace(target);
 		clearErrors();
 		showErrors(fields);
+		// A refused field the doctor cannot see — one on a branch he did not
+		// take — must not leave him with a form that silently will not send.
+		const shown = many('.pj-err').some((slot) => slot.getClientRects().length > 0);
+		if (!shown) showFailure('invalid');
 	}
 
 	async function send(): Promise<void> {
@@ -744,8 +754,21 @@ export function initProJoin(env: JoinPageEnv): void {
 		}
 		const target = reachable(landed.pj === 'done' ? 1 : landed.pj);
 		entry = landed;
-		if (target !== landed.pj) writeEntry({ pj: target, d: landed.d, prev: false }, false);
+		if (target !== landed.pj) {
+			// Forward onto a step whose earlier answers do not hold. Its own
+			// entry is still below: go there rather than relabel this one.
+			turnedBack = true;
+			if (landed.prev) {
+				history.back();
+				return;
+			}
+			writeEntry({ pj: target, d: landed.d, prev: false }, false);
+		}
 		showStep(target, true);
+		if (turnedBack) {
+			turnedBack = false;
+			showErrors(validateStep(target, readAnswers())); // why he is here
+		}
 	});
 
 	// ---------------------------------------------------------- start
