@@ -107,7 +107,11 @@ export const SCHEDULING_METHODS = [
 
 // What the platform does, as the last thing a doctor sees before sending.
 // The founder's wording (2026-10-11): two words, three at most, nothing that
-// reads like an advertisement. The sentence behind each info button states
+// reads like an advertisement. Some notes speak in general terms and some in
+// specifics — that is his choice, note by note (he wanted the percentages
+// named in accounting, and «general talking instead of details» for the
+// dental chart, the patient file and new patients). Do not level them.
+// The sentence behind each info button states
 // what the Pro APP does today — written from its code and feature records
 // (DocSera-Pro docs/launch/87, «the fact sheet»), not from the marketing page,
 // which undersells it. Check a sentence against the app before changing it.
@@ -124,7 +128,7 @@ export const INTERESTS = [
 	{ key: 'waiting_room', label: 'غرفة الانتظار', icon: 'armchair',
 		info: 'من وصل وكم انتظر كل مريض، بترتيب يوازن بين وقت الانتظار والتأخر عن الموعد، وتعدّله بالسحب. تستدعي المريض بضغطة، وتُنبَّه لأي زيارة بقيت مفتوحة.' },
 	{ key: 'patient_files', label: 'ملفات شاملة', icon: 'folder-heart',
-		info: 'معلومات المريض وزياراته وفواتيره وتقاريره وتاريخه الطبي في ملف واحد، مع ما يرفعه هو من تطبيقه ورقم ملف من ترقيم عيادتك. وملف مركزي يجمع تاريخه لدى أطبائه الآخرين، تطّلع عليه بموافقته.' },
+		info: 'ملف شامل لكل مريض يجمع معلوماته وزياراته وتقاريره وتاريخه الطبي، مرتبطاً بملفه المركزي على دوكسيرا.' },
 	{ key: 'reports', label: 'التقارير الطبية', icon: 'file-text',
 		info: 'عشرون نوع قسم، من الوصفة إلى خريطة الجسم ومقارنة الصور، وقوالب جاهزة لاختصاصك وأخرى تحفظها أنت. يعرض نتيجة المريض السابقة بجانب الجديدة، وتختار ما يراه حين تشاركه.' },
 	{ key: 'accounting', label: 'محاسبة ذكية', icon: 'calculator',
@@ -136,14 +140,14 @@ export const INTERESTS = [
 	{ key: 'insights', label: 'إحصاءات العيادة', icon: 'chart-column',
 		info: 'الإيرادات حسب سبب الزيارة وبالعملتين، أوقات الذروة، نسبة عدم الحضور ومن يكرره بالاسم، المرضى الجدد والعائدون، وكل ذلك مقارنةً بالفترة السابقة.' },
 	{ key: 'visibility', label: 'مرضى جدد', icon: 'user-plus',
-		info: 'ملفك يظهر لمن يبحث في تطبيق دوكسيرا بالاسم أو الاختصاص أو على الخريطة. لك رابط ورمز QR جاهز للطباعة، وترى كم شخصاً شاهد ملفك ومسح رمزك ومن أين أتى، وبرنامج إحالة يكافئك على كل مريض جديد يأتي عبر رمزك.' },
+		info: 'دوكسيرا يضع عيادتك أمام كل من يبحث عن طبيب، ويعطيك ما توسّع به حضورك: رابط ورمز خاص بك، أرقام تريك من وصل إليك ومن أين، وبرنامج إحالة يكافئك على كل مريض جديد.' },
 	{ key: 'offers', label: 'عروض وخصومات', icon: 'badge-percent',
 		info: 'خمسة أنواع من العروض، من الاستشارة الأولى المجانية إلى الخصم بنسبة أو مبلغ. يأخذ المريض رمزه الشخصي من ملفك، يُمسح عند الفاتورة فيُطبَّق الخصم، وتتابع كم رمزاً استُخدم.' },
 	{ key: 'loyalty', label: 'نقاط الولاء', icon: 'gift',
 		info: 'المريض يكسب نقاطاً عن كل زيارة يحجزها عبر التطبيق. وينبّهك دوكسيرا إلى سبع مناسبات، كعيد ميلاده وغيابه عن المتابعة، مع هدية جاهزة تصله في تطبيقه بضغطة.' },
 	// Offered to dentists and to centers only — see showsDentalChart.
 	{ key: 'dental_chart', label: 'مخطط الأسنان', icon: 'tooth',
-		info: 'مخطط للبالغ والطفل والمختلط، لكل سن سجله وحالته باللون: مخطَّط، قيد المعالجة، منجز. حشوات على مستوى السطح، جسور وزرعات، وأكثر من 90 إجراء. ونموذج ثلاثي الأبعاد للفكّين يعرض الحالة وخطة العلاج على أسنان المريض نفسها.' },
+		info: 'مخطط كامل لأسنان المريض يحفظ لكل سن تاريخه: ما أُجري عليه وما هو مخطَّط له. تراه ثنائي الأبعاد، أو نموذجاً ثلاثي الأبعاد يوضّح الحالة وخطة العلاج لمريضك.' },
 ] as const;
 
 /** A clinic of one of these is offered the dental chart. */

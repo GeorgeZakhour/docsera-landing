@@ -543,7 +543,7 @@ test('every interest has an icon and a short, specific note behind its info butt
 	for (const interest of INTERESTS) {
 		assert.match(interest.icon, /^[a-z0-9-]+$/, interest.key);
 		// long enough to say something real, short enough to read on a phone
-		assert.ok(interest.info.length >= 100 && interest.info.length <= 240, interest.key + ': ' + interest.info.length);
+		assert.ok(interest.info.length >= 80 && interest.info.length <= 240, interest.key + ': ' + interest.info.length);
 		assert.ok(interest.label.split(' ').length <= 3, interest.label);
 	}
 });
@@ -565,13 +565,19 @@ test('the notes say what the app really does', () => {
 	assert.match(info.loyalty, /يحجزها عبر التطبيق/);
 	// the founder's additions, 2026-10-11: both dental models, the profile's
 	// numbers and the referral programme, and the patient's central file
+	assert.match(info.dental_chart, /ثنائي الأبعاد/);
 	assert.match(info.dental_chart, /ثلاثي الأبعاد/);
 	assert.doesNotMatch(info.dental_chart, /قريباً/);
-	assert.match(info.visibility, /شاهد ملفك ومسح رمزك/);
+	// his second pass: each tooth's history, no colours, no lists of details
+	assert.match(info.dental_chart, /لكل سن تاريخه/);
+	assert.doesNotMatch(info.dental_chart, /لون/);
+	// new patients: exposure and room to grow, with the two tools he added
+	assert.match(info.visibility, /من وصل إليك ومن أين/);
 	assert.match(info.visibility, /برنامج إحالة/);
-	assert.match(info.patient_files, /ملف مركزي/);
-	// … which a doctor reads with the patient's consent, never as of right
-	assert.match(info.patient_files, /بموافقته/);
+	// the central file is named and not explained — and nothing here promises
+	// a doctor the records of the patient's other doctors
+	assert.match(info.patient_files, /ملفه المركزي/);
+	assert.doesNotMatch(info.patient_files, /أطبائه الآخرين/);
 });
 
 test('the dental chart is offered to dentists and to centers only', () => {
