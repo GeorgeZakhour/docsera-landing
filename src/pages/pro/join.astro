@@ -1,0 +1,583 @@
+---
+// /pro/join — the DocSera Pro request form. Own <html>, like the Pro page:
+// same dark tokens, fonts and Lucide bundle; it does not use Layout.astro.
+//
+// A three-step wizard. Nothing is sent before «إرسال الطلب»; the request then
+// goes to the edge function `pro_join_request` (DocSera-Pro). The behaviour
+// lives in src/scripts/pro-join.ts, the field rules in pro-join-validate.ts,
+// the lists and copy in src/config/pro-join.ts. See CLAUDE.md → "Pro request
+// form" before changing a field.
+import { proWhatsAppUrl } from '../../config/links';
+import {
+	GOVERNORATES,
+	INTERESTS,
+	NEXT_LABEL,
+	ROLES,
+	ROLE_COPY,
+	SCHEDULING_METHODS,
+	SPECIALTIES,
+	SPECIALTY_MULTI,
+	SPECIALTY_OTHER,
+	WHATSAPP_TEXT,
+	stepLabel,
+} from '../../config/pro-join';
+
+const SITE = 'https://docsera.app';
+const title = 'ابدأ تجربتك المجانية — DocSera Pro';
+const description = 'اطلب تجربة DocSera Pro لعيادتك أو مركزك: املأ طلباً قصيراً ونتواصل معك لتفعيل تجربتك المجانية.';
+const WA = proWhatsAppUrl(WHATSAPP_TEXT);
+const clinic = ROLE_COPY.clinic;
+---
+<!doctype html>
+<html lang="ar" dir="rtl">
+<head>
+<script is:inline>
+	document.documentElement.classList.add('js');
+	// Until the page script has loaded, a tap on «التالي» must not let the
+	// browser post the form into the address bar.
+	document.addEventListener('submit', function (e) { e.preventDefault(); }, true);
+</script>
+<meta charset="utf-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1" />
+<title>{title}</title>
+<meta name="description" content={description} />
+<link rel="canonical" href={SITE + '/pro/join'} />
+<link rel="icon" type="image/png" sizes="48x48" href="/favicon-48.png" />
+<link rel="apple-touch-icon" href="/apple-touch-icon.png" />
+
+<meta property="og:type" content="website" />
+<meta property="og:site_name" content="DocSera Pro" />
+<meta property="og:locale" content="ar_SY" />
+<meta property="og:title" content={title} />
+<meta property="og:description" content={description} />
+<meta property="og:url" content={SITE + '/pro/join'} />
+<meta property="og:image" content={SITE + '/og-image.png'} />
+<meta name="twitter:card" content="summary_large_image" />
+<meta name="twitter:title" content={title} />
+<meta name="twitter:description" content={description} />
+<meta name="twitter:image" content={SITE + '/og-image.png'} />
+
+<link rel="preload" href="/fonts/Cairo-600.woff2" as="font" type="font/woff2" crossorigin />
+<link rel="preload" href="/fonts/Cairo-800.woff2" as="font" type="font/woff2" crossorigin />
+
+<style is:global>
+/* Fonts and tokens are the Pro page's (src/pages/pro/index.astro). */
+@font-face{font-family:"Cairo";src:url("/fonts/Cairo-400.woff2") format("woff2");font-weight:400;font-display:swap;}
+@font-face{font-family:"Cairo";src:url("/fonts/Cairo-600.woff2") format("woff2");font-weight:600;font-display:swap;}
+@font-face{font-family:"Cairo";src:url("/fonts/Cairo-700.woff2") format("woff2");font-weight:700;font-display:swap;}
+@font-face{font-family:"Cairo";src:url("/fonts/Cairo-800.woff2") format("woff2");font-weight:800;font-display:swap;}
+@font-face{font-family:"Montserrat";src:url("/fonts/Montserrat-500.woff2") format("woff2");font-weight:500;font-display:swap;}
+@font-face{font-family:"Montserrat";src:url("/fonts/Montserrat-700.woff2") format("woff2");font-weight:700;font-display:swap;}
+
+:root {
+  --brand-primary:#00B5B7;
+  --brand-deep:#009092;
+  --brand-glow:#7DD3D4;
+  --brand-aura:rgba(0,181,183,0.18);
+
+  --bg-void:#001015;
+  --bg-base:#0F1A22;
+  --bg-paper:#1A252D;
+
+  --fg1:#E8EEF0;
+  --fg2:rgba(232,238,240,0.72);
+  --fg3:rgba(232,238,240,0.45);
+
+  --warm:#FFB494;
+
+  --stroke:rgba(255,255,255,0.08);
+  --stroke-soft:rgba(255,255,255,0.06);
+  --stroke-strong:rgba(255,255,255,0.16);
+
+  --font-ar:"Cairo","Segoe UI",system-ui,sans-serif;
+  --font-en:"Montserrat","Inter",system-ui,sans-serif;
+
+  --shadow-md:0 8px 16px -4px rgba(0,16,21,0.50), 0 2px 6px rgba(0,181,183,0.06);
+  --shadow-lg:0 24px 48px -12px rgba(0,16,21,0.55), 0 8px 16px -8px rgba(0,16,21,0.6);
+
+  --r-md:12px; --r-xl:24px; --r-pill:999px;
+}
+
+* { box-sizing:border-box; }
+html { -webkit-text-size-adjust:100%; }
+body {
+  margin:0;
+  position:relative;
+  direction:rtl;
+  background:var(--bg-void);
+  color:var(--fg1);
+  font-family:var(--font-ar);
+  -webkit-font-smoothing:antialiased;
+  text-rendering:optimizeLegibility;
+  overflow-x:hidden;
+}
+[hidden] { display:none !important; }
+
+/* Without JavaScript the wizard cannot work: only the WhatsApp link shows. */
+html:not(.js) [data-view="form"] { display:none; }
+
+.atmos { position:fixed; top:0; left:0; right:0; height:100vh; z-index:0; pointer-events:none; overflow:hidden;
+  background:
+    radial-gradient(1200px 560px at 50% -60px, #11303a 0%, #0c2129 26%, #06141b 52%, #02101500 100%),
+    linear-gradient(180deg,#04121a 0%, #041018 48%, #03121a 74%, #020d12 100%);
+}
+.atmos .orb { position:absolute; border-radius:999px; filter:blur(70px); mix-blend-mode:screen; opacity:0.9; }
+.atmos .grid {
+  position:absolute; inset:0;
+  background-image:
+    linear-gradient(rgba(255,255,255,0.022) 1px, transparent 1px),
+    linear-gradient(90deg, rgba(255,255,255,0.022) 1px, transparent 1px);
+  background-size:84px 84px;
+  -webkit-mask-image:radial-gradient(ellipse 70% 50% at 50% 0%, #000 20%, transparent 72%);
+  mask-image:radial-gradient(ellipse 70% 50% at 50% 0%, #000 20%, transparent 72%);
+}
+</style>
+
+<style>
+/* ---------- Layout ---------- */
+.shell { position:relative; z-index:2; min-height:100vh; display:flex; flex-direction:column; }
+.wrap { width:min(1040px, calc(100% - 32px)); margin-inline:auto; }
+
+.topbar { display:flex; align-items:center; justify-content:space-between; gap:16px; padding:22px 0 6px; }
+.brand { display:inline-flex; }
+.brand img { height:30px; width:auto; display:block; filter:drop-shadow(0 6px 16px rgba(0,181,183,0.35)); }
+.topbar .meta { font-family:var(--font-en); font-size:11px; letter-spacing:0.16em; text-transform:uppercase; color:var(--fg3); }
+
+.pj { flex:1; }
+.pj-grid { display:grid; grid-template-columns:minmax(0,1fr); gap:28px; padding:16px 0 48px; }
+
+/* ---------- Card ---------- */
+.pj-card { position:relative; width:100%; max-width:560px; margin-inline:auto; border-radius:var(--r-xl); padding:22px 18px 20px;
+  background:linear-gradient(150deg, rgba(255,255,255,0.085) 0%, rgba(255,255,255,0.028) 46%, rgba(255,255,255,0.06) 100%);
+  border:1px solid var(--stroke-strong);
+  box-shadow:inset 0 1px 0 rgba(255,255,255,0.16), inset 0 -1px 0 rgba(0,0,0,0.18), var(--shadow-lg); }
+.pj-card::after { content:""; position:absolute; top:0; left:24px; right:24px; height:1px;
+  background:linear-gradient(90deg, transparent, rgba(255,255,255,0.42), transparent); }
+
+.pj-head h1 { font-weight:800; font-size:clamp(23px,6vw,30px); line-height:1.4; margin:0; letter-spacing:-0.005em; }
+.pj-sub { font-size:15px; font-weight:500; color:var(--fg2); margin:4px 0 0; }
+.pj-prog { display:flex; gap:6px; margin-top:18px; }
+.pj-prog i { flex:1; height:4px; border-radius:var(--r-pill); background:rgba(255,255,255,0.12); transition:background .25s; }
+.pj-prog i.on { background:var(--brand-primary); }
+.pj-stepname { font-size:13.5px; font-weight:600; color:var(--brand-glow); margin:10px 0 0; }
+
+/* ---------- Steps and fields ---------- */
+.pj-step { outline:none; }
+.pj-step:not([hidden]) { animation:pjIn .22s ease-out; }
+@keyframes pjIn { from { opacity:0; transform:translateY(6px); } to { opacity:1; transform:none; } }
+
+.pj-f { margin:18px 0 0; padding:0; border:0; min-width:0; }
+.pj-l { display:block; float:none; width:100%; padding:0; margin:0 0 7px;
+  font-size:14px; font-weight:600; line-height:1.6; color:rgba(232,238,240,0.86); }
+.pj-l em { font-style:normal; color:var(--warm); margin-inline-start:4px; }
+.pj-l small { font-weight:400; font-size:12.5px; color:var(--fg3); margin-inline-start:6px; }
+.pj-branch { margin-top:12px; }
+
+.pj-in { display:block; width:100%; height:50px; padding:0 14px; border-radius:var(--r-md);
+  background-color:var(--bg-base); border:1px solid rgba(255,255,255,0.12); color:var(--fg1);
+  font-family:var(--font-ar); font-size:16px; font-weight:500; outline:none;
+  -webkit-appearance:none; appearance:none;
+  transition:border-color .15s, box-shadow .15s; }
+.pj-in::placeholder { color:rgba(232,238,240,0.4); opacity:1; }
+.pj-in:focus-visible { border-color:var(--brand-primary); box-shadow:0 0 0 3px var(--brand-aura); }
+.pj-in[aria-invalid="true"] { border-color:var(--warm); }
+textarea.pj-in { height:auto; min-height:96px; padding:12px 14px; line-height:1.7; resize:vertical; }
+select.pj-in { padding-inline-end:40px; cursor:pointer; text-overflow:ellipsis;
+  background-image:url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 24 24' fill='none' stroke='%237DD3D4' stroke-width='2.2' stroke-linecap='round' stroke-linejoin='round'%3E%3Cpath d='m6 9 6 6 6-6'/%3E%3C/svg%3E");
+  background-repeat:no-repeat; background-position:left 13px center; background-size:17px; }
+select.pj-in.is-empty { color:rgba(232,238,240,0.4); }
+select.pj-in option { color:#E8EEF0; background:#0F1A22; }
+/* A number is typed left to right; it sits on the right like every other answer. */
+.pj-in.ltr { direction:ltr; text-align:right; }
+.pj-in[type="number"] { -moz-appearance:textfield; }
+.pj-in[type="number"]::-webkit-outer-spin-button,
+.pj-in[type="number"]::-webkit-inner-spin-button { -webkit-appearance:none; margin:0; }
+
+.pj-two { display:grid; grid-template-columns:minmax(0,1fr) minmax(0,1fr); gap:10px; }
+
+.pj-err { margin:6px 0 0; font-size:13px; font-weight:600; line-height:1.6; color:var(--warm); }
+
+/* role: three radio rows */
+.pj-roles { display:grid; gap:8px; }
+.pj-role { position:relative; display:block; }
+.pj-role input, .pj-chip input { position:absolute; inset:0; width:100%; height:100%; margin:0; opacity:0; cursor:pointer; }
+.pj-role span { display:flex; align-items:center; gap:12px; min-height:52px; padding:10px 14px; border-radius:var(--r-md);
+  background:var(--bg-base); border:1px solid rgba(255,255,255,0.12);
+  font-size:15.5px; font-weight:600; line-height:1.5; color:var(--fg2);
+  transition:border-color .15s, background .15s, color .15s; }
+.pj-role span::before { content:""; flex:none; width:18px; height:18px; border-radius:var(--r-pill); border:1.5px solid rgba(255,255,255,0.3); }
+.pj-role input:checked + span { border-color:var(--brand-primary); background:rgba(0,181,183,0.12); color:var(--fg1); }
+.pj-role input:checked + span::before { border-color:var(--brand-primary); background:radial-gradient(var(--brand-primary) 0 42%, transparent 46%); }
+.pj-role input:focus-visible + span,
+.pj-chip input:focus-visible + span { box-shadow:0 0 0 3px var(--brand-aura); border-color:var(--brand-primary); }
+
+/* chips */
+.pj-chips { display:flex; flex-wrap:wrap; gap:8px; }
+.pj-chip { position:relative; display:inline-flex; }
+.pj-chip span { display:inline-flex; align-items:center; min-height:42px; padding:7px 16px; border-radius:var(--r-pill);
+  border:1px solid rgba(255,255,255,0.14); font-size:14.5px; font-weight:600; color:rgba(232,238,240,0.78);
+  transition:border-color .15s, background .15s, color .15s; }
+.pj-chip input:checked + span { background:rgba(0,181,183,0.18); border-color:var(--brand-primary); color:var(--brand-glow); }
+
+/* «واتساب على الرقم نفسه» */
+.pj-chk { position:relative; display:flex; align-items:center; gap:10px; min-height:36px; margin-top:12px;
+  font-size:14.5px; font-weight:500; color:rgba(232,238,240,0.86); cursor:pointer; }
+.pj-chk input { position:absolute; inset-inline-start:0; top:50%; width:22px; height:22px; margin:-11px 0 0; opacity:0; cursor:pointer; }
+.pj-box { flex:none; width:22px; height:22px; border-radius:6px; display:grid; place-items:center;
+  background:var(--bg-base); border:1.5px solid rgba(255,255,255,0.3); transition:background .15s, border-color .15s; }
+.pj-box::after { content:""; width:11px; height:6px; margin-top:-3px; border:solid #001015; border-width:0 0 2.4px 2.4px;
+  transform:rotate(-45deg); opacity:0; }
+.pj-chk input:checked + .pj-box { background:var(--brand-primary); border-color:var(--brand-primary); }
+.pj-chk input:checked + .pj-box::after { opacity:1; }
+.pj-chk input:focus-visible + .pj-box { box-shadow:0 0 0 3px var(--brand-aura); }
+
+/* honeypot: on the page for scripts that fill every field, never for people */
+.pj-hp { position:absolute; width:1px; height:1px; margin:-1px; padding:0; overflow:hidden; clip:rect(0 0 0 0); clip-path:inset(50%); white-space:nowrap; border:0; }
+
+/* ---------- Actions ---------- */
+.pj-actions { display:flex; gap:10px; margin-top:24px; }
+.pj-next, .pj-back, .pj-ghost { font-family:var(--font-ar); cursor:pointer; white-space:nowrap; }
+.pj-next { flex:1; min-width:0; height:54px; padding:0 20px; border:0; border-radius:var(--r-md);
+  display:inline-flex; align-items:center; justify-content:center; gap:9px; text-decoration:none;
+  font-weight:800; font-size:17px; color:#001015;
+  background:linear-gradient(180deg,#7DD3D4,#00B5B7);
+  box-shadow:0 12px 28px -6px rgba(0,181,183,0.55), inset 0 1px 0 rgba(255,255,255,0.35);
+  transition:transform 160ms cubic-bezier(.32,.72,0,1), box-shadow 160ms, opacity 160ms; }
+.pj-next:hover { transform:translateY(-2px); box-shadow:0 16px 34px -6px rgba(0,181,183,0.65), inset 0 1px 0 rgba(255,255,255,0.40); }
+.pj-next:focus-visible, .pj-back:focus-visible, .pj-ghost:focus-visible, .pj-line:focus-visible {
+  outline:2px solid var(--brand-glow); outline-offset:3px; }
+.pj-next:disabled { opacity:0.6; cursor:progress; transform:none; }
+.pj-next svg { width:19px; height:19px; flex:none; }
+.pj-back { flex:none; height:54px; padding:0 20px; border-radius:var(--r-md); background:transparent;
+  border:1px solid var(--stroke-strong); color:var(--fg2); font-weight:700; font-size:15px;
+  transition:color .15s, border-color .15s, background .15s; }
+.pj-back:hover { color:var(--fg1); border-color:rgba(255,255,255,0.3); background:rgba(255,255,255,0.04); }
+.pj-back:disabled { opacity:0.5; cursor:default; }
+
+.pj-consent { margin:12px 0 0; text-align:center; font-size:12.5px; line-height:1.7; color:var(--fg3); }
+.pj-consent a { color:var(--fg2); text-decoration:underline; text-underline-offset:3px; }
+.pj-consent a:hover { color:var(--fg1); }
+
+.pj-wa { margin:16px 0 0; text-align:center; font-size:14px; color:rgba(232,238,240,0.6); }
+.pj-wa a { color:var(--brand-glow); font-weight:700; text-decoration:none; }
+.pj-wa a:hover { text-decoration:underline; }
+
+/* ---------- Could not send ---------- */
+.pj-fail { margin-top:18px; padding:14px 16px; border-radius:14px;
+  background:rgba(255,180,148,0.10); border:1px solid rgba(255,180,148,0.34); }
+.pj-fail strong { display:block; font-size:15.5px; font-weight:800; color:#FFD9C4; }
+.pj-fail p { margin:4px 0 12px; font-size:13.5px; font-weight:500; line-height:1.7; color:var(--fg2); }
+.pj-fail-actions { display:flex; flex-wrap:wrap; gap:8px; }
+.pj-ghost, .pj-line { flex:1 1 auto; display:inline-flex; align-items:center; justify-content:center; gap:8px; min-height:44px; padding:0 16px;
+  border-radius:10px; font-family:var(--font-ar); font-weight:700; font-size:14px; text-decoration:none; }
+.pj-ghost { border:0; background:#FFD9C4; color:#2A1408; }
+.pj-ghost:disabled { opacity:0.6; cursor:progress; }
+.pj-line { border:1px solid rgba(255,255,255,0.22); color:var(--fg1); background:transparent; }
+.pj-line svg { width:17px; height:17px; flex:none; }
+
+/* ---------- Thank-you and WhatsApp-only ---------- */
+.pj-done { display:flex; flex-direction:column; align-items:center; text-align:center; padding:22px 2px 6px; }
+.pj-tick { width:72px; height:72px; border-radius:var(--r-pill); display:grid; place-items:center;
+  background:rgba(0,181,183,0.16); border:1.5px solid var(--brand-primary); color:var(--brand-glow); }
+.pj-tick svg { width:32px; height:32px; }
+.pj-done h1 { font-weight:800; font-size:clamp(22px,5.6vw,26px); line-height:1.4; margin:18px 0 0; outline:none; }
+.pj-done p { margin:8px 0 0; font-size:15px; font-weight:500; line-height:1.85; color:var(--fg2); max-width:34ch; }
+.pj-done .pj-ref { margin-top:18px; padding:9px 18px; border-radius:var(--r-pill); font-size:14px; color:var(--fg1);
+  background:var(--bg-base); border:1px solid rgba(255,255,255,0.12); }
+.pj-ref b { font-family:var(--font-en); font-weight:700; letter-spacing:0.08em; color:var(--brand-glow); }
+.pj-wabtn { margin-top:24px; width:100%; min-height:54px; padding:10px 16px; border-radius:var(--r-md);
+  display:flex; align-items:center; justify-content:center; gap:9px; text-decoration:none;
+  border:1px solid var(--brand-primary); color:var(--brand-glow); font-weight:800; font-size:15px; line-height:1.5;
+  transition:background .15s; }
+.pj-wabtn:hover { background:rgba(0,181,183,0.10); }
+.pj-wabtn svg { width:19px; height:19px; flex:none; }
+.pj-done .pj-hint { margin-top:8px; font-size:12.5px; color:var(--fg3); }
+.pj-done .pj-next { flex:none; width:100%; margin-top:24px; }
+
+.pj-noscript { margin:6px 0 4px; font-size:15px; line-height:1.9; color:var(--fg2); }
+.pj-noscript a { color:var(--brand-glow); font-weight:700; }
+
+/* ---------- «ماذا بعد الإرسال؟» (desktop) ---------- */
+.pj-side { display:none; }
+[data-state="closed"] .pj-side { display:none !important; }
+.pj-side h2 { font-weight:800; font-size:18px; line-height:1.5; margin:0 0 20px; color:var(--fg1); }
+.pj-side ol { list-style:none; margin:0; padding:0; display:flex; flex-direction:column; gap:22px; position:relative; }
+.pj-side ol::before { content:""; position:absolute; top:16px; bottom:16px; inset-inline-start:15px; width:1px; background:var(--stroke-strong); }
+.pj-side li { position:relative; display:flex; align-items:center; gap:14px; font-size:15.5px; font-weight:600; color:var(--fg1); }
+.pj-side li b { flex:none; width:31px; height:31px; border-radius:var(--r-pill); display:grid; place-items:center;
+  background:#12313a; border:1px solid rgba(0,181,183,0.45); color:var(--brand-glow);
+  font-family:var(--font-en); font-weight:700; font-size:13px; }
+
+.pj-foot { text-align:center; padding:22px 0 34px; border-top:1px solid var(--stroke-soft);
+  font-size:13px; line-height:1.8; color:var(--fg3); }
+
+@media (max-width:480px) {
+  .topbar .meta { display:none; }
+}
+@media (min-width:600px) {
+  .pj-card { padding:32px 32px 28px; }
+  .pj-grid { padding-top:28px; }
+}
+@media (min-width:960px) {
+  .pj-grid { grid-template-columns:minmax(0,560px) minmax(0,320px); justify-content:center; align-items:start; gap:36px; padding:40px 0 72px; }
+  .pj-card { margin-inline:0; }
+  [data-state="closed"] .pj-grid { grid-template-columns:minmax(0,560px); }
+  .pj-side { display:block; position:sticky; top:28px; padding:26px 24px; border-radius:var(--r-xl);
+    background:linear-gradient(150deg, rgba(36,48,57,0.55), rgba(15,26,34,0.55));
+    border:1px solid var(--stroke); box-shadow:inset 0 1px 0 rgba(255,255,255,0.06), var(--shadow-md); }
+}
+@media (prefers-reduced-motion:reduce) {
+  .pj-step:not([hidden]) { animation:none; }
+  .pj-next, .pj-prog i { transition:none; }
+}
+</style>
+</head>
+<body>
+
+<div class="atmos" aria-hidden="true">
+  <div class="orb" style="left:-6%;top:-8%;width:460px;height:460px;background:radial-gradient(circle,rgba(0,181,183,0.15),transparent 70%);"></div>
+  <div class="orb" style="left:74%;top:6%;width:420px;height:420px;background:radial-gradient(circle,rgba(125,211,212,0.16),transparent 70%);"></div>
+  <div class="orb" style="left:30%;top:54%;width:480px;height:480px;background:radial-gradient(circle,rgba(0,144,146,0.18),transparent 70%);"></div>
+  <div class="grid"></div>
+</div>
+
+<div class="shell">
+<div class="wrap">
+  <header class="topbar">
+    <a class="brand" href="/pro/" aria-label="DocSera Pro"><img src="/images/pro/logo-full-teal.png" alt="DocSera Pro" /></a>
+    <div class="meta">Practice platform · للأطباء</div>
+  </header>
+</div>
+
+<main class="pj wrap" data-pj data-state="form">
+  <div class="pj-grid">
+
+    <section class="pj-card" data-card>
+
+      <!-- ============ THE FORM ============ -->
+      <div data-view="form">
+        <header class="pj-head">
+          <h1>ابدأ تجربتك المجانية</h1>
+          <p class="pj-sub">املأ الطلب ونتواصل معك.</p>
+          <div class="pj-prog" aria-hidden="true"><i data-bar class="on"></i><i data-bar></i><i data-bar></i></div>
+          <p class="pj-stepname" id="pj-stepname" aria-live="polite">{stepLabel(1)}</p>
+        </header>
+
+        <form id="pj-form" novalidate>
+          <div class="pj-hp" aria-hidden="true">
+            <label for="pj-reference">اترك هذا الحقل فارغاً</label>
+            <input type="text" id="pj-reference" name="reference" tabindex="-1" autocomplete="off" />
+          </div>
+
+          <!-- 1 · من أنت -->
+          <div class="pj-step" data-step="1" tabindex="-1">
+            <fieldset class="pj-f" aria-describedby="pj-err-role">
+              <legend class="pj-l">أين تعمل؟<em aria-hidden="true">*</em></legend>
+              <div class="pj-roles">
+                {ROLES.map((role, index) => (
+                  <label class="pj-role">
+                    <input type="radio" name="role" value={role.key} checked={index === 0} required />
+                    <span>{role.label}</span>
+                  </label>
+                ))}
+              </div>
+              <p class="pj-err" id="pj-err-role" hidden></p>
+            </fieldset>
+
+            <div class="pj-f">
+              <label class="pj-l" for="pj-full_name">الاسم الكامل<em aria-hidden="true">*</em></label>
+              <input class="pj-in" type="text" id="pj-full_name" name="full_name" autocomplete="name" maxlength="80"
+                placeholder="د. سامر الحلبي" required aria-describedby="pj-err-full_name" />
+              <p class="pj-err" id="pj-err-full_name" hidden></p>
+            </div>
+
+            <div class="pj-f">
+              <label class="pj-l" for="pj-phone">رقم الموبايل<em aria-hidden="true">*</em></label>
+              <input class="pj-in ltr" type="tel" id="pj-phone" name="phone" inputmode="tel" dir="ltr" autocomplete="tel" maxlength="24"
+                placeholder="09XX XXX XXX" required aria-describedby="pj-err-phone" />
+              <p class="pj-err" id="pj-err-phone" hidden></p>
+              <label class="pj-chk">
+                <input type="checkbox" name="whatsapp_same" checked />
+                <span class="pj-box" aria-hidden="true"></span>
+                <span>واتساب على الرقم نفسه</span>
+              </label>
+            </div>
+
+            <div class="pj-f" data-branch="whatsapp" hidden>
+              <label class="pj-l" for="pj-whatsapp">رقم واتساب<em aria-hidden="true">*</em></label>
+              <input class="pj-in ltr" type="tel" id="pj-whatsapp" name="whatsapp" inputmode="tel" dir="ltr" autocomplete="tel" maxlength="24"
+                placeholder="09XX XXX XXX" required aria-describedby="pj-err-whatsapp" />
+              <p class="pj-err" id="pj-err-whatsapp" hidden></p>
+            </div>
+          </div>
+
+          <!-- 2 · مكان عملك -->
+          <div class="pj-step" data-step="2" tabindex="-1" hidden>
+            <div class="pj-f">
+              <label class="pj-l" for="pj-specialty"><span data-specialty-label>{clinic.specialtyLabel}</span><em aria-hidden="true">*</em></label>
+              <select class="pj-in is-empty" id="pj-specialty" name="specialty" required aria-describedby="pj-err-specialty">
+                <option value="" data-specialty-placeholder>{clinic.specialtyPlaceholder}</option>
+                <option value={SPECIALTY_MULTI} data-multi>{SPECIALTY_MULTI}</option>
+                {SPECIALTIES.map((name) => <option value={name}>{name}</option>)}
+                <option value={SPECIALTY_OTHER}>{SPECIALTY_OTHER}</option>
+              </select>
+              <div class="pj-branch" data-branch="specialty_other" hidden>
+                <label class="pj-l" for="pj-specialty_other">اكتب الاختصاص<em aria-hidden="true">*</em></label>
+                <input class="pj-in" type="text" id="pj-specialty_other" name="specialty_other" maxlength="80"
+                  required aria-describedby="pj-err-specialty" />
+              </div>
+              <p class="pj-err" id="pj-err-specialty" hidden></p>
+            </div>
+
+            <div class="pj-f">
+              <label class="pj-l" for="pj-place_name"><span data-place-label>{clinic.placeLabel}</span><em data-place-required aria-hidden="true" hidden>*</em><small data-place-optional>اختياري</small></label>
+              <input class="pj-in" type="text" id="pj-place_name" name="place_name" maxlength="100"
+                placeholder={clinic.placePlaceholder} aria-describedby="pj-err-place_name" />
+              <p class="pj-err" id="pj-err-place_name" hidden></p>
+            </div>
+
+            <div class="pj-two">
+              <div class="pj-f">
+                <label class="pj-l" for="pj-governorate">المحافظة<em aria-hidden="true">*</em></label>
+                <select class="pj-in is-empty" id="pj-governorate" name="governorate" required aria-describedby="pj-err-governorate">
+                  <option value="">اختر</option>
+                  {GOVERNORATES.map((name) => <option value={name}>{name}</option>)}
+                </select>
+                <p class="pj-err" id="pj-err-governorate" hidden></p>
+              </div>
+              <div class="pj-f">
+                <label class="pj-l" for="pj-area">المنطقة أو الحي<em aria-hidden="true">*</em></label>
+                <input class="pj-in" type="text" id="pj-area" name="area" maxlength="80"
+                  placeholder="المزة…" required aria-describedby="pj-err-area" />
+                <p class="pj-err" id="pj-err-area" hidden></p>
+              </div>
+            </div>
+
+            <div class="pj-f" data-branch="doctors_count" hidden>
+              <label class="pj-l" for="pj-doctors_count">عدد الأطباء في المركز<small>اختياري</small></label>
+              <input class="pj-in" type="number" id="pj-doctors_count" name="doctors_count" inputmode="numeric" min="1" max="200" step="1"
+                aria-describedby="pj-err-doctors_count" />
+              <p class="pj-err" id="pj-err-doctors_count" hidden></p>
+            </div>
+          </div>
+
+          <!-- 3 · ما تحتاجه -->
+          <div class="pj-step" data-step="3" tabindex="-1" hidden>
+            <fieldset class="pj-f" aria-describedby="pj-err-scheduling_method">
+              <legend class="pj-l">كيف تُنظَّم المواعيد اليوم؟<small>اختياري</small></legend>
+              <div class="pj-chips">
+                {SCHEDULING_METHODS.map((method) => (
+                  <label class="pj-chip">
+                    <input type="radio" name="scheduling_method" value={method.key} />
+                    <span>{method.label}</span>
+                  </label>
+                ))}
+              </div>
+              <p class="pj-err" id="pj-err-scheduling_method" hidden></p>
+              <div class="pj-branch" data-branch="competitor_name" hidden>
+                <label class="pj-l" for="pj-competitor_name">اسم البرنامج<small>اختياري</small></label>
+                <input class="pj-in" type="text" id="pj-competitor_name" name="competitor_name" maxlength="60"
+                  aria-describedby="pj-err-competitor_name" />
+                <p class="pj-err" id="pj-err-competitor_name" hidden></p>
+              </div>
+            </fieldset>
+
+            <fieldset class="pj-f" aria-describedby="pj-err-interests">
+              <legend class="pj-l">ما الذي يهمّك أكثر؟<small>اختياري</small></legend>
+              <div class="pj-chips">
+                {INTERESTS.map((interest) => (
+                  <label class="pj-chip">
+                    <input type="checkbox" name="interests" value={interest.key} />
+                    <span>{interest.label}</span>
+                  </label>
+                ))}
+              </div>
+              <p class="pj-err" id="pj-err-interests" hidden></p>
+            </fieldset>
+
+            <div class="pj-f">
+              <label class="pj-l" for="pj-note">ملاحظة<small>اختياري</small></label>
+              <textarea class="pj-in" id="pj-note" name="note" maxlength="500" rows="3"
+                placeholder="أي شيء تودّ أن نعرفه…" aria-describedby="pj-err-note"></textarea>
+              <p class="pj-err" id="pj-err-note" hidden></p>
+            </div>
+          </div>
+
+          <div class="pj-fail" id="pj-fail" role="alert" hidden>
+            <strong id="pj-fail-title"></strong>
+            <p id="pj-fail-body"></p>
+            <div class="pj-fail-actions">
+              <button type="button" class="pj-ghost" id="pj-retry">أعد المحاولة</button>
+              <a class="pj-line" data-wa="form" href={WA}><i data-lucide="message-circle"></i>راسلنا على واتساب</a>
+            </div>
+          </div>
+
+          <div class="pj-actions">
+            <button type="button" class="pj-back" id="pj-back" hidden>السابق</button>
+            <button type="submit" class="pj-next" id="pj-next"><span data-next-label>{NEXT_LABEL}</span></button>
+          </div>
+          <p class="pj-consent" data-consent hidden>بإرسال الطلب توافق على <a href="/pro/privacy-policy/">سياسة الخصوصية</a></p>
+        </form>
+
+        <p class="pj-wa">أو <a data-wa="form" href={WA}>تواصل معنا على واتساب</a></p>
+      </div>
+
+      <!-- ============ SENT ============ -->
+      <div class="pj-done" data-view="thanks" hidden>
+        <div class="pj-tick" aria-hidden="true"><i data-lucide="check"></i></div>
+        <h1 tabindex="-1">وصلنا طلبك يا دكتور</h1>
+        <p>سنتواصل معك قريباً<br />على الرقم الذي تركته.</p>
+        <p class="pj-ref" data-code-row>رمز طلبك · <b data-code dir="ltr"></b></p>
+        <a class="pj-wabtn" data-wa="thanks" href={WA}><i data-lucide="message-circle"></i>لا تريد الانتظار؟ راسلنا على واتساب</a>
+        <p class="pj-hint" data-code-hint>الرسالة تحمل رمز طلبك تلقائياً.</p>
+      </div>
+
+      <!-- ============ WHATSAPP ONLY ============ -->
+      <div class="pj-done" data-view="closed" hidden>
+        <div class="pj-tick" aria-hidden="true"><i data-lucide="message-circle"></i></div>
+        <h1 tabindex="-1">راسلنا على واتساب</h1>
+        <p>نستقبل طلبات التجربة المجانية عبر واتساب حالياً. اكتب لنا ونتواصل معك.</p>
+        <a class="pj-next" data-wa="closed" href={WA}><i data-lucide="message-circle"></i>تواصل معنا على واتساب</a>
+      </div>
+
+      <noscript>
+        <p class="pj-noscript">لإرسال الطلب من هذه الصفحة يلزم تفعيل JavaScript في متصفّحك. يمكنك مراسلتنا مباشرةً: <a href={WA}>تواصل معنا على واتساب</a></p>
+      </noscript>
+    </section>
+
+    <aside class="pj-side" aria-labelledby="pj-side-title">
+      <h2 id="pj-side-title">ماذا بعد الإرسال؟</h2>
+      <ol>
+        <li><b>1</b>نستلم طلبك</li>
+        <li><b>2</b>نتواصل معك</li>
+        <li><b>3</b>نفعّل تجربتك المجانية</li>
+      </ol>
+    </aside>
+
+  </div>
+</main>
+
+<div class="wrap">
+  <footer class="pj-foot">دوكسيرا برو · منصّة إدارة العيادة للأطباء</footer>
+</div>
+</div><!-- /shell -->
+
+<script is:inline src="/js/lucide.min.js" defer></script>
+<script is:inline>
+	document.addEventListener('DOMContentLoaded', function () {
+		if (window.lucide) lucide.createIcons();
+	});
+</script>
+<script>
+	import { SUPABASE_ANON_KEY, SUPABASE_URL, attributionSource, fireBeacon } from '../../scripts/reach';
+	import { initProJoin } from '../../scripts/pro-join.ts';
+
+	initProJoin({
+		endpoint: SUPABASE_URL + '/functions/v1/pro_join_request',
+		anonKey: SUPABASE_ANON_KEY,
+		source: attributionSource(),
+		beacon: fireBeacon,
+	});
+</script>
+</body>
+</html>

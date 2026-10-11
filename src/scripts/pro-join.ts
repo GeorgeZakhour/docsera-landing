@@ -513,6 +513,9 @@ export function initProJoin(env: JoinPageEnv): void {
 	// ---------------------------------------------------------- steps
 
 	function showStep(target: Step, moved: boolean): void {
+		// Stepping back abandons the attempt that raised this step's errors;
+		// they are not waiting for the doctor when he returns.
+		if (target < step) clearErrors(steps[step - 1]);
 		step = target;
 		steps.forEach((el) => {
 			el.hidden = Number(el.dataset.step) !== target;
@@ -588,7 +591,7 @@ export function initProJoin(env: JoinPageEnv): void {
 
 	function showView(next: View): void {
 		view = next;
-		root!.dataset.view = next;
+		root!.dataset.state = next; // the side panel follows it
 		(Object.keys(views) as View[]).forEach((name) => {
 			views[name].hidden = name !== next;
 		});
@@ -767,7 +770,7 @@ export function initProJoin(env: JoinPageEnv): void {
 	applyRole();
 	syncBranches();
 
-	const start = reachable(restored && restored.pj !== 'done' ? restored.pj : 1);
+	const start = reachable(restored ? restored.pj : 1);
 	writeEntry({ pj: start, d: restored?.d ?? 0, prev: restored?.pj === start ? restored.prev : false }, false);
 	showStep(start, false);
 
