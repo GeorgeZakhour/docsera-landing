@@ -92,6 +92,13 @@ lands in a founder-only inbox in DocSera-Admin. Design and contracts: DocSera-Pr
   `src/config/pro-join.ts` are part of the rule. The specialty list is not: the request
   stores the label as text. This copy is the strict one on purpose — whatever it lets
   through, the other two accept.
+- **Two numbers, two rules** (founder, 2026-10-11): the mobile is a Syrian mobile; the
+  WhatsApp number is a Syrian mobile **or any number written with its country code**
+  (`+49…`, `0049…`) — a doctor's WhatsApp is often on a number from abroad. Never make
+  the WhatsApp field Syrian-only again. The mobile, WhatsApp and doctors-count fields
+  rewrite Arabic-keyboard digits to Latin as they are typed (`latinDigits`, one
+  character to one, so the caret does not move); the count is a text input because a
+  number input silently drops «١٢».
 - **Honeypot**: the hidden input `name="reference"`, sent as `hp`. A filled honeypot is
   answered `accepted` and dropped by the server, so never give it a name a browser
   autofills (website, email, company, address).
