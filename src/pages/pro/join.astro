@@ -455,7 +455,8 @@ select.pj-in option { color:#E8EEF0; background:#0F1A22; }
 
             <div class="pj-f" data-branch="doctors_count" hidden>
               <label class="pj-l" for="pj-doctors_count">عدد الأطباء في المركز<small>اختياري</small></label>
-              <input class="pj-in" type="number" id="pj-doctors_count" name="doctors_count" inputmode="numeric" min="1" max="200" step="1"
+              <!-- text, not number: a number input silently drops ١٢ typed on an Arabic keyboard -->
+              <input class="pj-in ltr" type="text" id="pj-doctors_count" name="doctors_count" inputmode="numeric" dir="ltr" autocomplete="off" maxlength="3"
                 aria-describedby="pj-err-doctors_count" />
               <p class="pj-err" id="pj-err-doctors_count" hidden></p>
             </div>

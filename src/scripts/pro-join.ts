@@ -364,9 +364,7 @@ export function initProJoin(env: JoinPageEnv): void {
 			place_name: placeName.value,
 			governorate: governorate.value,
 			area: value('area'),
-			// A number input reports '' for text it cannot read. Keep that
-			// from passing as "left empty": the doctor did type something.
-			doctors_count: doctorsCount.value || (doctorsCount.validity.badInput ? '?' : ''),
+			doctors_count: doctorsCount.value,
 			scheduling_method: picked('scheduling_method')[0] ?? '',
 			competitor_name: value('competitor_name'),
 			interests: picked('interests'),
@@ -393,7 +391,7 @@ export function initProJoin(env: JoinPageEnv): void {
 		governorate.value = a.governorate;
 		if (governorate.value !== a.governorate) governorate.value = '';
 		named<HTMLInputElement>('area').value = a.area;
-		doctorsCount.value = a.doctors_count === '?' ? '' : a.doctors_count;
+		doctorsCount.value = a.doctors_count;
 		check('scheduling_method', [a.scheduling_method]);
 		named<HTMLInputElement>('competitor_name').value = a.competitor_name;
 		check('interests', a.interests);
