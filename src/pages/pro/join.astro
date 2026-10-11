@@ -405,8 +405,9 @@ select.pj-in option { color:#E8EEF0; background:#0F1A22; }
 
             <div class="pj-f" data-branch="whatsapp" hidden>
               <label class="pj-l" for="pj-whatsapp">رقم واتساب<em aria-hidden="true">*</em></label>
+              <!-- any country: a doctor's WhatsApp is often on a number from abroad -->
               <input class="pj-in ltr" type="tel" id="pj-whatsapp" name="whatsapp" inputmode="tel" dir="ltr" autocomplete="tel" maxlength="24"
-                placeholder="09XX XXX XXX" required aria-describedby="pj-err-whatsapp" />
+                placeholder="09XX XXX XXX  /  +49 …" required aria-describedby="pj-err-whatsapp" />
               <p class="pj-err" id="pj-err-whatsapp" hidden></p>
             </div>
           </div>

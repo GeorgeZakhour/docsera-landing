@@ -114,7 +114,11 @@ export function flattenLines(raw: string): string {
 
 // ---------------------------------------------------------------- phone
 
-function latinDigits(raw: string): string {
+/**
+ * Digits typed on an Arabic keyboard → Latin digits. One character in, one
+ * character out, so a field can be rewritten while its caret stays in place.
+ */
+export function latinDigits(raw: string): string {
 	return raw
 		.replace(/[٠-٩]/g, (d) => String(d.charCodeAt(0) - 0x0660)) // Arabic-Indic
 		.replace(/[۰-۹]/g, (d) => String(d.charCodeAt(0) - 0x06f0)); // Eastern Arabic
@@ -131,6 +135,23 @@ export function normalizePhone(raw: unknown): string | null {
 	if (typeof raw !== 'string') return null;
 	const match = SYRIAN_MOBILE.exec(latinDigits(raw).replace(PHONE_NOISE, ''));
 	return match ? '+963' + match[1] : null;
+}
+
+/**
+ * A WhatsApp number → E.164, else null. A doctor's WhatsApp is often on a
+ * number from abroad (founder, 2026-10-11): a Syrian mobile in any form the
+ * mobile field takes, or any other number written WITH its country code
+ * (`+49…` or `0049…`). A foreign number without its code is not guessed at.
+ */
+export function normalizeWhatsApp(raw: unknown): string | null {
+	const syrian = normalizePhone(raw);
+	if (syrian) return syrian;
+	if (typeof raw !== 'string') return null;
+	const match = /^(?:\+|00)([1-9]\d{6,14})$/.exec(latinDigits(raw).replace(PHONE_NOISE, ''));
+	if (!match) return null;
+	// A Syrian mobile that did not pass above has a digit missing or to spare.
+	if (match[1].startsWith('9639')) return null;
+	return '+' + match[1];
 }
 
 // ---------------------------------------------------------------- source, cta
@@ -163,7 +184,7 @@ function evaluate(a: JoinAnswers): { form: JoinForm; bad: Set<string> } {
 	if (typeof a.whatsapp_same !== 'boolean') bad.add('whatsapp_same');
 	const whatsappSame = a.whatsapp_same !== false;
 	// A second number typed and then abandoned is dropped, not checked.
-	const whatsapp = whatsappSame ? null : need('whatsapp', normalizePhone(a.whatsapp) ?? false, '');
+	const whatsapp = whatsappSame ? null : need('whatsapp', normalizeWhatsApp(a.whatsapp) ?? false, '');
 
 	// ---- step 2
 	let specialty = '';

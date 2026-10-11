@@ -22,6 +22,8 @@ import {
 	reviveAnswers,
 	stepOfField,
 	validateStep,
+	normalizeWhatsApp,
+	latinDigits,
 } from './pro-join-validate.ts';
 import type { JoinAnswers, JoinForm } from './pro-join-validate.ts';
 
@@ -177,6 +179,46 @@ test('whatsapp: null while it is the same number; required and checked when it i
 
 	assert.deepEqual(bad({ whatsapp_same: false, whatsapp: '' }), ['whatsapp']);
 	assert.deepEqual(bad({ whatsapp_same: false, whatsapp: '011223344' }), ['whatsapp']);
+});
+
+// Founder, 2026-10-11: a doctor's WhatsApp is often on a number from abroad.
+test('whatsapp: a number from any country, written with its code', () => {
+	for (const [typed, stored] of [
+		['+4915732113277', '+4915732113277'],
+		['+49 157 3211 3277', '+4915732113277'],
+		['0049 157-3211-3277', '+4915732113277'],
+		['+1 (415) 555-0100', '+14155550100'],
+		['+٩٧١ ٥٠ ١٢٣ ٤٥٦٧', '+971501234567'],
+		['+963 11 222 3344', '+963112223344'],
+		['0933 000 111', '+963933000111'],
+		['٠٩٣٣٠٠٠١١١', '+963933000111'],
+		['933000111', '+963933000111'],
+	]) assert.equal(normalizeWhatsApp(typed), stored, typed);
+	assert.equal(form({ whatsapp_same: false, whatsapp: '+49 157 3211 3277' }).whatsapp, '+4915732113277');
+});
+
+test('whatsapp: a foreign number without its country code is not guessed', () => {
+	for (const typed of ['4915732113277', '015732113277', '+96394412345', '+9639441234567', '+0123456789', '+49', '+491573211327712345', '', null, 49157]) {
+		assert.equal(normalizeWhatsApp(typed), null, String(typed));
+	}
+	assert.deepEqual(bad({ whatsapp_same: false, whatsapp: '4915732113277' }), ['whatsapp']);
+});
+
+test('the mobile itself stays a Syrian mobile', () => {
+	assert.equal(normalizePhone('+4915732113277'), null);
+	assert.deepEqual(bad({ phone: '+4915732113277' }), ['phone']);
+});
+
+// Founder, 2026-10-11: «make the field write the numbers in English even if
+// the keyboard was Arabic».
+test('digits typed on an Arabic keyboard become Latin digits, and nothing else changes', () => {
+	assert.equal(latinDigits('٠٩٤٤ ١٢٣ ٤٥٦'), '0944 123 456');
+	assert.equal(latinDigits('۰۹۴۴۱۲۳۴۵۶'), '0944123456');
+	assert.equal(latinDigits('+٤٩ 157'), '+49 157');
+	assert.equal(latinDigits('١٢'), '12');
+	assert.equal(latinDigits('0944 abc د.'), '0944 abc د.');
+	// one character in, one character out: the caret does not move
+	assert.equal(latinDigits('٠٩٤٤-١٢٣').length, '٠٩٤٤-١٢٣'.length);
 });
 
 test('whatsapp_same must be a boolean', () => {

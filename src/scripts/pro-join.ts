@@ -33,6 +33,7 @@ import {
 	reviveAnswers,
 	stepOfField,
 	validateStep,
+	latinDigits,
 } from './pro-join-validate.ts';
 import type { JoinAnswers, JoinForm, Role, Step } from './pro-join-validate.ts';
 
@@ -700,9 +701,25 @@ export function initProJoin(env: JoinPageEnv): void {
 	backButton.addEventListener('click', goBack);
 	retryButton.addEventListener('click', () => void send());
 
+	// The three number fields show Latin digits whatever the keyboard
+	// (founder, 2026-10-11). latinDigits maps one character to one, so the
+	// caret is put back exactly where the doctor left it.
+	const NUMBER_FIELDS = new Set(['phone', 'whatsapp', 'doctors_count']);
+	const keepLatinDigits = (field: HTMLInputElement): void => {
+		const latin = latinDigits(field.value);
+		if (latin === field.value) return;
+		const start = field.selectionStart;
+		const end = field.selectionEnd;
+		field.value = latin;
+		try {
+			if (start !== null && end !== null) field.setSelectionRange(start, end);
+		} catch { /* a field that has no caret to restore */ }
+	};
+
 	const onEdit = (event: Event): void => {
 		const target = event.target as Control;
 		if (target === honeypot || view !== 'form') return;
+		if (NUMBER_FIELDS.has(target.name)) keepLatinDigits(target as HTMLInputElement);
 		if (target.name === 'role') applyRole();
 		if (target.name === 'scheduling_method') scheduling = target.value;
 		syncBranches();
