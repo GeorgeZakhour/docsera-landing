@@ -539,12 +539,32 @@ test('the interests carry the labels the founder chose', () => {
 	});
 });
 
-test('every interest has an icon and one plain sentence behind its info button', () => {
+test('every interest has an icon and a short, specific note behind its info button', () => {
 	for (const interest of INTERESTS) {
 		assert.match(interest.icon, /^[a-z0-9-]+$/, interest.key);
-		assert.ok(interest.info.length >= 30 && interest.info.length <= 140, interest.key + ': ' + interest.info.length);
+		// long enough to say something real, short enough to read on a phone
+		assert.ok(interest.info.length >= 100 && interest.info.length <= 240, interest.key + ': ' + interest.info.length);
 		assert.ok(interest.label.split(' ').length <= 3, interest.label);
 	}
+});
+
+// Founder, 2026-10-11: «we make each feature much weaker than how it is in
+// real… be accurate». These pin what he corrected and what the app does not do.
+test('the notes say what the app really does', () => {
+	const info = Object.fromEntries(INTERESTS.map((i) => [i.key, i.info as string]));
+	// accounting: the centre's and the visiting doctor's percentages
+	assert.match(info.accounting, /نسبة المركز/);
+	assert.match(info.accounting, /الطبيب الزائر/);
+	// team: permissions are the secretary's, set by each doctor
+	assert.match(info.team, /صلاحيات سكرتيره/);
+	// messages live in the clinic's inbox, not inside the patient's file
+	assert.doesNotMatch(info.messaging, /محفوظة في ملف المريض/);
+	// offers: the app counts codes; it shows no income figure per offer
+	assert.doesNotMatch(info.offers, /دخل/);
+	// points are for visits booked through the app, not for every visit
+	assert.match(info.loyalty, /يحجزها عبر التطبيق/);
+	// the 3D model is not in any doctor's hands yet
+	assert.match(info.dental_chart, /ثلاثي الأبعاد قريباً/);
 });
 
 test('the dental chart is offered to dentists and to centers only', () => {

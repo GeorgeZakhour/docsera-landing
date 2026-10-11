@@ -107,36 +107,41 @@ export const SCHEDULING_METHODS = [
 
 // What the platform does, as the last thing a doctor sees before sending.
 // The founder's wording (2026-10-11): two words, three at most, nothing that
-// reads like an advertisement; the sentence behind the info button says what
-// the Pro page itself says, no more. The keys are part of the field rules —
+// reads like an advertisement. The sentence behind each info button states
+// what the Pro APP does today — written from its code and feature records
+// (DocSera-Pro docs/launch/87, «the fact sheet»), not from the marketing page,
+// which undersells it. Every claim there is live in production; what is built
+// but switched off (Reach analytics, the referral programme) is left out, and
+// the 3D dental model is named as coming. Check a sentence against the app
+// before changing it. The keys are part of the field rules —
 // they have twins in the edge function and in the table's CHECK.
 // `icon` is a Lucide name, except `tooth`, which the page draws itself.
 export const INTERESTS = [
 	{ key: 'self_booking', label: 'حجز ذاتي للمريض', icon: 'calendar-check',
-		info: 'المريض يحجز من هاتفه في الأوقات التي تحددها، فتقلّ المكالمات.' },
+		info: 'المريض يحجز من تطبيقه في الأوقات التي تحددها، ولكل سبب زيارة مدته وجدوله. تأكيد يدوي إن أردت، تذكير تلقائي قبل الموعد، وحظر تلقائي لمن يكرر الغياب.' },
 	{ key: 'waiting_room', label: 'غرفة الانتظار', icon: 'armchair',
-		info: 'من وصل، من ينتظر، ومن دخل المعاينة. تتابعها مباشرة.' },
+		info: 'من وصل وكم انتظر كل مريض، بترتيب يوازن بين وقت الانتظار والتأخر عن الموعد، وتعدّله بالسحب. تستدعي المريض بضغطة، وتُنبَّه لأي زيارة بقيت مفتوحة.' },
 	{ key: 'patient_files', label: 'ملفات شاملة', icon: 'folder-heart',
-		info: 'تاريخ المريض وزياراته وتحاليله وصوره ووصفاته في ملف واحد.' },
+		info: 'معلومات المريض وزياراته وفواتيره وتقاريره وتاريخه الطبي في ملف واحد، مع ما يرفعه هو من تطبيقه. لكل وثيقة خصوصيتها، ولكل ملف رقمه في ترقيم عيادتك.' },
 	{ key: 'reports', label: 'التقارير الطبية', icon: 'file-text',
-		info: 'قوالب جاهزة للشكوى والتشخيص والإجراءات، مع تصدير PDF ومشاركته مع المريض.' },
+		info: 'عشرون نوع قسم، من الوصفة إلى خريطة الجسم ومقارنة الصور، وقوالب جاهزة لاختصاصك وأخرى تحفظها أنت. يعرض نتيجة المريض السابقة بجانب الجديدة، وتختار ما يراه حين تشاركه.' },
 	{ key: 'accounting', label: 'محاسبة ذكية', icon: 'calculator',
-		info: 'فواتير ودفعات جزئية وخصومات بالليرة والدولار، مع إيراداتك ومصاريفك وصافي ربحك في لوحة واحدة.' },
+		info: 'فواتير بالليرة والدولار ودفعات جزئية، وتكاليف المخبر والمواد داخل الفاتورة مع كشف حساب لكل مورد. وفي المراكز: نسبة المركز من دخل كل طبيب ونسبة الطبيب الزائر تُحسبان تلقائياً، مع المستحقات والتسويات.' },
 	{ key: 'messaging', label: 'مراسلة المرضى', icon: 'messages-square',
-		info: 'نصوص وصور وملاحظات صوتية، محفوظة في ملف المريض لا في هاتفك الشخصي.' },
+		info: 'محادثات مشفّرة بالنص والصور والصوت وملفات PDF، خارج هاتفك الشخصي. أنت تحدد من يراسلك ولأي سبب، تقبل الطلب أو ترفضه، وتحفظ أي مرفق في ملف المريض.' },
 	{ key: 'team', label: 'إدارة الفريق', icon: 'users-round',
-		info: 'تضيف السكرتير والزملاء بدعوة، وتحدد لكل واحد ما يراه وما يفعله.' },
+		info: 'أطباء وأخصائيون وسكرتارية في حساب واحد. كل طبيب يحدد صلاحيات سكرتيره في عمله هو، بقوالب جاهزة (استقبال، مدير مكتب، بديل الطبيب) أو صلاحية بصلاحية.' },
 	{ key: 'insights', label: 'إحصاءات العيادة', icon: 'chart-column',
-		info: 'عدد المواعيد والمرضى والدخل، وأوقات الازدحام ونسبة المتغيّبين.' },
+		info: 'الإيرادات حسب سبب الزيارة وبالعملتين، أوقات الذروة، نسبة عدم الحضور ومن يكرره بالاسم، المرضى الجدد والعائدون، وكل ذلك مقارنةً بالفترة السابقة.' },
 	{ key: 'visibility', label: 'مرضى جدد', icon: 'user-plus',
-		info: 'صفحتك تظهر في تطبيق دوكسيرا لمن يبحث عن طبيب، مع رابط ورمز خاص بك.' },
+		info: 'ملفك يظهر لمن يبحث في تطبيق دوكسيرا بالاسم أو الاختصاص أو على الخريطة، مع خدماتك وأسعارك وصور عيادتك. ولك رابط ورمز QR خاص، جاهز للطباعة.' },
 	{ key: 'offers', label: 'عروض وخصومات', icon: 'badge-percent',
-		info: 'استشارة أولى مجانية أو خصم يُحسب تلقائياً عند الفاتورة، وترى أثره على دخلك.' },
+		info: 'خمسة أنواع من العروض، من الاستشارة الأولى المجانية إلى الخصم بنسبة أو مبلغ. يأخذ المريض رمزه الشخصي من ملفك، يُمسح عند الفاتورة فيُطبَّق الخصم، وتتابع كم رمزاً استُخدم.' },
 	{ key: 'loyalty', label: 'نقاط الولاء', icon: 'gift',
-		info: 'نقاط للمريض مع كل زيارة، وتذكير بمناسباته وبمن غاب عنك منذ مدة.' },
+		info: 'المريض يكسب نقاطاً عن كل زيارة يحجزها عبر التطبيق. وينبّهك دوكسيرا إلى سبع مناسبات، كعيد ميلاده وغيابه عن المتابعة، مع هدية جاهزة تصله في تطبيقه بضغطة.' },
 	// Offered to dentists and to centers only — see showsDentalChart.
 	{ key: 'dental_chart', label: 'مخطط الأسنان', icon: 'tooth',
-		info: 'مخطط ثنائي الأبعاد لكامل الفكّين يسجّل حالة كل سن وإجراءه، ونموذج ثلاثي الأبعاد يوضّح الحالة وخطة العلاج للمريض.' },
+		info: 'مخطط للبالغ والطفل والمختلط، لكل سن سجله وحالته باللون: مخطَّط، قيد المعالجة، منجز. حشوات على مستوى السطح، جسور وزرعات، وأكثر من 90 إجراء، في عرض كامل قابل للتكبير. والنموذج ثلاثي الأبعاد قريباً.' },
 ] as const;
 
 /** A clinic of one of these is offered the dental chart. */
