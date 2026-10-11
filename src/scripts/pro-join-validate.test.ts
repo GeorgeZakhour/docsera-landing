@@ -562,7 +562,7 @@ test('the notes say what the app really does', () => {
 	// offers: the app counts codes; it shows no income figure per offer
 	assert.doesNotMatch(info.offers, /دخل/);
 	// points are for visits booked through the app, not for every visit
-	assert.match(info.loyalty, /يحجزها عبر التطبيق/);
+	assert.match(info.loyalty, /المحجوزة عبر التطبيق/);
 	// the founder's additions, 2026-10-11: both dental models, the profile's
 	// numbers and the referral programme, and the patient's central file
 	assert.match(info.dental_chart, /ثنائي الأبعاد/);
@@ -578,6 +578,14 @@ test('the notes say what the app really does', () => {
 	// a doctor the records of the patient's other doctors
 	assert.match(info.patient_files, /ملفه المركزي/);
 	assert.doesNotMatch(info.patient_files, /أطبائه الآخرين/);
+});
+
+// Founder, 2026-10-11: «dont list them exactly… tell always (and more…)».
+test('every note is open-ended: examples and «and more», never a closed list or a count', () => {
+	for (const interest of INTERESTS) {
+		assert.match(interest.info, /وغيرها|وغيرهما|وغير ذلك|وأكثر|والكثير غيرها/, interest.key);
+		assert.doesNotMatch(interest.info, /[0-9٠-٩]|عشرون|خمسة أنواع|سبع مناسبات/, interest.key);
+	}
 });
 
 test('the dental chart is offered to dentists and to centers only', () => {
