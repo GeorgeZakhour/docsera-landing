@@ -1,7 +1,11 @@
 ---
+import { proWhatsAppUrl } from '../../config/links';
+import { WHATSAPP_TEXT } from '../../config/pro-join';
+
 const SITE = 'https://docsera.app';
 const title = 'DocSera Pro — عيادتك كلها في مكانٍ واحد';
 const description = 'منصّة DocSera Pro لإدارة العيادة: المواعيد، ملفات المرضى، التقارير، المراسلة، المحاسبة، والتحليلات في مكانٍ واحد. جرّب الباقة الكاملة مجاناً.';
+const WA_TALK = proWhatsAppUrl(WHATSAPP_TEXT);
 ---
 <!doctype html>
 <html lang="ar" dir="rtl">
@@ -1279,7 +1283,7 @@ body {
         <div class="en-line">Everything your clinic needs — one quiet place.</div>
         <p class="lede">أدِر عيادتك اليوم، وكن أوّل من يجده مرضاك غداً.</p>
         <div class="hero-cta-row">
-          <a class="btn btn-wa lg" href="#" id="waHero"><i data-lucide="message-circle" class="wa-ico"></i>ابدأ تجربتك المجانية</a>
+          <a class="btn btn-wa lg" href="/pro/join/?cta=hero" id="joinHero">ابدأ تجربتك المجانية<i data-lucide="arrow-left"></i></a>
         </div>
         <div class="hero-badges">
           <span class="seal"><i data-lucide="badge-check"></i>سعرٌ مخفّضٌ لأول ١٠٠ طبيب</span>
@@ -1979,8 +1983,8 @@ body {
       <div class="en-line">A beginning worthy of your practice.</div>
       <p class="body">المرضى يبحثون الآن عن طبيبٍ مثلك على دوكسيرا. جهّز صفحتك، أدِر عيادتك كلها من مكانٍ واحد، ودع دوكسيرا يساعدك على النموّ.</p>
       <div class="cta-row">
-        <a class="btn btn-wa lg" href="#" id="waClose"><i data-lucide="message-circle" class="wa-ico"></i>ابدأ على واتساب — نوثّق ترخيصك ونفعّل باقتك</a>
-        <a class="quiet" href="#" id="waTalk">تحدّث إلينا</a>
+        <a class="btn btn-wa lg" href="/pro/join/?cta=closing" id="joinClose">ابدأ تجربتك المجانية<i data-lucide="arrow-left"></i></a>
+        <a class="quiet" href={WA_TALK} id="waTalk">تحدّث إلينا</a>
       </div>
       <div class="reassure">
         <span><i data-lucide="check-circle"></i>دون دفعٍ مسبق</span>
@@ -2005,9 +2009,11 @@ body {
     var el = document.getElementById('noise');
     if(el) el.style.backgroundImage = "url(\"data:image/svg+xml;utf8," + encodeURIComponent(svg).replace(/%2523/g,'%23') + "\")";
 
-    // WhatsApp links
-    var WA = "https://wa.me/963983322665?text=" + encodeURIComponent("مرحباً، أودّ تجربة DocSera Pro لعيادتي.");
-    ["waHero","waClose","waTalk"].forEach(function(id){ var a=document.getElementById(id); if(a) a.href=WA; });
+    // Request-form links: carry a valid ?s= along, so the request keeps its source
+    var src = new URLSearchParams(window.location.search).get('s') || '';
+    if(/^[a-z_]{1,24}$/.test(src)){
+      ["joinHero","joinClose"].forEach(function(id){ var a=document.getElementById(id); if(a) a.href += "&s=" + src; });
+    }
 
     // QR code (offer) — finder squares + deterministic modules
     function buildQR(){
