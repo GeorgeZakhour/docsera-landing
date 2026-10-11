@@ -23,6 +23,8 @@ import {
 	SPECIALTY_OTHER,
 	stepLabel,
 	whatsappTextWithCode,
+	INTERESTS_ALL_LABEL,
+	INTERESTS_NONE_LABEL,
 } from '../config/pro-join.ts';
 import {
 	checkAnswers,
@@ -34,6 +36,7 @@ import {
 	stepOfField,
 	validateStep,
 	latinDigits,
+	showsDentalChart,
 } from './pro-join-validate.ts';
 import type { JoinAnswers, JoinForm, Role, Step } from './pro-join-validate.ts';
 
@@ -333,6 +336,12 @@ export function initProJoin(env: JoinPageEnv): void {
 	const placeName = named<HTMLInputElement>('place_name');
 	const doctorsCount = named<HTMLInputElement>('doctors_count');
 	const schedulingRadios = many<HTMLInputElement>('input[name="scheduling_method"]');
+	// The interest tiles: one shared note under whichever (i) was tapped.
+	const tiles = one<HTMLElement>('[data-tiles]');
+	const pop = one<HTMLElement>('[data-pop]');
+	const allButton = one<HTMLButtonElement>('[data-interests-all]');
+	const dentalTile = one<HTMLElement>('[data-interest="dental_chart"]');
+	let openInfo: HTMLButtonElement | null = null;
 	// «متعدد الاختصاصات» is in the markup once; it is taken out of the list
 	// for every role but the center owner (an <option> cannot be reliably
 	// hidden on iOS, only removed).
@@ -431,9 +440,60 @@ export function initProJoin(env: JoinPageEnv): void {
 		one('[data-branch="specialty_other"]').hidden = specialty.value !== SPECIALTY_OTHER;
 		one('[data-branch="doctors_count"]').hidden = currentRole() !== 'center_owner';
 		one('[data-branch="competitor_name"]').hidden = scheduling !== 'competitor';
+		// The dental chart is offered to dentists and to centers only.
+		const dental = showsDentalChart(currentRole(), specialty.value, named<HTMLInputElement>('specialty_other').value);
+		if (dentalTile.hidden === dental) {
+			dentalTile.hidden = !dental;
+			if (!dental) {
+				dentalTile.querySelector<HTMLInputElement>('input')!.checked = false;
+				closeInfo();
+			}
+		}
+		syncAll();
 		// A select has no placeholder attribute; an unanswered one is dimmed like one.
 		specialty.classList.toggle('is-empty', specialty.value === '');
 		governorate.classList.toggle('is-empty', governorate.value === '');
+	}
+
+	// ---------------------------------------------------------- interests
+
+	/** The tiles the doctor can see — the dental one is not always among them. */
+	function offeredBoxes(): HTMLInputElement[] {
+		return many<HTMLInputElement>('input[name="interests"]')
+			.filter((box) => !box.closest<HTMLElement>('[data-interest]')!.hidden);
+	}
+
+	/** «اختيار الكل» reads «إلغاء الكل» once everything offered is picked. */
+	function syncAll(): void {
+		const boxes = offeredBoxes();
+		const all = boxes.length > 0 && boxes.every((box) => box.checked);
+		allButton.textContent = all ? INTERESTS_NONE_LABEL : INTERESTS_ALL_LABEL;
+		allButton.setAttribute('aria-pressed', String(all));
+	}
+
+	function closeInfo(): void {
+		if (!openInfo) return;
+		openInfo.setAttribute('aria-expanded', 'false');
+		openInfo = null;
+		pop.hidden = true;
+	}
+
+	/** Opens the note right under the tapped tile; above it on the last row. */
+	function toggleInfo(button: HTMLButtonElement): void {
+		if (openInfo === button) {
+			closeInfo();
+			return;
+		}
+		closeInfo();
+		const tile = button.closest<HTMLElement>('[data-interest]')!;
+		one<HTMLElement>('[data-pop-title]').textContent = button.dataset.title ?? '';
+		one<HTMLElement>('[data-pop-text]').textContent = button.dataset.text ?? '';
+		pop.hidden = false;
+		const shown = many<HTMLElement>('[data-interest]').filter((each) => !each.hidden);
+		const lastRow = tile.offsetTop === shown[shown.length - 1].offsetTop;
+		pop.style.top = (lastRow ? tile.offsetTop - pop.offsetHeight - 6 : tile.offsetTop + tile.offsetHeight + 6) + 'px';
+		button.setAttribute('aria-expanded', 'true');
+		openInfo = button;
 	}
 
 	// ---------------------------------------------------------- draft
@@ -514,6 +574,7 @@ export function initProJoin(env: JoinPageEnv): void {
 	// ---------------------------------------------------------- steps
 
 	function showStep(target: Step, moved: boolean): void {
+		closeInfo();
 		// Stepping back abandons the attempt that raised this step's errors;
 		// they are not waiting for the doctor when he returns.
 		if (target < step) clearErrors(steps[step - 1]);
@@ -731,6 +792,26 @@ export function initProJoin(env: JoinPageEnv): void {
 	};
 	form.addEventListener('input', onEdit);
 	form.addEventListener('change', onEdit);
+
+	tiles.addEventListener('click', (event) => {
+		const button = (event.target as HTMLElement).closest<HTMLButtonElement>('[data-info]');
+		if (button) toggleInfo(button);
+	});
+	// A tap anywhere else, or Escape, puts the note away.
+	document.addEventListener('click', (event) => {
+		const target = event.target as HTMLElement;
+		if (openInfo && !target.closest('[data-info]') && !target.closest('[data-pop]')) closeInfo();
+	});
+	document.addEventListener('keydown', (event) => {
+		if (event.key === 'Escape') closeInfo();
+	});
+	allButton.addEventListener('click', () => {
+		const boxes = offeredBoxes();
+		const all = boxes.every((box) => box.checked);
+		boxes.forEach((box) => { box.checked = !all; });
+		syncAll();
+		saveDraft();
+	});
 
 	// The scheduling question is optional: a second tap on the chosen answer
 	// takes it back, which a radio group does not do on its own. `scheduling`

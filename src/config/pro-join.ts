@@ -105,14 +105,45 @@ export const SCHEDULING_METHODS = [
 	{ key: 'none', label: 'لا شيء' },
 ] as const;
 
+// What the platform does, as the last thing a doctor sees before sending.
+// The founder's wording (2026-10-11): two words, three at most, nothing that
+// reads like an advertisement; the sentence behind the info button says what
+// the Pro page itself says, no more. The keys are part of the field rules —
+// they have twins in the edge function and in the table's CHECK.
+// `icon` is a Lucide name, except `tooth`, which the page draws itself.
 export const INTERESTS = [
-	{ key: 'appointments', label: 'المواعيد' },
-	{ key: 'patient_files', label: 'ملفات المرضى' },
-	{ key: 'accounting', label: 'المحاسبة' },
-	{ key: 'reports', label: 'التقارير' },
-	{ key: 'dental_chart', label: 'مخطط الأسنان' },
-	{ key: 'visibility', label: 'الظهور للمرضى' },
+	{ key: 'self_booking', label: 'حجز ذاتي للمريض', icon: 'calendar-check',
+		info: 'المريض يحجز من هاتفه في الأوقات التي تحددها، فتقلّ المكالمات.' },
+	{ key: 'waiting_room', label: 'غرفة الانتظار', icon: 'armchair',
+		info: 'من وصل، من ينتظر، ومن دخل المعاينة. تتابعها مباشرة.' },
+	{ key: 'patient_files', label: 'ملفات شاملة', icon: 'folder-heart',
+		info: 'تاريخ المريض وزياراته وتحاليله وصوره ووصفاته في ملف واحد.' },
+	{ key: 'reports', label: 'التقارير الطبية', icon: 'file-text',
+		info: 'قوالب جاهزة للشكوى والتشخيص والإجراءات، مع تصدير PDF ومشاركته مع المريض.' },
+	{ key: 'accounting', label: 'محاسبة ذكية', icon: 'calculator',
+		info: 'فواتير ودفعات جزئية وخصومات بالليرة والدولار، مع إيراداتك ومصاريفك وصافي ربحك في لوحة واحدة.' },
+	{ key: 'messaging', label: 'مراسلة المرضى', icon: 'messages-square',
+		info: 'نصوص وصور وملاحظات صوتية، محفوظة في ملف المريض لا في هاتفك الشخصي.' },
+	{ key: 'team', label: 'إدارة الفريق', icon: 'users-round',
+		info: 'تضيف السكرتير والزملاء بدعوة، وتحدد لكل واحد ما يراه وما يفعله.' },
+	{ key: 'insights', label: 'إحصاءات العيادة', icon: 'chart-column',
+		info: 'عدد المواعيد والمرضى والدخل، وأوقات الازدحام ونسبة المتغيّبين.' },
+	{ key: 'visibility', label: 'مرضى جدد', icon: 'user-plus',
+		info: 'صفحتك تظهر في تطبيق دوكسيرا لمن يبحث عن طبيب، مع رابط ورمز خاص بك.' },
+	{ key: 'offers', label: 'عروض وخصومات', icon: 'badge-percent',
+		info: 'استشارة أولى مجانية أو خصم يُحسب تلقائياً عند الفاتورة، وترى أثره على دخلك.' },
+	{ key: 'loyalty', label: 'نقاط الولاء', icon: 'gift',
+		info: 'نقاط للمريض مع كل زيارة، وتذكير بمناسباته وبمن غاب عنك منذ مدة.' },
+	// Offered to dentists and to centers only — see showsDentalChart.
+	{ key: 'dental_chart', label: 'مخطط الأسنان', icon: 'tooth',
+		info: 'مخطط ثنائي الأبعاد لكامل الفكّين يسجّل حالة كل سن وإجراءه، ونموذج ثلاثي الأبعاد يوضّح الحالة وخطة العلاج للمريض.' },
 ] as const;
+
+/** A clinic of one of these is offered the dental chart. */
+export const DENTAL_SPECIALTIES: readonly string[] = ['طب الأسنان', 'تقويم الأسنان', 'جراحة الفم والوجه والفكين'];
+
+export const INTERESTS_ALL_LABEL = 'اختيار الكل';
+export const INTERESTS_NONE_LABEL = 'إلغاء الكل';
 
 // ---------------------------------------------------------------- copy
 

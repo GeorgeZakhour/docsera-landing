@@ -24,6 +24,7 @@ import {
 	validateStep,
 	normalizeWhatsApp,
 	latinDigits,
+	showsDentalChart,
 } from './pro-join-validate.ts';
 import type { JoinAnswers, JoinForm } from './pro-join-validate.ts';
 
@@ -322,14 +323,19 @@ test('competitor_name: optional, at most 60 characters', () => {
 
 // ---------------------------------------------------------------- interests, note
 
-test('interests: a unique subset of the six keys', () => {
+test('interests: a unique subset of the twelve keys', () => {
 	assert.deepEqual(INTERESTS.map((i) => i.key), [
-		'appointments', 'patient_files', 'accounting', 'reports', 'dental_chart', 'visibility',
+		'self_booking', 'waiting_room', 'patient_files', 'reports', 'accounting', 'messaging',
+		'team', 'insights', 'visibility', 'offers', 'loyalty', 'dental_chart',
 	]);
 	assert.deepEqual(form({ interests: [] }).interests, []);
-	assert.deepEqual(form({ interests: ['accounting', 'appointments'] }).interests, ['accounting', 'appointments']);
-	assert.deepEqual(form({ interests: INTERESTS.map((i) => i.key) }).interests.length, 6);
-	assert.deepEqual(bad({ interests: ['appointments', 'billing'] }), ['interests']);
+	assert.deepEqual(form({ interests: ['accounting', 'self_booking'] }).interests, ['accounting', 'self_booking']);
+	// a center is shown every option, the dental chart included
+	const center = { role: 'center_owner', place_name: 'مركز الشام الطبي', specialty: 'متعدد الاختصاصات' };
+	assert.deepEqual(form({ ...center, interests: INTERESTS.map((i) => i.key) }).interests.length, 12);
+	assert.deepEqual(bad({ interests: ['self_booking', 'pricing'] }), ['interests']);
+	// the key the first version of the form used is gone
+	assert.deepEqual(bad({ interests: ['appointments'] }), ['interests']);
 	assert.deepEqual(bad({ interests: ['reports', 'reports'] }), ['interests']);
 	assert.deepEqual(bad({ interests: 'reports' as unknown as string[] }), ['interests']);
 });
@@ -436,7 +442,7 @@ test('a complete request carries every contract key and nothing else', () => {
 		doctors_count: '8',
 		scheduling_method: 'competitor',
 		competitor_name: 'برنامج ما',
-		interests: ['appointments', 'visibility'],
+		interests: ['self_booking', 'visibility'],
 		note: 'نعمل على فترتين',
 	});
 	assert.deepEqual(sent, {
@@ -452,7 +458,7 @@ test('a complete request carries every contract key and nothing else', () => {
 		doctors_count: 8,
 		scheduling_method: 'competitor',
 		competitor_name: 'برنامج ما',
-		interests: ['appointments', 'visibility'],
+		interests: ['self_booking', 'visibility'],
 		note: 'نعمل على فترتين',
 	});
 });
@@ -515,13 +521,46 @@ test('the specialty list keeps the database order and ends with the free-text op
 	assert.equal(owner.length, 53);
 });
 
-test('the interests carry their Arabic labels', () => {
+// The founder's wording, 2026-10-11: two words, three at most, nothing cheesy.
+test('the interests carry the labels the founder chose', () => {
 	assert.deepEqual(Object.fromEntries(INTERESTS.map((i) => [i.key, i.label])), {
-		appointments: 'المواعيد',
-		patient_files: 'ملفات المرضى',
-		accounting: 'المحاسبة',
-		reports: 'التقارير',
+		self_booking: 'حجز ذاتي للمريض',
+		waiting_room: 'غرفة الانتظار',
+		patient_files: 'ملفات شاملة',
+		reports: 'التقارير الطبية',
+		accounting: 'محاسبة ذكية',
+		messaging: 'مراسلة المرضى',
+		team: 'إدارة الفريق',
+		insights: 'إحصاءات العيادة',
+		visibility: 'مرضى جدد',
+		offers: 'عروض وخصومات',
+		loyalty: 'نقاط الولاء',
 		dental_chart: 'مخطط الأسنان',
-		visibility: 'الظهور للمرضى',
 	});
+});
+
+test('every interest has an icon and one plain sentence behind its info button', () => {
+	for (const interest of INTERESTS) {
+		assert.match(interest.icon, /^[a-z0-9-]+$/, interest.key);
+		assert.ok(interest.info.length >= 30 && interest.info.length <= 140, interest.key + ': ' + interest.info.length);
+		assert.ok(interest.label.split(' ').length <= 3, interest.label);
+	}
+});
+
+test('the dental chart is offered to dentists and to centers only', () => {
+	assert.equal(showsDentalChart('clinic', 'طب الأسنان', ''), true);
+	assert.equal(showsDentalChart('clinic', 'تقويم الأسنان', ''), true);
+	assert.equal(showsDentalChart('clinic', 'جراحة الفم والوجه والفكين', ''), true);
+	assert.equal(showsDentalChart('clinic', 'اختصاص آخر', 'زراعة أسنان'), true);
+	assert.equal(showsDentalChart('clinic', 'أمراض القلب', ''), false);
+	assert.equal(showsDentalChart('clinic', 'اختصاص آخر', 'طب الأعشاب'), false);
+	assert.equal(showsDentalChart('clinic', '', ''), false);
+	assert.equal(showsDentalChart('center_owner', 'أمراض القلب', ''), true);
+	assert.equal(showsDentalChart('center_staff', 'أمراض القلب', ''), true);
+});
+
+test('an option that is not offered is dropped, not refused', () => {
+	// a cardiologist who somehow carries the dental chart (he switched specialty)
+	assert.deepEqual(form({ specialty: 'أمراض القلب', interests: ['dental_chart', 'reports'] }).interests, ['reports']);
+	assert.deepEqual(form({ specialty: 'طب الأسنان', interests: ['dental_chart', 'reports'] }).interests, ['dental_chart', 'reports']);
 });

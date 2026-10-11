@@ -19,6 +19,7 @@ import {
 	SCHEDULING_METHODS,
 	SPECIALTY_OTHER,
 	specialtiesFor,
+	DENTAL_SPECIALTIES,
 } from '../config/pro-join.ts';
 
 export type Role = (typeof ROLES)[number]['key'];
@@ -212,7 +213,12 @@ function evaluate(a: JoinAnswers): { form: JoinForm; bad: Set<string> } {
 		null,
 	);
 	const competitorName = scheduling === 'competitor' ? need('competitor_name', text(a.competitor_name, 0, 60, false), null) : null;
-	const interests = need('interests', subset(a.interests), []);
+	// An option the doctor is not offered is dropped, like any other field of
+	// another branch: a cardiologist who picked the dental chart while he was
+	// still «طب الأسنان» does not carry it.
+	const dentalOffered = showsDentalChart(role, a.specialty, a.specialty_other);
+	const interests = (need('interests', subset(a.interests), []) ?? [])
+		.filter((key) => key !== 'dental_chart' || dentalOffered);
 	const note = need('note', text(a.note, 0, 500, false), null);
 
 	return {
@@ -244,6 +250,16 @@ function count(raw: unknown): number | null | false {
 	if (!/^\d{1,3}$/.test(typed)) return false;
 	const n = Number(typed);
 	return n >= 1 && n <= 200 ? n : false;
+}
+
+/**
+ * Is the dental chart offered? To a center always (it may well have a
+ * dentist); to a clinic when its specialty is a dental one.
+ */
+export function showsDentalChart(role: string, specialty: string, specialtyOther: string): boolean {
+	if (role === 'center_owner' || role === 'center_staff') return true;
+	if (DENTAL_SPECIALTIES.includes(specialty)) return true;
+	return specialty === SPECIALTY_OTHER && /أسنان|اللثة/.test(specialtyOther ?? '');
 }
 
 /** A unique subset of the interest keys. */
