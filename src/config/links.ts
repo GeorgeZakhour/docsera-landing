@@ -18,6 +18,17 @@ export const APK_URL = '/downloads/docsera.apk';
 export const WEB_APP_URL = 'https://my.docsera.app';
 export const INSTAGRAM_URL = 'https://www.instagram.com/docsera.app/';
 
+// DocSera Pro's sales line on WhatsApp, in the form wa.me wants: country
+// code, no plus, no leading zero. The only place the number is written for
+// a link — /pro and /pro/join both build theirs with proWhatsAppUrl().
+export const PRO_WHATSAPP_NUMBER = '963983322665';
+
+/** A wa.me chat with the Pro line, opening with `text` already typed. */
+export function proWhatsAppUrl(text: string = ''): string {
+	const base = `https://wa.me/${PRO_WHATSAPP_NUMBER}`;
+	return text ? `${base}?text=${encodeURIComponent(text)}` : base;
+}
+
 const SOURCE_RE = /^[a-z_]{1,24}$/;
 
 /**

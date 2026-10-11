@@ -52,8 +52,8 @@ function form(over: Partial<JoinAnswers> = {}): JoinForm {
 
 const CONTROL = 'سامر\u0007الحلبي'; // a bell character
 const NEWLINE = 'سامر\nالحلبي';
-const BIDI_OVERRIDE = 'سامر‮الحلبي';
-const BIDI_ISOLATE = 'سامر⁦الحلبي⁩';
+const BIDI_OVERRIDE = 'سامر\u202Eالحلبي';
+const BIDI_ISOLATE = 'سامر\u2066الحلبي\u2069';
 
 // ---------------------------------------------------------------- phone
 
@@ -76,8 +76,8 @@ test('phone forms normalise to one value', () => {
 });
 
 test('phone pasted from a contact card with invisible direction marks is the same number', () => {
-	assert.equal(normalizePhone('‪+963 944 123 456‬'), '+963944123456');
-	assert.equal(normalizePhone('‎0944123456‏'), '+963944123456');
+	assert.equal(normalizePhone('\u202A+963 944 123 456\u202C'), '+963944123456');
+	assert.equal(normalizePhone('\u200E0944123456\u200F'), '+963944123456');
 });
 
 test('phone that is not a Syrian mobile is refused', () => {

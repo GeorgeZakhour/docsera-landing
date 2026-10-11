@@ -84,7 +84,7 @@ const INTEREST_KEYS: readonly string[] = INTERESTS.map((i) => i.key);
 // Control characters (which include line breaks and tabs) and the bidi
 // embedding / override / isolate controls. Nothing else is refused: angle
 // brackets, quotes and emoji are text.
-const FORBIDDEN = /[\p{Cc}‪-‮⁦-⁩]/u;
+const FORBIDDEN = /[\p{Cc}\u202A-\u202E\u2066-\u2069]/u;
 
 /**
  * One text answer against its rule. Returns the value to send, null when
@@ -123,7 +123,7 @@ function latinDigits(raw: string): string {
 // Direction marks are invisible and travel with a number copied out of a
 // chat or a contact card. They are stripped here, before the contract's rule
 // is applied; what is sent is the canonical number, which carries none.
-const PHONE_NOISE = /[\s\-().‎‏؜‪-‮⁦-⁩﻿]/g;
+const PHONE_NOISE = /[\s\-().\u200E\u200F\u061C\u202A-\u202E\u2066-\u2069\uFEFF]/g;
 const SYRIAN_MOBILE = /^(?:\+963|00963|963|0)?(9\d{8})$/;
 
 /** A Syrian mobile in any of the forms people type → `+9639XXXXXXXX`, else null. */
