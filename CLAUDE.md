@@ -21,8 +21,9 @@ src/
 │   ├── AppBar.astro       # "get the app" bar for Android / in-app browsers
 │   └── EntityCta.astro    # install → open-in-app block shared by doctor + center pages
 ├── config/
-│   └── links.ts      # every store / APK / web-app / social URL, and playUrl()
-├── scripts/          # browser modules shared between pages (analytics, entity CTA)
+│   ├── links.ts      # every store / APK / web-app / social URL, playUrl(), proWhatsAppUrl()
+│   └── pro-join.ts   # the Pro request form's closed lists and copy
+├── scripts/          # browser modules shared between pages (analytics, entity CTA, Pro request form)
 ├── layouts/
 │   └── Layout.astro  # Main layout with global styles and CSS variables
 └── pages/
@@ -30,7 +31,7 @@ src/
     ├── download.astro
     ├── doctor.astro  # single shell for every /doctor/<token> (nginx try_files)
     ├── center.astro  # single shell for every /center/<id>
-    ├── pro/          # DocSera Pro page (own <html>, does not use Layout)
+    ├── pro/          # DocSera Pro page + /pro/join request form (own <html>, do not use Layout)
     ├── features.astro
     ├── about.astro
     └── help.astro
@@ -61,6 +62,51 @@ The patient app is on the App Store and Google Play (since 2026-10-06).
 - Pages are previewed against the real image: `docker build -t docsera-landing-preview . &&
   docker run -p 127.0.0.1:8091:80 docsera-landing-preview` (the dev server cannot route
   `/doctor/<token>` and does not apply the nginx redirects).
+
+## Pro request form (`/pro/join`)
+
+The two main buttons on `/pro` open a three-step form instead of WhatsApp. A sent request
+lands in a founder-only inbox in DocSera-Admin. Design and contracts: DocSera-Pro
+`docs/superpowers/specs/2026-10-11-pro-join-requests-design.md` and
+`docs/superpowers/plans/2026-10-11-pro-join-requests.md`.
+
+- **Files**: `src/pages/pro/join.astro` (markup, styles) · `src/scripts/pro-join.ts` (the
+  send path and the page controller) · `src/scripts/pro-join-validate.ts` (field rules,
+  pure) · `src/config/pro-join.ts` (lists, copy).
+- **The server is one endpoint**: `POST {SUPABASE_URL}/functions/v1/pro_join_request` with
+  the anon key — an edge function in DocSera-Pro. Every outcome is HTTP 200:
+  - `{action:"open"}` → `{open:true, token}` or `{open:false}`
+  - `{action:"submit", token, hp, source, cta, form}` → `{status}`: `accepted` (+ `code`) ·
+    `invalid` (+ `fields`) · `retry` · `busy` · `closed`
+- **Closed means WhatsApp only.** On page load, an answer that is not 200, or `open:false`,
+  replaces the form with a WhatsApp panel. That is what makes it safe to deploy this site
+  before the server, or with the flag `pro_join_form_enabled` off. A request that could
+  not be made at all (offline, timeout) keeps the form; the token is asked for on send.
+- **Tokens.** The server answers `retry` for a token younger than 4 s or older than 2 h.
+  The page never sends one younger than 4 s; on `retry` it fetches a new one, waits, and
+  resends once. Do not shorten that wait.
+- **The field rules exist three times and change together**: `pro-join-validate.ts` here,
+  `supabase/functions/pro_join_request/validate.ts` in DocSera-Pro, and the CHECK
+  constraints on `pro_join_requests` (the DocSera-Pro migration). Role keys,
+  the 14 governorates (spelling included), scheduling keys and interest keys in
+  `src/config/pro-join.ts` are part of the rule. The specialty list is not: the request
+  stores the label as text. This copy is the strict one on purpose — whatever it lets
+  through, the other two accept.
+- **Honeypot**: the hidden input `name="reference"`, sent as `hp`. A filled honeypot is
+  answered `accepted` and dropped by the server, so never give it a name a browser
+  autofills (website, email, company, address).
+- **Tests**: `npm test` — `node:test` on the `.ts` files directly (Node 22.18+), no
+  dependency. That is why these modules import each other with the `.ts` extension, and
+  why `pro-join.ts` must not import `reach.ts` (it reads `import.meta.env` when loaded);
+  the page hands it the endpoint, the key and `fireBeacon`.
+- **Trying it locally**: the dev server and a plain build talk to the PRODUCTION API — a
+  local submit is a real request in the founder's inbox. Build against staging:
+  `PUBLIC_SUPABASE_URL=https://api-staging.docsera.app npm run build && npm run preview`.
+- **Copy**: never state a trial length, here or on `/pro`. Arabic uses «».
+- The Pro WhatsApp number is `PRO_WHATSAPP_NUMBER` in `links.ts`; build links with
+  `proWhatsAppUrl(text)`.
+- Funnel beacons through `fireBeacon`, category `acquisition`, never any personal data:
+  `pro_join_opened`, `pro_join_step`, `pro_join_submitted`, `pro_join_whatsapp`.
 
 ## Design System
 
@@ -96,6 +142,7 @@ The patient app is on the App Store and Google Play (since 2026-10-06).
 npm run dev       # Development server
 npm run build     # Build to ./dist/
 npm run preview   # Preview production build
+npm test          # Unit tests for the Pro request form (node:test, Node 22.18+)
 ```
 
 ## Deployment
