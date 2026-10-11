@@ -563,8 +563,15 @@ test('the notes say what the app really does', () => {
 	assert.doesNotMatch(info.offers, /دخل/);
 	// points are for visits booked through the app, not for every visit
 	assert.match(info.loyalty, /يحجزها عبر التطبيق/);
-	// the 3D model is not in any doctor's hands yet
-	assert.match(info.dental_chart, /ثلاثي الأبعاد قريباً/);
+	// the founder's additions, 2026-10-11: both dental models, the profile's
+	// numbers and the referral programme, and the patient's central file
+	assert.match(info.dental_chart, /ثلاثي الأبعاد/);
+	assert.doesNotMatch(info.dental_chart, /قريباً/);
+	assert.match(info.visibility, /شاهد ملفك ومسح رمزك/);
+	assert.match(info.visibility, /برنامج إحالة/);
+	assert.match(info.patient_files, /ملف مركزي/);
+	// … which a doctor reads with the patient's consent, never as of right
+	assert.match(info.patient_files, /بموافقته/);
 });
 
 test('the dental chart is offered to dentists and to centers only', () => {
