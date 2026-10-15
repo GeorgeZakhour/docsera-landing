@@ -17,10 +17,12 @@ const paths = [...whiteLogo.matchAll(/\sd="([^"]+)"/g)].map((m) => m[1].replace(
 const markPath = paths[0];
 const letterPaths = paths.slice(1);
 
-// The mark's own box inside the logo, and its centre: the four petals are
-// cut apart along the diagonals and drawn together from there.
-const MARK_BOX = { x: 4, y: 11, w: 256, h: 246 };
-const C = { x: 132, y: 133.5 };
+// Measured with getBBox() in the browser — the mark's own box inside the logo
+// (with a little room), its centre, and the letters' box. The four petals are
+// cut apart along the diagonals and drawn together from the centre.
+const MARK_BOX = { x: 14, y: 14, w: 242, h: 242 };
+const C = { x: 134.8, y: 134.9 };
+const WORD_BOX = '299 25 1238 233';
 const corners = {
 	tl: `${MARK_BOX.x},${MARK_BOX.y}`,
 	tr: `${MARK_BOX.x + MARK_BOX.w},${MARK_BOX.y}`,
@@ -159,7 +161,7 @@ const WA_TEXT = 'مرحباً، عندي سؤال عن DocSera';
 				</svg>
 			</div>
 			<h1 class="wordmark">
-				<svg viewBox="300 40 1236 200" role="img" aria-label="DocSera">
+				<svg viewBox={WORD_BOX} role="img" aria-label="DocSera">
 					<g fill="currentColor">{letterPaths.map((d) => <path d={d} />)}</g>
 				</svg>
 			</h1>
