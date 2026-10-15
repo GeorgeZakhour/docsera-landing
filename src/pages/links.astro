@@ -1,0 +1,1004 @@
+---
+// /links — the one page behind the Instagram bio (docsera.app/ig 302s here
+// with ?s=instagram). Every button carries that source onward, so a visit
+// that starts in the bio is still counted as Instagram on /pro, on the Pro
+// request form and in Google Play's install referrer.
+//
+// Own <html> like the /pro pages: the look is its own (deep teal, glass),
+// and it must stay light — most visitors open it inside Instagram's
+// in-app browser on a slow line.
+//
+// Never link the web apps (my.docsera.app / pro.docsera.app) from here.
+import { APP_STORE_URL, playUrl, proWhatsAppUrl, INSTAGRAM_URL } from '../config/links';
+import whiteLogo from '../../public/images/docsera_white.svg?raw';
+
+// docsera_white.svg = the mark (first path) followed by the letters.
+const paths = [...whiteLogo.matchAll(/\sd="([^"]+)"/g)].map((m) => m[1].replace(/\s+/g, ' ').trim());
+const markPath = paths[0];
+const letterPaths = paths.slice(1);
+
+// The mark's own box inside the logo, and its centre: the four petals are
+// cut apart along the diagonals and drawn together from there.
+const MARK_BOX = { x: 4, y: 11, w: 256, h: 246 };
+const C = { x: 132, y: 133.5 };
+const corners = {
+	tl: `${MARK_BOX.x},${MARK_BOX.y}`,
+	tr: `${MARK_BOX.x + MARK_BOX.w},${MARK_BOX.y}`,
+	br: `${MARK_BOX.x + MARK_BOX.w},${MARK_BOX.y + MARK_BOX.h}`,
+	bl: `${MARK_BOX.x},${MARK_BOX.y + MARK_BOX.h}`,
+};
+const centre = `${C.x},${C.y}`;
+const petals = [
+	{ id: 'top', pts: `${corners.tl} ${corners.tr} ${centre}`, dx: 0, dy: -46 },
+	{ id: 'right', pts: `${corners.tr} ${corners.br} ${centre}`, dx: 46, dy: 0 },
+	{ id: 'bottom', pts: `${corners.br} ${corners.bl} ${centre}`, dx: 0, dy: 46 },
+	{ id: 'left', pts: `${corners.bl} ${corners.tl} ${centre}`, dx: -46, dy: 0 },
+];
+
+const WA_TEXT = 'مرحباً، عندي سؤال عن DocSera';
+---
+
+<!doctype html>
+<html lang="ar" dir="rtl">
+<head>
+	<meta charset="UTF-8" />
+	<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover" />
+	<title>DocSera — Your health, connected.</title>
+	<meta name="description" content="حمّل تطبيق دوكسيرا، تعرّف على DocSera Pro للعيادات والمراكز، وتواصل معنا — كل روابط دوكسيرا في مكان واحد." />
+	<link rel="canonical" href="https://docsera.app/links" />
+	<meta name="theme-color" content="#03292C" />
+	<link rel="icon" type="image/png" sizes="48x48" href="/favicon-48.png" />
+	<link rel="apple-touch-icon" href="/apple-touch-icon.png" />
+	<meta property="og:type" content="website" />
+	<meta property="og:site_name" content="DocSera" />
+	<meta property="og:title" content="DocSera — Your health, connected." />
+	<meta property="og:description" content="كل روابط دوكسيرا في مكان واحد." />
+	<meta property="og:url" content="https://docsera.app/links" />
+	<meta property="og:image" content="https://docsera.app/og-image.png" />
+	<meta name="twitter:card" content="summary_large_image" />
+	<link rel="preload" href="/fonts/Cairo-700.woff2" as="font" type="font/woff2" crossorigin />
+
+	<script is:inline>
+		(function () {
+			var d = document.documentElement, u = navigator.userAgent || '';
+			var ios = /iPad|iPhone|iPod/.test(u);
+			if (!ios && /Macintosh/.test(u) && navigator.maxTouchPoints > 1) ios = true;
+			d.setAttribute('data-os', ios ? 'ios' : /Android/i.test(u) ? 'android' : 'desktop');
+			d.classList.add('js');
+			try { if (localStorage.getItem('ds_links_lang') === 'en') d.classList.add('pre-en'); } catch (e) {}
+		})();
+	</script>
+
+	<style is:global>
+		@font-face { font-family: 'Cairo'; font-weight: 400; font-display: swap; src: url('/fonts/Cairo-400.woff2') format('woff2'); }
+		@font-face { font-family: 'Cairo'; font-weight: 600; font-display: swap; src: url('/fonts/Cairo-600.woff2') format('woff2'); }
+		@font-face { font-family: 'Cairo'; font-weight: 700; font-display: swap; src: url('/fonts/Cairo-700.woff2') format('woff2'); }
+		@font-face { font-family: 'Cairo'; font-weight: 800; font-display: swap; src: url('/fonts/Cairo-800.woff2') format('woff2'); }
+		@font-face { font-family: 'Montserrat'; font-weight: 500; font-display: swap; src: url('/fonts/Montserrat-500.woff2') format('woff2'); }
+		@font-face { font-family: 'Montserrat'; font-weight: 600; font-display: swap; src: url('/fonts/Montserrat-600.woff2') format('woff2'); }
+		@font-face { font-family: 'Montserrat'; font-weight: 700; font-display: swap; src: url('/fonts/Montserrat-700.woff2') format('woff2'); }
+
+		:root {
+			--abyss: #021C1F;
+			--deep: #03292C;
+			--teal: #009092;
+			--aqua: #3FD0C9;
+			--mint: #BDF4EC;
+			--ivory: #F3FBFA;
+			--slate: #0C1A20;
+			--text-soft: rgba(225, 246, 243, 0.74);
+			--ease-out: cubic-bezier(0.2, 0.8, 0.2, 1);
+			--ease-spring: cubic-bezier(0.34, 1.56, 0.64, 1);
+			color-scheme: dark;
+		}
+
+		*, *::before, *::after { box-sizing: border-box; }
+		html { -webkit-text-size-adjust: 100%; background: var(--abyss); }
+		body {
+			margin: 0;
+			min-height: 100vh;
+			min-height: 100dvh;
+			background: var(--abyss);
+			color: var(--ivory);
+			font-family: 'Cairo', 'Montserrat', system-ui, sans-serif;
+			-webkit-font-smoothing: antialiased;
+			-webkit-tap-highlight-color: transparent;
+			overflow-x: hidden;
+		}
+		html[lang='en'] body { font-family: 'Montserrat', 'Cairo', system-ui, sans-serif; }
+		a { color: inherit; text-decoration: none; }
+		img { display: block; }
+		:focus-visible { outline: 2px solid var(--mint); outline-offset: 3px; }
+	</style>
+</head>
+
+<body>
+	<!-- The mark, once, for the background blooms. -->
+	<svg width="0" height="0" style="position:absolute" aria-hidden="true">
+		<defs>
+			<path id="ds-mark" d={markPath} />
+			<linearGradient id="markFill" x1="0" y1="0" x2="1" y2="1">
+				<stop offset="0" stop-color="#FFFFFF" />
+				<stop offset="1" stop-color="#BDF4EC" />
+			</linearGradient>
+			{petals.map((p) => (
+				<clipPath id={`cut-${p.id}`}><polygon points={p.pts} /></clipPath>
+			))}
+		</defs>
+	</svg>
+
+	<!-- Backdrop: the brand mark itself, enlarged and blurred into light, for
+	     the glass to refract. It drifts on its own and leans toward the
+	     pointer / finger. -->
+	<div class="sky" aria-hidden="true">
+		<svg class="bloom bloom-a" viewBox={`${MARK_BOX.x} ${MARK_BOX.y} ${MARK_BOX.w} ${MARK_BOX.h}`}><use href="#ds-mark" /></svg>
+		<svg class="bloom bloom-b" viewBox={`${MARK_BOX.x} ${MARK_BOX.y} ${MARK_BOX.w} ${MARK_BOX.h}`}><use href="#ds-mark" /></svg>
+		<svg class="bloom bloom-c" viewBox={`${MARK_BOX.x} ${MARK_BOX.y} ${MARK_BOX.w} ${MARK_BOX.h}`}><use href="#ds-mark" /></svg>
+		<div class="vignette"></div>
+		<div class="grain"></div>
+	</div>
+
+	<div class="shell">
+		<header class="topbar">
+			<button class="icon-btn" type="button" data-share data-t-aria="share" aria-label="مشاركة الصفحة">
+				<svg viewBox="0 0 24 24" aria-hidden="true"><path d="M4 12v7a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2v-7" /><path d="m16 6-4-4-4 4" /><path d="M12 2v13" /></svg>
+			</button>
+			<button class="lang-btn" type="button" data-lang lang="en" aria-label="Switch to English">EN</button>
+		</header>
+
+		<section class="hero">
+			<div class="orb">
+				<span class="orb-ring" aria-hidden="true"></span>
+				<svg class="mark" viewBox={`${MARK_BOX.x} ${MARK_BOX.y} ${MARK_BOX.w} ${MARK_BOX.h}`} aria-hidden="true">
+					{petals.map((p, i) => (
+						<g class="petal" style={`--dx:${p.dx}px;--dy:${p.dy}px;--i:${i}`}>
+							<use href="#ds-mark" clip-path={`url(#cut-${p.id})`} fill="url(#markFill)" />
+						</g>
+					))}
+					<use class="mark-whole" href="#ds-mark" fill="url(#markFill)" />
+				</svg>
+			</div>
+			<h1 class="wordmark">
+				<svg viewBox="300 40 1236 200" role="img" aria-label="DocSera">
+					<g fill="currentColor">{letterPaths.map((d) => <path d={d} />)}</g>
+				</svg>
+			</h1>
+			<p class="slogan" lang="en" dir="ltr">Your health, connected.</p>
+		</section>
+
+		<main class="links">
+			<!-- 1. The patient app. On a phone it goes straight to that phone's store. -->
+			<a class="card card-app" href="/download/" data-app-link data-track="app" style="--i:0">
+				<span class="sheen" aria-hidden="true"></span>
+				<img class="app-icon" src="/images/links/app-icon.webp" width="60" height="60" alt="" />
+				<span class="card-text">
+					<span class="card-title" data-t="appTitle">حمّل التطبيق</span>
+					<span class="card-sub" data-t="appSub">احجز موعدك وتابع ملفك الطبي</span>
+					<span class="store-line">
+						<span class="os-ios" data-t="appIos">مجاني على App Store</span>
+						<span class="os-android" data-t="appAndroid">مجاني على Google Play</span>
+						<span class="os-desktop" data-t="appDesktop">مجاني على App Store و Google Play</span>
+					</span>
+				</span>
+				<span class="get" aria-hidden="true">
+					<svg viewBox="0 0 24 24"><path d="M12 4v12" /><path d="m6 11 6 6 6-6" /><path d="M5 20h14" /></svg>
+				</span>
+			</a>
+
+			<!-- 2. DocSera Pro — the doctors' side. Two destinations: the page, and the request form. -->
+			<div class="card card-pro" style="--i:1">
+				<a class="pro-main" href="/pro/" data-carry-source data-track="pro">
+					<img class="pro-icon" src="/images/links/pro-icon.webp" width="60" height="60" alt="" />
+					<span class="card-text">
+						<img class="pro-logo" src="/images/links/pro-logo.webp" width="640" height="144" alt="DocSera Pro" />
+						<span class="card-sub" data-t="proSub">لإدارة العيادات والمراكز الطبية</span>
+					</span>
+					<svg class="chev" viewBox="0 0 24 24" aria-hidden="true"><path d="m15 18-6-6 6-6" /></svg>
+				</a>
+				<div class="pro-foot">
+					<span class="pro-for" data-t="proFor">للأطباء والمراكز</span>
+					<a class="chip" href="/pro/join/" data-carry-source data-track="pro_join" data-t="proJoin">ابدأ تجربتك المجانية</a>
+				</div>
+			</div>
+
+			<!-- 3. The website. -->
+			<a class="card card-row" href="/" data-carry-source data-track="site" style="--i:2">
+				<span class="row-icon" aria-hidden="true">
+					<svg viewBox="0 0 24 24"><circle cx="12" cy="12" r="9.5" /><path d="M12 2.5a14 14 0 0 0 0 19 14 14 0 0 0 0-19" /><path d="M2.5 12h19" /></svg>
+				</span>
+				<span class="card-text">
+					<span class="row-title" data-t="siteTitle">الموقع الرسمي</span>
+					<span class="row-sub" lang="en">docsera.app</span>
+				</span>
+				<svg class="chev" viewBox="0 0 24 24" aria-hidden="true"><path d="m15 18-6-6 6-6" /></svg>
+			</a>
+
+			<!-- 4 + 5. Contact and help, side by side. -->
+			<div class="pair" style="--i:3">
+				<a class="card card-tile" href={proWhatsAppUrl(WA_TEXT)} target="_blank" rel="noopener" data-track="whatsapp">
+					<span class="tile-icon tile-wa" aria-hidden="true">
+						<svg viewBox="0 0 24 24"><path d="M17.47 14.38c-.3-.15-1.76-.87-2.03-.97-.27-.1-.47-.15-.67.15-.2.3-.77.97-.94 1.16-.17.2-.35.22-.64.08-.3-.15-1.26-.47-2.39-1.48-.88-.79-1.48-1.76-1.65-2.06-.17-.3-.02-.46.13-.6.13-.14.3-.35.45-.52.15-.18.2-.3.3-.5.1-.2.05-.37-.03-.52-.07-.15-.67-1.61-.92-2.21-.24-.58-.49-.5-.67-.51h-.57c-.2 0-.52.07-.79.37-.27.3-1.04 1.02-1.04 2.48 0 1.46 1.07 2.88 1.21 3.07.15.2 2.1 3.2 5.08 4.49.71.31 1.26.49 1.7.63.71.22 1.36.19 1.87.12.57-.09 1.76-.72 2-1.41.25-.7.25-1.29.18-1.41-.08-.13-.28-.2-.57-.35M12.05 21.79h-.01a9.87 9.87 0 0 1-5.03-1.38l-.36-.21-3.74.98 1-3.65-.24-.37a9.86 9.86 0 0 1-1.51-5.26c0-5.45 4.44-9.88 9.89-9.88 2.64 0 5.12 1.03 6.99 2.9a9.83 9.83 0 0 1 2.89 6.99c0 5.45-4.44 9.88-9.88 9.88m8.41-18.3A11.82 11.82 0 0 0 12.05 0C5.5 0 .16 5.34.16 11.89c0 2.1.55 4.14 1.59 5.95L.06 24l6.3-1.65a11.88 11.88 0 0 0 5.68 1.45h.01c6.55 0 11.89-5.34 11.89-11.89a11.82 11.82 0 0 0-3.48-8.41z" /></svg>
+					</span>
+					<span class="tile-title" data-t="waTitle">تواصل معنا</span>
+					<span class="tile-sub" data-t="waSub">على واتساب</span>
+				</a>
+				<a class="card card-tile" href="/help/" data-carry-source data-track="help">
+					<span class="tile-icon" aria-hidden="true">
+						<svg viewBox="0 0 24 24" class="stroke"><circle cx="12" cy="12" r="10" /><path d="M9.1 9a3 3 0 0 1 5.8 1c0 2-3 3-3 3" /><path d="M12 17h.01" /></svg>
+					</span>
+					<span class="tile-title" data-t="helpTitle">المساعدة</span>
+					<span class="tile-sub" data-t="helpSub">الأسئلة الشائعة</span>
+				</a>
+			</div>
+		</main>
+
+		<footer class="foot">
+			<a class="icon-btn" href={INSTAGRAM_URL} target="_blank" rel="noopener" data-track="instagram" aria-label="Instagram @docsera.app">
+				<svg viewBox="0 0 24 24" aria-hidden="true"><rect x="2.5" y="2.5" width="19" height="19" rx="5.5" /><circle cx="12" cy="12" r="4.2" /><path d="M17.5 6.5h.01" /></svg>
+			</a>
+			<p class="legal">
+				<a href="/privacy-policy/" data-t="privacy">سياسة الخصوصية</a>
+				<span lang="en" dir="ltr">© 2026 DocSera</span>
+			</p>
+		</footer>
+	</div>
+
+	<div class="toast" role="status" aria-live="polite" data-toast></div>
+</body>
+</html>
+
+<script>
+	import { APP_STORE_URL, playUrl } from '../config/links';
+	import { attributionSource, fireBeacon } from '../scripts/reach';
+
+	const root = document.documentElement;
+	const os = root.getAttribute('data-os') || 'desktop';
+	const source = attributionSource();
+	const tagged = source !== 'direct';
+
+	// ------------------------------------------------------------ language
+	const T: Record<'ar' | 'en', Record<string, string>> = {
+		ar: {
+			appTitle: 'حمّل التطبيق',
+			appSub: 'احجز موعدك وتابع ملفك الطبي',
+			appIos: 'مجاني على App Store',
+			appAndroid: 'مجاني على Google Play',
+			appDesktop: 'مجاني على App Store و Google Play',
+			proSub: 'لإدارة العيادات والمراكز الطبية',
+			proFor: 'للأطباء والمراكز',
+			proJoin: 'ابدأ تجربتك المجانية',
+			siteTitle: 'الموقع الرسمي',
+			waTitle: 'تواصل معنا',
+			waSub: 'على واتساب',
+			helpTitle: 'المساعدة',
+			helpSub: 'الأسئلة الشائعة',
+			privacy: 'سياسة الخصوصية',
+			share: 'مشاركة الصفحة',
+			copied: 'تم نسخ الرابط',
+		},
+		en: {
+			appTitle: 'Get the app',
+			appSub: 'Book visits and keep your medical file',
+			appIos: 'Free on the App Store',
+			appAndroid: 'Free on Google Play',
+			appDesktop: 'Free on the App Store and Google Play',
+			proSub: 'Practice management for clinics and medical centres',
+			proFor: 'For doctors and centres',
+			proJoin: 'Start your free trial',
+			siteTitle: 'Official website',
+			waTitle: 'Contact us',
+			waSub: 'On WhatsApp',
+			helpTitle: 'Help',
+			helpSub: 'Frequently asked questions',
+			privacy: 'Privacy policy',
+			share: 'Share this page',
+			copied: 'Link copied',
+		},
+	};
+	let lang: 'ar' | 'en' = root.classList.contains('pre-en') ? 'en' : 'ar';
+	const langBtn = document.querySelector<HTMLButtonElement>('[data-lang]')!;
+
+	function applyLang(next: 'ar' | 'en') {
+		lang = next;
+		root.lang = next;
+		root.dir = next === 'ar' ? 'rtl' : 'ltr';
+		root.classList.remove('pre-en');
+		document.querySelectorAll<HTMLElement>('[data-t]').forEach((el) => {
+			const v = T[next][el.dataset.t!];
+			if (v) el.textContent = v;
+		});
+		document.querySelectorAll<HTMLElement>('[data-t-aria]').forEach((el) => {
+			const v = T[next][el.dataset.tAria!];
+			if (v) el.setAttribute('aria-label', v);
+		});
+		langBtn.textContent = next === 'ar' ? 'EN' : 'ع';
+		langBtn.lang = next === 'ar' ? 'en' : 'ar';
+		langBtn.setAttribute('aria-label', next === 'ar' ? 'Switch to English' : 'التبديل إلى العربية');
+	}
+	if (lang === 'en') applyLang('en');
+	langBtn.addEventListener('click', () => {
+		const next = lang === 'ar' ? 'en' : 'ar';
+		document.body.classList.add('swapping');
+		setTimeout(() => {
+			applyLang(next);
+			document.body.classList.remove('swapping');
+		}, 160);
+		try { localStorage.setItem('ds_links_lang', next); } catch { /* per-visit only */ }
+	});
+
+	// ------------------------------------------------------------ links
+	// The app button: straight to this phone's store; desktop → /download.
+	const app = document.querySelector<HTMLAnchorElement>('[data-app-link]')!;
+	if (os === 'ios') app.href = APP_STORE_URL;
+	else if (os === 'android') app.href = playUrl(tagged ? source : 'site');
+	else if (tagged) app.href = '/download/?s=' + source;
+
+	// Our own pages keep the visitor's source.
+	if (tagged) {
+		document.querySelectorAll<HTMLAnchorElement>('a[data-carry-source]').forEach((a) => {
+			a.href += (a.href.includes('?') ? '&' : '?') + 's=' + source;
+		});
+	}
+
+	// ------------------------------------------------------------ counting
+	fireBeacon('links_page_viewed', 'acquisition', 'ds_beacon_links', { source, os });
+	document.querySelectorAll<HTMLAnchorElement>('a[data-track]').forEach((a) => {
+		a.addEventListener('click', () => {
+			const link = a.dataset.track!;
+			fireBeacon('links_link_clicked', 'acquisition', null, { link, source, os });
+			if (link === 'app' && os !== 'desktop') {
+				fireBeacon('store_link_clicked', 'acquisition', null, {
+					store: os, surface: 'links', source,
+				});
+			}
+		});
+	});
+
+	// ------------------------------------------------------------ share
+	const toast = document.querySelector<HTMLElement>('[data-toast]')!;
+	let toastTimer = 0;
+	function say(msg: string) {
+		toast.textContent = msg;
+		toast.classList.add('on');
+		clearTimeout(toastTimer);
+		toastTimer = window.setTimeout(() => toast.classList.remove('on'), 2200);
+	}
+	document.querySelector('[data-share]')!.addEventListener('click', async () => {
+		const url = 'https://docsera.app/links';
+		try {
+			if (navigator.share) {
+				await navigator.share({ title: 'DocSera', text: 'Your health, connected.', url });
+				return;
+			}
+		} catch (e) {
+			if ((e as DOMException)?.name === 'AbortError') return;
+		}
+		try {
+			await navigator.clipboard.writeText(url);
+			say(T[lang].copied);
+		} catch {
+			window.prompt('', url);
+		}
+	});
+
+	// ------------------------------------------------------------ light
+	// Glass catches the light where the finger or pointer is; a press leaves
+	// a ripple. The backdrop leans gently toward the pointer.
+	const reduce = window.matchMedia('(prefers-reduced-motion: reduce)').matches;
+
+	document.querySelectorAll<HTMLElement>('.card').forEach((card) => {
+		const place = (e: PointerEvent) => {
+			const r = card.getBoundingClientRect();
+			card.style.setProperty('--mx', `${e.clientX - r.left}px`);
+			card.style.setProperty('--my', `${e.clientY - r.top}px`);
+		};
+		card.addEventListener('pointermove', place);
+		card.addEventListener('pointerenter', (e) => { place(e); card.classList.add('lit'); });
+		card.addEventListener('pointerleave', () => card.classList.remove('lit'));
+		card.addEventListener('pointerdown', (e) => {
+			place(e);
+			card.classList.add('lit');
+			if (reduce) return;
+			const r = card.getBoundingClientRect();
+			const dot = document.createElement('span');
+			dot.className = 'ripple';
+			dot.style.left = `${e.clientX - r.left}px`;
+			dot.style.top = `${e.clientY - r.top}px`;
+			card.appendChild(dot);
+			dot.addEventListener('animationend', () => dot.remove());
+		});
+		card.addEventListener('pointerup', (e) => {
+			if (e.pointerType !== 'mouse') setTimeout(() => card.classList.remove('lit'), 380);
+		});
+		card.addEventListener('pointercancel', () => card.classList.remove('lit'));
+	});
+
+	if (!reduce) {
+		let raf = 0;
+		let tx = 0, ty = 0;
+		window.addEventListener('pointermove', (e) => {
+			tx = e.clientX / window.innerWidth - 0.5;
+			ty = e.clientY / window.innerHeight - 0.5;
+			if (raf) return;
+			raf = requestAnimationFrame(() => {
+				raf = 0;
+				root.style.setProperty('--px', tx.toFixed(3));
+				root.style.setProperty('--py', ty.toFixed(3));
+			});
+		}, { passive: true });
+	}
+</script>
+
+<style>
+	/* ---------------------------------------------------------- backdrop */
+	.sky {
+		position: fixed;
+		inset: 0;
+		overflow: hidden;
+		pointer-events: none;
+		background:
+			radial-gradient(120% 70% at 50% -10%, #05484B 0%, transparent 60%),
+			linear-gradient(180deg, var(--deep) 0%, var(--abyss) 70%);
+	}
+	.bloom {
+		position: absolute;
+		fill: currentColor;
+		filter: blur(46px);
+		will-change: transform;
+	}
+	.bloom-a {
+		width: 120vmax; max-width: 760px;
+		top: -16%; inset-inline-start: -30%;
+		color: #0BA5A3;
+		opacity: 0.55;
+		animation: drift-a 38s ease-in-out infinite alternate;
+		translate: calc(var(--px, 0) * -40px) calc(var(--py, 0) * -30px);
+	}
+	.bloom-b {
+		width: 90vmax; max-width: 620px;
+		bottom: -18%; inset-inline-end: -34%;
+		color: #2FC3B8;
+		opacity: 0.32;
+		animation: drift-b 46s ease-in-out infinite alternate;
+		translate: calc(var(--px, 0) * 50px) calc(var(--py, 0) * 36px);
+	}
+	.bloom-c {
+		width: 54vmax; max-width: 380px;
+		top: 34%; inset-inline-end: -12%;
+		color: #8FE8DC;
+		opacity: 0.18;
+		animation: drift-c 30s ease-in-out infinite alternate;
+		translate: calc(var(--px, 0) * 26px) calc(var(--py, 0) * 20px);
+	}
+	@keyframes drift-a { to { transform: rotate(28deg) scale(1.08); } }
+	@keyframes drift-b { to { transform: rotate(-24deg) scale(0.94); } }
+	@keyframes drift-c { to { transform: rotate(40deg) translateY(-6vh); } }
+	.vignette {
+		position: absolute;
+		inset: 0;
+		background: radial-gradient(130% 90% at 50% 40%, transparent 55%, rgba(1, 14, 16, 0.65) 100%);
+	}
+	.grain {
+		position: absolute;
+		inset: 0;
+		opacity: 0.07;
+		mix-blend-mode: overlay;
+		background-image: url("data:image/svg+xml;utf8,<svg xmlns='http://www.w3.org/2000/svg' width='180' height='180'><filter id='n'><feTurbulence type='fractalNoise' baseFrequency='0.9' numOctaves='2' stitchTiles='stitch'/></filter><rect width='100%' height='100%' filter='url(%23n)'/></svg>");
+	}
+
+	/* ---------------------------------------------------------- shell */
+	.shell {
+		position: relative;
+		max-width: 460px;
+		margin: 0 auto;
+		padding: max(14px, env(safe-area-inset-top)) 18px max(28px, env(safe-area-inset-bottom));
+		min-height: 100vh;
+		min-height: 100dvh;
+		display: flex;
+		flex-direction: column;
+		transition: opacity 0.16s ease;
+	}
+	:global(body.swapping) .shell { opacity: 0.35; }
+
+	.topbar {
+		display: flex;
+		justify-content: space-between;
+		align-items: center;
+		height: 44px;
+	}
+	.icon-btn,
+	.lang-btn {
+		display: grid;
+		place-items: center;
+		width: 42px;
+		height: 42px;
+		border-radius: 50%;
+		border: 1px solid rgba(255, 255, 255, 0.14);
+		background: rgba(255, 255, 255, 0.07);
+		-webkit-backdrop-filter: blur(16px);
+		backdrop-filter: blur(16px);
+		color: var(--ivory);
+		cursor: pointer;
+		transition: background 0.2s, transform 0.2s var(--ease-spring);
+	}
+	.icon-btn:active,
+	.lang-btn:active { transform: scale(0.92); }
+	.icon-btn:hover,
+	.lang-btn:hover { background: rgba(255, 255, 255, 0.13); }
+	.icon-btn svg {
+		width: 19px;
+		height: 19px;
+		fill: none;
+		stroke: currentColor;
+		stroke-width: 1.8;
+		stroke-linecap: round;
+		stroke-linejoin: round;
+	}
+	.lang-btn {
+		font: 600 13px/1 'Montserrat', 'Cairo', sans-serif;
+		letter-spacing: 0.02em;
+	}
+	.lang-btn:lang(ar) { font: 700 16px/1 'Cairo', sans-serif; padding-bottom: 3px; }
+
+	/* ---------------------------------------------------------- hero */
+	.hero {
+		text-align: center;
+		padding: 18px 0 30px;
+	}
+	.orb {
+		position: relative;
+		width: 128px;
+		height: 128px;
+		margin: 0 auto;
+		border-radius: 50%;
+		display: grid;
+		place-items: center;
+		background:
+			radial-gradient(70% 55% at 32% 22%, rgba(255, 255, 255, 0.32), transparent 62%),
+			radial-gradient(90% 90% at 50% 100%, rgba(63, 208, 201, 0.3), transparent 70%),
+			rgba(255, 255, 255, 0.06);
+		border: 1px solid rgba(255, 255, 255, 0.22);
+		box-shadow:
+			inset 0 1px 0 rgba(255, 255, 255, 0.45),
+			inset 0 -10px 24px rgba(0, 40, 42, 0.35),
+			0 24px 60px -20px rgba(0, 0, 0, 0.7),
+			0 0 70px -10px rgba(63, 208, 201, 0.45);
+		-webkit-backdrop-filter: blur(20px) saturate(160%);
+		backdrop-filter: blur(20px) saturate(160%);
+	}
+	.mark {
+		width: 64px;
+		height: 64px;
+		overflow: visible;
+		filter: drop-shadow(0 6px 14px rgba(0, 30, 32, 0.45));
+	}
+	.petal {
+		transform-box: view-box;
+		transform-origin: center;
+	}
+	.mark-whole { opacity: 1; }
+	.orb-ring {
+		position: absolute;
+		inset: -1px;
+		border-radius: 50%;
+		border: 1.5px solid var(--mint);
+		opacity: 0;
+	}
+
+	.wordmark {
+		margin: 22px auto 0;
+		width: 168px;
+		color: var(--ivory);
+		line-height: 0;
+	}
+	.wordmark svg { width: 100%; height: auto; display: block; }
+	.slogan {
+		margin: 12px 0 0;
+		font: 500 16px/1.4 'Montserrat', sans-serif;
+		letter-spacing: 0.01em;
+		color: var(--text-soft);
+	}
+
+	/* ---------------------------------------------------------- cards */
+	.links {
+		display: flex;
+		flex-direction: column;
+		gap: 12px;
+	}
+	.card {
+		position: relative;
+		isolation: isolate;
+		overflow: hidden;
+		display: flex;
+		align-items: center;
+		gap: 14px;
+		color: var(--ivory);
+		background: linear-gradient(140deg, rgba(255, 255, 255, 0.13), rgba(255, 255, 255, 0.045));
+		border: 1px solid rgba(255, 255, 255, 0.14);
+		box-shadow:
+			inset 0 1px 0 rgba(255, 255, 255, 0.22),
+			0 18px 40px -22px rgba(0, 0, 0, 0.6);
+		-webkit-backdrop-filter: blur(22px) saturate(170%);
+		backdrop-filter: blur(22px) saturate(170%);
+		transition: transform 0.35s var(--ease-spring), border-color 0.3s, box-shadow 0.3s;
+		touch-action: manipulation;
+	}
+	/* the light that follows the finger */
+	.card::before {
+		content: '';
+		position: absolute;
+		inset: 0;
+		z-index: -1;
+		background: radial-gradient(240px circle at var(--mx, 50%) var(--my, 0%), rgba(255, 255, 255, 0.16), transparent 65%);
+		opacity: 0;
+		transition: opacity 0.35s;
+		pointer-events: none;
+	}
+	.card:global(.lit)::before { opacity: 1; }
+	.card:global(.lit) { border-color: rgba(255, 255, 255, 0.26); }
+	a.card:active,
+	.card-pro:has(.pro-main:active) { transform: scale(0.975); }
+	@media (hover: hover) {
+		a.card:hover,
+		.card-pro:hover { transform: translateY(-2px); }
+	}
+	.card :global(.ripple) {
+		position: absolute;
+		z-index: -1;
+		width: 16px;
+		height: 16px;
+		margin: -8px 0 0 -8px;
+		border-radius: 50%;
+		background: rgba(255, 255, 255, 0.35);
+		pointer-events: none;
+		animation: ripple 0.65s var(--ease-out) forwards;
+	}
+	@keyframes ripple {
+		to { transform: scale(34); opacity: 0; }
+	}
+
+	.card-text {
+		display: flex;
+		flex-direction: column;
+		min-width: 0;
+		flex: 1;
+	}
+	.card-title {
+		font-weight: 800;
+		font-size: 20px;
+		line-height: 1.3;
+	}
+	:global(html[lang='en']) .card-title { font-weight: 700; font-size: 19px; letter-spacing: -0.01em; }
+	.card-sub {
+		font-size: 13.5px;
+		line-height: 1.5;
+		color: var(--text-soft);
+		margin-top: 2px;
+	}
+	:global(html[lang='en']) .card-sub { font-size: 13px; }
+	.chev {
+		width: 20px;
+		height: 20px;
+		flex: none;
+		fill: none;
+		stroke: currentColor;
+		stroke-width: 2;
+		stroke-linecap: round;
+		stroke-linejoin: round;
+		opacity: 0.55;
+		transition: transform 0.3s var(--ease-spring), opacity 0.3s;
+	}
+	:global(html[dir='ltr']) .chev { transform: scaleX(-1); }
+	a.card:hover .chev,
+	.pro-main:hover .chev { opacity: 0.9; transform: translateX(-3px); }
+	:global(html[dir='ltr']) a.card:hover .chev,
+	:global(html[dir='ltr']) .pro-main:hover .chev { transform: scaleX(-1) translateX(-3px); }
+
+	/* 1 — the app: the one teal surface on the page */
+	.card-app {
+		padding: 18px 18px 18px 16px;
+		border-radius: 28px;
+		background:
+			radial-gradient(120% 140% at 100% 0%, rgba(120, 240, 228, 0.32), transparent 55%),
+			linear-gradient(150deg, rgba(0, 168, 168, 0.72), rgba(0, 112, 116, 0.55));
+		border-color: rgba(189, 244, 236, 0.38);
+		box-shadow:
+			inset 0 1px 0 rgba(255, 255, 255, 0.4),
+			0 22px 48px -18px rgba(0, 144, 146, 0.65);
+	}
+	:global(html[dir='ltr']) .card-app { padding: 18px 16px 18px 18px; }
+	.app-icon {
+		width: 60px;
+		height: 60px;
+		flex: none;
+		border-radius: 15px;
+		box-shadow: 0 8px 18px -6px rgba(0, 40, 42, 0.6), 0 0 0 1px rgba(255, 255, 255, 0.25);
+	}
+	.card-app .card-sub { color: rgba(240, 255, 252, 0.86); }
+	.store-line {
+		margin-top: 6px;
+		font: 600 11.5px/1.3 'Montserrat', 'Cairo', sans-serif;
+		color: var(--mint);
+	}
+	.store-line > span { display: none; }
+	:global(html[data-os='ios']) .os-ios,
+	:global(html[data-os='android']) .os-android,
+	:global(html[data-os='desktop']) .os-desktop { display: inline; }
+	:global(html:not(.js)) .os-desktop { display: inline; }
+	.get {
+		flex: none;
+		display: grid;
+		place-items: center;
+		width: 46px;
+		height: 46px;
+		border-radius: 50%;
+		background: var(--ivory);
+		color: #006E70;
+		box-shadow: 0 8px 18px -8px rgba(0, 30, 32, 0.7);
+		transition: transform 0.35s var(--ease-spring);
+	}
+	.get svg {
+		width: 21px;
+		height: 21px;
+		fill: none;
+		stroke: currentColor;
+		stroke-width: 2.2;
+		stroke-linecap: round;
+		stroke-linejoin: round;
+	}
+	.card-app:hover .get { transform: translateY(2px); }
+	.sheen {
+		position: absolute;
+		inset: 0;
+		z-index: -1;
+		pointer-events: none;
+		background: linear-gradient(105deg, transparent 35%, rgba(255, 255, 255, 0.22) 50%, transparent 65%);
+		transform: translateX(-120%);
+	}
+
+	/* 2 — Pro: dark glass, its own world */
+	.card-pro {
+		flex-direction: column;
+		align-items: stretch;
+		gap: 0;
+		padding: 0;
+		border-radius: 26px;
+		background:
+			radial-gradient(120% 120% at 0% 0%, rgba(0, 144, 146, 0.28), transparent 55%),
+			linear-gradient(160deg, rgba(14, 30, 38, 0.82), rgba(8, 18, 24, 0.78));
+		border-color: rgba(63, 208, 201, 0.26);
+		box-shadow:
+			inset 0 1px 0 rgba(255, 255, 255, 0.12),
+			0 22px 48px -20px rgba(0, 0, 0, 0.8);
+	}
+	.pro-main {
+		display: flex;
+		align-items: center;
+		gap: 14px;
+		padding: 18px 18px 14px;
+	}
+	.pro-icon {
+		width: 60px;
+		height: 60px;
+		flex: none;
+		border-radius: 15px;
+		box-shadow: 0 8px 18px -6px rgba(0, 0, 0, 0.7), 0 0 0 1px rgba(63, 208, 201, 0.3);
+	}
+	.pro-logo {
+		height: 25px;
+		width: auto;
+		max-width: 100%;
+		object-fit: contain;
+		object-position: right center;
+		filter: brightness(0) invert(1);
+		margin-bottom: 5px;
+	}
+	:global(html[dir='ltr']) .pro-logo { object-position: left center; }
+	.pro-foot {
+		display: flex;
+		align-items: center;
+		justify-content: space-between;
+		gap: 10px;
+		padding: 12px 18px 16px;
+		border-top: 1px solid rgba(255, 255, 255, 0.07);
+	}
+	.pro-for {
+		font-size: 12.5px;
+		color: rgba(189, 244, 236, 0.7);
+	}
+	.chip {
+		position: relative;
+		z-index: 1;
+		display: inline-flex;
+		align-items: center;
+		min-height: 36px;
+		padding: 0 16px;
+		border-radius: 999px;
+		font-weight: 700;
+		font-size: 13.5px;
+		color: #012427;
+		background: linear-gradient(180deg, #7CE5DB, #3FD0C9);
+		box-shadow: inset 0 1px 0 rgba(255, 255, 255, 0.6), 0 8px 20px -8px rgba(63, 208, 201, 0.7);
+		transition: transform 0.3s var(--ease-spring), box-shadow 0.3s;
+		white-space: nowrap;
+	}
+	.chip:hover { box-shadow: inset 0 1px 0 rgba(255, 255, 255, 0.6), 0 10px 26px -6px rgba(63, 208, 201, 0.9); }
+	.chip:active { transform: scale(0.95); }
+
+	/* 3 — the website */
+	.card-row {
+		padding: 14px 18px 14px 16px;
+		border-radius: 20px;
+	}
+	:global(html[dir='ltr']) .card-row { padding: 14px 16px 14px 18px; }
+	.row-icon {
+		display: grid;
+		place-items: center;
+		width: 44px;
+		height: 44px;
+		flex: none;
+		border-radius: 13px;
+		background: rgba(255, 255, 255, 0.09);
+		border: 1px solid rgba(255, 255, 255, 0.12);
+		color: var(--mint);
+	}
+	.row-icon svg {
+		width: 22px;
+		height: 22px;
+		fill: none;
+		stroke: currentColor;
+		stroke-width: 1.8;
+		stroke-linecap: round;
+		stroke-linejoin: round;
+	}
+	.row-title { font-weight: 700; font-size: 16px; line-height: 1.35; }
+	.row-sub {
+		font: 500 12.5px/1.4 'Montserrat', sans-serif;
+		color: var(--text-soft);
+		direction: ltr;
+		text-align: start;
+	}
+	:global(html[dir='rtl']) .row-sub { text-align: right; }
+
+	/* 4 + 5 — two tiles */
+	.pair {
+		display: grid;
+		grid-template-columns: 1fr 1fr;
+		gap: 12px;
+	}
+	.card-tile {
+		flex-direction: column;
+		align-items: flex-start;
+		gap: 0;
+		padding: 16px;
+		border-radius: 22px;
+	}
+	.tile-icon {
+		display: grid;
+		place-items: center;
+		width: 40px;
+		height: 40px;
+		border-radius: 12px;
+		margin-bottom: 14px;
+		background: rgba(255, 255, 255, 0.09);
+		border: 1px solid rgba(255, 255, 255, 0.12);
+		color: var(--mint);
+	}
+	.tile-icon svg { width: 21px; height: 21px; fill: currentColor; }
+	.tile-icon svg.stroke {
+		fill: none;
+		stroke: currentColor;
+		stroke-width: 1.9;
+		stroke-linecap: round;
+		stroke-linejoin: round;
+	}
+	.tile-wa { color: #5BE38F; }
+	.tile-title { font-weight: 700; font-size: 16px; line-height: 1.35; }
+	.tile-sub { font-size: 12.5px; color: var(--text-soft); margin-top: 1px; }
+
+	/* ---------------------------------------------------------- footer */
+	.foot {
+		margin-top: auto;
+		padding-top: 34px;
+		display: flex;
+		flex-direction: column;
+		align-items: center;
+		gap: 14px;
+	}
+	.legal {
+		margin: 0;
+		display: flex;
+		gap: 16px;
+		font-size: 12px;
+		color: rgba(225, 246, 243, 0.5);
+	}
+	.legal a { text-decoration: underline; text-underline-offset: 3px; text-decoration-color: rgba(225, 246, 243, 0.25); }
+	.legal a:hover { color: var(--ivory); }
+	.legal span { font-family: 'Montserrat', sans-serif; }
+
+	.toast {
+		position: fixed;
+		left: 50%;
+		bottom: max(24px, env(safe-area-inset-bottom));
+		transform: translate(-50%, 20px);
+		padding: 10px 18px;
+		border-radius: 999px;
+		background: rgba(243, 251, 250, 0.94);
+		color: #022427;
+		font-weight: 700;
+		font-size: 14px;
+		opacity: 0;
+		pointer-events: none;
+		transition: opacity 0.25s, transform 0.35s var(--ease-spring);
+	}
+	.toast:global(.on) { opacity: 1; transform: translate(-50%, 0); }
+
+	/* No backdrop-filter (old WebViews): make the glass opaque enough to read. */
+	@supports not ((backdrop-filter: blur(1px)) or (-webkit-backdrop-filter: blur(1px))) {
+		.card { background: rgba(20, 60, 64, 0.92); }
+		.card-pro { background: #0E1E26; }
+		.card-app { background: linear-gradient(150deg, #00A3A4, #00777A); }
+	}
+
+	/* ---------------------------------------------------------- the entrance
+	   One sequence: the four petals of the mark come together (“connected”),
+	   a ring answers, then the name, the line, and the links settle in. */
+	@media (prefers-reduced-motion: no-preference) {
+		:global(html.js) .petal {
+			animation: join 1s var(--ease-out) both;
+			animation-delay: calc(0.12s + var(--i) * 0.06s);
+		}
+		@keyframes join {
+			from { transform: translate(var(--dx), var(--dy)) scale(0.7); opacity: 0; }
+			to { transform: none; opacity: 1; }
+		}
+		:global(html.js) .mark-whole {
+			animation: whole 0.2s linear 1.12s backwards;
+		}
+		@keyframes whole { from { opacity: 0; } to { opacity: 1; } }
+		:global(html.js) .orb {
+			animation: orb-in 0.9s var(--ease-out) both;
+		}
+		@keyframes orb-in {
+			from { transform: scale(0.86); opacity: 0; }
+			to { transform: none; opacity: 1; }
+		}
+		:global(html.js) .orb-ring {
+			animation: ring 1.3s var(--ease-out) 1.05s both;
+		}
+		@keyframes ring {
+			0% { transform: scale(1); opacity: 0.8; }
+			100% { transform: scale(1.7); opacity: 0; }
+		}
+		:global(html.js) .wordmark,
+		:global(html.js) .slogan,
+		:global(html.js) .links > *,
+		:global(html.js) .foot {
+			animation: rise 0.8s var(--ease-out) backwards;
+		}
+		:global(html.js) .wordmark { animation-delay: 0.85s; }
+		:global(html.js) .slogan { animation-delay: 1s; }
+		:global(html.js) .links > * { animation-delay: calc(1.12s + var(--i) * 0.08s); }
+		:global(html.js) .foot { animation-delay: 1.5s; }
+		@keyframes rise {
+			from { transform: translateY(16px); opacity: 0; filter: blur(6px); }
+			to { transform: none; opacity: 1; filter: none; }
+		}
+		.sheen { animation: sheen 7s ease-in-out 2.4s infinite; }
+		@keyframes sheen {
+			0% { transform: translateX(-120%); }
+			18%, 100% { transform: translateX(120%); }
+		}
+	}
+	@media (prefers-reduced-motion: reduce) {
+		.bloom { animation: none; }
+		.card, .chip, .get, .chev { transition: none; }
+	}
+
+	@media (max-width: 360px) {
+		.card-title { font-size: 18px; }
+		.card-sub { font-size: 12.5px; }
+		.app-icon, .pro-icon { width: 52px; height: 52px; border-radius: 13px; }
+		.chip { padding: 0 12px; font-size: 12.5px; }
+	}
+</style>
