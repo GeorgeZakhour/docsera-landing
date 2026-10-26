@@ -6,7 +6,7 @@
       "name_ar": "سياسة الخصوصية (دوكسيرا برو)",
       "url": "https://docsera.app/pro/privacy-policy/",
       "version": "1.1",
-      "effective_date": "2026-10-26",
+      "effective_date": "2026-10-20",
       "requires_consent": true
     },
     {
@@ -15,7 +15,7 @@
       "name_ar": "شروط الاستخدام (دوكسيرا برو)",
       "url": "https://docsera.app/pro/terms-of-service/",
       "version": "1.1",
-      "effective_date": "2026-10-26",
+      "effective_date": "2026-10-20",
       "requires_consent": true
     }
   ]
