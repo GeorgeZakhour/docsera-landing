@@ -46,7 +46,8 @@ export function careersWhatsAppUrl(text: string = ''): string | null {
 	return text ? `${base}?text=${encodeURIComponent(text)}` : base;
 }
 
-const SOURCE_RE = /^[a-z_]{1,24}$/;
+// digits too, so a numbered careers link («?s=3») survives the bio page's carry (founder, 2026-11-07)
+const SOURCE_RE = /^[a-z0-9_]{1,24}$/;
 
 /**
  * Google Play link carrying an install referrer.

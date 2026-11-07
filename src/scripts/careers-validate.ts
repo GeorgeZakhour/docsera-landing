@@ -352,6 +352,20 @@ export function knownFields(raw: unknown): string[] {
 	return FIELD_ORDER.filter((field) => raw.includes(field));
 }
 
+// ---------------------------------------------------------------- source
+
+/**
+ * The `?s=` tag the page was opened with, as sent in the `source` part: lower-case
+ * letters, digits and underscores, up to 24 — the founder labels his links «1», «2»,
+ * «3»… as well as «poster» (2026-11-07). Anything else is «direct». Wider than the
+ * site's `attributionSource` (letters only), on purpose; twins: the edge function's
+ * `cleanSource` and the CHECK `job_applications_source_check`.
+ */
+export function careersSource(search: string): string {
+	const s = new URLSearchParams(search).get('s') || '';
+	return /^[a-z0-9_]{1,24}$/.test(s) ? s : 'direct';
+}
+
 // ---------------------------------------------------------------- draft
 
 export function emptyAnswers(): CareersAnswers {

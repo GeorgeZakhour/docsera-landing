@@ -554,7 +554,8 @@ footer .logo{height:14px;width:auto;display:block}
 <footer><div class="container"><a href="/" aria-label="DocSera"><img class="logo" src="/images/docsera_white.svg" alt="DocSera" width="84" height="14" /></a><span class="en">© 2026 DocSera · docsera.app</span></div></footer>
 
 <script>
-	import { SUPABASE_ANON_KEY, SUPABASE_URL, attributionSource, fireBeacon } from '../scripts/reach';
+	import { SUPABASE_ANON_KEY, SUPABASE_URL, fireBeacon } from '../scripts/reach';
+	import { careersSource } from '../scripts/careers-validate.ts';
 	import { careersWhatsAppUrl } from '../config/links.ts';
 	import { WHATSAPP_TEXT } from '../config/careers.ts';
 	import { initCareers } from '../scripts/careers.ts';
@@ -562,7 +563,8 @@ footer .logo{height:14px;width:auto;display:block}
 	initCareers({
 		endpoint: SUPABASE_URL + '/functions/v1/job_application',
 		anonKey: SUPABASE_ANON_KEY,
-		source: attributionSource(),
+		// digits allowed here (the founder's «?s=1», «?s=2»…) — wider than the site's attributionSource
+		source: careersSource(window.location.search),
 		beacon: fireBeacon,
 		whatsappUrl: careersWhatsAppUrl(WHATSAPP_TEXT),
 	});

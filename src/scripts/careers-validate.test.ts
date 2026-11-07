@@ -18,6 +18,7 @@ import {
 } from '../config/careers.ts';
 import { CAREERS_WHATSAPP_NUMBER, careersWhatsAppUrl } from '../config/links.ts';
 import {
+	careersSource,
 	checkAnswers,
 	checkFileChoice,
 	emptyAnswers,
@@ -494,6 +495,20 @@ test('a minimal request sends the optionals as empty strings and nulls, as the c
 	assert.equal(sent.areas_other, '');
 	assert.equal(sent.message, '');
 	assert.equal(sent.whatsapp, sent.phone);
+});
+
+// ---------------------------------------------------------------- source
+
+test('the source tag: letters, digits and underscores up to 24 — «?s=3» is a source, not direct', () => {
+	assert.equal(careersSource('?s=3'), '3');
+	assert.equal(careersSource('?s=poster'), 'poster');
+	assert.equal(careersSource('?s=poster_2&x=1'), 'poster_2');
+	assert.equal(careersSource('?x=1&s=12'), '12');
+	assert.equal(careersSource(''), 'direct');
+	assert.equal(careersSource('?s='), 'direct');
+	assert.equal(careersSource('?s=Insta%20gram'), 'direct');
+	assert.equal(careersSource('?s=Facebook'), 'direct');
+	assert.equal(careersSource('?s=' + 'a'.repeat(25)), 'direct');
 });
 
 // ---------------------------------------------------------------- draft
