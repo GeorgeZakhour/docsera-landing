@@ -1,0 +1,246 @@
+<!doctype html>
+<html lang="ar" dir="rtl"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1">
+<title>انضم إلى فريق DocSera — مندوب/ة مبيعات ميداني</title>
+<style>
+{{FONTS_CSS}}
+:root{--c-main:#009092;--c-main-dark:#007474;--c-ink:#0B2A2E;--c-main-light:#E0F2F2;--c-glow:#7DD3D4;--c-warm:#FFB494;--c-sand:#EAE0D5;--c-sand-light:#F7F5F2;--c-text:#2D3436;--c-muted:#636E72;--c-white:#fff;--font-ar:"Cairo",sans-serif;--font-en:"Montserrat",sans-serif;--r:18px;--r-lg:26px;--shadow:0 20px 50px -28px rgba(0,116,116,.35)}
+*{box-sizing:border-box;margin:0;padding:0}
+html{background:#fff;-webkit-text-size-adjust:100%}
+body{font-family:var(--font-ar);color:var(--c-text);background:#fff;-webkit-font-smoothing:antialiased;font-size:16px;line-height:1.6}
+.container{width:min(1120px,100% - 40px);margin-inline:auto}
+.en{font-family:var(--font-en);direction:ltr;unicode-bidi:isolate}
+/* nav */
+.nav{position:sticky;top:0;z-index:10;background:rgba(255,255,255,.86);backdrop-filter:blur(10px);border-bottom:1px solid rgba(0,0,0,.06)}
+.nav .container{display:flex;justify-content:space-between;align-items:center;height:64px}
+.nav .logo{height:30px;width:190px;display:block}
+.nav .tag{font-size:14px;font-weight:700;color:var(--c-main-dark);background:var(--c-main-light);border-radius:999px;padding:4px 14px}
+/* hero */
+.hero{position:relative;color:#fff;overflow:hidden;padding:56px 0 64px;background:radial-gradient(800px 420px at 90% -10%,rgba(125,211,212,.55) 0%,rgba(125,211,212,0) 60%),radial-gradient(600px 400px at 0% 110%,rgba(0,0,0,.25) 0%,rgba(0,0,0,0) 60%),linear-gradient(160deg,#00A3A5 0%,#009092 42%,#006E70 100%)}
+.hero::after{content:"";position:absolute;inset:0;background-image:linear-gradient(rgba(255,255,255,.05) 1px,transparent 1px),linear-gradient(90deg,rgba(255,255,255,.05) 1px,transparent 1px);background-size:64px 64px;-webkit-mask-image:radial-gradient(ellipse 80% 70% at 50% 0%,#000 10%,transparent 80%);pointer-events:none}
+.hero .shape{position:absolute;left:-120px;bottom:-160px;width:460px;height:auto;opacity:.10;transform:rotate(12deg)}
+.hero .shape *{fill:#fff!important}
+.hero .z{position:relative;z-index:2}
+.chip{display:inline-block;font-weight:800;font-size:14px;background:var(--c-warm);color:var(--c-ink);padding:4px 14px;border-radius:999px}
+.hero .eyebrow{margin-top:18px;font-size:15px;font-weight:700;color:#CFF1F1}
+.hero h1{font-size:clamp(34px,6vw,64px);line-height:1.1;font-weight:900;margin-top:4px;text-shadow:0 10px 30px rgba(0,40,42,.3)}
+.hero h1 small{display:block;font-size:.5em;font-weight:800;color:#E6F7F7;margin-top:4px}
+.hero .lede{margin-top:16px;font-size:clamp(16px,2vw,19px);color:#E8F6F6;font-weight:600;max-width:640px;line-height:1.7}
+.areas{margin-top:22px;display:flex;flex-wrap:wrap;gap:10px;align-items:center}
+.areas .lbl{font-size:14px;font-weight:800;color:#CFF1F1}
+.area{display:inline-flex;align-items:center;gap:8px;background:rgba(255,255,255,.14);border:1.5px solid rgba(255,255,255,.35);border-radius:999px;padding:6px 14px 6px 8px;font-size:15px;font-weight:700}
+.area b{font-family:var(--font-en);font-weight:900;font-size:13px;width:26px;height:26px;border-radius:50%;background:#fff;color:var(--c-main-dark);display:inline-grid;place-items:center}
+.cta-row{margin-top:28px;display:flex;flex-wrap:wrap;gap:12px;align-items:center}
+.btn{display:inline-flex;align-items:center;justify-content:center;gap:8px;border-radius:999px;padding:14px 26px;font-weight:800;font-size:16px;border:0;cursor:pointer;font-family:inherit}
+.btn-white{background:#fff;color:var(--c-main-dark);box-shadow:0 14px 30px -14px rgba(0,0,0,.4)}
+.btn-ghost{background:transparent;color:#fff;border:1.5px solid rgba(255,255,255,.5)}
+.hero .meta{margin-top:16px;font-size:13px;color:#CFF1F1;font-weight:600}
+/* sections */
+section.block{padding:56px 0}
+section.alt{background:var(--c-sand-light)}
+h2{font-size:clamp(24px,3vw,34px);font-weight:800;color:var(--c-ink);display:flex;align-items:center;gap:12px}
+h2::before{content:"";width:12px;height:12px;border-radius:3px;background:var(--c-main);transform:rotate(45deg)}
+.sub{color:var(--c-muted);margin-top:6px;font-weight:600}
+.grid{display:grid;gap:14px;margin-top:24px;grid-template-columns:repeat(auto-fit,minmax(230px,1fr))}
+.card{background:#fff;border:1px solid rgba(0,0,0,.06);border-radius:var(--r);padding:18px;box-shadow:var(--shadow)}
+.card .ic{width:42px;height:42px;border-radius:12px;background:var(--c-main-light);color:var(--c-main-dark);display:grid;place-items:center;font-weight:900;font-size:18px;margin-bottom:10px}
+.card h4{font-size:17px;font-weight:800;color:var(--c-ink)}
+.card p{font-size:14.5px;color:var(--c-muted);margin-top:4px;font-weight:600;line-height:1.6}
+ul.checks{list-style:none;display:grid;gap:10px;margin-top:20px}
+ul.checks li{display:flex;gap:12px;align-items:flex-start;font-weight:600;font-size:16px}
+ul.checks li::before{content:"✓";flex:none;width:28px;height:28px;border-radius:50%;background:var(--c-main-light);color:var(--c-main-dark);font-weight:900;font-size:15px;display:grid;place-items:center;margin-top:2px}
+.two{display:grid;gap:28px;grid-template-columns:1fr}
+@media(min-width:900px){.two{grid-template-columns:1fr 1fr}}
+.area-card{display:flex;gap:14px;align-items:flex-start}
+.area-card .letter{font-family:var(--font-en);font-weight:900;font-size:22px;width:48px;height:48px;border-radius:14px;background:var(--c-main);color:#fff;display:grid;place-items:center;flex:none}
+/* form */
+.apply{padding:64px 0 72px;background:linear-gradient(180deg,#fff 0%,var(--c-sand-light) 100%)}
+.apply-wrap{display:grid;gap:28px;grid-template-columns:1fr;align-items:start}
+@media(min-width:1000px){.apply-wrap{grid-template-columns:minmax(0,1.5fr) minmax(0,1fr)}}
+.form-card{background:#fff;border:1px solid rgba(0,0,0,.06);border-radius:var(--r-lg);padding:26px 22px;box-shadow:0 30px 70px -40px rgba(0,116,116,.5)}
+@media(min-width:700px){.form-card{padding:34px}}
+.form-head h3{font-size:26px;font-weight:900;color:var(--c-ink)}
+.form-head p{color:var(--c-muted);font-weight:600;font-size:14.5px;margin-top:2px}
+.stepper{list-style:none;display:grid;grid-template-columns:repeat(3,1fr);gap:8px;margin:22px 0 26px}
+.stepper li{position:relative;padding-top:14px;font-size:13px;font-weight:700;color:var(--c-muted)}
+.stepper li::before{content:"";position:absolute;top:0;inset-inline:0;height:6px;border-radius:999px;background:var(--c-main-light)}
+.stepper li.active{color:var(--c-main-dark)}.stepper li.active::before,.stepper li.done::before{background:var(--c-main)}
+.field{margin-top:16px}
+label{display:block;font-weight:700;font-size:14.5px;color:var(--c-ink);margin-bottom:6px}
+label .opt{color:var(--c-muted);font-weight:600;font-size:12.5px;margin-inline-start:6px}
+.input{width:100%;border:1.5px solid rgba(0,0,0,.12);border-radius:14px;padding:13px 14px;font-family:inherit;font-size:16px;color:var(--c-text);background:#fff;outline:none}
+.input.ph{color:#9AA3A6;font-weight:500}
+.input.en{text-align:left}
+.help{font-size:12.5px;color:var(--c-muted);margin-top:5px;font-weight:600}
+textarea.input{min-height:120px;resize:vertical}
+.row2{display:grid;gap:12px;grid-template-columns:1fr}
+@media(min-width:600px){.row2{grid-template-columns:1fr 1fr}}
+.toggle{display:flex;align-items:center;justify-content:space-between;gap:12px;background:var(--c-sand-light);border-radius:14px;padding:12px 14px;margin-top:12px;font-weight:700;font-size:14.5px}
+.switch{width:46px;height:26px;border-radius:999px;background:var(--c-main);position:relative;flex:none}
+.switch::after{content:"";position:absolute;top:3px;left:3px;width:20px;height:20px;border-radius:50%;background:#fff}
+.seg{display:flex;flex-wrap:wrap;gap:8px}
+.seg span{border:1.5px solid rgba(0,0,0,.12);border-radius:999px;padding:8px 14px;font-weight:700;font-size:14px;color:var(--c-text);background:#fff}
+.seg span.on{background:var(--c-main);border-color:var(--c-main);color:#fff}
+.checks2{display:grid;gap:10px}
+.chk{display:flex;align-items:center;gap:12px;border:1.5px solid rgba(0,0,0,.12);border-radius:14px;padding:12px 14px;font-weight:700;font-size:15px;background:#fff}
+.chk .box{width:22px;height:22px;border-radius:7px;border:2px solid rgba(0,0,0,.25);flex:none;display:grid;place-items:center;color:#fff;font-size:13px;font-weight:900}
+.chk.on{border-color:var(--c-main);background:var(--c-main-light)}.chk.on .box{background:var(--c-main);border-color:var(--c-main)}
+.chk b{font-family:var(--font-en);font-weight:900;color:var(--c-main-dark);margin-inline-end:2px}
+.drop{border:2px dashed rgba(0,144,146,.5);background:var(--c-main-light);border-radius:16px;padding:22px 16px;text-align:center}
+.drop .ic{width:48px;height:48px;border-radius:14px;background:#fff;color:var(--c-main-dark);display:grid;place-items:center;margin:0 auto 10px;font-weight:900;font-size:22px}
+.drop b{display:block;font-weight:800;color:var(--c-ink);font-size:15.5px}
+.drop span{display:block;color:var(--c-muted);font-weight:600;font-size:13px;margin-top:3px}
+.file{display:flex;align-items:center;gap:12px;border:1.5px solid rgba(0,0,0,.1);border-radius:14px;padding:10px 12px;margin-top:10px;font-size:14px;font-weight:700;background:#fff}
+.file .ext{font-family:var(--font-en);font-weight:900;font-size:11px;background:#E53935;color:#fff;border-radius:8px;padding:4px 7px}
+.file .sz{color:var(--c-muted);font-weight:600;margin-inline-start:auto;font-size:12.5px}
+.bar{height:6px;border-radius:999px;background:var(--c-main-light);margin-top:8px;overflow:hidden}.bar i{display:block;height:100%;width:100%;background:var(--c-main)}
+.actions{display:flex;gap:10px;margin-top:26px}
+.btn-main{background:var(--c-main);color:#fff;flex:1;box-shadow:0 16px 34px -16px rgba(0,144,146,.7)}
+.btn-prev{background:var(--c-sand-light);color:var(--c-text)}
+.consent{font-size:12.5px;color:var(--c-muted);font-weight:600;margin-top:12px;text-align:center}
+.consent a{color:var(--c-main-dark)}
+.side .card{margin-top:14px}
+.side ol{list-style:none;counter-reset:s;display:grid;gap:14px;margin-top:8px}
+.side ol li{display:flex;gap:12px;align-items:flex-start;font-weight:600}
+.side ol li::before{counter-increment:s;content:counter(s);flex:none;width:30px;height:30px;border-radius:50%;background:var(--c-main);color:#fff;font-family:var(--font-en);font-weight:900;display:grid;place-items:center;font-size:14px}
+.side ol li b{display:block;color:var(--c-ink)}
+.side ol li span{color:var(--c-muted);font-size:14px}
+footer{background:var(--c-ink);color:#CFE6E6;padding:26px 0;font-size:13.5px;font-weight:600}
+footer .container{display:flex;justify-content:space-between;align-items:center;gap:12px;flex-wrap:wrap}
+footer .logo{height:26px;width:156px}
+footer .logo *{fill:#fff!important}
+[hidden]{display:none!important}
+</style></head>
+<body>
+<nav class="nav"><div class="container"><a href="#">{{LOGO_MAIN}}</a><span class="tag">الوظائف</span></div></nav>
+
+<header class="hero">{{SHAPE_WHITE}}<div class="container z">
+  <span class="chip">نوظّف الآن</span>
+  <div class="eyebrow">فريق المبيعات · دمشق</div>
+  <h1>مندوب/ة مبيعات<small>ميداني — القطاع الطبي</small></h1>
+  <p class="lede">تزور الأطباء والعيادات في منطقتك، تعرّفهم بـ DocSera Pro، تفعّل تجربتهم المجانية، وتتابعهم حتى الاشتراك وما بعده.</p>
+  <div class="areas"><span class="lbl">الشواغر</span><span class="area"><b>A</b> مزة</span><span class="area"><b>B</b> روضة · مالكي · أبو رمانة</span><span class="area"><b>C</b> مركز المدينة</span></div>
+  <div class="cta-row"><a class="btn btn-white" href="#apply">قدّم الآن</a><a class="btn btn-ghost" href="#role">تعرّف على الدور</a></div>
+  <div class="meta">التقديم يستغرق ثلاث دقائق · نراجع كل طلب ونتواصل مع من تنطبق عليه الشروط</div>
+</div></header>
+
+<section class="block" id="role"><div class="container">
+  <h2>ما الذي ستفعله</h2><p class="sub">عمل ميداني بنتيجة واضحة: عيادات تنضمّ إلى DocSera وتبقى معه.</p>
+  <div class="grid">
+    <div class="card"><div class="ic">١</div><h4>زيارات ميدانية</h4><p>تزور الأطباء والمراكز في منطقتك وتعرّفهم بـ DocSera Pro وبما يقدّمه لعيادتهم.</p></div>
+    <div class="card"><div class="ic">٢</div><h4>تفعيل التجربة</h4><p>تساعد العيادة على البدء: تجهيز الحساب، شرح الأساسيات، وتجربة مجانية حتى تقرّر.</p></div>
+    <div class="card"><div class="ic">٣</div><h4>المتابعة والدعم</h4><p>تتابع عملاءك بعد الاشتراك، تجيب عن أسئلتهم، وتنقل ملاحظاتهم إلى فريق المنتج.</p></div>
+    <div class="card"><div class="ic">٤</div><h4>تقارير من هاتفك</h4><p>تخطّط زياراتك وتسجّل نتائجها في تطبيق DocSera Admin — لا أوراق ولا جداول.</p></div>
+  </div>
+</div></section>
+
+<section class="block alt"><div class="container two">
+  <div><h2>ما الذي نقدّمه</h2>
+    <ul class="checks">
+      <li>راتب ثابت، وعمولة على كل اشتراك تجلبه، ومكافآت شهرية عند تحقيق الأهداف</li>
+      <li>تدريب على المنتج وأسلوب البيع منذ اليوم الأول، واجتماعات دورية للتطوير</li>
+      <li>مرونة في الدوام: الالتزام بالنتيجة لا بالساعة</li>
+      <li>إجازة سنوية مدفوعة وقواعد عمل واضحة ومكتوبة</li>
+      <li>فرصة حقيقية للنمو مع مشروع سوري يتوسّع</li>
+    </ul>
+  </div>
+  <div><h2>المطلوب</h2>
+    <ul class="checks">
+      <li>خبرة في التسويق أو المبيعات</li>
+      <li>شهادة جامعية — يفضَّل القطاع الطبي أو الصحي (طب أسنان، صيدلة، تمريض، علوم صحية…)</li>
+      <li>مهارات تواصل وإقناع، وراحة في التعامل مع الأطباء</li>
+      <li>الإقامة في دمشق والقدرة على التنقل اليومي في منطقتك</li>
+    </ul>
+  </div>
+</div></section>
+
+<section class="block"><div class="container">
+  <h2>المناطق</h2><p class="sub">ثلاثة شواغر، لكل منطقة مندوب/ة واحد/ة. اختر ما يناسبك في الطلب.</p>
+  <div class="grid">
+    <div class="card area-card"><div class="letter">A</div><div><h4>مزة</h4><p>المزة بكل أحيائها: الفيلات، الشيخ سعد، جبل المزة، الأوتوستراد.</p></div></div>
+    <div class="card area-card"><div class="letter">B</div><div><h4>روضة · مالكي · أبو رمانة</h4><p>منطقة العيادات الأكثر كثافة في دمشق، وأقصر المسافات بين زيارة وأخرى.</p></div></div>
+    <div class="card area-card"><div class="letter">C</div><div><h4>مركز المدينة</h4><p>الشعلان، الصالحية، العرنوس، الحلبوني، وما بينها.</p></div></div>
+  </div>
+</div></section>
+
+<section class="apply" id="apply"><div class="container apply-wrap">
+  <div class="form-card">
+    <div class="form-head"><h3>قدّم الآن</h3><p>ثلاث خطوات قصيرة. لا يُرسل شيء قبل أن تضغط «إرسال الطلب».</p></div>
+    <ol class="stepper"><li>من أنت</li><li>خبرتك</li><li>السيرة والتفاصيل</li></ol>
+
+    <div data-step="1">
+      <div class="field"><label>الاسم الكامل</label><div class="input ph">الاسم الثلاثي</div></div>
+      <div class="row2">
+        <div class="field"><label>رقم الموبايل</label><div class="input ph en">09xx xxx xxx</div></div>
+        <div class="field"><label>البريد الإلكتروني <span class="opt">اختياري</span></label><div class="input ph en">name@example.com</div></div>
+      </div>
+      <div class="toggle"><span>واتساب على الرقم نفسه</span><span class="switch"></span></div>
+      <div class="field"><label>مكان إقامتك</label><div class="input ph">الحي أو المنطقة — مثلاً: القصاع</div></div>
+      <div class="field"><label>الخدمة الإلزامية <span class="opt">اختياري</span></label>
+        <div class="seg"><span>لا ينطبق</span><span class="on">منتهية</span><span>مؤجَّلة</span><span>معفى</span></div>
+        <div class="help">يساعدنا على التخطيط معك، ولا يؤثر وحده على القرار.</div></div>
+      <div class="actions"><span class="btn btn-main">التالي</span></div>
+    </div>
+
+    <div data-step="2" hidden>
+      <div class="row2">
+        <div class="field"><label>المؤهل العلمي</label><div class="input">بكالوريوس ▾</div></div>
+        <div class="field"><label>الجامعة <span class="opt">اختياري</span></label><div class="input ph">جامعة دمشق</div></div>
+      </div>
+      <div class="field"><label>مجال الدراسة</label>
+        <div class="seg"><span>طب أسنان</span><span class="on">صيدلة</span><span>طب بشري</span><span>تمريض</span><span>علوم صحية</span><span>إدارة أعمال / تسويق</span><span>اقتصاد</span><span>أخرى</span></div></div>
+      <div class="field"><label>سنوات الخبرة في المبيعات أو التسويق</label>
+        <div class="seg"><span>لا خبرة</span><span>أقل من سنة</span><span class="on">1 – 2</span><span>3 – 5</span><span>أكثر من 5</span></div></div>
+      <div class="field"><label>هل عملت مع أطباء أو عيادات أو شركات أدوية؟</label>
+        <div class="seg"><span class="on">نعم</span><span>لا</span></div>
+        <div class="input ph" style="margin-top:10px">أين، وبأي دور؟</div></div>
+      <div class="field"><label>آخر جهة عمل ومسمّاك الوظيفي <span class="opt">اختياري</span></label><div class="input ph">مثلاً: مندوب طبي — شركة …</div></div>
+      <div class="field"><label>أهم إنجاز بيعي حققته</label><div class="input ph" style="min-height:110px">احكِ لنا باختصار عن موقف بيعي تفتخر به: ماذا كان الهدف، وماذا فعلت، وما النتيجة.</div><div class="help">بين 20 و600 حرف. هذا أهم ما نقرأه في طلبك.</div></div>
+      <div class="actions"><span class="btn btn-prev">السابق</span><span class="btn btn-main">التالي</span></div>
+    </div>
+
+    <div data-step="3" hidden>
+      <div class="field"><label>المناطق التي تناسبك</label>
+        <div class="checks2">
+          <div class="chk on"><span class="box">✓</span><span><b>A</b> مزة</span></div>
+          <div class="chk on"><span class="box">✓</span><span><b>B</b> روضة · مالكي · أبو رمانة</span></div>
+          <div class="chk"><span class="box"></span><span><b>C</b> مركز المدينة</span></div>
+        </div></div>
+      <div class="row2">
+        <div class="field"><label>متى تستطيع البدء؟</label><div class="seg"><span class="on">فوراً</span><span>خلال أسبوعين</span><span>خلال شهر</span></div></div>
+        <div class="field"><label>وسيلة نقل خاصة؟</label><div class="seg"><span>نعم</span><span class="on">لا</span></div></div>
+      </div>
+      <div class="row2">
+        <div class="field"><label>الراتب الشهري المتوقع <span class="opt">اختياري</span></label><div class="input ph en">$</div></div>
+        <div class="field"><label>رابط LinkedIn <span class="opt">اختياري</span></label><div class="input ph en">linkedin.com/in/…</div></div>
+      </div>
+      <div class="field"><label>السيرة الذاتية</label>
+        <div class="drop"><div class="ic">↑</div><b>اختر ملف السيرة الذاتية</b><span>PDF أو Word أو صورة — حتى 16 ميغابايت</span></div>
+        <div class="file"><span class="ext">PDF</span><span>CV-Lama-Haddad.pdf</span><span class="sz en">1.8 MB</span></div>
+      </div>
+      <div class="field"><label>ملفات إضافية <span class="opt">اختياري — حتى ملفّين</span></label>
+        <div class="file"><span class="ext" style="background:#009092">JPG</span><span>الشهادة الجامعية.jpg</span><span class="sz en">3.1 MB</span></div>
+        <div class="help">الشهادة الجامعية، شهادة خبرة، أو أي ملف يدعم طلبك.</div></div>
+      <div class="field"><label>رسالة قصيرة <span class="opt">اختياري</span></label><div class="input ph" style="min-height:90px">لماذا هذا الدور؟ وما الذي يميّزك؟</div></div>
+      <div class="actions"><span class="btn btn-prev">السابق</span><span class="btn btn-main">إرسال الطلب</span></div>
+      <div class="consent">بإرسال الطلب توافق على معالجة بياناتك وسيرتك الذاتية لغرض التوظيف فقط — <a href="#">سياسة الخصوصية</a></div>
+    </div>
+  </div>
+
+  <aside class="side">
+    <h2>ماذا بعد الإرسال؟</h2>
+    <div class="card"><ol>
+      <li><div><b>نستلم طلبك فوراً</b><span>يصلك رقم مرجعي، ويظهر طلبك عندنا في اللحظة نفسها.</span></div></li>
+      <li><div><b>نراجع ونتواصل</b><span>نقرأ كل طلب. من تنطبق عليه الشروط نتصل به لمقابلة قصيرة.</span></div></li>
+      <li><div><b>تدريب ثم الميدان</b><span>تبدأ بتدريب على المنتج وأسلوب العمل، ثم تنطلق في منطقتك مع متابعة من قائدة الفريق.</span></div></li>
+    </ol></div>
+    <div class="card"><h4 style="font-weight:800;color:var(--c-ink)">عن DocSera</h4><p style="color:var(--c-muted);font-weight:600;font-size:14.5px;margin-top:6px">منصة سورية لإدارة العيادات والمراكز الطبية وحجز المواعيد: تطبيق للمرضى وتطبيق للأطباء، يعمل مع عيادات ومراكز في دمشق.</p></div>
+  </aside>
+</div></section>
+
+<footer><div class="container"><span>{{LOGO_WHITE}}</span><span class="en">© 2026 DocSera · docsera.app</span></div></footer>
+<script>
+  const step=new URLSearchParams(location.search).get('step')||'1';
+  document.querySelectorAll('[data-step]').forEach(el=>{el.hidden=el.dataset.step!==step});
+  document.querySelectorAll('.stepper li').forEach((li,i)=>{li.classList.toggle('active',String(i+1)===step);li.classList.toggle('done',i+1<Number(step))});
+</script>
+</body></html>

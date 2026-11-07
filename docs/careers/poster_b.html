@@ -1,0 +1,71 @@
+<!doctype html>
+<html lang="ar" dir="rtl"><head><meta charset="utf-8">
+<style>
+{{FONTS_CSS}}
+:root{--p:#00B5B7;--deep:#009092;--glow:#7DD3D4;--void:#001015;--base:#0F1A22;--paper:#1A252D;--elev:#243039;--fg1:#E8EEF0;--fg2:rgba(232,238,240,.72);--fg3:rgba(232,238,240,.45);--warm:#FFB494;--stroke:rgba(255,255,255,.09);--stroke-strong:rgba(255,255,255,.18);--font-ar:"Cairo",sans-serif;--font-en:"Montserrat",sans-serif;}
+*{box-sizing:border-box;margin:0;padding:0}
+html,body{width:1080px;height:1350px;overflow:hidden;background:var(--void);font-family:var(--font-ar);color:var(--fg1);-webkit-font-smoothing:antialiased}
+.poster{position:relative;width:1080px;height:1350px;padding:64px 72px 48px;display:flex;flex-direction:column;overflow:hidden;
+  background:radial-gradient(1200px 620px at 50% -80px,#11303a 0%,#0c2129 28%,#06141b 55%,rgba(2,16,21,0) 100%),linear-gradient(180deg,#04121a 0%,#041018 48%,#03121a 74%,#020d12 100%)}
+.orb{position:absolute;border-radius:999px;filter:blur(80px);mix-blend-mode:screen;opacity:.85;pointer-events:none}
+.o1{width:620px;height:620px;right:-180px;top:-220px;background:rgba(0,181,183,.38)}
+.o2{width:520px;height:520px;left:-200px;top:520px;background:rgba(0,144,146,.22)}
+.o3{width:420px;height:420px;right:120px;bottom:-200px;background:rgba(255,180,148,.12)}
+.grid{position:absolute;inset:0;background-image:linear-gradient(rgba(255,255,255,.035) 1px,transparent 1px),linear-gradient(90deg,rgba(255,255,255,.035) 1px,transparent 1px);background-size:84px 84px;-webkit-mask-image:radial-gradient(ellipse 75% 60% at 50% 0%,#000 15%,transparent 75%);pointer-events:none}
+.z{position:relative;z-index:2}
+.row{display:flex;justify-content:space-between;align-items:center}
+.logo{height:56px;width:auto;display:block}
+.chip{font-weight:800;font-size:28px;background:var(--warm);color:#1A0F0A;padding:8px 26px;border-radius:999px;box-shadow:0 0 0 1px rgba(255,180,148,.3),0 16px 34px -14px rgba(255,180,148,.55)}
+.eyebrow{margin-top:56px;font-size:30px;font-weight:700;color:var(--glow);letter-spacing:.3px}
+h1{margin-top:6px;font-size:108px;line-height:1.06;font-weight:900;letter-spacing:-1px;color:#fff;text-shadow:0 0 60px rgba(0,181,183,.35)}
+h1 small{display:block;font-size:58px;font-weight:800;margin-top:8px;background:linear-gradient(90deg,var(--glow),var(--p));-webkit-background-clip:text;background-clip:text;color:transparent}
+.lede{margin-top:22px;font-size:30px;line-height:1.55;font-weight:600;color:var(--fg2);max-width:880px}
+.areas{margin-top:32px;display:flex;flex-wrap:wrap;align-items:center;gap:14px}
+.areas-label{font-size:26px;font-weight:800;color:var(--fg2);margin-inline-end:6px}
+.area{display:inline-flex;align-items:center;gap:12px;background:rgba(255,255,255,.06);border:1.5px solid var(--stroke-strong);border-radius:999px;padding:10px 22px 10px 12px;font-size:27px;font-weight:700;color:#fff}
+.area b{font-family:var(--font-en);font-weight:900;font-size:24px;width:40px;height:40px;border-radius:50%;background:var(--p);color:#001015;display:inline-grid;place-items:center}
+.card{margin-top:34px;background:linear-gradient(180deg,rgba(26,37,45,.92),rgba(15,26,34,.92));border:1px solid var(--stroke);border-radius:28px;padding:26px 36px;box-shadow:0 30px 60px -30px rgba(0,16,21,.9)}
+.cols{display:grid;grid-template-columns:1fr 1fr;gap:40px}
+.col h3{font-size:30px;font-weight:800;color:var(--glow);margin-bottom:14px;display:flex;align-items:center;gap:12px}
+.col h3::before{content:"";width:12px;height:12px;border-radius:3px;background:var(--p);transform:rotate(45deg);box-shadow:0 0 18px var(--p)}
+.col ul{list-style:none;display:grid;gap:12px}
+.col li{display:flex;gap:14px;align-items:flex-start;font-size:25px;font-weight:600;line-height:1.4;color:var(--fg1)}
+.col li::before{content:"✓";flex:none;width:34px;height:34px;border-radius:50%;background:rgba(0,181,183,.16);color:var(--p);font-weight:900;font-size:20px;display:grid;place-items:center;margin-top:3px}
+.cta{margin-top:auto;display:flex;align-items:center;gap:28px;padding:18px 24px;border-radius:28px;background:rgba(255,255,255,.04);border:1px solid var(--stroke-strong)}
+.qr-box{flex:none;width:156px;height:156px;padding:12px;border-radius:18px;background:#fff;box-shadow:0 0 0 3px var(--p),0 0 40px rgba(0,181,183,.45)}
+.qr{width:100%;height:100%;display:block}
+.cta-title{font-size:44px;font-weight:900;color:#fff;line-height:1.1}
+.url{font-family:var(--font-en);direction:ltr;unicode-bidi:isolate;font-weight:700;font-size:38px;color:var(--p);margin-top:4px;letter-spacing:-.3px}
+.hint{font-size:23px;color:var(--fg2);font-weight:600;margin-top:6px}
+footer{margin-top:24px;display:flex;justify-content:space-between;align-items:center;font-size:22px;color:var(--fg3);font-weight:600}
+footer .brand{font-family:var(--font-en);direction:ltr;unicode-bidi:isolate;font-weight:700;color:var(--glow)}
+</style></head>
+<body><div class="poster">
+  <div class="orb o1"></div><div class="orb o2"></div><div class="orb o3"></div><div class="grid"></div>
+  <div class="z row"><div>{{LOGO_WHITE}}</div><span class="chip">نوظّف الآن</span></div>
+  <div class="z eyebrow">فريق المبيعات · دمشق</div>
+  <h1 class="z">مندوب/ة مبيعات<small>ميداني — القطاع الطبي</small></h1>
+  <p class="z lede">زيارات ميدانية للأطباء والعيادات في منطقتك: تعرّفهم بـ DocSera Pro، تفعّل تجربتهم، وتتابعهم حتى الاشتراك.</p>
+  <div class="z areas"><span class="areas-label">الشواغر</span>
+    <span class="area"><b>A</b> مزة</span>
+    <span class="area"><b>B</b> روضة · مالكي · أبو رمانة</span>
+    <span class="area"><b>C</b> مركز المدينة</span>
+  </div>
+  <div class="z card"><div class="cols">
+    <div class="col"><h3>المطلوب</h3><ul>
+      <li>خبرة في التسويق والمبيعات</li>
+      <li>شهادة جامعية — يفضَّل القطاع الطبي</li>
+      <li>مهارات تواصل وإقناع، وراحة في الميدان</li>
+    </ul></div>
+    <div class="col"><h3>نقدّم</h3><ul>
+      <li>راتب ثابت + عمولات ومكافآت شهرية</li>
+      <li>تدريب مستمر ومرونة في الدوام</li>
+      <li>فرصة للنمو مع مشروع يتوسّع</li>
+    </ul></div>
+  </div></div>
+  <div class="z cta">
+    <div class="qr-box">{{QR_DARK}}</div>
+    <div><div class="cta-title">قدّم الآن</div><div class="url">docsera.app/careers</div><div class="hint">امسح الرمز أو افتح الرابط — التقديم يستغرق ثلاث دقائق</div></div>
+  </div>
+  <footer class="z"><span>منصة سورية لإدارة العيادات وحجز المواعيد</span><span class="brand">DocSera</span></footer>
+</div></body></html>

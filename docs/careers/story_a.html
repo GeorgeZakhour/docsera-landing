@@ -1,0 +1,59 @@
+<!doctype html>
+<html lang="ar" dir="rtl"><head><meta charset="utf-8">
+<style>
+{{FONTS_CSS}}
+:root{--teal:#009092;--teal-deep:#007474;--teal-ink:#0B2A2E;--teal-light:#E0F2F2;--warm:#FFB494;--sand:#F7F5F2;--text:#2D3436;--muted:#636E72;--font-ar:"Cairo",sans-serif;--font-en:"Montserrat",sans-serif;}
+*{box-sizing:border-box;margin:0;padding:0}
+html,body{width:1080px;height:1920px;overflow:hidden;background:#fff;font-family:var(--font-ar);color:var(--text);-webkit-font-smoothing:antialiased}
+.poster{position:relative;width:1080px;height:1920px;display:flex;flex-direction:column}
+.top{position:relative;height:1150px;padding:120px 72px 0;color:#fff;overflow:hidden;
+  background:radial-gradient(900px 560px at 85% 0%,rgba(125,211,212,.55) 0%,rgba(125,211,212,0) 60%),radial-gradient(700px 500px at 5% 110%,rgba(0,0,0,.28) 0%,rgba(0,0,0,0) 60%),linear-gradient(160deg,#00A3A5 0%,#009092 42%,#006E70 100%)}
+.top::after{content:"";position:absolute;inset:0;background-image:linear-gradient(rgba(255,255,255,.05) 1px,transparent 1px),linear-gradient(90deg,rgba(255,255,255,.05) 1px,transparent 1px);background-size:72px 72px;-webkit-mask-image:radial-gradient(ellipse 80% 70% at 50% 0%,#000 10%,transparent 80%);pointer-events:none}
+.shape{position:absolute;left:-180px;bottom:-240px;width:720px;height:auto;opacity:.10;transform:rotate(12deg)}
+.shape *{fill:#fff!important}
+.z{position:relative;z-index:2}
+.row{display:flex;justify-content:space-between;align-items:center}
+.logo{height:60px;width:auto;display:block}
+.chip{font-weight:800;font-size:30px;background:var(--warm);color:var(--teal-ink);padding:10px 28px;border-radius:999px}
+.eyebrow{margin-top:96px;font-size:32px;font-weight:700;color:#CFF1F1}
+h1{margin-top:10px;font-size:118px;line-height:1.06;font-weight:900;letter-spacing:-1px;text-shadow:0 14px 40px rgba(0,40,42,.35)}
+h1 small{display:block;font-size:66px;font-weight:800;color:#E6F7F7;margin-top:8px}
+.lede{margin-top:34px;font-size:33px;line-height:1.55;font-weight:600;color:#E8F6F6;max-width:900px}
+.areas{margin-top:44px;display:flex;flex-wrap:wrap;align-items:center;gap:14px}
+.areas-label{font-size:28px;font-weight:800;color:#CFF1F1;width:100%}
+.area{display:inline-flex;align-items:center;gap:14px;background:rgba(255,255,255,.14);border:1.5px solid rgba(255,255,255,.35);border-radius:999px;padding:12px 24px 12px 14px;font-size:30px;font-weight:700;color:#fff;width:max-content}
+.area b{font-family:var(--font-en);font-weight:900;font-size:26px;width:46px;height:46px;border-radius:50%;background:#fff;color:var(--teal-deep);display:inline-grid;place-items:center}
+.bottom{flex:1;position:relative;background:linear-gradient(180deg,#fff 0%,var(--sand) 100%);padding:52px 72px 150px;display:flex;flex-direction:column}
+.cols{display:grid;grid-template-columns:1fr 1fr;gap:40px}
+.col h3{font-size:32px;font-weight:800;color:var(--teal-deep);margin-bottom:14px;display:flex;align-items:center;gap:12px}
+.col h3::before{content:"";width:14px;height:14px;border-radius:4px;background:var(--teal);transform:rotate(45deg)}
+.col ul{list-style:none;display:grid;gap:12px}
+.col li{display:flex;gap:14px;align-items:flex-start;font-size:27px;font-weight:600;line-height:1.4}
+.col li::before{content:"✓";flex:none;width:36px;height:36px;border-radius:50%;background:var(--teal-light);color:var(--teal-deep);font-weight:900;font-size:22px;display:grid;place-items:center;margin-top:3px}
+.cta{margin-top:auto;display:flex;align-items:center;gap:30px;padding:24px 28px;border-radius:28px;background:#fff;border:2px solid var(--teal-light);box-shadow:0 24px 50px -30px rgba(0,116,116,.45)}
+.qr-box{flex:none;width:190px;height:190px;padding:12px;border-radius:18px;background:#fff;border:2.5px solid var(--teal)}
+.qr{width:100%;height:100%;display:block}
+.cta-title{font-size:46px;font-weight:900;color:var(--teal-ink);line-height:1.1}
+.url{font-family:var(--font-en);direction:ltr;unicode-bidi:isolate;font-weight:700;font-size:40px;color:var(--teal-deep);margin-top:4px}
+.hint{font-size:24px;color:var(--muted);font-weight:600;margin-top:6px}
+</style></head>
+<body><div class="poster">
+  <header class="top">{{SHAPE_WHITE}}
+    <div class="z row"><div>{{LOGO_WHITE}}</div><span class="chip">نوظّف الآن</span></div>
+    <div class="z eyebrow">فريق المبيعات · دمشق</div>
+    <h1 class="z">مندوب/ة مبيعات<small>ميداني — القطاع الطبي</small></h1>
+    <p class="z lede">زيارات ميدانية للأطباء والعيادات في منطقتك: تعرّفهم بـ DocSera Pro، تفعّل تجربتهم، وتتابعهم حتى الاشتراك.</p>
+    <div class="z areas"><span class="areas-label">الشواغر</span>
+      <span class="area"><b>A</b> مزة</span>
+      <span class="area"><b>B</b> روضة · مالكي · أبو رمانة</span>
+      <span class="area"><b>C</b> مركز المدينة</span>
+    </div>
+  </header>
+  <section class="bottom">
+    <div class="cols">
+      <div class="col"><h3>المطلوب</h3><ul><li>خبرة في التسويق والمبيعات</li><li>شهادة جامعية — يفضَّل القطاع الطبي</li><li>مهارات تواصل وإقناع</li></ul></div>
+      <div class="col"><h3>نقدّم</h3><ul><li>راتب ثابت + عمولات ومكافآت</li><li>تدريب مستمر ومرونة في الدوام</li><li>فرصة للنمو مع مشروع يتوسّع</li></ul></div>
+    </div>
+    <div class="cta"><div class="qr-box">{{QR_DARK}}</div><div><div class="cta-title">قدّم الآن</div><div class="url">docsera.app/careers</div><div class="hint">الرابط في البايو — التقديم يستغرق ثلاث دقائق</div></div></div>
+  </section>
+</div></body></html>
