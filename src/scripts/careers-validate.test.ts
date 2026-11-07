@@ -109,10 +109,13 @@ test('the title, the privacy sentence and the copy follow the rulings', () => {
 	assert.equal(whatsappTextWithCode('').includes('undefined'), false);
 });
 
-test('the careers WhatsApp number ships empty, and then no link is built', () => {
-	assert.equal(CAREERS_WHATSAPP_NUMBER, '');
-	assert.equal(careersWhatsAppUrl(WHATSAPP_TEXT), null);
-	assert.equal(careersWhatsAppUrl(), null);
+test('the careers WhatsApp number is the founder\'s (2026-11-07), and the link carries the prefilled text', () => {
+	assert.equal(CAREERS_WHATSAPP_NUMBER, '963983322665');
+	const url = careersWhatsAppUrl(WHATSAPP_TEXT);
+	assert.ok(url && url.startsWith('https://wa.me/963983322665?text='));
+	assert.ok(url.includes(encodeURIComponent('مندوب/ة مبيعات')));
+	assert.ok(careersWhatsAppUrl(whatsappTextWithCode('K7M-42Q'))?.includes(encodeURIComponent('K7M-42Q')));
+	assert.equal(careersWhatsAppUrl(), 'https://wa.me/963983322665');
 });
 
 // ---------------------------------------------------------------- step 1

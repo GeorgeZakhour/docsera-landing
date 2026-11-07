@@ -33,7 +33,8 @@ export function proWhatsAppUrl(text: string = ''): string {
 // 2026-11-07). Same wa.me form as above. EMPTY = the option is not drawn,
 // anywhere on /careers — the founder supplies the number later; a landing
 // deploy is all it takes.
-export const CAREERS_WHATSAPP_NUMBER = '';
+/** Set by the founder on 2026-11-07: the same number as the Pro join line. */
+export const CAREERS_WHATSAPP_NUMBER = '963983322665';
 
 /**
  * A wa.me chat with the careers number, opening with `text` already typed —
