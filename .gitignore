@@ -22,6 +22,9 @@
 dist/
 .astro/
 
+# Assembled HTML from docs/careers/build.py (fonts and logos inlined, MBs each)
+docs/careers/out/
+
 # --------------------------------------------------------------------
 # Dependencies
 # --------------------------------------------------------------------

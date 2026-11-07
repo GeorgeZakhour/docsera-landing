@@ -11,9 +11,11 @@
 //
 // Transport: multipart/form-data through XMLHttpRequest (fetch has no upload
 // progress), parts `token`, `hp`, `source`, `form` (JSON string), `cv`, and
-// one `extra` per extra file — the plan's default. The edge function reads
-// exactly these parts (handler.ts). Its header records the staging probe
-// of this transport (plan A1).
+// one `extra` per extra file. The staging probe (plan A1, 2026-11-07) passed
+// 16 MB of multipart through Caddy → Kong → the edge runtime on a fast line
+// and on one throttled to 1 Mbit/s, so the inline-base64 JSON fallback of
+// spec §6.3 is not used; the edge function reads exactly these parts
+// (handler.ts) and records the probe in its header.
 //
 // This module must stay importable outside a browser: no DOM access at the
 // top level, and nothing imported that reads `import.meta.env`. The page

@@ -115,6 +115,50 @@ lands in a founder-only inbox in DocSera-Admin. Design and contracts: DocSera-Pr
 - Funnel beacons through `fireBeacon`, category `acquisition`, never any personal data:
   `pro_join_opened`, `pro_join_step`, `pro_join_submitted`, `pro_join_whatsapp`.
 
+## Careers page (`/careers`)
+
+The hiring page: the posting, then a three-step application form with a CV upload. A
+sent application lands in the «طلبات التوظيف» inbox in DocSera-Admin. Sibling of the Pro
+request form — every rule above carries over (three copies of the field rules, tokens
+≥ 4 s, honeypot name rules, `node:test` on `.ts` imports, never import `reach.ts` from a
+tested module, «», no trial length). Design and contract: DocSera-Pro
+`docs/superpowers/specs/2026-11-07-hiring-applications-design.md` (§2c = the founder's
+rulings, §5 = this page) and `docs/superpowers/plans/2026-11-07-hiring-applications.md` (§C0).
+
+- **Files**: `src/pages/careers.astro` (markup, styles — ported from the mockup
+  `docs/careers/careers_page.html`) · `src/scripts/careers.ts` (send path + page
+  controller) · `src/scripts/careers-validate.ts` (field rules, pure) ·
+  `src/config/careers.ts` (closed lists, copy). The phone helpers are the Pro form's,
+  imported; so are `askOpen` and the token rules.
+- **The server is one endpoint**: `POST {SUPABASE_URL}/functions/v1/job_application` with
+  the anon key (DocSera-Pro). `{action:"open"}` (JSON) → `{open, token}`; the submit is
+  ONE `multipart/form-data` request through `XMLHttpRequest` (fetch has no upload
+  progress) with parts `token`, `hp`, `source`, `form` (JSON string), `cv`, `extra` (0–2)
+  → `{status}`: `accepted` (+ `code`) · `invalid` (+ `fields`, incl. `cv` / `extra` /
+  `files_total` / `form`) · `retry` · `busy` · `closed` · `too_large`.
+- **Closed means the closed panel**, not WhatsApp: `open:false`, a non-200, or `closed`
+  replaces the form with «أُغلق باب التقديم حالياً». Flag `hiring_form_enabled` ships off.
+- **Files**: each ≤ 16 MB and all together ≤ 16 MB, CV required, ≤ 2 extras; the page
+  checks the name's extension and the sizes on choice (refused on the spot with the
+  reason), the server checks the bytes. Files never enter the draft (`ds_careers_draft`
+  holds the typed answers only) and are re-chosen after a reload.
+- **Timeouts**: 240 s overall; **45 s without an upload-progress event** aborts — a dead
+  line shows as a stall long before the overall limit. Do not shorten either.
+- **The rulings** (founder, 2026-11-07): title «مندوب/ة مبيعات» everywhere; NO
+  expected-salary field; military status kept, optional; one plain privacy sentence,
+  no link; WhatsApp («أو أرسل سيرتك الذاتية على واتساب») only when
+  `CAREERS_WHATSAPP_NUMBER` in `links.ts` is set — empty = the option is not drawn
+  anywhere; he supplies the number, then a landing deploy is all it takes.
+- **Astro scopes a page's `<style>`**: anything the script creates at runtime (the file
+  rows) is styled from the `is:global` block, or it renders bare.
+- **Live screenshots**: `docs/careers/live_shots.mjs` drives the preview build through
+  headless Chromium's DevTools port (`--block-open` keeps the form up whatever staging
+  answers; `submit` sends a real application — never against production). The OG image
+  is the page's own hero: `python3 docs/careers/build.py og`.
+- Beacons through `fireBeacon`, category `acquisition`, never any personal data:
+  `careers_opened`, `careers_step` (2, 3), `careers_submitted`, `careers_closed_seen`,
+  `careers_whatsapp`.
+
 ## Design System
 
 ### CSS Variables
