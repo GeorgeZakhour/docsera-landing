@@ -1,0 +1,33 @@
+<!doctype html>
+<html lang="ar" dir="rtl"><head><meta charset="utf-8">
+<title>og-careers</title>
+<style>
+{{FONTS_CSS}}
+:root{--c-main:#009092;--c-main-dark:#007474;--c-ink:#0B2A2E;--c-warm:#FFB494;--font-ar:"Cairo",sans-serif;--font-en:"Montserrat",sans-serif}
+*{box-sizing:border-box;margin:0;padding:0}
+html,body{width:1200px;height:630px;overflow:hidden;background:#009092;font-family:var(--font-ar);color:#fff;-webkit-font-smoothing:antialiased}
+/* The page's own hero, at the card's size (spec §5.1: the OG image comes from the hero, not the poster). */
+.hero{position:relative;width:1200px;height:630px;overflow:hidden;padding:56px 72px;background:radial-gradient(900px 480px at 90% -10%,rgba(125,211,212,.55) 0%,rgba(125,211,212,0) 60%),radial-gradient(700px 460px at 0% 110%,rgba(0,0,0,.25) 0%,rgba(0,0,0,0) 60%),linear-gradient(160deg,#00A3A5 0%,#009092 42%,#006E70 100%)}
+.hero::after{content:"";position:absolute;inset:0;background-image:linear-gradient(rgba(255,255,255,.05) 1px,transparent 1px),linear-gradient(90deg,rgba(255,255,255,.05) 1px,transparent 1px);background-size:64px 64px;-webkit-mask-image:radial-gradient(ellipse 80% 70% at 50% 0%,#000 10%,transparent 80%);pointer-events:none}
+.shape{position:absolute;left:-140px;bottom:-190px;width:560px;height:auto;opacity:.10;transform:rotate(12deg)}
+.shape *{fill:#fff!important}
+.z{position:relative;z-index:2}
+.row{display:flex;justify-content:space-between;align-items:center}
+.logo{height:46px;width:auto;display:block}
+.chip{display:inline-block;font-weight:800;font-size:24px;background:var(--c-warm);color:var(--c-ink);padding:6px 22px;border-radius:999px}
+.eyebrow{margin-top:40px;font-size:26px;font-weight:700;color:#CFF1F1}
+h1{font-size:96px;line-height:1.08;font-weight:900;margin-top:2px;text-shadow:0 10px 30px rgba(0,40,42,.3)}
+h1 small{display:block;font-size:46px;font-weight:800;color:#E6F7F7;margin-top:6px}
+.areas{margin-top:34px;display:flex;flex-wrap:wrap;gap:12px;align-items:center}
+.lbl{font-size:24px;font-weight:800;color:#CFF1F1;margin-inline-end:4px}
+.area{display:inline-flex;align-items:center;gap:12px;background:rgba(255,255,255,.14);border:1.5px solid rgba(255,255,255,.35);border-radius:999px;padding:8px 22px 8px 10px;font-size:26px;font-weight:700}
+.area b{font-family:var(--font-en);font-weight:900;font-size:22px;width:40px;height:40px;border-radius:50%;background:#fff;color:var(--c-main-dark);display:inline-grid;place-items:center}
+.url{margin-top:30px;font-family:var(--font-en);direction:ltr;text-align:left;font-weight:700;font-size:26px;color:#E6F7F7;letter-spacing:-.2px}
+</style></head>
+<body><div class="hero">{{SHAPE_WHITE}}<div class="z">
+  <div class="row"><div>{{LOGO_WHITE}}</div><span class="chip">نوظّف الآن</span></div>
+  <div class="eyebrow">فريق المبيعات · دمشق</div>
+  <h1>مندوب/ة مبيعات<small>القطاع الطبي · دمشق</small></h1>
+  <div class="areas"><span class="lbl">الشواغر</span><span class="area"><b>A</b> مزة</span><span class="area"><b>B</b> روضة · مالكي · أبو رمانة</span><span class="area"><b>C</b> مركز المدينة</span></div>
+<div class="url">docsera.app/careers</div></div></div>
+</body></html>

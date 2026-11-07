@@ -97,6 +97,10 @@ if __name__ == "__main__":
         a = assemble("poster_a.html"); render(a, f"{DEST}/poster-A-light-1080x1350.png", 1080, 1350)
         b = assemble("poster_b.html"); render(b, f"{DEST}/poster-B-dark-1080x1350.png", 1080, 1350)
         s = assemble("story_a.html"); render(s, f"{DEST}/story-A-light-1080x1920.png", 1080, 1920)
+    if "all" in jobs or "og" in jobs:
+        # The page's Open Graph image: its own hero at 1200×630 (spec §5.1).
+        o = assemble("og_careers.html")
+        render(o, os.path.join(LANDING, "public/og-careers.png"), 1200, 630)
     if "all" in jobs or "page" in jobs:
         p = assemble("careers_page.html")
         for st in ("1", "3"):
