@@ -6,45 +6,52 @@
 // them — see CLAUDE.md → "Careers page". Labels are the Arabic shown.
 //
 // Design and rulings: DocSera-Pro
-// docs/superpowers/specs/2026-11-07-hiring-applications-design.md (§2c, §5).
+// docs/superpowers/specs/2026-11-07-hiring-applications-design.md (§2c, §2d, §5).
+// Round 2 (founder, 2026-11-07 evening — §2d): residence, military status,
+// the achievement, transport and LinkedIn are GONE; one «شهادة جامعية»
+// instead of bachelor / master; nursing and health sciences out, biomedical
+// engineering in, and the medical field is an advantage, not a condition;
+// the medical-sector question is optional; a fourth area «أخرى» with a text.
 
 /** The title everywhere — page, form, Admin, email, post (ruling 2). */
 export const TITLE = 'مندوب/ة مبيعات';
 export const SUBTITLE = 'القطاع الطبي · دمشق';
 
+/**
+ * The three areas the founder is hiring for, and «أخرى» — any other place the
+ * applicant names in `areas_other` (round 2). Only the three carry a letter.
+ */
 export const AREAS = [
 	{ key: 'mazzeh', letter: 'A', label: 'مزة' },
 	{ key: 'rawda_malki_abu_rummaneh', letter: 'B', label: 'روضة · مالكي · أبو رمانة' },
 	{ key: 'city_center', letter: 'C', label: 'مركز المدينة' },
+	{ key: 'other', letter: '', label: 'أخرى' },
 ] as const;
 
-/** Kept, optional (ruling 4). */
-export const MILITARY = [
-	{ key: 'not_applicable', label: 'لا ينطبق' },
-	{ key: 'completed', label: 'منتهية' },
-	{ key: 'deferred', label: 'مؤجَّلة' },
-	{ key: 'exempt', label: 'معفى' },
-] as const;
+/** The placeholder of the text behind «أخرى» (founder: «… جرمانا»). */
+export const AREAS_OTHER_PLACEHOLDER = 'مثلاً: جرمانا';
 
+/** One «شهادة جامعية», never bachelor / master (founder, round 2). */
 export const DEGREE_LEVELS = [
 	{ key: 'high_school', label: 'ثانوية' },
 	{ key: 'institute', label: 'معهد' },
 	{ key: 'student', label: 'طالب/ة جامعي/ة' },
-	{ key: 'bachelor', label: 'بكالوريوس' },
-	{ key: 'master_plus', label: 'ماجستير أو أعلى' },
+	{ key: 'university', label: 'شهادة جامعية' },
 ] as const;
 
-/** The first five are the medical ones (Admin shows them in teal). */
+/** The first four are the medical ones (Admin shows them in teal). */
 export const DEGREE_FIELDS = [
 	{ key: 'dentistry', label: 'طب أسنان', medical: true },
 	{ key: 'pharmacy', label: 'صيدلة', medical: true },
 	{ key: 'medicine', label: 'طب بشري', medical: true },
-	{ key: 'nursing', label: 'تمريض', medical: true },
-	{ key: 'health_sciences', label: 'علوم صحية', medical: true },
+	{ key: 'biomedical_engineering', label: 'هندسة طبية', medical: true },
 	{ key: 'business_marketing', label: 'إدارة أعمال / تسويق', medical: false },
 	{ key: 'economics', label: 'اقتصاد', medical: false },
 	{ key: 'other', label: 'أخرى', medical: false },
 ] as const;
+
+/** Under «مجال الدراسة» and in «المطلوب»: an advantage, not a condition (founder, round 2). */
+export const DEGREE_FIELD_HINT = 'الاختصاص الطبي أو الصحي أفضلية، لا شرطاً.';
 
 /** Asked, not enforced: «لا خبرة» is accepted (spec §2a). */
 export const EXPERIENCE = [
@@ -107,21 +114,17 @@ export const FIELD_ERRORS: Record<string, string> = {
 	phone: 'اكتب رقم موبايل صحيحاً، مثل 0944123456',
 	whatsapp: 'اكتب رقم واتساب صحيحاً. إن كان من خارج سوريا فابدأه برمز الدولة، مثل ‎+49',
 	email: 'تحقّق من البريد الإلكتروني، أو اترك الحقل فارغاً',
-	residence: 'اكتب الحي أو المنطقة التي تقيم فيها',
-	military_status: 'اختر من الخيارات المعروضة',
 	degree_level: 'اختر المؤهل العلمي',
 	degree_field: 'اختر مجال الدراسة',
 	degree_field_other: 'اكتب مجال دراستك',
 	university: 'تحقّق من اسم الجامعة، وأبقِه ضمن 80 حرفاً',
 	sales_experience: 'اختر سنوات خبرتك',
-	medical_sector: 'أجب بنعم أو لا',
+	medical_sector: 'اختر نعم أو لا، أو اترك السؤال بلا إجابة',
 	medical_sector_detail: 'أبقِ الإجابة ضمن 200 حرف',
 	last_employer: 'أبقِ الإجابة ضمن 120 حرفاً',
-	achievement: 'اكتب بين 20 و600 حرف',
 	areas: 'اختر منطقة واحدة على الأقل',
+	areas_other: 'اكتب المنطقة التي تناسبك، مثل جرمانا — ضمن 80 حرفاً',
 	start_availability: 'اختر متى تستطيع البدء',
-	has_transport: 'اختر من الخيارات المعروضة',
-	linkedin_url: 'الصق رابط ملفك على LinkedIn، أو اترك الحقل فارغاً',
 	cv: 'أرفق سيرتك الذاتية — PDF أو Word أو صورة',
 	extra: 'تحقّق من الملفات الإضافية — حتى ملفّين، PDF أو Word أو صورة',
 	files_total: 'مجموع الملفات يتجاوز 16 ميغابايت — صغّر ملفاً أو أزل واحداً',
@@ -139,8 +142,6 @@ export const FILE_REASONS = {
 
 export const CV_HELP = 'ملف PDF بحجم 2–3 ميغابايت يكفي — الحد 16';
 export const EXTRAS_HELP = 'الشهادة الجامعية، شهادة خبرة، أو أي ملف يدعم طلبك.';
-export const ACHIEVEMENT_LABEL = 'أهم إنجاز حققته — في البيع أو في أي عمل أو نشاط';
-export const ACHIEVEMENT_HELP = 'موقف أقنعت فيه أحداً، أو هدف وصلت إليه. إن كانت لديك خبرة بيعية فابدأ بها';
 
 export const SEND_LABEL = 'إرسال الطلب';
 export const NEXT_LABEL = 'التالي';

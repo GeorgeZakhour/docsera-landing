@@ -143,13 +143,21 @@ rulings, §5 = this page) and `docs/superpowers/plans/2026-11-07-hiring-applicat
   «أعد المحاولة», which asks `open` again; the form comes back only when it opens.
   `askOpenCareers` in `careers.ts` reads that answer — the Pro form's `askOpen` is not
   touched.
-- **Two paragraphs keep their line breaks**: `achievement` and `message` go through
-  `paragraph()` in `careers-validate.ts` (controls and bidi marks stripped, 3+ newlines
-  folded to 2, trimmed) — never `flattenLines`. Every other text field is one line.
-- **LinkedIn is a host, not a substring**: `https://` + `linkedin.com` or one subdomain +
-  a path (`^https://([a-z0-9-]+\.)?linkedin\.com/\S+$`, host case-insensitive); a pasted
-  `linkedin.com/in/x` is completed to `https://`, an `http://` one upgraded. Same regex in
-  the edge function and the table's CHECK.
+- **The field set is round 2's (founder, 2026-11-07 evening — spec §2d)**: `full_name`,
+  `phone`, `whatsapp`, `email` · `degree_level` (`high_school` · `institute` · `student` ·
+  `university` — one «شهادة جامعية», never bachelor / master), `degree_field`
+  (`dentistry` · `pharmacy` · `medicine` · `biomedical_engineering` · `business_marketing` ·
+  `economics` · `other` + `degree_field_other`; the medical field is an ADVANTAGE, not a
+  condition — say so, never «يفضَّل» alone), `university`, `sales_experience`,
+  `medical_sector` (OPTIONAL: `true` / `false` / `null`), `medical_sector_detail`,
+  `last_employer` · `areas` (1–4 of `mazzeh` · `rawda_malki_abu_rummaneh` · `city_center` ·
+  `other`) + `areas_other` (2–80, required with `other`, placeholder «مثلاً: جرمانا»),
+  `start_availability`, `message`. **Gone, do not re-add**: residence, military status,
+  the achievement, transport, LinkedIn, expected salary. The areas live in the FORM only —
+  no «الشواغر» strip in the hero, no «المناطق» section.
+- **One paragraph keeps its line breaks**: `message` goes through `paragraph()` in
+  `careers-validate.ts` (controls and bidi marks stripped, 3+ newlines folded to 2,
+  trimmed) — never `flattenLines`. Every other text field is one line.
 - **Files**: each ≤ 16 MB and all together ≤ 16 MB, CV required, ≤ 2 extras; the page
   checks the name's extension and the sizes on choice (refused on the spot with the
   reason), the server checks the bytes. Files never enter the draft (`ds_careers_draft`
@@ -160,7 +168,7 @@ rulings, §5 = this page) and `docs/superpowers/plans/2026-11-07-hiring-applicat
   takes its place (the server's work starts only when the whole body is in). Do not
   shorten any of the three.
 - **The rulings** (founder, 2026-11-07): title «مندوب/ة مبيعات» everywhere; NO
-  expected-salary field; military status kept, optional; one plain privacy sentence,
+  expected-salary field; one plain privacy sentence,
   no link; WhatsApp («أو أرسل سيرتك الذاتية على واتساب») only when
   `CAREERS_WHATSAPP_NUMBER` in `links.ts` is set — empty = the option is not drawn
   anywhere; he supplies the number, then a landing deploy is all it takes.

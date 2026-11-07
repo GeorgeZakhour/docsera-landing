@@ -10,7 +10,6 @@ import {
 	DEGREE_LEVELS,
 	EXPERIENCE,
 	FILE_LIMITS,
-	MILITARY,
 	PRIVACY_LINE,
 	START,
 	TITLE,
@@ -45,12 +44,10 @@ function answers(over: Partial<CareersAnswers> = {}): CareersAnswers {
 		...emptyAnswers(),
 		full_name: 'لمى حداد',
 		phone: '0944123456',
-		residence: 'القصاع',
-		degree_level: 'bachelor',
+		degree_level: 'university',
 		degree_field: 'pharmacy',
 		sales_experience: '1_2',
 		medical_sector: true,
-		achievement: 'أقنعت عيادة كانت تعمل بالورق بالانتقال إلى برنامج إلكتروني خلال شهر.',
 		areas: ['mazzeh'],
 		start_availability: 'immediately',
 		cvFile: file('CV-Lama.pdf', 2 * MB, 'application/pdf'),
@@ -77,16 +74,20 @@ const LONG_ENOUGH = 'ا'.repeat(20);
 
 // ---------------------------------------------------------------- the lists are the contract
 
-test('the closed lists carry exactly the contract keys, in order', () => {
-	assert.deepEqual(AREAS.map((a) => a.key), ['mazzeh', 'rawda_malki_abu_rummaneh', 'city_center']);
-	assert.deepEqual(AREAS.map((a) => a.letter), ['A', 'B', 'C']);
-	assert.deepEqual(MILITARY.map((m) => m.key), ['not_applicable', 'completed', 'deferred', 'exempt']);
-	assert.deepEqual(DEGREE_LEVELS.map((d) => d.key), ['high_school', 'institute', 'student', 'bachelor', 'master_plus']);
+test('the closed lists carry exactly the contract keys, in order (round 2, founder 2026-11-07)', () => {
+	assert.deepEqual(AREAS.map((a) => a.key), ['mazzeh', 'rawda_malki_abu_rummaneh', 'city_center', 'other']);
+	// only the three hiring areas carry a letter; «أخرى» carries none
+	assert.deepEqual(AREAS.map((a) => a.letter), ['A', 'B', 'C', '']);
+	// one «شهادة جامعية» — never bachelor or master
+	assert.deepEqual(DEGREE_LEVELS.map((d) => d.key), ['high_school', 'institute', 'student', 'university']);
+	assert.equal(DEGREE_LEVELS.find((d) => d.key === 'university')?.label, 'شهادة جامعية');
+	assert.doesNotMatch(DEGREE_LEVELS.map((d) => d.label).join(' '), /بكالوريوس|ماجستير/);
+	// nursing and health sciences out, biomedical engineering in
 	assert.deepEqual(DEGREE_FIELDS.map((d) => d.key), [
-		'dentistry', 'pharmacy', 'medicine', 'nursing', 'health_sciences', 'business_marketing', 'economics', 'other',
+		'dentistry', 'pharmacy', 'medicine', 'biomedical_engineering', 'business_marketing', 'economics', 'other',
 	]);
-	// the first five are the medical ones
-	assert.deepEqual(DEGREE_FIELDS.map((d) => d.medical), [true, true, true, true, true, false, false, false]);
+	// the first four are the medical ones
+	assert.deepEqual(DEGREE_FIELDS.map((d) => d.medical), [true, true, true, true, false, false, false]);
 	assert.deepEqual(EXPERIENCE.map((e) => e.key), ['none', 'under_1', '1_2', '3_5', 'over_5']);
 	assert.deepEqual(START.map((s) => s.key), ['immediately', 'two_weeks', 'one_month', 'later']);
 });
@@ -169,31 +170,17 @@ test('email: optional; a valid address up to 120 characters, else email', () => 
 	}
 });
 
-test('residence: 2–80 characters', () => {
-	assert.equal(form({ residence: '  باب   توما ' }).residence, 'باب توما');
-	assert.equal(form({ residence: 'a'.repeat(80) }).residence.length, 80);
-	assert.deepEqual(bad({ residence: '' }), ['residence']);
-	assert.deepEqual(bad({ residence: 'م' }), ['residence']);
-	assert.deepEqual(bad({ residence: 'a'.repeat(81) }), ['residence']);
-});
-
-test('military_status: unanswered or one of the four', () => {
-	assert.equal(form({ military_status: '' }).military_status, '');
-	for (const key of ['not_applicable', 'completed', 'deferred', 'exempt']) {
-		assert.equal(form({ military_status: key }).military_status, key);
-	}
-	assert.deepEqual(bad({ military_status: 'done' }), ['military_status']);
-});
-
 // ---------------------------------------------------------------- step 2
 
-test('degree_level: one of the five', () => {
+test('degree_level: one of the four; the old bachelor / master keys are refused', () => {
 	for (const key of DEGREE_LEVELS.map((d) => d.key)) assert.equal(form({ degree_level: key }).degree_level, key);
 	assert.deepEqual(bad({ degree_level: '' }), ['degree_level']);
 	assert.deepEqual(bad({ degree_level: 'phd' }), ['degree_level']);
+	assert.deepEqual(bad({ degree_level: 'bachelor' }), ['degree_level']);
+	assert.deepEqual(bad({ degree_level: 'master_plus' }), ['degree_level']);
 });
 
-test('degree_field: one of the eight; «أخرى» needs its text, 2–60', () => {
+test('degree_field: one of the seven; «أخرى» needs its text, 2–60; the dropped keys are refused', () => {
 	for (const key of DEGREE_FIELDS.map((d) => d.key).filter((k) => k !== 'other')) {
 		const sent = form({ degree_field: key });
 		assert.equal(sent.degree_field, key);
@@ -201,6 +188,9 @@ test('degree_field: one of the eight; «أخرى» needs its text, 2–60', () =
 	}
 	assert.deepEqual(bad({ degree_field: '' }), ['degree_field']);
 	assert.deepEqual(bad({ degree_field: 'law' }), ['degree_field']);
+	assert.deepEqual(bad({ degree_field: 'nursing' }), ['degree_field']);
+	assert.deepEqual(bad({ degree_field: 'health_sciences' }), ['degree_field']);
+	assert.equal(form({ degree_field: 'biomedical_engineering' }).degree_field, 'biomedical_engineering');
 
 	assert.equal(form({ degree_field: 'other', degree_field_other: '  هندسة   معلوماتية ' }).degree_field_other, 'هندسة معلوماتية');
 	assert.equal(form({ degree_field: 'other', degree_field_other: 'a'.repeat(60) }).degree_field_other.length, 60);
@@ -208,7 +198,7 @@ test('degree_field: one of the eight; «أخرى» needs its text, 2–60', () =
 	assert.deepEqual(bad({ degree_field: 'other', degree_field_other: 'a' }), ['degree_field_other']);
 	assert.deepEqual(bad({ degree_field: 'other', degree_field_other: 'a'.repeat(61) }), ['degree_field_other']);
 	// typed, then a listed field chosen: dropped, never a reason to refuse
-	assert.equal(form({ degree_field: 'nursing', degree_field_other: CONTROL }).degree_field_other, '');
+	assert.equal(form({ degree_field: 'medicine', degree_field_other: CONTROL }).degree_field_other, '');
 });
 
 test('university: optional, at most 80 characters', () => {
@@ -225,10 +215,12 @@ test('sales_experience: one of the five; «لا خبرة» is accepted, not refu
 	assert.deepEqual(bad({ sales_experience: '10_plus' }), ['sales_experience']);
 });
 
-test('medical_sector: yes or no, required; its detail only with a yes, at most 200', () => {
+test('medical_sector: optional — yes, no or unanswered; its detail only with a yes, at most 200', () => {
 	assert.equal(form({ medical_sector: true }).medical_sector, true);
 	assert.equal(form({ medical_sector: false }).medical_sector, false);
-	assert.deepEqual(bad({ medical_sector: null }), ['medical_sector']);
+	// round 2: the question may be left alone — null travels as null, never as «no»
+	assert.equal(form({ medical_sector: null }).medical_sector, null);
+	assert.deepEqual(validateStep(2, answers({ medical_sector: null })), []);
 	const broken = { ...answers(), medical_sector: 'yes' } as unknown as CareersAnswers;
 	assert.deepEqual((checkAnswers(broken) as { fields: string[] }).fields, ['medical_sector']);
 
@@ -236,8 +228,9 @@ test('medical_sector: yes or no, required; its detail only with a yes, at most 2
 	assert.equal(form({ medical_sector: true, medical_sector_detail: ' مندوب  طبي ' }).medical_sector_detail, 'مندوب طبي');
 	assert.equal(form({ medical_sector: true, medical_sector_detail: 'a'.repeat(200) }).medical_sector_detail.length, 200);
 	assert.deepEqual(bad({ medical_sector: true, medical_sector_detail: 'a'.repeat(201) }), ['medical_sector_detail']);
-	// a detail typed, then «لا»: dropped
+	// a detail typed, then «لا» or the answer taken back: dropped
 	assert.equal(form({ medical_sector: false, medical_sector_detail: 'a'.repeat(201) }).medical_sector_detail, '');
+	assert.equal(form({ medical_sector: null, medical_sector_detail: 'a'.repeat(201) }).medical_sector_detail, '');
 });
 
 test('last_employer: optional, at most 120 characters', () => {
@@ -246,68 +239,39 @@ test('last_employer: optional, at most 120 characters', () => {
 	assert.deepEqual(bad({ last_employer: 'a'.repeat(121) }), ['last_employer']);
 });
 
-test('achievement: required, 20–600 characters; 19 is refused, 20 accepted', () => {
-	assert.equal(form({ achievement: 'ا'.repeat(20) }).achievement.length, 20);
-	assert.equal(form({ achievement: 'ا'.repeat(600) }).achievement.length, 600);
-	assert.deepEqual(bad({ achievement: 'ا'.repeat(19) }), ['achievement']);
-	assert.deepEqual(bad({ achievement: '' }), ['achievement']);
-	assert.deepEqual(bad({ achievement: 'ا'.repeat(601) }), ['achievement']);
-	// spaces around are trimmed and a run inside counts as one character: 10 + 1 + 8 = 19
-	assert.deepEqual(bad({ achievement: '   ' + 'ا'.repeat(10) + '     ' + 'ا'.repeat(8) + '   ' }), ['achievement']);
-	assert.equal(form({ achievement: '   ' + 'ا'.repeat(10) + '     ' + 'ا'.repeat(9) + '   ' }).achievement.length, 20);
-});
-
 // ---------------------------------------------------------------- step 3
 
-test('areas: one to three of the three keys, no duplicates, sent in A·B·C order', () => {
+test('areas: one to four of the four keys, no duplicates, sent in A·B·C·أخرى order', () => {
 	assert.deepEqual(form({ areas: ['mazzeh'] }).areas, ['mazzeh']);
 	assert.deepEqual(form({ areas: ['city_center', 'mazzeh'] }).areas, ['mazzeh', 'city_center']);
 	assert.deepEqual(form({ areas: ['city_center', 'rawda_malki_abu_rummaneh', 'mazzeh'] }).areas, [
 		'mazzeh', 'rawda_malki_abu_rummaneh', 'city_center',
 	]);
+	assert.deepEqual(form({ areas: ['other', 'city_center'], areas_other: 'جرمانا' }).areas, ['city_center', 'other']);
 	assert.deepEqual(bad({ areas: [] }), ['areas']);
 	assert.deepEqual(bad({ areas: ['mazzeh', 'mazzeh'] }), ['areas']);
 	assert.deepEqual(bad({ areas: ['damascus'] }), ['areas']);
+	assert.deepEqual(bad({ areas: ['mazzeh', 'rawda_malki_abu_rummaneh', 'city_center', 'other', 'mazzeh'], areas_other: 'جرمانا' }), ['areas']);
 	assert.deepEqual(bad({ areas: 'mazzeh' as unknown as string[] }), ['areas']);
+});
+
+test('areas_other: the place behind «أخرى» — required with it (2–80), dropped without it', () => {
+	assert.equal(form({ areas: ['other'], areas_other: ' جرمانا ' }).areas_other, 'جرمانا');
+	assert.equal(form({ areas: ['other'], areas_other: 'a'.repeat(80) }).areas_other.length, 80);
+	assert.deepEqual(bad({ areas: ['other'], areas_other: '' }), ['areas_other']);
+	assert.deepEqual(bad({ areas: ['other'], areas_other: 'ج' }), ['areas_other']);
+	assert.deepEqual(bad({ areas: ['other'], areas_other: 'a'.repeat(81) }), ['areas_other']);
+	assert.deepEqual(bad({ areas: ['mazzeh', 'other'], areas_other: '' }), ['areas_other']);
+	// typed, then «أخرى» unticked: dropped, never a reason to refuse
+	assert.equal(form({ areas: ['mazzeh'], areas_other: CONTROL }).areas_other, '');
+	// and «أخرى» alone is a valid choice — the applicant lives in Jaramana
+	assert.deepEqual(validateStep(3, answers({ areas: ['other'], areas_other: 'جرمانا' })), []);
 });
 
 test('start_availability: one of the four', () => {
 	for (const key of START.map((s) => s.key)) assert.equal(form({ start_availability: key }).start_availability, key);
 	assert.deepEqual(bad({ start_availability: '' }), ['start_availability']);
 	assert.deepEqual(bad({ start_availability: 'tomorrow' }), ['start_availability']);
-});
-
-test('has_transport: unanswered, yes or no', () => {
-	assert.equal(form({ has_transport: null }).has_transport, null);
-	assert.equal(form({ has_transport: true }).has_transport, true);
-	assert.equal(form({ has_transport: false }).has_transport, false);
-	const broken = { ...answers(), has_transport: 'car' } as unknown as CareersAnswers;
-	assert.deepEqual((checkAnswers(broken) as { fields: string[] }).fields, ['has_transport']);
-});
-
-test('linkedin_url: optional; an https address ON linkedin.com, within 200', () => {
-	assert.equal(form({ linkedin_url: '' }).linkedin_url, '');
-	assert.equal(form({ linkedin_url: ' https://www.linkedin.com/in/lama-haddad ' }).linkedin_url, 'https://www.linkedin.com/in/lama-haddad');
-	assert.equal(form({ linkedin_url: 'https://ae.linkedin.com/in/lama' }).linkedin_url, 'https://ae.linkedin.com/in/lama');
-	assert.equal(form({ linkedin_url: 'HTTPS://WWW.LinkedIn.com/in/Lama' }).linkedin_url, 'HTTPS://WWW.LinkedIn.com/in/Lama');
-	// a link pasted without its scheme is completed, never refused; http is upgraded
-	assert.equal(form({ linkedin_url: 'linkedin.com/in/lama' }).linkedin_url, 'https://linkedin.com/in/lama');
-	assert.equal(form({ linkedin_url: 'www.linkedin.com/in/lama' }).linkedin_url, 'https://www.linkedin.com/in/lama');
-	assert.equal(form({ linkedin_url: 'http://www.linkedin.com/in/lama' }).linkedin_url, 'https://www.linkedin.com/in/lama');
-	assert.deepEqual(bad({ linkedin_url: 'https://example.com/lama' }), ['linkedin_url']);
-	assert.deepEqual(bad({ linkedin_url: 'linkedin.com' }), ['linkedin_url']);
-	assert.deepEqual(bad({ linkedin_url: 'https://linkedin.com/in/' + 'a'.repeat(200) }), ['linkedin_url']);
-	assert.deepEqual(bad({ linkedin_url: 'https://linkedin.com/in/la ma' }), ['linkedin_url']);
-	// review M1 — «linkedin.com/» inside another site's address is not LinkedIn; Admin opens this in a browser
-	for (const url of [
-		'http://evil.example/?u=linkedin.com/',
-		'evil.example/?u=linkedin.com/',
-		'https://evil.example/linkedin.com/in/x',
-		'https://linkedin.com.evil.example/in/x',
-		'https://a.b.linkedin.com/in/x',
-		'https://www.linkedin.com/',
-		'javascript:alert(1)//linkedin.com/',
-	]) assert.deepEqual(bad({ linkedin_url: url }), ['linkedin_url'], url);
 });
 
 test('message: optional, at most 500 characters, keeps its line breaks', () => {
@@ -325,7 +289,7 @@ test('message: optional, at most 500 characters, keeps its line breaks', () => {
 test('every one-line field refuses control and bidi characters, and names itself', () => {
 	for (const poison of [CONTROL, NEWLINE, BIDI_OVERRIDE, BIDI_ISOLATE]) {
 		assert.deepEqual(bad({ full_name: poison }), ['full_name']);
-		assert.deepEqual(bad({ residence: poison }), ['residence']);
+		assert.deepEqual(bad({ areas: ['other'], areas_other: poison }), ['areas_other']);
 		assert.deepEqual(bad({ degree_field: 'other', degree_field_other: poison }), ['degree_field_other']);
 		assert.deepEqual(bad({ university: poison }), ['university']);
 		assert.deepEqual(bad({ medical_sector: true, medical_sector_detail: poison }), ['medical_sector_detail']);
@@ -335,34 +299,29 @@ test('every one-line field refuses control and bidi characters, and names itself
 
 // Review drift #1 — the edge function and the table accept «\n» in these two;
 // the page used to flatten them to one line, losing the applicant's paragraphs.
-test('achievement and message are paragraphs: line breaks kept, the rest cleaned', () => {
-	const two = 'أقنعت عيادة بالانتقال إلى البرنامج.\nثم أقنعت ثلاث عيادات أخرى.';
-	assert.equal(form({ achievement: two }).achievement, two);
+
+test('the message is a paragraph: line breaks kept, the rest cleaned', () => {
+	const two = 'سطر أول\nسطر ثان';
 	assert.equal(form({ message: two }).message, two);
-	// Windows line ends, tabs, trailing spaces on a line, runs of spaces: canonical
-	assert.equal(form({ achievement: 'سطر أول  \t بمسافات \r\nسطر ثان' }).achievement, 'سطر أول بمسافات\nسطر ثان');
-	// three or more blank lines fold to one blank line; the ends are trimmed
-	assert.equal(form({ achievement: '\n\n' + LONG_ENOUGH + '\n\n\n\n' + LONG_ENOUGH + '\n' }).achievement, LONG_ENOUGH + '\n\n' + LONG_ENOUGH);
+	// tabs and runs of spaces fold, a line's edges are trimmed, 3+ blank lines become 2
+	assert.equal(form({ message: 'سطر أول  \t بمسافات \r\nسطر ثان' }).message, 'سطر أول بمسافات\nسطر ثان');
+	assert.equal(form({ message: '\n\n' + LONG_ENOUGH + '\n\n\n\n' + LONG_ENOUGH + '\n' }).message, LONG_ENOUGH + '\n\n' + LONG_ENOUGH);
 	// control characters and bidi marks are stripped, not shown back as an error the applicant cannot see
-	assert.equal(form({ achievement: LONG_ENOUGH + CONTROL }).achievement, LONG_ENOUGH + 'لمىحداد');
-	assert.equal(form({ achievement: LONG_ENOUGH + BIDI_OVERRIDE }).achievement, LONG_ENOUGH + 'لمىحداد');
-	assert.equal(form({ message: BIDI_ISOLATE }).message, 'لمىحداد');
-	// a line break is one character: 10 + 1 + 9 = 20 is accepted, 10 + 1 + 8 is not
-	assert.equal(form({ achievement: 'ا'.repeat(10) + '\n' + 'ا'.repeat(9) }).achievement.length, 20);
-	assert.deepEqual(bad({ achievement: 'ا'.repeat(10) + '\n' + 'ا'.repeat(8) }), ['achievement']);
-	// a paragraph of nothing but blank lines is empty
-	assert.deepEqual(bad({ achievement: '\n\n\n' }), ['achievement']);
+	assert.equal(form({ message: LONG_ENOUGH + CONTROL }).message, LONG_ENOUGH + 'لمىحداد');
+	assert.equal(form({ message: LONG_ENOUGH + BIDI_OVERRIDE }).message, LONG_ENOUGH + 'لمىحداد');
+	// a line break is one character; only blank lines is nothing
+	assert.equal(form({ message: 'ا'.repeat(10) + '\n' + 'ا'.repeat(9) }).message.length, 20);
+	assert.equal(form({ message: '\n\n\n' }).message, '');
 	assert.equal(form({ message: '\n \n' }).message, '');
 });
 
 test('angle brackets, quotes and emoji are text, not a reason to refuse', () => {
 	const odd = '<script>alert("x")</script> \'لمى\' 😀';
-	const sent = form({ full_name: odd, residence: odd, university: odd, last_employer: odd, achievement: odd, message: odd });
+	const sent = form({ full_name: odd, university: odd, last_employer: odd, areas: ['other'], areas_other: odd, message: odd });
 	assert.equal(sent.full_name, odd);
-	assert.equal(sent.residence, odd);
 	assert.equal(sent.university, odd);
 	assert.equal(sent.last_employer, odd);
-	assert.equal(sent.achievement, odd);
+	assert.equal(sent.areas_other, odd);
 	assert.equal(sent.message, odd);
 });
 
@@ -434,22 +393,27 @@ test('a file name is shown with its type chip and a readable size', () => {
 
 test('each step answers for its own fields only', () => {
 	const blank = emptyAnswers();
-	assert.deepEqual(validateStep(1, blank), ['full_name', 'phone', 'residence']);
-	assert.deepEqual(validateStep(2, blank), ['degree_level', 'degree_field', 'sales_experience', 'medical_sector', 'achievement']);
+	assert.deepEqual(validateStep(1, blank), ['full_name', 'phone']);
+	assert.deepEqual(validateStep(2, blank), ['degree_level', 'degree_field', 'sales_experience']);
 	assert.deepEqual(validateStep(3, blank), ['areas', 'start_availability', 'cv']);
 
-	const other = { ...blank, whatsapp_same: false, degree_field: 'other' };
-	assert.deepEqual(validateStep(1, other), ['full_name', 'phone', 'whatsapp', 'residence']);
-	assert.deepEqual(validateStep(2, other), ['degree_level', 'degree_field_other', 'sales_experience', 'medical_sector', 'achievement']);
+	const other = { ...blank, whatsapp_same: false, degree_field: 'other', areas: ['other'] };
+	assert.deepEqual(validateStep(1, other), ['full_name', 'phone', 'whatsapp']);
+	assert.deepEqual(validateStep(2, other), ['degree_level', 'degree_field_other', 'sales_experience']);
+	assert.deepEqual(validateStep(3, other), ['areas_other', 'start_availability', 'cv']);
 });
 
 test('a refused field leads back to the step that holds it', () => {
 	assert.equal(stepOfField('phone'), 1);
 	assert.equal(stepOfField('whatsapp'), 1);
-	assert.equal(stepOfField('military_status'), 1);
-	assert.equal(stepOfField('achievement'), 2);
+	assert.equal(stepOfField('medical_sector'), 2);
 	assert.equal(stepOfField('degree_field_other'), 2);
 	assert.equal(stepOfField('areas'), 3);
+	assert.equal(stepOfField('areas_other'), 3);
+	// the fields of round 2 are gone from the form
+	for (const gone of ['residence', 'military_status', 'achievement', 'has_transport', 'linkedin_url']) {
+		assert.equal(stepOfField(gone), null, gone);
+	}
 	assert.equal(stepOfField('cv'), 3);
 	assert.equal(stepOfField('extra'), 3);
 	assert.equal(stepOfField('files_total'), 3);
@@ -457,7 +421,7 @@ test('a refused field leads back to the step that holds it', () => {
 	assert.equal(stepOfField('form'), null);
 	assert.equal(stepOfField('not_a_field'), null);
 
-	assert.equal(firstBadStep(['message', 'achievement', 'cv']), 2);
+	assert.equal(firstBadStep(['message', 'degree_field_other', 'cv']), 2);
 	assert.equal(firstBadStep(['cv', 'phone']), 1);
 	assert.equal(firstBadStep(['files_total']), 3);
 	assert.equal(firstBadStep([]), null);
@@ -475,7 +439,6 @@ test('a complete request carries every contract key and nothing else', () => {
 		whatsapp_same: false,
 		whatsapp: '0955000111',
 		email: 'lama@example.com',
-		military_status: 'not_applicable',
 		degree_field: 'other',
 		degree_field_other: 'هندسة',
 		university: 'جامعة دمشق',
@@ -483,10 +446,9 @@ test('a complete request carries every contract key and nothing else', () => {
 		medical_sector: true,
 		medical_sector_detail: 'مندوب طبي',
 		last_employer: 'شركة أدوية — مندوب',
-		areas: ['city_center', 'mazzeh'],
+		areas: ['other', 'city_center', 'mazzeh'],
+		areas_other: 'جرمانا',
 		start_availability: 'two_weeks',
-		has_transport: true,
-		linkedin_url: 'https://linkedin.com/in/lama',
 		message: 'أعمل مساءً فقط',
 		extraFiles: [file('cert.jpg', 1 * MB)],
 	});
@@ -495,9 +457,7 @@ test('a complete request carries every contract key and nothing else', () => {
 		phone: '+963944123456',
 		whatsapp: '+963955000111',
 		email: 'lama@example.com',
-		residence: 'القصاع',
-		military_status: 'not_applicable',
-		degree_level: 'bachelor',
+		degree_level: 'university',
 		degree_field: 'other',
 		degree_field_other: 'هندسة',
 		university: 'جامعة دمشق',
@@ -505,13 +465,15 @@ test('a complete request carries every contract key and nothing else', () => {
 		medical_sector: true,
 		medical_sector_detail: 'مندوب طبي',
 		last_employer: 'شركة أدوية — مندوب',
-		achievement: 'أقنعت عيادة كانت تعمل بالورق بالانتقال إلى برنامج إلكتروني خلال شهر.',
-		areas: ['mazzeh', 'city_center'],
+		areas: ['mazzeh', 'city_center', 'other'],
+		areas_other: 'جرمانا',
 		start_availability: 'two_weeks',
-		has_transport: true,
-		linkedin_url: 'https://linkedin.com/in/lama',
 		message: 'أعمل مساءً فقط',
 	});
+	// the fields of round 2 never travel, not even empty
+	for (const gone of ['residence', 'military_status', 'achievement', 'has_transport', 'linkedin_url']) {
+		assert.equal(gone in sent, false, gone);
+	}
 	// the files travel as parts, never inside the JSON
 	assert.equal('cv' in sent, false);
 	assert.equal('cvFile' in sent, false);
@@ -519,15 +481,14 @@ test('a complete request carries every contract key and nothing else', () => {
 });
 
 test('a minimal request sends the optionals as empty strings and nulls, as the contract allows', () => {
-	const sent = form();
+	const sent = form({ medical_sector: null });
 	assert.equal(sent.email, '');
-	assert.equal(sent.military_status, '');
 	assert.equal(sent.degree_field_other, '');
 	assert.equal(sent.university, '');
+	assert.equal(sent.medical_sector, null);
 	assert.equal(sent.medical_sector_detail, '');
 	assert.equal(sent.last_employer, '');
-	assert.equal(sent.has_transport, null);
-	assert.equal(sent.linkedin_url, '');
+	assert.equal(sent.areas_other, '');
 	assert.equal(sent.message, '');
 	assert.equal(sent.whatsapp, sent.phone);
 });
@@ -544,9 +505,8 @@ test('a draft read back from storage is never trusted, and never carries a file'
 		phone: 944123456,
 		whatsapp_same: 'no',
 		medical_sector: true,
-		has_transport: 'yes',
 		areas: ['mazzeh', 5, 'city_center', 'nowhere'],
-		achievement: { a: 1 },
+		areas_other: { a: 1 },
 		cvFile: { name: 'cv.pdf', size: 10 },
 		extraFiles: [{ name: 'a.jpg', size: 10 }],
 		extra: 'ignored',
@@ -555,16 +515,19 @@ test('a draft read back from storage is never trusted, and never carries a file'
 	assert.equal(revived.phone, '');
 	assert.equal(revived.whatsapp_same, true);
 	assert.equal(revived.medical_sector, true);
-	assert.equal(revived.has_transport, null);
 	assert.deepEqual(revived.areas, ['mazzeh', 'city_center']);
-	assert.equal(revived.achievement, '');
+	assert.equal(revived.areas_other, '');
 	assert.equal(revived.cvFile, null);
 	assert.deepEqual(revived.extraFiles, []);
 	assert.equal('extra' in revived, false);
 
 	assert.equal(reviveAnswers({ whatsapp_same: false }).whatsapp_same, false);
 	assert.equal(reviveAnswers({ medical_sector: false }).medical_sector, false);
-	assert.equal(reviveAnswers({ has_transport: false }).has_transport, false);
+	assert.deepEqual(reviveAnswers({ areas: ['other'], areas_other: 'جرمانا' }).areas, ['other']);
+	assert.equal(reviveAnswers({ areas: ['other'], areas_other: 'جرمانا' }).areas_other, 'جرمانا');
+	// a draft from before round 2 revives without its dead keys
+	const old = reviveAnswers({ residence: 'القصاع', military_status: 'completed', achievement: 'x', has_transport: true, linkedin_url: 'y' }) as unknown as Record<string, unknown>;
+	for (const gone of ['residence', 'military_status', 'achievement', 'has_transport', 'linkedin_url']) assert.equal(gone in old, false, gone);
 	assert.equal(reviveAnswers({ degree_field: 'law' }).degree_field, '');
 	assert.equal(reviveAnswers({ degree_field: 'pharmacy' }).degree_field, 'pharmacy');
 });
@@ -573,8 +536,8 @@ test('the default answers: WhatsApp on the same number, nothing picked, no files
 	const blank = emptyAnswers();
 	assert.equal(blank.whatsapp_same, true);
 	assert.equal(blank.medical_sector, null);
-	assert.equal(blank.has_transport, null);
 	assert.deepEqual(blank.areas, []);
+	assert.equal(blank.areas_other, '');
 	assert.equal(blank.cvFile, null);
 	assert.deepEqual(blank.extraFiles, []);
 });

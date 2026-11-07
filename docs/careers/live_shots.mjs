@@ -95,18 +95,20 @@ const fill = `
 	true`;
 await evaluate(fill);
 
+// Round 2 (founder, 2026-11-07 evening): no residence / military / achievement /
+// transport / LinkedIn; one «شهادة جامعية»; «أخرى» as a fourth area with a text.
+// CAREERS_PHONE: a phone that has not applied twice in 30 days, or the server
+// answers with the code it already has and inserts nothing (the cap).
+const PHONE = process.env.CAREERS_PHONE || '0944000123';
 const step1 = `(() => { const d = window.__drive;
-	d.set('full_name', 'لمى حداد'); d.set('phone', '0944000123'); d.set('email', 'lama@example.com');
-	d.set('residence', 'القصاع'); d.pick('military_status', 'not_applicable'); return true; })()`;
+	d.set('full_name', 'لمى حداد'); d.set('phone', '${PHONE}'); d.set('email', 'lama@example.com'); return true; })()`;
 const step2 = `(() => { const d = window.__drive;
-	d.set('degree_level', 'bachelor'); d.set('university', 'جامعة دمشق'); d.pick('degree_field', 'pharmacy');
+	d.set('degree_level', 'university'); d.set('university', 'جامعة دمشق'); d.pick('degree_field', 'pharmacy');
 	d.pick('sales_experience', '1_2'); d.pick('medical_sector', 'yes'); d.set('medical_sector_detail', 'مندوبة طبية — شركة أدوية');
 	d.set('last_employer', 'مندوبة طبية — شركة أدوية');
-	d.set('achievement', 'أقنعت عيادة كانت تعمل بالورق بالانتقال إلى برنامج إلكتروني خلال شهر، وبقيت العيادة مشتركة بعد سنة.');
 	return true; })()`;
 const step3 = `(() => { const d = window.__drive;
-	d.pick('areas', 'mazzeh'); d.pick('areas', 'rawda_malki_abu_rummaneh'); d.pick('start_availability', 'immediately');
-	d.pick('has_transport', 'no'); d.set('linkedin_url', 'linkedin.com/in/lama-haddad');
+	d.pick('areas', 'mazzeh'); d.pick('areas', 'other'); d.set('areas_other', 'جرمانا'); d.pick('start_availability', 'immediately');
 	d.set('message', 'أعرف عيادات المزة جيداً وأستطيع البدء فوراً.'); return true; })()`;
 
 async function attach(selector, paths) {

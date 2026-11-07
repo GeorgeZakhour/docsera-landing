@@ -451,8 +451,8 @@ export function initCareers(env: CareersPageEnv): void {
 	let doneCode = '';
 	/** The chosen files: the only state the DOM does not hold (a file input cannot be edited). */
 	const files: { cv: File | null; extras: File[] } = { cv: null, extras: [] };
-	/** The optional radio groups' current answer, so a second tap can take it back. */
-	const optional: Record<string, string> = { military_status: '', has_transport: '' };
+	/** The optional radio group's current answer, so a second tap can take it back. */
+	const optional: Record<string, string> = { medical_sector: '' };
 	/** Set while the browser's Forward button is being turned back from a step not reached yet. */
 	let turnedBack = false;
 
@@ -472,8 +472,6 @@ export function initCareers(env: CareersPageEnv): void {
 			whatsapp_same: whatsappSame.checked,
 			whatsapp: value('whatsapp'),
 			email: value('email'),
-			residence: value('residence'),
-			military_status: picked('military_status')[0] ?? '',
 			degree_level: degreeLevel.value,
 			degree_field: picked('degree_field')[0] ?? '',
 			degree_field_other: value('degree_field_other'),
@@ -482,12 +480,10 @@ export function initCareers(env: CareersPageEnv): void {
 			medical_sector: yesNo('medical_sector'),
 			medical_sector_detail: value('medical_sector_detail'),
 			last_employer: value('last_employer'),
-			// the two paragraphs keep their line breaks (careers-validate's `paragraph`)
-			achievement: value('achievement'),
 			areas: picked('areas'),
+			areas_other: value('areas_other'),
 			start_availability: picked('start_availability')[0] ?? '',
-			has_transport: yesNo('has_transport'),
-			linkedin_url: value('linkedin_url'),
+			// the one paragraph keeps its line breaks (careers-validate's `paragraph`)
 			message: value('message'),
 			cvFile: files.cv,
 			extraFiles: [...files.extras],
@@ -506,8 +502,6 @@ export function initCareers(env: CareersPageEnv): void {
 		whatsappSame.checked = a.whatsapp_same;
 		named<HTMLInputElement>('whatsapp').value = a.whatsapp;
 		named<HTMLInputElement>('email').value = a.email;
-		named<HTMLInputElement>('residence').value = a.residence;
-		check('military_status', [a.military_status]);
 		degreeLevel.value = a.degree_level;
 		if (degreeLevel.value !== a.degree_level) degreeLevel.value = '';
 		check('degree_field', [a.degree_field]);
@@ -517,11 +511,9 @@ export function initCareers(env: CareersPageEnv): void {
 		check('medical_sector', yesNo(a.medical_sector));
 		named<HTMLInputElement>('medical_sector_detail').value = a.medical_sector_detail;
 		named<HTMLInputElement>('last_employer').value = a.last_employer;
-		named<HTMLTextAreaElement>('achievement').value = a.achievement;
 		check('areas', a.areas);
+		named<HTMLInputElement>('areas_other').value = a.areas_other;
 		check('start_availability', [a.start_availability]);
-		check('has_transport', yesNo(a.has_transport));
-		named<HTMLInputElement>('linkedin_url').value = a.linkedin_url;
 		named<HTMLTextAreaElement>('message').value = a.message;
 	}
 
@@ -531,6 +523,7 @@ export function initCareers(env: CareersPageEnv): void {
 		one('[data-branch="whatsapp"]').hidden = whatsappSame.checked;
 		one('[data-branch="degree_field_other"]').hidden = picked('degree_field') !== 'other';
 		one('[data-branch="medical_sector_detail"]').hidden = picked('medical_sector') !== 'yes';
+		one('[data-branch="areas_other"]').hidden = !many<HTMLInputElement>('input[name="areas"]:checked').some((a) => a.value === 'other');
 		// A select has no placeholder attribute; an unanswered one is dimmed like one.
 		degreeLevel.classList.toggle('is-empty', degreeLevel.value === '');
 		// The area cards colour as a whole, not only their box.
@@ -625,9 +618,7 @@ export function initCareers(env: CareersPageEnv): void {
 
 	// ---------------------------------------------------------- errors
 
-	const RADIO_GROUPS = new Set([
-		'military_status', 'degree_field', 'sales_experience', 'medical_sector', 'areas', 'start_availability', 'has_transport',
-	]);
+	const RADIO_GROUPS = new Set(['degree_field', 'sales_experience', 'medical_sector', 'areas', 'start_availability']);
 
 	/** The control a field's error belongs to — where focus goes. */
 	function controlOf(field: string): HTMLElement {
@@ -1018,15 +1009,14 @@ export function initCareers(env: CareersPageEnv): void {
 		// Anything typed while this script was still loading is newer than the draft.
 		const typed = readAnswers();
 		const text = [
-			'full_name', 'phone', 'whatsapp', 'email', 'residence', 'degree_field_other', 'university',
-			'medical_sector_detail', 'last_employer', 'achievement', 'linkedin_url', 'message',
+			'full_name', 'phone', 'whatsapp', 'email', 'degree_field_other', 'university',
+			'medical_sector_detail', 'last_employer', 'areas_other', 'message',
 		] as const;
 		for (const key of text) if (typed[key] !== '') draft[key] = typed[key];
 		writeAnswers(draft);
 	}
 	const current = readAnswers();
-	optional.military_status = current.military_status;
-	optional.has_transport = current.has_transport === true ? 'yes' : current.has_transport === false ? 'no' : '';
+	optional.medical_sector = current.medical_sector === true ? 'yes' : current.medical_sector === false ? 'no' : '';
 	syncBranches();
 	renderFiles('cv');
 	renderFiles('extra');

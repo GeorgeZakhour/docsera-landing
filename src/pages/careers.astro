@@ -13,23 +13,26 @@
 // field.
 //
 // Founder rulings (2026-11-07): title «مندوب/ة مبيعات»; no expected-salary
-// field; military status kept, optional; one plain privacy sentence, no
-// link; WhatsApp offered only when CAREERS_WHATSAPP_NUMBER is set.
+// field; one plain privacy sentence, no link; WhatsApp offered only when
+// CAREERS_WHATSAPP_NUMBER is set. Round 2 (same evening): no residence,
+// military status, achievement, transport or LinkedIn; the areas live in the
+// form only (no «الشواغر» strip, no «المناطق» section); one «شهادة جامعية»;
+// the medical field is an advantage, not a condition; the medical-sector
+// question is optional; a fourth area «أخرى» with its own text.
 import { careersWhatsAppUrl } from '../config/links';
 import {
-	ACHIEVEMENT_HELP,
-	ACHIEVEMENT_LABEL,
 	AREAS,
+	AREAS_OTHER_PLACEHOLDER,
 	BACK_LABEL,
 	BUSY_COPY,
 	CLOSED_COPY,
 	CV_HELP,
+	DEGREE_FIELD_HINT,
 	DEGREE_FIELDS,
 	DEGREE_LEVELS,
 	EXPERIENCE,
 	EXTRAS_HELP,
 	FILE_LIMITS,
-	MILITARY,
 	NEXT_LABEL,
 	PRIVACY_LINE,
 	START,
@@ -44,7 +47,7 @@ import {
 
 const SITE = 'https://docsera.app';
 const title = `${TITLE} — انضم إلى فريق DocSera`;
-const description = 'نوظّف مندوبي/ات مبيعات في دمشق (مزة · روضة–مالكي–أبو رمانة · مركز المدينة). قدّم طلبك مع سيرتك الذاتية في ثلاث دقائق.';
+const description = 'نوظّف مندوبي/ات مبيعات في دمشق. قدّم طلبك مع سيرتك الذاتية في ثلاث دقائق.';
 /** null while no number is set: the WhatsApp option is not drawn (ruling 9). */
 const WA = careersWhatsAppUrl(WHATSAPP_TEXT);
 const ARABIC_DIGITS = ['١', '٢', '٣', '٤'];
@@ -133,10 +136,6 @@ html:not(.js) [data-view="form"]{display:none}
 .hero h1{font-size:clamp(34px,6vw,64px);line-height:1.1;font-weight:800;margin-top:4px;text-shadow:0 10px 30px rgba(0,40,42,.3)}
 .hero h1 small{display:block;font-size:.5em;font-weight:800;color:#E6F7F7;margin-top:4px}
 .hero .lede{margin-top:16px;font-size:clamp(16px,2vw,19px);color:#E8F6F6;font-weight:600;max-width:640px;line-height:1.7}
-.areas{margin-top:22px;display:flex;flex-wrap:wrap;gap:10px;align-items:center}
-.areas .lbl{font-size:14px;font-weight:800;color:#CFF1F1}
-.area{display:inline-flex;align-items:center;gap:8px;background:rgba(255,255,255,.14);border:1.5px solid rgba(255,255,255,.35);border-radius:999px;padding:6px 14px 6px 8px;font-size:15px;font-weight:700}
-.area b{font-family:var(--font-en);font-weight:700;font-size:13px;width:26px;height:26px;border-radius:50%;background:#fff;color:var(--c-main-dark);display:inline-grid;place-items:center}
 .cta-row{margin-top:28px;display:flex;flex-wrap:wrap;gap:12px;align-items:center}
 .btn{display:inline-flex;align-items:center;justify-content:center;gap:8px;border-radius:999px;padding:14px 26px;font-weight:800;font-size:16px;border:0;cursor:pointer;font-family:inherit;text-decoration:none;line-height:1.3}
 .btn:focus-visible{outline:3px solid var(--c-glow);outline-offset:3px}
@@ -159,8 +158,6 @@ ul.checks li{display:flex;gap:12px;align-items:flex-start;font-weight:600;font-s
 ul.checks li::before{content:"✓";flex:none;width:28px;height:28px;border-radius:50%;background:var(--c-main-light);color:var(--c-main-dark);font-weight:800;font-size:15px;display:grid;place-items:center;margin-top:2px}
 .two{display:grid;gap:28px;grid-template-columns:1fr}
 @media(min-width:900px){.two{grid-template-columns:1fr 1fr}}
-.area-card{display:flex;gap:14px;align-items:flex-start}
-.area-card .letter{font-family:var(--font-en);font-weight:700;font-size:22px;width:48px;height:48px;border-radius:14px;background:var(--c-main);color:#fff;display:grid;place-items:center;flex:none}
 /* form */
 .apply{padding:64px 0 72px;background:linear-gradient(180deg,#fff 0%,var(--c-sand-light) 100%)}
 .apply-wrap{display:grid;gap:28px;grid-template-columns:1fr;align-items:start}
@@ -291,7 +288,6 @@ footer .logo{height:26px;width:auto;display:block}
   <div class="eyebrow">فريق المبيعات · دمشق</div>
   <h1>{TITLE}<small>{SUBTITLE}</small></h1>
   <p class="lede">تزور الأطباء والعيادات في منطقتك، تعرّفهم بـ DocSera Pro، تفعّل تجربتهم المجانية، وتتابعهم حتى الاشتراك وما بعده.</p>
-  <div class="areas"><span class="lbl">الشواغر</span>{AREAS.map((a) => <span class="area"><b>{a.letter}</b> {a.label}</span>)}</div>
   <div class="cta-row"><a class="btn btn-white" href="#apply">قدّم الآن</a><a class="btn btn-ghost" href="#role">تعرّف على الدور</a></div>
   <div class="meta">التقديم يستغرق ثلاث دقائق · نراجع كل طلب ونتواصل مع من تنطبق عليه الشروط</div>
 </div></header>
@@ -300,7 +296,7 @@ footer .logo{height:26px;width:auto;display:block}
   <h2>ما الذي ستفعله</h2><p class="sub">عمل ميداني بنتيجة واضحة: عيادات تنضمّ إلى DocSera وتبقى معه.</p>
   <div class="grid">
     <div class="card"><div class="ic">{ARABIC_DIGITS[0]}</div><h4>زيارات ميدانية</h4><p>تزور الأطباء والمراكز في منطقتك وتعرّفهم بـ DocSera Pro وبما يقدّمه لعيادتهم.</p></div>
-    <div class="card"><div class="ic">{ARABIC_DIGITS[1]}</div><h4>تفعيل التجربة</h4><p>تساعد العيادة على البدء: تجهيز الحساب، شرح الأساسيات، وتجربة مجانية حتى تقرّر.</p></div>
+    <div class="card"><div class="ic">{ARABIC_DIGITS[1]}</div><h4>تفعيل التجربة</h4><p>تساعد العيادة على البدء: تجهيز الحساب وشرح الأساسيات، ومرافقتها خلال فترة التجربة المجانية حتى تشترك.</p></div>
     <div class="card"><div class="ic">{ARABIC_DIGITS[2]}</div><h4>المتابعة والدعم</h4><p>تتابع عملاءك بعد الاشتراك، تجيب عن أسئلتهم، وتنقل ملاحظاتهم إلى فريق المنتج.</p></div>
     <div class="card"><div class="ic">{ARABIC_DIGITS[3]}</div><h4>تقارير من هاتفك</h4><p>تخطّط زياراتك وتسجّل نتائجها في تطبيق DocSera Admin — لا أوراق ولا جداول.</p></div>
   </div>
@@ -319,19 +315,10 @@ footer .logo{height:26px;width:auto;display:block}
   <div><h2>المطلوب</h2>
     <ul class="checks">
       <li>خبرة في التسويق أو المبيعات</li>
-      <li>شهادة جامعية — يفضَّل القطاع الطبي أو الصحي (طب أسنان، صيدلة، تمريض، علوم صحية…)</li>
+      <li>شهادة جامعية — والاختصاص الطبي أو الصحي (طب أسنان، صيدلة، طب، هندسة طبية…) أفضلية، لا شرطاً</li>
       <li>مهارات تواصل وإقناع، وراحة في التعامل مع الأطباء</li>
       <li>الإقامة في دمشق والقدرة على التنقل اليومي في منطقتك</li>
     </ul>
-  </div>
-</div></section>
-
-<section class="block"><div class="container">
-  <h2>المناطق</h2><p class="sub">ثلاثة شواغر، لكل منطقة مندوب/ة واحد/ة. اختر ما يناسبك في الطلب.</p>
-  <div class="grid">
-    <div class="card area-card"><div class="letter">A</div><div><h4>مزة</h4><p>المزة بكل أحيائها: الفيلات، الشيخ سعد، جبل المزة، الأوتوستراد.</p></div></div>
-    <div class="card area-card"><div class="letter">B</div><div><h4>روضة · مالكي · أبو رمانة</h4><p>منطقة العيادات الأكثر كثافة في دمشق، وأقصر المسافات بين زيارة وأخرى.</p></div></div>
-    <div class="card area-card"><div class="letter">C</div><div><h4>مركز المدينة</h4><p>الشعلان، الصالحية، العرنوس، الحلبوني، وما بينها.</p></div></div>
   </div>
 </div></section>
 
@@ -376,21 +363,6 @@ footer .logo{height:26px;width:auto;display:block}
             <input class="input en" type="tel" id="cr-whatsapp" name="whatsapp" inputmode="tel" dir="ltr" autocomplete="tel" maxlength="24" placeholder="09xx xxx xxx  /  +49 …" aria-describedby="cr-err-whatsapp" />
             <p class="err" id="cr-err-whatsapp" hidden></p>
           </div>
-          <div class="field">
-            <label class="lbl" for="cr-residence">مكان إقامتك</label>
-            <input class="input" type="text" id="cr-residence" name="residence" maxlength="80" placeholder="الحي أو المنطقة — مثلاً: القصاع" required aria-describedby="cr-err-residence" />
-            <p class="err" id="cr-err-residence" hidden></p>
-          </div>
-          <fieldset class="field" aria-describedby="cr-err-military_status">
-            <legend class="lbl">الخدمة الإلزامية <span class="opt">اختياري</span></legend>
-            <div class="seg">
-              {MILITARY.map((m) => (
-                <label><input type="radio" name="military_status" value={m.key} data-optional /><span>{m.label}</span></label>
-              ))}
-            </div>
-            <p class="help">يساعدنا على التخطيط معك، ولا يؤثر وحده على القرار.</p>
-            <p class="err" id="cr-err-military_status" hidden></p>
-          </fieldset>
         </div>
 
         <!-- 2 · خبرتك -->
@@ -410,13 +382,14 @@ footer .logo{height:26px;width:auto;display:block}
               <p class="err" id="cr-err-university" hidden></p>
             </div>
           </div>
-          <fieldset class="field" aria-describedby="cr-err-degree_field">
+          <fieldset class="field" aria-describedby="cr-help-degree_field cr-err-degree_field">
             <legend class="lbl">مجال الدراسة</legend>
             <div class="seg">
               {DEGREE_FIELDS.map((d) => (
                 <label><input type="radio" name="degree_field" value={d.key} required /><span>{d.label}</span></label>
               ))}
             </div>
+            <p class="help" id="cr-help-degree_field">{DEGREE_FIELD_HINT}</p>
             <p class="err" id="cr-err-degree_field" hidden></p>
             <div class="branch" data-branch="degree_field_other" hidden>
               <label class="lbl" for="cr-degree_field_other">اكتب مجال دراستك</label>
@@ -434,10 +407,10 @@ footer .logo{height:26px;width:auto;display:block}
             <p class="err" id="cr-err-sales_experience" hidden></p>
           </fieldset>
           <fieldset class="field" aria-describedby="cr-err-medical_sector">
-            <legend class="lbl">هل عملت مع أطباء أو عيادات أو شركات أدوية؟</legend>
+            <legend class="lbl">هل عملت مع أطباء أو عيادات أو شركات أدوية؟ <span class="opt">اختياري</span></legend>
             <div class="seg">
-              <label><input type="radio" name="medical_sector" value="yes" required /><span>نعم</span></label>
-              <label><input type="radio" name="medical_sector" value="no" required /><span>لا</span></label>
+              <label><input type="radio" name="medical_sector" value="yes" data-optional /><span>نعم</span></label>
+              <label><input type="radio" name="medical_sector" value="no" data-optional /><span>لا</span></label>
             </div>
             <p class="err" id="cr-err-medical_sector" hidden></p>
             <div class="branch" data-branch="medical_sector_detail" hidden>
@@ -451,12 +424,6 @@ footer .logo{height:26px;width:auto;display:block}
             <input class="input" type="text" id="cr-last_employer" name="last_employer" maxlength="120" placeholder="مثلاً: مندوب طبي — شركة …" aria-describedby="cr-err-last_employer" />
             <p class="err" id="cr-err-last_employer" hidden></p>
           </div>
-          <div class="field">
-            <label class="lbl" for="cr-achievement">{ACHIEVEMENT_LABEL}</label>
-            <textarea class="input" id="cr-achievement" name="achievement" maxlength="600" rows="4" required placeholder="احكِ لنا باختصار: ماذا كان الهدف، وماذا فعلت، وما النتيجة." aria-describedby="cr-help-achievement cr-err-achievement"></textarea>
-            <p class="help" id="cr-help-achievement">{ACHIEVEMENT_HELP}. بين 20 و600 حرف.</p>
-            <p class="err" id="cr-err-achievement" hidden></p>
-          </div>
         </div>
 
         <!-- 3 · السيرة والتفاصيل -->
@@ -465,35 +432,25 @@ footer .logo{height:26px;width:auto;display:block}
             <legend class="lbl">المناطق التي تناسبك</legend>
             <div class="checks2">
               {AREAS.map((a) => (
-                <label class="chk"><input type="checkbox" name="areas" value={a.key} /><span class="box" aria-hidden="true"></span><span><b>{a.letter}</b> {a.label}</span></label>
+                <label class="chk"><input type="checkbox" name="areas" value={a.key} /><span class="box" aria-hidden="true"></span><span>{a.letter ? <b>{a.letter}</b> : null} {a.label}</span></label>
               ))}
             </div>
             <p class="err" id="cr-err-areas" hidden></p>
+            <div class="branch" data-branch="areas_other" hidden>
+              <label class="lbl" for="cr-areas_other">أي منطقة؟</label>
+              <input class="input" type="text" id="cr-areas_other" name="areas_other" maxlength="80" placeholder={AREAS_OTHER_PLACEHOLDER} aria-describedby="cr-err-areas_other" />
+              <p class="err" id="cr-err-areas_other" hidden></p>
+            </div>
           </fieldset>
-          <div class="row2">
-            <fieldset class="field" aria-describedby="cr-err-start_availability">
-              <legend class="lbl">متى تستطيع البدء؟</legend>
-              <div class="seg">
-                {START.map((s) => (
-                  <label><input type="radio" name="start_availability" value={s.key} required /><span>{s.label}</span></label>
-                ))}
-              </div>
-              <p class="err" id="cr-err-start_availability" hidden></p>
-            </fieldset>
-            <fieldset class="field" aria-describedby="cr-err-has_transport">
-              <legend class="lbl">وسيلة نقل خاصة؟ <span class="opt">اختياري</span></legend>
-              <div class="seg">
-                <label><input type="radio" name="has_transport" value="yes" data-optional /><span>نعم</span></label>
-                <label><input type="radio" name="has_transport" value="no" data-optional /><span>لا</span></label>
-              </div>
-              <p class="err" id="cr-err-has_transport" hidden></p>
-            </fieldset>
-          </div>
-          <div class="field">
-            <label class="lbl" for="cr-linkedin_url">رابط LinkedIn <span class="opt">اختياري</span></label>
-            <input class="input en" type="url" id="cr-linkedin_url" name="linkedin_url" inputmode="url" dir="ltr" autocomplete="url" maxlength="200" placeholder="linkedin.com/in/…" aria-describedby="cr-err-linkedin_url" />
-            <p class="err" id="cr-err-linkedin_url" hidden></p>
-          </div>
+          <fieldset class="field" aria-describedby="cr-err-start_availability">
+            <legend class="lbl">متى تستطيع البدء؟</legend>
+            <div class="seg">
+              {START.map((s) => (
+                <label><input type="radio" name="start_availability" value={s.key} required /><span>{s.label}</span></label>
+              ))}
+            </div>
+            <p class="err" id="cr-err-start_availability" hidden></p>
+          </fieldset>
           <div class="field">
             <span class="lbl" id="cr-lbl-cv">السيرة الذاتية</span>
             <label class="drop" data-drop="cv">
@@ -587,7 +544,7 @@ footer .logo{height:26px;width:auto;display:block}
       <li><div><b>نراجع ونتواصل</b><span>نقرأ كل طلب. من تنطبق عليه الشروط نتصل به لمقابلة قصيرة.</span></div></li>
       <li><div><b>تدريب ثم الميدان</b><span>تبدأ بتدريب على المنتج وأسلوب العمل، ثم تنطلق في منطقتك مع متابعة من قائدة الفريق.</span></div></li>
     </ol></div>
-    <div class="card"><h4 style="font-weight:800;color:var(--c-ink)">عن DocSera</h4><p style="color:var(--c-muted);font-weight:600;font-size:14.5px;margin-top:6px">منصة سورية لإدارة العيادات والمراكز الطبية وحجز المواعيد: تطبيق للمرضى وتطبيق للأطباء، يعمل مع عيادات ومراكز في دمشق.</p></div>
+    <div class="card"><h4 style="font-weight:800;color:var(--c-ink)">عن DocSera</h4><p style="color:var(--c-muted);font-weight:600;font-size:14.5px;margin-top:6px">منصة سورية متكاملة للرعاية الصحية الرقمية: نظام واحد يجمع الطبيب والمركز الطبي والمريض — إدارة المواعيد والملفات الطبية والمالية للعيادة، حجز المواعيد ومتابعة الملف الصحي للمريض، وأدوات تنسيق لفرق المراكز. نبنيها لكل عيادة في سوريا.</p></div>
   </aside>
 </div></main>
 

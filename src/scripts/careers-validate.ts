@@ -21,7 +21,6 @@ import {
 	FILE_LIMITS,
 	FILE_REASONS,
 	FILE_TYPES,
-	MILITARY,
 	START,
 } from '../config/careers.ts';
 import { normalizePhone, normalizeWhatsApp } from './pro-join-validate.ts';
@@ -29,7 +28,6 @@ import { normalizePhone, normalizeWhatsApp } from './pro-join-validate.ts';
 export { flattenLines, latinDigits, normalizePhone, normalizeWhatsApp } from './pro-join-validate.ts';
 
 export type AreaKey = (typeof AREAS)[number]['key'];
-export type MilitaryKey = (typeof MILITARY)[number]['key'];
 export type DegreeLevel = (typeof DEGREE_LEVELS)[number]['key'];
 export type DegreeField = (typeof DEGREE_FIELDS)[number]['key'];
 export type Experience = (typeof EXPERIENCE)[number]['key'];
@@ -44,25 +42,20 @@ export interface CareersAnswers {
 	whatsapp_same: boolean;
 	whatsapp: string;
 	email: string;
-	residence: string;
-	/** '' while unanswered. */
-	military_status: string;
 	degree_level: string;
 	degree_field: string;
 	/** The free text behind «أخرى». */
 	degree_field_other: string;
 	university: string;
 	sales_experience: string;
-	/** null while unanswered. */
+	/** null while unanswered — and it may stay so (optional since round 2). */
 	medical_sector: boolean | null;
 	medical_sector_detail: string;
 	last_employer: string;
-	achievement: string;
 	areas: string[];
+	/** The place behind the area «أخرى». */
+	areas_other: string;
 	start_availability: string;
-	/** null while unanswered — and it may stay so. */
-	has_transport: boolean | null;
-	linkedin_url: string;
 	message: string;
 	/** Files are held here, never in the draft. */
 	cvFile: File | null;
@@ -76,21 +69,19 @@ export interface CareersForm {
 	/** The applicant's WhatsApp, or the phone itself. */
 	whatsapp: string;
 	email: string;
-	residence: string;
-	military_status: MilitaryKey | '';
 	degree_level: DegreeLevel;
 	degree_field: DegreeField;
 	degree_field_other: string;
 	university: string;
 	sales_experience: Experience;
-	medical_sector: boolean;
+	/** null = the question was left unanswered. */
+	medical_sector: boolean | null;
 	medical_sector_detail: string;
 	last_employer: string;
-	achievement: string;
 	areas: AreaKey[];
+	/** '' unless `areas` holds `other`. */
+	areas_other: string;
 	start_availability: StartKey;
-	has_transport: boolean | null;
-	linkedin_url: string;
 	message: string;
 }
 
@@ -102,7 +93,7 @@ export type Checked = { ok: true; form: CareersForm } | { ok: false; fields: str
  * belong to step 3 like the fields around them.
  */
 const STEP_FIELDS: Record<Step, readonly string[]> = {
-	1: ['full_name', 'phone', 'whatsapp', 'email', 'residence', 'military_status'],
+	1: ['full_name', 'phone', 'whatsapp', 'email'],
 	2: [
 		'degree_level',
 		'degree_field',
@@ -112,14 +103,12 @@ const STEP_FIELDS: Record<Step, readonly string[]> = {
 		'medical_sector',
 		'medical_sector_detail',
 		'last_employer',
-		'achievement',
 	],
-	3: ['areas', 'start_availability', 'has_transport', 'linkedin_url', 'cv', 'extra', 'files_total', 'message'],
+	3: ['areas', 'areas_other', 'start_availability', 'cv', 'extra', 'files_total', 'message'],
 };
 const FIELD_ORDER: readonly string[] = [...STEP_FIELDS[1], ...STEP_FIELDS[2], ...STEP_FIELDS[3]];
 
 const AREA_KEYS: readonly string[] = AREAS.map((a) => a.key);
-const MILITARY_KEYS: readonly string[] = MILITARY.map((m) => m.key);
 const DEGREE_LEVEL_KEYS: readonly string[] = DEGREE_LEVELS.map((d) => d.key);
 const DEGREE_FIELD_KEYS: readonly string[] = DEGREE_FIELDS.map((d) => d.key);
 const EXPERIENCE_KEYS: readonly string[] = EXPERIENCE.map((e) => e.key);
@@ -167,31 +156,7 @@ function email(raw: unknown): string | false {
 	return EMAIL.test(value) ? value : false;
 }
 
-/**
- * A LinkedIn profile: optional; when given it must be an https address ON
- * linkedin.com — or one subdomain of it, `ae.linkedin.com` — with something
- * after the slash, within 200 characters. Admin opens this address in a
- * browser, so the host is the point: «linkedin.com/» inside another site's
- * URL is refused. A link pasted without its scheme is completed — the
- * applicant copied it from the app's share sheet, not from the bar — and an
- * `http://` one is upgraded. (Twins: the edge function's LINKEDIN and the
- * table's CHECK.)
- */
-const LINKEDIN = /^https:\/\/([a-z0-9-]+\.)?linkedin\.com\/\S+$/i;
-
-function linkedin(raw: unknown): string | false {
-	if (typeof raw !== 'string') return false;
-	if (FORBIDDEN.test(raw)) return false;
-	let value = raw.trim();
-	if (value === '') return '';
-	if (/\s/.test(value)) return false;
-	if (/^http:\/\//i.test(value)) value = 'https://' + value.slice('http://'.length);
-	else if (!/^https:\/\//i.test(value)) value = 'https://' + value;
-	if (!LINKEDIN.test(value)) return false;
-	return value.length <= 200 ? value : false;
-}
-
-// A paragraph — the achievement, the message — keeps its line breaks. The
+// A paragraph — the message — keeps its line breaks. The
 // other control characters and the bidi controls are STRIPPED rather than
 // shown back as an error the applicant cannot see (pasted text carries them
 // invisibly); the server's `fn_pro_join_note_ok` refuses them, so this copy
@@ -289,29 +254,26 @@ function evaluate(a: CareersAnswers): { form: CareersForm; bad: Set<string> } {
 		whatsapp = need('whatsapp', normalizeWhatsApp(a.whatsapp) ?? false, '');
 	}
 	const mail = need('email', email(a.email), '');
-	const residence = need('residence', text(a.residence, 2, 80, true), '');
-	const military = need('military_status', pick(a.military_status, MILITARY_KEYS, false), '') as MilitaryKey | '';
 
 	// ---- step 2
-	const degreeLevel = need('degree_level', pick(a.degree_level, DEGREE_LEVEL_KEYS, true), 'bachelor') as DegreeLevel;
+	const degreeLevel = need('degree_level', pick(a.degree_level, DEGREE_LEVEL_KEYS, true), 'university') as DegreeLevel;
 	const degreeField = need('degree_field', pick(a.degree_field, DEGREE_FIELD_KEYS, true), 'other') as DegreeField;
 	// Only «أخرى» asks for the text; for any other field a typed value is dropped.
 	const degreeFieldOther = a.degree_field === 'other' ? need('degree_field_other', text(a.degree_field_other, 2, 60, true), '') : '';
 	const university = need('university', text(a.university, 0, 80, false), '');
 	const experience = need('sales_experience', pick(a.sales_experience, EXPERIENCE_KEYS, true), 'none') as Experience;
-	// Required, and `false` is an answer — so not through `need`.
-	if (typeof a.medical_sector !== 'boolean') bad.add('medical_sector');
-	const medical = a.medical_sector === true;
+	// Optional, and `false` is an answer — so not through `need`: unanswered
+	// stays null; anything that is not a yes, a no or nothing is refused.
+	if (a.medical_sector !== null && typeof a.medical_sector !== 'boolean') bad.add('medical_sector');
+	const medical = typeof a.medical_sector === 'boolean' ? a.medical_sector : null;
 	const medicalDetail = a.medical_sector === true ? need('medical_sector_detail', text(a.medical_sector_detail, 0, 200, false), '') : '';
 	const lastEmployer = need('last_employer', text(a.last_employer, 0, 120, false), '');
-	const achievement = need('achievement', paragraph(a.achievement, 20, 600, true), '');
 
 	// ---- step 3
 	const areas = need('areas', areaSubset(a.areas), []);
+	// Only «أخرى» asks for the place; without it a typed value is dropped.
+	const areasOther = areas.includes('other') ? need('areas_other', text(a.areas_other, 2, 80, true), '') : '';
 	const start = need('start_availability', pick(a.start_availability, START_KEYS, true), 'later') as StartKey;
-	if (a.has_transport !== null && typeof a.has_transport !== 'boolean') bad.add('has_transport');
-	const transport = typeof a.has_transport === 'boolean' ? a.has_transport : null;
-	const linkedinUrl = need('linkedin_url', linkedin(a.linkedin_url), '');
 	const message = need('message', paragraph(a.message, 0, 500, false), '');
 
 	// ---- the files: counted again here, so nothing refused on choice slips through
@@ -332,8 +294,6 @@ function evaluate(a: CareersAnswers): { form: CareersForm; bad: Set<string> } {
 			phone,
 			whatsapp,
 			email: mail,
-			residence,
-			military_status: military,
 			degree_level: degreeLevel,
 			degree_field: degreeField,
 			degree_field_other: degreeFieldOther,
@@ -342,17 +302,15 @@ function evaluate(a: CareersAnswers): { form: CareersForm; bad: Set<string> } {
 			medical_sector: medical,
 			medical_sector_detail: medicalDetail,
 			last_employer: lastEmployer,
-			achievement,
 			areas,
+			areas_other: areasOther,
 			start_availability: start,
-			has_transport: transport,
-			linkedin_url: linkedinUrl,
 			message,
 		},
 	};
 }
 
-/** One to three distinct area keys, sent in the order the page lists them (A · B · C). */
+/** One to four distinct area keys, sent in the order the page lists them (A · B · C · أخرى). */
 function areaSubset(raw: unknown): AreaKey[] | false {
 	if (!Array.isArray(raw)) return false;
 	if (raw.length === 0 || raw.length > AREA_KEYS.length) return false;
@@ -403,8 +361,6 @@ export function emptyAnswers(): CareersAnswers {
 		whatsapp_same: true,
 		whatsapp: '',
 		email: '',
-		residence: '',
-		military_status: '',
 		degree_level: '',
 		degree_field: '',
 		degree_field_other: '',
@@ -413,11 +369,9 @@ export function emptyAnswers(): CareersAnswers {
 		medical_sector: null,
 		medical_sector_detail: '',
 		last_employer: '',
-		achievement: '',
 		areas: [],
+		areas_other: '',
 		start_availability: '',
-		has_transport: null,
-		linkedin_url: '',
 		message: '',
 		cvFile: null,
 		extraFiles: [],
@@ -443,8 +397,6 @@ export function reviveAnswers(raw: unknown): CareersAnswers {
 	if (stored.whatsapp_same === false) answers.whatsapp_same = false;
 	answers.whatsapp = str('whatsapp');
 	answers.email = str('email');
-	answers.residence = str('residence');
-	answers.military_status = listed('military_status', MILITARY_KEYS);
 	answers.degree_level = listed('degree_level', DEGREE_LEVEL_KEYS);
 	answers.degree_field = listed('degree_field', DEGREE_FIELD_KEYS);
 	answers.degree_field_other = str('degree_field_other');
@@ -453,13 +405,12 @@ export function reviveAnswers(raw: unknown): CareersAnswers {
 	answers.medical_sector = bool('medical_sector');
 	answers.medical_sector_detail = str('medical_sector_detail');
 	answers.last_employer = str('last_employer');
-	answers.achievement = str('achievement');
-	if (Array.isArray(stored.areas)) {
-		answers.areas = AREA_KEYS.filter((key) => stored.areas!.includes(key)) as string[];
+	const storedAreas = stored.areas;
+	if (Array.isArray(storedAreas)) {
+		answers.areas = AREA_KEYS.filter((key) => storedAreas.includes(key)) as string[];
 	}
+	answers.areas_other = str('areas_other');
 	answers.start_availability = listed('start_availability', START_KEYS);
-	answers.has_transport = bool('has_transport');
-	answers.linkedin_url = str('linkedin_url');
 	answers.message = str('message');
 	return answers;
 }
