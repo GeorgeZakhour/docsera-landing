@@ -183,6 +183,16 @@ export const CLOSED_COPY = {
 	body: 'تابعنا لنشر الشواغر القادمة.',
 } as const;
 
+/**
+ * The server said «busy» to opening the form — this network's hourly cap, not
+ * the founder's switch. A panel with a retry, never the closed panel.
+ */
+export const BUSY_COPY = {
+	title: 'الخدمة مشغولة الآن',
+	body: 'أعد المحاولة بعد قليل.',
+	retry: 'أعد المحاولة',
+} as const;
+
 /** Under the send button: one plain sentence, no link, no legal page (ruling 8). */
 export const PRIVACY_LINE = 'بياناتك وسيرتك الذاتية تُستخدم لغرض التوظيف فقط ولا تُشارك مع أي جهة أخرى.';
 

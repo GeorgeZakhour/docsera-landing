@@ -285,29 +285,44 @@ test('has_transport: unanswered, yes or no', () => {
 	assert.deepEqual((checkAnswers(broken) as { fields: string[] }).fields, ['has_transport']);
 });
 
-test('linkedin_url: optional; must name linkedin.com/ and stay within 200', () => {
+test('linkedin_url: optional; an https address ON linkedin.com, within 200', () => {
 	assert.equal(form({ linkedin_url: '' }).linkedin_url, '');
 	assert.equal(form({ linkedin_url: ' https://www.linkedin.com/in/lama-haddad ' }).linkedin_url, 'https://www.linkedin.com/in/lama-haddad');
-	// a link pasted without its scheme is completed, never refused
+	assert.equal(form({ linkedin_url: 'https://ae.linkedin.com/in/lama' }).linkedin_url, 'https://ae.linkedin.com/in/lama');
+	assert.equal(form({ linkedin_url: 'HTTPS://WWW.LinkedIn.com/in/Lama' }).linkedin_url, 'HTTPS://WWW.LinkedIn.com/in/Lama');
+	// a link pasted without its scheme is completed, never refused; http is upgraded
 	assert.equal(form({ linkedin_url: 'linkedin.com/in/lama' }).linkedin_url, 'https://linkedin.com/in/lama');
 	assert.equal(form({ linkedin_url: 'www.linkedin.com/in/lama' }).linkedin_url, 'https://www.linkedin.com/in/lama');
+	assert.equal(form({ linkedin_url: 'http://www.linkedin.com/in/lama' }).linkedin_url, 'https://www.linkedin.com/in/lama');
 	assert.deepEqual(bad({ linkedin_url: 'https://example.com/lama' }), ['linkedin_url']);
 	assert.deepEqual(bad({ linkedin_url: 'linkedin.com' }), ['linkedin_url']);
 	assert.deepEqual(bad({ linkedin_url: 'https://linkedin.com/in/' + 'a'.repeat(200) }), ['linkedin_url']);
 	assert.deepEqual(bad({ linkedin_url: 'https://linkedin.com/in/la ma' }), ['linkedin_url']);
+	// review M1 — «linkedin.com/» inside another site's address is not LinkedIn; Admin opens this in a browser
+	for (const url of [
+		'http://evil.example/?u=linkedin.com/',
+		'evil.example/?u=linkedin.com/',
+		'https://evil.example/linkedin.com/in/x',
+		'https://linkedin.com.evil.example/in/x',
+		'https://a.b.linkedin.com/in/x',
+		'https://www.linkedin.com/',
+		'javascript:alert(1)//linkedin.com/',
+	]) assert.deepEqual(bad({ linkedin_url: url }), ['linkedin_url'], url);
 });
 
-test('message: optional, at most 500 characters; the page flattens line breaks first', () => {
+test('message: optional, at most 500 characters, keeps its line breaks', () => {
 	assert.equal(form({ message: '' }).message, '');
 	assert.equal(form({ message: ' أعمل  مساءً فقط ' }).message, 'أعمل مساءً فقط');
 	assert.equal(form({ message: 'a'.repeat(500) }).message.length, 500);
 	assert.deepEqual(bad({ message: 'a'.repeat(501) }), ['message']);
-	assert.deepEqual(bad({ message: NEWLINE }), ['message']);
+	assert.equal(form({ message: NEWLINE }).message, NEWLINE);
+	// 500 counted with the line breaks: 250 + 1 + 250 is over
+	assert.deepEqual(bad({ message: 'a'.repeat(250) + '\n' + 'a'.repeat(250) }), ['message']);
 });
 
 // ---------------------------------------------------------------- text rules
 
-test('every text field refuses control and bidi characters, and names itself', () => {
+test('every one-line field refuses control and bidi characters, and names itself', () => {
 	for (const poison of [CONTROL, NEWLINE, BIDI_OVERRIDE, BIDI_ISOLATE]) {
 		assert.deepEqual(bad({ full_name: poison }), ['full_name']);
 		assert.deepEqual(bad({ residence: poison }), ['residence']);
@@ -315,9 +330,29 @@ test('every text field refuses control and bidi characters, and names itself', (
 		assert.deepEqual(bad({ university: poison }), ['university']);
 		assert.deepEqual(bad({ medical_sector: true, medical_sector_detail: poison }), ['medical_sector_detail']);
 		assert.deepEqual(bad({ last_employer: poison }), ['last_employer']);
-		assert.deepEqual(bad({ achievement: LONG_ENOUGH + poison }), ['achievement']);
-		assert.deepEqual(bad({ message: poison }), ['message']);
 	}
+});
+
+// Review drift #1 — the edge function and the table accept «\n» in these two;
+// the page used to flatten them to one line, losing the applicant's paragraphs.
+test('achievement and message are paragraphs: line breaks kept, the rest cleaned', () => {
+	const two = 'أقنعت عيادة بالانتقال إلى البرنامج.\nثم أقنعت ثلاث عيادات أخرى.';
+	assert.equal(form({ achievement: two }).achievement, two);
+	assert.equal(form({ message: two }).message, two);
+	// Windows line ends, tabs, trailing spaces on a line, runs of spaces: canonical
+	assert.equal(form({ achievement: 'سطر أول  \t بمسافات \r\nسطر ثان' }).achievement, 'سطر أول بمسافات\nسطر ثان');
+	// three or more blank lines fold to one blank line; the ends are trimmed
+	assert.equal(form({ achievement: '\n\n' + LONG_ENOUGH + '\n\n\n\n' + LONG_ENOUGH + '\n' }).achievement, LONG_ENOUGH + '\n\n' + LONG_ENOUGH);
+	// control characters and bidi marks are stripped, not shown back as an error the applicant cannot see
+	assert.equal(form({ achievement: LONG_ENOUGH + CONTROL }).achievement, LONG_ENOUGH + 'لمىحداد');
+	assert.equal(form({ achievement: LONG_ENOUGH + BIDI_OVERRIDE }).achievement, LONG_ENOUGH + 'لمىحداد');
+	assert.equal(form({ message: BIDI_ISOLATE }).message, 'لمىحداد');
+	// a line break is one character: 10 + 1 + 9 = 20 is accepted, 10 + 1 + 8 is not
+	assert.equal(form({ achievement: 'ا'.repeat(10) + '\n' + 'ا'.repeat(9) }).achievement.length, 20);
+	assert.deepEqual(bad({ achievement: 'ا'.repeat(10) + '\n' + 'ا'.repeat(8) }), ['achievement']);
+	// a paragraph of nothing but blank lines is empty
+	assert.deepEqual(bad({ achievement: '\n\n\n' }), ['achievement']);
+	assert.equal(form({ message: '\n \n' }).message, '');
 });
 
 test('angle brackets, quotes and emoji are text, not a reason to refuse', () => {

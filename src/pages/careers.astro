@@ -21,6 +21,7 @@ import {
 	ACHIEVEMENT_LABEL,
 	AREAS,
 	BACK_LABEL,
+	BUSY_COPY,
 	CLOSED_COPY,
 	CV_HELP,
 	DEGREE_FIELDS,
@@ -163,7 +164,7 @@ ul.checks li::before{content:"✓";flex:none;width:28px;height:28px;border-radiu
 /* form */
 .apply{padding:64px 0 72px;background:linear-gradient(180deg,#fff 0%,var(--c-sand-light) 100%)}
 .apply-wrap{display:grid;gap:28px;grid-template-columns:1fr;align-items:start}
-@media(min-width:1000px){.apply-wrap{grid-template-columns:minmax(0,1.5fr) minmax(0,1fr)}[data-state="closed"] .apply-wrap{grid-template-columns:minmax(0,1.5fr)}}
+@media(min-width:1000px){.apply-wrap{grid-template-columns:minmax(0,1.5fr) minmax(0,1fr)}[data-state="closed"] .apply-wrap,[data-state="busy"] .apply-wrap{grid-template-columns:minmax(0,1.5fr)}}
 .form-card{background:#fff;border:1px solid rgba(0,0,0,.06);border-radius:var(--r-lg);padding:26px 22px;box-shadow:0 30px 70px -40px rgba(0,116,116,.5)}
 @media(min-width:700px){.form-card{padding:34px}}
 .form-head h3{font-size:26px;font-weight:800;color:var(--c-ink)}
@@ -264,6 +265,7 @@ textarea.input.short{min-height:90px}
 .wabtn:hover{background:var(--c-main-light)}
 .wabtn svg{width:19px;height:19px;fill:currentColor;flex:none}
 .done .hint{margin-top:8px;font-size:12.5px;color:var(--c-muted)}
+.done .btn{margin-top:22px;min-width:200px;flex:none}
 .noscript{margin:6px 0 4px;font-size:15px;line-height:1.9;color:var(--c-text);font-weight:600}
 .noscript a{color:var(--c-main-dark);font-weight:800}
 /* side */
@@ -274,7 +276,7 @@ textarea.input.short{min-height:90px}
 .side ol li::before{counter-increment:s;content:counter(s);flex:none;width:30px;height:30px;border-radius:50%;background:var(--c-main);color:#fff;font-family:var(--font-en);font-weight:700;display:grid;place-items:center;font-size:14px}
 .side ol li b{display:block;color:var(--c-ink)}
 .side ol li span{color:var(--c-muted);font-size:14px}
-[data-state="closed"] .side{display:none}
+[data-state="closed"] .side,[data-state="busy"] .side{display:none}
 footer{background:var(--c-ink);color:#CFE6E6;padding:26px 0;font-size:13.5px;font-weight:600}
 footer .container{display:flex;justify-content:space-between;align-items:center;gap:12px;flex-wrap:wrap}
 footer .logo{height:26px;width:auto;display:block}
@@ -561,6 +563,14 @@ footer .logo{height:26px;width:auto;display:block}
       <div class="tick" aria-hidden="true"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"><rect x="3" y="11" width="18" height="10" rx="2" /><path d="M7 11V7a5 5 0 0 1 10 0v4" /></svg></div>
       <h3 tabindex="-1">{CLOSED_COPY.title}</h3>
       <p>{CLOSED_COPY.body}</p>
+    </div>
+
+    <!-- ============ BUSY (this network's hourly cap on opening the form — a retry, never «closed») ============ -->
+    <div class="done" data-view="busy" hidden>
+      <div class="tick" aria-hidden="true"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="9" /><path d="M12 7v5l3 2" /></svg></div>
+      <h3 tabindex="-1">{BUSY_COPY.title}</h3>
+      <p>{BUSY_COPY.body}</p>
+      <button type="button" class="btn btn-main" id="cr-busy-retry">{BUSY_COPY.retry}</button>
     </div>
 
     <noscript>

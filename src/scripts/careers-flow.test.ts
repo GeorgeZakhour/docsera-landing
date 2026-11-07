@@ -4,9 +4,11 @@ import { test } from 'node:test';
 import assert from 'node:assert/strict';
 
 import {
+	ANSWER_MS,
 	MIN_TOKEN_AGE_MS,
 	STALL_MS,
 	SUBMIT_TIMEOUT_MS,
+	askOpenCareers,
 	buildBody,
 	parseEntry,
 	submitApplication,
@@ -365,6 +367,48 @@ test('a stall is counted from the last progress event, not from the start', asyn
 	assert.equal(multipart.uploads[0].xhr.aborted, true);
 });
 
+// Review M3 — once every byte is up there is no progress event to wait for.
+test('after 100 % the stall clock stops: no progress for 100 s does not abort; 130 s does (one 120 s answer timer)', async () => {
+	assert.equal(ANSWER_MS, 120_000);
+	const clock = fakeClock();
+	const total = 4 * MB;
+	// the body is up at 9 s; the server never answers
+	const multipart = xhrServer(clock, () => ({
+		progress: [{ at: 3_000, loaded: 1 * MB, total }, { at: 9_000, loaded: total, total }],
+		answerAt: 999_999,
+	}));
+	let outcome: unknown = null;
+	void submitApplication(api(clock, jsonServer(clock, () => OPEN('t')), multipart), seasoned(clock), request()).then((o) => (outcome = o));
+
+	await clock.advance(9_000 + 100_000);
+	assert.equal(outcome, null, '100 s after 100 % the request is still alive');
+	assert.equal(multipart.uploads[0].xhr.aborted, false);
+	await clock.advance(ANSWER_MS - 100_000 - 1);
+	assert.equal(outcome, null, '119.999 s after 100 %');
+	await clock.advance(1);
+	assert.deepEqual(outcome, { kind: 'failed' }, '120 s after 100 %: let go');
+	assert.equal(multipart.uploads[0].xhr.aborted, true);
+	assert.equal(multipart.uploads.length, 1, 'never resent on its own');
+});
+
+test('an answer within the 120 s after 100 % is taken; a late final progress event does not restart the clock', async () => {
+	const clock = fakeClock();
+	const total = 4 * MB;
+	const multipart = xhrServer(clock, () => ({
+		// the browser may repeat the final progress event; it must not re-arm anything
+		progress: [{ at: 9_000, loaded: total, total }, { at: 60_000, loaded: total, total }],
+		answerAt: 9_000 + ANSWER_MS - 1_000,
+		body: { status: 'accepted', code: 'K7M-42Q' },
+	}));
+	let outcome: unknown = null;
+	void submitApplication(api(clock, jsonServer(clock, () => OPEN('t')), multipart), seasoned(clock), request()).then((o) => (outcome = o));
+	await clock.advance(9_000 + ANSWER_MS - 1_001);
+	assert.equal(outcome, null);
+	await clock.advance(1);
+	assert.deepEqual(outcome, { kind: 'accepted', code: 'K7M-42Q' });
+	assert.equal(multipart.uploads[0].xhr.aborted, false);
+});
+
 test('a slow line that keeps moving is never cut: progress every 10 s for 200 s, then accepted', async () => {
 	// Review focus 1: a 16 MB CV at 1 Mbit/s. The overall limit is 240 s.
 	const clock = fakeClock();
@@ -499,6 +543,50 @@ test('a token fetched a moment ago is aged before the first send', async () => {
 	assert.equal(multipart.uploads.length, 0);
 	await clock.advance(1_000);
 	assert.deepEqual(outcome, { kind: 'accepted', code: 'K7M-42Q' });
+});
+
+// Review M2 — the network's hourly cap on «open» is not the founder's switch.
+test('askOpenCareers: busy is its own answer; closed, open and unreachable read as the Pro form reads them', async () => {
+	const ask = async (reply: JsonReply) => {
+		const clock = fakeClock();
+		const json = jsonServer(clock, () => reply);
+		const answer = askOpenCareers({ fetch: json.fetch, clock, endpoint: ENDPOINT, anonKey: ANON_KEY });
+		await clock.advance(60_000);
+		return { answer: await answer, sent: json.opens[0]?.body };
+	};
+	assert.deepEqual((await ask({ body: { open: false, reason: 'busy' } })).answer, { kind: 'busy' });
+	assert.deepEqual((await ask({ body: { open: false } })).answer, { kind: 'closed' });
+	assert.deepEqual((await ask({ body: { open: false, reason: 'anything_else' } })).answer, { kind: 'closed' });
+	assert.deepEqual((await ask({ status: 404, body: {} })).answer, { kind: 'closed' });
+	assert.deepEqual((await ask('offline')).answer, { kind: 'unreachable' });
+	assert.deepEqual((await ask('hang')).answer, { kind: 'unreachable' });
+	assert.deepEqual((await ask({ body: { open: true } })).answer, { kind: 'unreachable' });
+	const opened = await ask({ body: { open: true, token: 'tok-9' } });
+	assert.equal(opened.answer.kind, 'open');
+	assert.equal(opened.answer.kind === 'open' && opened.answer.token.value, 'tok-9');
+	assert.deepEqual(opened.sent, { action: 'open' });
+});
+
+test('the busy panel\'s retry asks again, and the form opens only when the server opens it', async () => {
+	const clock = fakeClock();
+	// first call: over the cap; second: open
+	const json = jsonServer(clock, (n) => (n === 1 ? { body: { open: false, reason: 'busy' } } : OPEN('tok-2')));
+	const a = { fetch: json.fetch, clock, endpoint: ENDPOINT, anonKey: ANON_KEY };
+	assert.deepEqual(await askOpenCareers(a), { kind: 'busy' });
+	const again = await askOpenCareers(a);
+	assert.equal(again.kind, 'open');
+	assert.equal(again.kind === 'open' && again.token.value, 'tok-2');
+	assert.equal(json.opens.length, 2);
+});
+
+test('no token and the network is over its cap at submit time: busy, nothing sent, no token kept', async () => {
+	const clock = fakeClock();
+	const multipart = xhrServer(clock, () => ACCEPTED);
+	const box: TokenBox = { token: null };
+	const outcome = await finish(clock, submitApplication(api(clock, jsonServer(clock, () => ({ body: { open: false, reason: 'busy' } })), multipart), box, request()));
+	assert.deepEqual(outcome, { kind: 'busy' });
+	assert.equal(multipart.uploads.length, 0);
+	assert.equal(box.token, null);
 });
 
 test('no token and the form has been closed meanwhile: nothing is sent', async () => {

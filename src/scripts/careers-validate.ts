@@ -168,19 +168,56 @@ function email(raw: unknown): string | false {
 }
 
 /**
- * A LinkedIn link: optional; when given it must name `linkedin.com/` and
- * fit in 200 characters. A link pasted without its scheme is completed —
- * the applicant copied it from the app's share sheet, not from the bar.
+ * A LinkedIn profile: optional; when given it must be an https address ON
+ * linkedin.com — or one subdomain of it, `ae.linkedin.com` — with something
+ * after the slash, within 200 characters. Admin opens this address in a
+ * browser, so the host is the point: «linkedin.com/» inside another site's
+ * URL is refused. A link pasted without its scheme is completed — the
+ * applicant copied it from the app's share sheet, not from the bar — and an
+ * `http://` one is upgraded. (Twins: the edge function's LINKEDIN and the
+ * table's CHECK.)
  */
+const LINKEDIN = /^https:\/\/([a-z0-9-]+\.)?linkedin\.com\/\S+$/i;
+
 function linkedin(raw: unknown): string | false {
 	if (typeof raw !== 'string') return false;
 	if (FORBIDDEN.test(raw)) return false;
 	let value = raw.trim();
 	if (value === '') return '';
 	if (/\s/.test(value)) return false;
-	if (!/^https?:\/\//i.test(value)) value = 'https://' + value;
-	if (!/linkedin\.com\/./i.test(value)) return false;
+	if (/^http:\/\//i.test(value)) value = 'https://' + value.slice('http://'.length);
+	else if (!/^https:\/\//i.test(value)) value = 'https://' + value;
+	if (!LINKEDIN.test(value)) return false;
 	return value.length <= 200 ? value : false;
+}
+
+// A paragraph — the achievement, the message — keeps its line breaks. The
+// other control characters and the bidi controls are STRIPPED rather than
+// shown back as an error the applicant cannot see (pasted text carries them
+// invisibly); the server's `fn_pro_join_note_ok` refuses them, so this copy
+// sends the text already clean. Tabs become spaces, runs of blank lines fold
+// to one, each line and the whole are trimmed.
+// eslint-disable-next-line no-control-regex
+const STRIPPED_IN_PARAGRAPH = /[\u0000-\u0009\u000B-\u001F\u007F-\u009F‪-‮⁦-⁩]/gu;
+
+/**
+ * One multi-line answer against its rule. Returns the value to send, '' when
+ * the answer is empty and may be, or false when it breaks the rule. Counted
+ * as `text` counts, a line break being one character in every copy.
+ */
+function paragraph(raw: unknown, min: number, max: number, required: boolean): string | false {
+	if (typeof raw !== 'string') return false;
+	const value = raw
+		.replace(/\r\n?/g, '\n')
+		.replace(/\t/g, ' ')
+		.replace(STRIPPED_IN_PARAGRAPH, '')
+		.replace(/ {2,}/g, ' ')
+		.replace(/ *\n */g, '\n')
+		.replace(/\n{3,}/g, '\n\n')
+		.trim();
+	if (value === '') return required ? false : '';
+	if ([...value].length < min || value.length > max) return false;
+	return value;
 }
 
 // ---------------------------------------------------------------- files
@@ -267,7 +304,7 @@ function evaluate(a: CareersAnswers): { form: CareersForm; bad: Set<string> } {
 	const medical = a.medical_sector === true;
 	const medicalDetail = a.medical_sector === true ? need('medical_sector_detail', text(a.medical_sector_detail, 0, 200, false), '') : '';
 	const lastEmployer = need('last_employer', text(a.last_employer, 0, 120, false), '');
-	const achievement = need('achievement', text(a.achievement, 20, 600, true), '');
+	const achievement = need('achievement', paragraph(a.achievement, 20, 600, true), '');
 
 	// ---- step 3
 	const areas = need('areas', areaSubset(a.areas), []);
@@ -275,7 +312,7 @@ function evaluate(a: CareersAnswers): { form: CareersForm; bad: Set<string> } {
 	if (a.has_transport !== null && typeof a.has_transport !== 'boolean') bad.add('has_transport');
 	const transport = typeof a.has_transport === 'boolean' ? a.has_transport : null;
 	const linkedinUrl = need('linkedin_url', linkedin(a.linkedin_url), '');
-	const message = need('message', text(a.message, 0, 500, false), '');
+	const message = need('message', paragraph(a.message, 0, 500, false), '');
 
 	// ---- the files: counted again here, so nothing refused on choice slips through
 	const cv = a.cvFile;

@@ -3,8 +3,8 @@
 // `job_application` (DocSera-Pro).
 //
 // Two halves:
-//   1. The send path (askOpen from the Pro form, submitApplication) — contract
-//      C0. It takes its network, its XHR and its clock as arguments, so
+//   1. The send path (askOpenCareers, submitApplication) — contract C0. It
+//      takes its network, its XHR and its clock as arguments, so
 //      careers-flow.test.ts runs it without a browser.
 //   2. The page (initCareers) — steps, inline errors, the draft, the file
 //      rows, the progress bar, and what the applicant sees for each answer.
@@ -32,15 +32,14 @@ import {
 	whatsappTextWithCode,
 } from '../config/careers.ts';
 import { careersWhatsAppUrl } from '../config/links.ts';
-import { MIN_TOKEN_AGE_MS, askOpen, cleanCode } from './pro-join.ts';
-import type { Clock, JoinApi, Token, TokenBox } from './pro-join.ts';
+import { MIN_TOKEN_AGE_MS, OPEN_TIMEOUT_MS, cleanCode } from './pro-join.ts';
+import type { Clock, JoinApi, OpenAnswer, Token, TokenBox } from './pro-join.ts';
 import {
 	checkAnswers,
 	checkFileChoice,
 	draftOf,
 	fileExt,
 	firstBadStep,
-	flattenLines,
 	formatBytes,
 	knownFields,
 	latinDigits,
@@ -50,7 +49,7 @@ import {
 } from './careers-validate.ts';
 import type { CareersAnswers, CareersForm, FileKind, Step } from './careers-validate.ts';
 
-export { MIN_TOKEN_AGE_MS, askOpen, cleanCode } from './pro-join.ts';
+export { MIN_TOKEN_AGE_MS, cleanCode } from './pro-join.ts';
 export type { Clock, Token, TokenBox } from './pro-join.ts';
 
 // ================================================================ send path
@@ -61,6 +60,69 @@ const TOKEN_AGE_SLACK_MS = 250;
 export const SUBMIT_TIMEOUT_MS = 240_000;
 /** Without an upload-progress event for this long, the line is dead. */
 export const STALL_MS = 45_000;
+/**
+ * Once every byte is up there is nothing more to send and no progress event
+ * to wait for: the server's answer is given this long instead (its clock
+ * starts only when the whole body has arrived, and the email no longer holds
+ * it back). Review M3.
+ */
+export const ANSWER_MS = 120_000;
+
+/**
+ * `{action:"open"}` as THIS form reads it: the Pro form's answer plus
+ * `busy` — `{open:false, reason:"busy"}`, this network's hourly cap on
+ * opening the form (a carrier NAT address is many phones). The page then
+ * shows «الخدمة مشغولة الآن» with a retry, never the closed panel. Review M2.
+ */
+export type CareersOpenAnswer = OpenAnswer | { kind: 'busy' };
+
+/** One JSON call to the endpoint, bounded by the injected clock. */
+async function callJson(api: JoinApi, payload: unknown, timeoutMs: number): Promise<{ status: number; data: unknown }> {
+	const abort = typeof AbortController === 'function' ? new AbortController() : null;
+	let timer: unknown;
+	const timedOut = new Promise<never>((_, reject) => {
+		timer = api.clock.setTimer(() => {
+			abort?.abort();
+			reject(new Error('timeout'));
+		}, timeoutMs);
+	});
+	const exchange = (async () => {
+		const res = await api.fetch(api.endpoint, {
+			method: 'POST',
+			headers: {
+				apikey: api.anonKey,
+				Authorization: 'Bearer ' + api.anonKey,
+				'Content-Type': 'application/json',
+			},
+			body: JSON.stringify(payload),
+			signal: abort?.signal,
+		});
+		// Every outcome in the contract is a 200. Anything else has no body we act on.
+		return { status: res.status, data: res.status === 200 ? await res.json() : null };
+	})();
+	try {
+		return await Promise.race([exchange, timedOut]);
+	} finally {
+		api.clock.clearTimer(timer);
+	}
+}
+
+export async function askOpenCareers(api: JoinApi): Promise<CareersOpenAnswer> {
+	let answer: { status: number; data: unknown };
+	try {
+		answer = await callJson(api, { action: 'open' }, OPEN_TIMEOUT_MS);
+	} catch {
+		return { kind: 'unreachable' };
+	}
+	// Not 200 covers a function that is not deployed yet: the closed panel.
+	if (answer.status !== 200) return { kind: 'closed' };
+	const data = record(answer.data);
+	if (data.open === false) return data.reason === 'busy' ? { kind: 'busy' } : { kind: 'closed' };
+	if (data.open === true && typeof data.token === 'string' && data.token !== '') {
+		return { kind: 'open', token: { value: data.token, at: api.clock.now() } };
+	}
+	return { kind: 'unreachable' };
+}
 
 /** The slice of XMLHttpRequest the send path uses — a test hands in a fake. */
 export interface XhrLike {
@@ -140,7 +202,9 @@ function upload(api: CareersApi, body: FormData, onProgress: ProgressReport): Pr
 	return new Promise((resolve, reject) => {
 		const xhr = api.xhr();
 		let settled = false;
+		/** The stall timer while bytes flow; the answer timer once they are all up. */
 		let stall: unknown = null;
+		let complete = false;
 		const overall = api.clock.setTimer(() => fail('timeout'), SUBMIT_TIMEOUT_MS);
 
 		const clear = (): void => {
@@ -160,11 +224,19 @@ function upload(api: CareersApi, body: FormData, onProgress: ProgressReport): Pr
 			if (stall !== null) api.clock.clearTimer(stall);
 			stall = api.clock.setTimer(() => fail('stall'), STALL_MS);
 		};
+		/** The upload is complete: one timer for the answer replaces the stall clock, and is never re-armed. */
+		const awaitAnswer = (): void => {
+			complete = true;
+			if (stall !== null) api.clock.clearTimer(stall);
+			stall = api.clock.setTimer(() => fail('answer'), ANSWER_MS);
+		};
 
 		xhr.upload.onprogress = (event) => {
 			if (settled) return;
-			armStall();
 			if (event.lengthComputable) onProgress(event.loaded, event.total);
+			if (complete) return;
+			if (event.lengthComputable && event.total > 0 && event.loaded >= event.total) awaitAnswer();
+			else armStall();
 		};
 		xhr.onload = () => {
 			if (settled) return;
@@ -215,8 +287,9 @@ export async function submitApplication(
 ): Promise<SubmitOutcome> {
 	for (let attempt = 1; ; attempt++) {
 		if (!box.token) {
-			const opened = await askOpen(api);
+			const opened = await askOpenCareers(api);
 			if (opened.kind === 'closed') return { kind: 'closed' };
+			if (opened.kind === 'busy') return { kind: 'busy' };
 			if (opened.kind === 'unreachable') return { kind: 'failed' };
 			box.token = opened.token;
 		}
@@ -297,7 +370,7 @@ export interface CareersPageEnv {
 
 const DRAFT_KEY = 'ds_careers_draft';
 
-type View = 'form' | 'thanks' | 'closed';
+type View = 'form' | 'thanks' | 'closed' | 'busy';
 type Control = HTMLInputElement | HTMLSelectElement | HTMLTextAreaElement;
 
 export function initCareers(env: CareersPageEnv): void {
@@ -333,7 +406,9 @@ export function initCareers(env: CareersPageEnv): void {
 		form: one('[data-view="form"]'),
 		thanks: one('[data-view="thanks"]'),
 		closed: one('[data-view="closed"]'),
+		busy: one('[data-view="busy"]'),
 	};
+	const busyRetryButton = one<HTMLButtonElement>('#cr-busy-retry');
 	const card = one('[data-card]');
 	const steps = many('[data-step]');
 	const bars = many('[data-bar]');
@@ -407,12 +482,13 @@ export function initCareers(env: CareersPageEnv): void {
 			medical_sector: yesNo('medical_sector'),
 			medical_sector_detail: value('medical_sector_detail'),
 			last_employer: value('last_employer'),
-			achievement: flattenLines(value('achievement')),
+			// the two paragraphs keep their line breaks (careers-validate's `paragraph`)
+			achievement: value('achievement'),
 			areas: picked('areas'),
 			start_availability: picked('start_availability')[0] ?? '',
 			has_transport: yesNo('has_transport'),
 			linkedin_url: value('linkedin_url'),
-			message: flattenLines(value('message')),
+			message: value('message'),
 			cvFile: files.cv,
 			extraFiles: [...files.extras],
 		};
@@ -808,6 +884,28 @@ export function initCareers(env: CareersPageEnv): void {
 	backButton.addEventListener('click', goBack);
 	retryButton.addEventListener('click', () => void send());
 
+	/**
+	 * The busy panel's «أعد المحاولة»: ask the server again. The form comes
+	 * back only when it opens; «closed» meanwhile shows the closed panel;
+	 * busy again, or no answer, leaves the panel up with its button live.
+	 */
+	async function retryOpen(): Promise<void> {
+		if (busyRetryButton.disabled) return;
+		busyRetryButton.disabled = true;
+		try {
+			const answer = await askOpenCareers(api);
+			if (answer.kind === 'open') {
+				box.token = answer.token;
+				showView('form');
+			} else if (answer.kind === 'closed') {
+				showView('closed');
+			}
+		} finally {
+			busyRetryButton.disabled = false;
+		}
+	}
+	busyRetryButton.addEventListener('click', () => void retryOpen());
+
 	// The two number fields show Latin digits whatever the keyboard (the Pro
 	// form's rule). latinDigits maps one character to one, so the caret is
 	// put back exactly where the applicant left it.
@@ -941,11 +1039,14 @@ export function initCareers(env: CareersPageEnv): void {
 
 	env.beacon('careers_opened', 'acquisition', 'ds_careers_opened', tags);
 
-	void askOpen(api).then((answer) => {
+	void askOpenCareers(api).then((answer) => {
 		if (answer.kind === 'open') {
 			if (!box.token) box.token = answer.token;
 		} else if (answer.kind === 'closed' && view === 'form') {
 			showView('closed');
+		} else if (answer.kind === 'busy' && view === 'form') {
+			// the network's cap, not the founder's switch: a panel with a retry
+			showView('busy');
 		}
 		// unreachable → the form stays; the token is asked for again on send.
 	});

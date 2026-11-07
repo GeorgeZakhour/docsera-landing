@@ -138,12 +138,27 @@ rulings, §5 = this page) and `docs/superpowers/plans/2026-11-07-hiring-applicat
   `files_total` / `form`) · `retry` · `busy` · `closed` · `too_large`.
 - **Closed means the closed panel**, not WhatsApp: `open:false`, a non-200, or `closed`
   replaces the form with «أُغلق باب التقديم حالياً». Flag `hiring_form_enabled` ships off.
+  **Busy is not closed**: `{open:false, reason:"busy"}` (this network's hourly cap on
+  opening — one carrier NAT address is many phones) shows «الخدمة مشغولة الآن» with
+  «أعد المحاولة», which asks `open` again; the form comes back only when it opens.
+  `askOpenCareers` in `careers.ts` reads that answer — the Pro form's `askOpen` is not
+  touched.
+- **Two paragraphs keep their line breaks**: `achievement` and `message` go through
+  `paragraph()` in `careers-validate.ts` (controls and bidi marks stripped, 3+ newlines
+  folded to 2, trimmed) — never `flattenLines`. Every other text field is one line.
+- **LinkedIn is a host, not a substring**: `https://` + `linkedin.com` or one subdomain +
+  a path (`^https://([a-z0-9-]+\.)?linkedin\.com/\S+$`, host case-insensitive); a pasted
+  `linkedin.com/in/x` is completed to `https://`, an `http://` one upgraded. Same regex in
+  the edge function and the table's CHECK.
 - **Files**: each ≤ 16 MB and all together ≤ 16 MB, CV required, ≤ 2 extras; the page
   checks the name's extension and the sizes on choice (refused on the spot with the
   reason), the server checks the bytes. Files never enter the draft (`ds_careers_draft`
   holds the typed answers only) and are re-chosen after a reload.
-- **Timeouts**: 240 s overall; **45 s without an upload-progress event** aborts — a dead
-  line shows as a stall long before the overall limit. Do not shorten either.
+- **Timeouts**: 240 s overall; **45 s without an upload-progress event** aborts while
+  bytes are still going up — a dead line shows as a stall long before the overall limit.
+  Once `loaded === total` the stall clock stops and ONE **120 s** «awaiting answer» timer
+  takes its place (the server's work starts only when the whole body is in). Do not
+  shorten any of the three.
 - **The rulings** (founder, 2026-11-07): title «مندوب/ة مبيعات» everywhere; NO
   expected-salary field; military status kept, optional; one plain privacy sentence,
   no link; WhatsApp («أو أرسل سيرتك الذاتية على واتساب») only when
