@@ -29,6 +29,22 @@ export function proWhatsAppUrl(text: string = ''): string {
 	return text ? `${base}?text=${encodeURIComponent(text)}` : base;
 }
 
+// The careers page's second option: a CV sent on WhatsApp (founder ruling 9,
+// 2026-11-07). Same wa.me form as above. EMPTY = the option is not drawn,
+// anywhere on /careers — the founder supplies the number later; a landing
+// deploy is all it takes.
+export const CAREERS_WHATSAPP_NUMBER = '';
+
+/**
+ * A wa.me chat with the careers number, opening with `text` already typed —
+ * or null while no number is set, so a page can leave the option out.
+ */
+export function careersWhatsAppUrl(text: string = ''): string | null {
+	if (!CAREERS_WHATSAPP_NUMBER) return null;
+	const base = `https://wa.me/${CAREERS_WHATSAPP_NUMBER}`;
+	return text ? `${base}?text=${encodeURIComponent(text)}` : base;
+}
+
 const SOURCE_RE = /^[a-z_]{1,24}$/;
 
 /**
