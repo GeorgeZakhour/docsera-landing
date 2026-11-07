@@ -298,7 +298,9 @@ import EntityCta from '../components/EntityCta.astro';
 		const city = (addr.city || '').trim();
 		const parts: string[] = [];
 		if (street) parts.push(street);
-		if (hood && hood !== street && hood !== city) parts.push(hood);
+		// The zone is left out when the street already names it («شارع القصاع» +
+		// «القصاع» prints once) — the same rule as the doctor page (Pro doc 140).
+		if (hood && !street.includes(hood) && hood !== city) parts.push(hood);
 		if (city) parts.push(city);
 		return parts.join('، ');
 	}
