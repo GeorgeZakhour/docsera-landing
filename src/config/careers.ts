@@ -200,6 +200,9 @@ export const PRIVACY_LINE = 'بياناتك وسيرتك الذاتية تُست
 /** The second option, drawn only when the number is set (ruling 9). */
 export const WHATSAPP_LINE = 'أو أرسل سيرتك الذاتية على واتساب';
 
+/** Under the form's WhatsApp line only (founder, 2026-11-07): the form is the faster road. */
+export const WHATSAPP_FORM_HINT = 'الطلبات عبر النموذج تُراجَع أسرع عادةً.';
+
 /** Prefilled WhatsApp message from under the form. */
 export const WHATSAPP_TEXT = `مرحباً، أودّ التقديم على وظيفة ${TITLE} في DocSera، وأرسل سيرتي الذاتية هنا.`;
 
