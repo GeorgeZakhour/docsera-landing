@@ -243,18 +243,17 @@ import EntityCta from '../components/EntityCta.astro';
 
 	function formatAddress(addr: any): string {
 		if (!addr || typeof addr !== 'object') return '';
-		// Compose "street، neighborhood، city" with whichever parts exist,
-		// preferring the most specific. Strip neighborhood's parenthesised
-		// detail so we don't end up with "المزة (فيلات، أوتوستراد، شيخ سعد)"
-		// inline — the parens fight with the surrounding RTL comma-list.
+		// Compose "street، city" from what the doctor typed himself. The
+		// `neighborhood` key is NOT printed: Pro fills it from a fixed list of
+		// search zones (nearest zone centre when nothing matches), so it can
+		// name the wrong area — «الزينبية، جوبر، دمشق» for a clinic that is
+		// not in Jobar. It only feeds the patient app's area filter. The
+		// patient app's profile page prints street + city the same way.
 		const street = (addr.street || '').trim();
-		const rawHood = (addr.neighborhood || '').trim();
-		const hood = rawHood.replace(/\s*\([^)]*\)\s*$/, '').trim();
 		const city = (addr.city || '').trim();
 		const parts: string[] = [];
 		if (street) parts.push(street);
-		if (hood && hood !== street && hood !== city) parts.push(hood);
-		if (city) parts.push(city);
+		if (city && city !== street) parts.push(city);
 		return parts.join('، ');
 	}
 
