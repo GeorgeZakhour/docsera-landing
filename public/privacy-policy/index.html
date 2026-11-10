@@ -35,7 +35,15 @@
         <button id="btn-en" onclick="setLang('en')">English</button>
     </div>
     <h1>سياسة الخصوصية</h1>
-    <div class="meta">الإصدار 1.0 — ساري المفعول من 23 تموز 2026</div>
+    <div class="meta">الإصدار 1.3 — ساري المفعول من 20 تشرين الثاني 2026</div>
+
+    <div class="callout"><strong>ما الجديد في هذه النسخة (1.3):</strong>
+        <ul>
+            <li>ما يسجّله طبيبك لك يبقى لدى عيادته، إلا ما يختار إضافته إلى ملفك المركزي.</li>
+            <li>لا يطّلع طبيب من عيادة أخرى على ملفك المركزي إلا برمز تحقق تسلّمه أنت إليه.</li>
+            <li>ترى إدارة المركز مواعيدك فيه: الوقت والاسم وسبب الزيارة.</li>
+        </ul>
+    </div>
 
     <p>مرحباً بك في تطبيق <strong>DocSera</strong> ("التطبيق" أو "نحن"). تُحدّد هذه الوثيقة كيف نقوم بجمع بياناتك الشخصية والصحية، وكيف نستخدمها، وأين نحفظها، ومع مَن نشاركها، وما هي حقوقك تجاه هذه البيانات. باستخدامك للتطبيق وإنشاء حساب فيه، فإنك توافق على ممارسات الخصوصية الموضحة في هذه الوثيقة.</p>
 
@@ -59,8 +67,9 @@
         <li><strong>سجل المواعيد:</strong> تاريخ ووقت الموعد، الطبيب، سبب الزيارة، وحالة الموعد.</li>
         <li><strong>المستندات الطبية التي ترفعها بنفسك:</strong> الوصفات، التقارير، التحاليل، الصور الطبية. يتم تشفيرها داخل التخزين الخاص بنا.</li>
         <li><strong>الملف الصحي الذي تُدخِله بنفسك:</strong> الحساسيات، الأمراض المزمنة، الأدوية، السجل العائلي.</li>
+        <li><strong>ما يضيفه أطباؤك إلى ملفك المركزي:</strong> ما يختار طبيبك إضافته من سجلات أو مستندات، منسوباً إليه.</li>
         <li><strong>المراسلات مع الأطباء:</strong> الرسائل النصية والصوتية والمرفقات. <strong>جميع محتويات الرسائل مشفّرة بمعيار AES-256-GCM</strong> قبل تخزينها.</li>
-        <li><strong>التقارير الطبية الصادرة عن الأطباء:</strong> تُحفظ في حسابك للاطلاع عليها لاحقاً.</li>
+        <li><strong>التقارير والوصفات التي يشاركها طبيبك معك:</strong> تُحفظ في حسابك للاطلاع عليها لاحقاً.</li>
         <li><strong>ملفات الأقارب الذين تُديرهم:</strong> بيانات أفراد العائلة (مثل الأبناء القاصرين أو كبار السن) عند اختيارك إضافتهم لحسابك.</li>
     </ul>
 
@@ -96,8 +105,12 @@
 
     <h2>3. مشاركة البيانات</h2>
 
-    <h3>3.1 مع الأطباء الذين تختارهم</h3>
-    <p>عند حجزك موعداً لدى طبيب — وهو فعل صريح منك — يرتبط ملفك بقائمة مرضى ذلك الطبيب، ويستطيع هو (وفريق عيادته ضمن أذونات يمنحها لهم) الاطلاع على ملفك الصحي في التطبيق — بياناتك التعريفية الأساسية وتاريخك الطبي ووثائقك — وذلك لغرض تقديم الرعاية حصراً. وينشأ الارتباط نفسه عند قبولك طلب ربط يرسله إليك طبيبك. <strong>الأطباء غير المرتبطين بك لا يرون أي شيء من ملفك.</strong></p>
+    <h3>3.1 مع الأطباء الذين تتعامل معهم</h3>
+    <p>عند حجزك موعداً لدى طبيب أو قبولك طلب ربط منه، يُضاف اسمك إلى قائمة مرضى عيادته، فيرى هو وفريق عيادته (ضمن أذونات يمنحها لهم) بياناتك التعريفية ومواعيدك معه وما تسجّله عيادته لك. ولا يمنحه ذلك وحده الاطلاع على ملفك الطبي المركزي.</p>
+    <p>يجمع ملفك الطبي المركزي ما تُدخله أنت بنفسك (كالحساسيات والأمراض المزمنة والأدوية)، والمستندات التي ترفعها، وما يختار أطباؤك إضافته إليه. ولا يطّلع عليه طبيب إلا برمز تحقق يصل إلى هاتفك وتسلّمه أنت إليه، ويمكنك سحب هذا الاطلاع في أي وقت من التطبيق. أما الأطباء الذين كانت عياداتهم مرتبطة بك عند بدء العمل برمز التحقق في 31 تموز 2026، فقد بقي لهم الاطلاع الذي كان لهم يومها، وتجدهم في التطبيق ضمن «الاطّلاع على الملف الطبي»، ويمكنك سحبه منهم بالطريقة نفسها.</p>
+    <p>وما يسجّله طبيبك لك (كإجراءات الأسنان أو الحالات أو الأدوية التي يدوّنها) يبقى لدى عيادته، ولا يصبح جزءاً من ملفك المركزي إلا إذا اختار الطبيب إضافته إليه، فيكون عندها منسوباً إليه. وتصلك في حسابك التقارير والوصفات التي يشاركها طبيبك معك.</p>
+    <p>وإذا كان طبيبك من أطباء مركزٍ يعمل عيادةً واحدة («مركز موحّد»)، فما يسجّله لك أطباء المركز في أماكنه يحفظه المركز، ويطّلع عليه أطباؤه وفق ما يحدّده المركز؛ ويبقى ملفك المركزي لا يُفتح لعيادة أخرى إلا برمز تحقق تسلّمه أنت.</p>
+    <p>وإذا حجزت موعداً في مركز طبي، ترى إدارة المركز مواعيدك فيه: الوقت والاسم وسبب الزيارة.</p>
 
     <h3>3.2 مع الشركاء التجاريين (برنامج الولاء والعروض)</h3>
     <p>يضم تطبيق DocSera برنامج ولاء وعروض من شركاء تجاريين معتمدين. <strong>ولا تشمل القسائم أدوية.</strong> عند استخدامك قسيمة لدى أحد الشركاء، نُشارك مع الشريك فقط:</p>
@@ -154,6 +167,7 @@
         <li><strong>حق الحذف الدائم:</strong> طلب الحذف الكامل لحسابك (انظر القسم 8).</li>
         <li><strong>حق سحب الموافقة:</strong> سحب أي موافقة منحتها سابقاً (مثلاً منع الإشعارات أو إلغاء أذونات الموقع).</li>
     </ul>
+    <p>وطلبات الاطلاع على ما تسجّله عيادة ما لديها ولم تضفه إلى ملفك المركزي تُحال إلى تلك العيادة.</p>
     <p>لممارسة أيّ من هذه الحقوق: <a href="mailto:support@docsera.app">support@docsera.app</a></p>
 
     <h2>8. حذف الحساب — كيف يحدث ذلك بالضبط</h2>
@@ -171,8 +185,8 @@
     </ul>
     <p>سبب احتفاظ الأطباء بسجلاتهم: الممارسة الطبية المعتمدة في الجمهورية العربية السورية تُلزم الطبيب بالاحتفاظ بسجلاته الإكلينيكية لأغراض المسؤولية القانونية والمراجعة المهنية.</p>
 
-    <h3>المرحلة 4: الحذف الكامل — بعد 7 سنوات</h3>
-    <p>بعد مرور <strong>7 سنوات</strong> من تاريخ التمويه، يتم تلقائياً حذف جميع السجلات الطبية المرتبطة بحسابك السابق، بما في ذلك السجلات المُموَّهة لدى الأطباء، بشكل دائم ولا يمكن استرجاعه.</p>
+    <h3>المرحلة 4: حذف بقايا الحساب — بعد 7 سنوات</h3>
+    <p>بعد مرور <strong>7 سنوات</strong> من تاريخ التمويه، يُحذف نهائياً سجلّ حسابك المُموَّه وما بقي مرتبطاً به (كالإشعارات والأجهزة المسجّلة والملف الصحي). أما ما يحتفظ به كل طبيب عالجك من سجلات علاجك، مُموَّهاً، فيبقى لدى عيادته جزءاً من سجلاته المهنية، ولا يحذفه DocSera تلقائياً.</p>
 
     <p>للبدء في عملية الحذف: الإعدادات &gt; الأمان &gt; حذف الحساب، أو راسلنا على <a href="mailto:support@docsera.app">support@docsera.app</a>.</p>
 
@@ -264,7 +278,15 @@
         <button class="active" onclick="setLang('en')">English</button>
     </div>
     <h1>Privacy Policy</h1>
-    <div class="meta">Version 1.0 — Effective 23 July 2026</div>
+    <div class="meta">Version 1.3 — Effective 20 November 2026</div>
+
+    <div class="callout callout-ltr"><strong>What's new in this version (1.3):</strong>
+        <ul>
+            <li>What your doctor records for you stays with their clinic, except what they choose to add to your central file.</li>
+            <li>A doctor from another clinic sees your central file only with a verification code you hand them yourself.</li>
+            <li>A medical centre's management sees your appointments there: the time, your name and the reason for the visit.</li>
+        </ul>
+    </div>
 
     <p>Welcome to <strong>DocSera</strong> ("the App", or "we"). This document sets out exactly what personal and health data we collect, how we use it, where it is stored, with whom it is shared, and what rights you have over it. By using the App and creating an account, you accept the privacy practices described here.</p>
 
@@ -288,8 +310,9 @@
         <li><strong>Appointment history:</strong> date, time, doctor, reason, and status of each appointment.</li>
         <li><strong>Medical documents you upload:</strong> prescriptions, lab reports, scans, and similar files. They are encrypted in our storage.</li>
         <li><strong>Health profile entries you enter:</strong> allergies, chronic conditions, medications, family history.</li>
+        <li><strong>What your doctors add to your central file:</strong> the records or documents your doctor chooses to add, attributed to them.</li>
         <li><strong>Doctor messages:</strong> text, voice, and file attachments. <strong>The content of every message is encrypted with AES-256-GCM</strong> before storage.</li>
-        <li><strong>Doctor-issued reports:</strong> kept in your account for future reference.</li>
+        <li><strong>Reports and prescriptions your doctor shares with you:</strong> kept in your account for future reference.</li>
         <li><strong>Relative profiles you manage:</strong> data of family members (e.g. minor children, elderly relatives) you choose to add.</li>
     </ul>
 
@@ -323,8 +346,12 @@
 
     <h2>3. Data sharing</h2>
 
-    <h3>3.1 With doctors you choose</h3>
-    <p>When you book an appointment or send a message to a doctor, only what you explicitly choose to share is shared with that doctor: your name, date of birth, gender, reason for visit, and any documents you attach to that interaction. <strong>The doctor does not see your full medical history automatically</strong> — only what concerns the interaction between the two of you, or what you deliberately share with them.</p>
+    <h3>3.1 With the doctors you deal with</h3>
+    <p>When you book an appointment with a doctor or accept a link request from them, your name is added to their clinic's patient list. They and their clinic team (within permissions they grant) then see your identifying details, your appointments with them and what their clinic records for you. That alone does not give them access to your central medical file.</p>
+    <p>Your central medical file holds what you enter yourself (such as allergies, chronic conditions and medications), the documents you upload, and what your doctors choose to add to it. A doctor sees it only with a verification code sent to your phone that you hand them yourself, and you can withdraw that access at any time from the app. Doctors whose clinics were linked with you when the verification code came into use on 31 July 2026 kept the access they had then; you find them in the app under “Medical file access” and can withdraw it from them the same way.</p>
+    <p>What your doctor records for you (such as dental procedures, or the conditions and medications they note) stays with their clinic and becomes part of your central file only if the doctor chooses to add it, in which case it is attributed to them. Reports and prescriptions your doctor shares with you reach your account.</p>
+    <p>If your doctor is one of the doctors of a centre that works as a single clinic (a «unified centre»), what the centre's doctors record for you at its locations is kept by the centre and seen by its doctors as the centre decides; your central file still opens to another clinic only with a verification code you hand over yourself.</p>
+    <p>If you book at a medical centre, the centre's management sees your appointments there: the time, your name and the reason for the visit.</p>
 
     <h3>3.2 With business partners (loyalty program)</h3>
     <p>DocSera includes a loyalty and offers program from approved commercial partners. <strong>Vouchers never include medicines.</strong> When you redeem a voucher with a partner, we share with the partner only:</p>
@@ -376,6 +403,7 @@
         <li><strong>Right to permanent deletion:</strong> request permanent deletion of your account (see section 8).</li>
         <li><strong>Right to withdraw consent:</strong> withdraw any consent you previously gave.</li>
     </ul>
+    <p>Requests to see what a clinic records and keeps without adding it to your central file are referred to that clinic.</p>
     <p>Contact: <a href="mailto:support@docsera.app">support@docsera.app</a></p>
 
     <h2>8. Account deletion — exactly how it works</h2>
@@ -393,8 +421,8 @@
     </ul>
     <p>Why doctors keep their records: medical practice in the Syrian Arab Republic obliges physicians to retain their clinical records for legal-liability and professional-review purposes.</p>
 
-    <h3>Stage 4: Full deletion — after 7 years</h3>
-    <p>After <strong>7 years</strong> from the pseudonymization date, all medical records associated with your former account — including the pseudonymized records held by doctors — are automatically and permanently deleted, and cannot be recovered.</p>
+    <h3>Stage 4: Removal of what remains of the account — after 7 years</h3>
+    <p>After <strong>7 years</strong> from the pseudonymization date, your pseudonymized account record and what remains linked to it (such as notifications, registered devices and the health profile) are permanently deleted. The records each doctor who treated you keeps of your treatment, pseudonymized, stay with their clinic as part of their professional records; DocSera does not delete them automatically.</p>
 
     <p>To start the deletion process: Settings &gt; Security &gt; Delete account, or contact <a href="mailto:support@docsera.app">support@docsera.app</a>.</p>
 
