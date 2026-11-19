@@ -49,6 +49,22 @@ export function careersWhatsAppUrl(text: string = ''): string | null {
 // digits too, so a numbered careers link («?s=3») survives the bio page's carry (founder, 2026-11-07)
 const SOURCE_RE = /^[a-z0-9_]{1,24}$/;
 
+// App Store Connect campaign links (App Analytics → Campaigns). The provider
+// token is the developer account's `pt=` value — the same for every campaign,
+// not a secret. EMPTY = plain store link everywhere (no campaign data).
+export const APP_STORE_PROVIDER_TOKEN = '';
+
+/**
+ * App Store link that App Store Connect counts under campaign `campaign`
+ * (shown there after 24 h and 5 first-time downloads). Falls back to the plain,
+ * country-neutral link when there is no token or the campaign name is not ours.
+ */
+export function appStoreUrl(campaign: string = ''): string {
+	if (!APP_STORE_PROVIDER_TOKEN || !/^\d{1,20}$/.test(APP_STORE_PROVIDER_TOKEN)) return APP_STORE_URL;
+	if (!SOURCE_RE.test(campaign) || campaign === 'site') return APP_STORE_URL;
+	return `https://apps.apple.com/app/apple-store/id${APP_STORE_ID}?pt=${APP_STORE_PROVIDER_TOKEN}&ct=${campaign}&mt=8`;
+}
+
 /**
  * Google Play link carrying an install referrer.
  *
