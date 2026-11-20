@@ -52,7 +52,7 @@ const SOURCE_RE = /^[a-z0-9_]{1,24}$/;
 // App Store Connect campaign links (App Analytics → Campaigns). The provider
 // token is the developer account's `pt=` value — the same for every campaign,
 // not a secret. EMPTY = plain store link everywhere (no campaign data).
-export const APP_STORE_PROVIDER_TOKEN = '';
+export const APP_STORE_PROVIDER_TOKEN = '119219568';
 
 /**
  * App Store link that App Store Connect counts under campaign `campaign`
