@@ -6,11 +6,10 @@
 // the same content is a plain column.
 import Layout from '../layouts/Layout.astro';
 import Footer from '../components/Footer.astro';
+import ClassicSections from '../components/home/ClassicSections.astro';
 import StoreBadges from '../components/StoreBadges.astro';
 import { WEB_APP_URL } from '../config/links';
 import bootUrl from '../scripts/home/boot.ts?worker&url';
-
-const TRUST = 'بياناتك الطبية محفوظة على خوادمنا داخل سوريا، ومشفّرة.';
 
 const PAPERS = [
 	{ label: 'تحليل دم شامل', kind: 'lines' },
@@ -29,7 +28,7 @@ const CHAPTERS = [
 ];
 
 const SHOTS = [
-	'/images/app110/health-640.webp', '/images/app110/routine-640.webp', '/images/app110/results-640.webp',
+	'/images/app110/home-640.webp', '/images/app110/health-640.webp', '/images/app110/routine-640.webp', '/images/app110/results-640.webp',
 	'/images/app110/booking-640.webp', '/images/home/confirmed.webp', '/images/app110/share-390.webp',
 ];
 
@@ -73,7 +72,7 @@ const MORE = [
 	</script>
 
 	<header class="h">
-		<a href="/" class="h-logo" aria-label="DocSera"><img src="/images/docsera_main.svg" alt="DocSera" width="118" height="19" /></a>
+		<a href="/" class="h-logo" aria-label="DocSera"><img src="/images/docsera_main.svg" alt="DocSera" width="101" height="16" /></a>
 		<nav class="h-nav" aria-label="الأقسام">
 			<a href="/features">عن التطبيق</a><a href="/about">من نحن</a><a href="/help">المساعدة</a><a href="/pro">للأطباء</a>
 		</nav>
@@ -83,6 +82,7 @@ const MORE = [
 	<main class="m">
 		<section class="st" data-story>
 			<div class="stick" data-stick>
+				<div class="bg bg-hero" data-bg-hero aria-hidden="true"><i class="au au1"></i><i class="au au2"></i></div>
 				<div class="bg bg-dusk" data-dusk aria-hidden="true"></div>
 				<div class="bg bg-twi" data-twi aria-hidden="true"></div>
 				<div class="bg bg-night" data-night aria-hidden="true"></div>
@@ -97,6 +97,10 @@ const MORE = [
 
 				<div class="a-hero" data-a-hero aria-hidden="true"></div>
 				<div class="a-dial" data-a-dial aria-hidden="true"></div>
+				<div class="a-fan" data-a-fan aria-hidden="true"></div>
+
+				<div class="side fx" data-side="1" aria-hidden="true"><div class="ph-in"><img src="/images/app110/health-320.webp" alt="" width="320" height="694" decoding="async" /></div></div>
+				<div class="side fx" data-side="-1" aria-hidden="true"><div class="ph-in"><img src="/images/app110/routine-320.webp" alt="" width="320" height="694" decoding="async" /></div></div>
 
 				<div class="papers fx" aria-hidden="true">
 					{PAPERS.map((x) => (
@@ -134,7 +138,9 @@ const MORE = [
 
 				<div class="ph fx" data-phone aria-hidden="true">
 					<div class="ph-in">
-						{SHOTS.map((s) => <img data-shot data-src={s} alt="" width="640" height="1387" decoding="async" />)}
+						{SHOTS.map((s, i) => i === 0
+							? <img data-shot src={s} srcset="/images/app110/home-320.webp 320w, /images/app110/home-480.webp 480w, /images/app110/home-640.webp 640w" sizes="(max-width: 899px) 240px, 300px" alt="" width="640" height="1387" decoding="async" fetchpriority="high" />
+							: <img data-shot data-src={s} alt="" width="640" height="1387" decoding="async" />)}
 					</div>
 					<div class="notes">
 						<div class="note" data-note>
@@ -154,6 +160,11 @@ const MORE = [
 						</div>
 					</div>
 				</div>
+
+				<div class="hchip fx" data-float aria-hidden="true"><i><svg viewBox="0 0 24 24"><rect x="4" y="5" width="16" height="15" rx="3" /><path d="M4 10h16M9 3v4M15 3v4" /></svg></i><span><small>موعدك القادم</small><b>غداً · 10:30 ص</b></span></div>
+				<div class="hchip fx" data-float aria-hidden="true"><i><svg viewBox="0 0 24 24"><path d="M5 12.5l4.5 4.5L19 7.5" /></svg></i><span><small>حان موعد دوائك</small><b>أخذته ✓</b></span></div>
+				<div class="hchip fx" data-float aria-hidden="true"><i><svg viewBox="0 0 24 24"><path d="M7 3h7l4 4v14H7z" /><path d="M10 12h5M10 16h5" /></svg></i><span><b>تقرير زيارة جديد</b></span></div>
+				<div class="hchip fx" data-float aria-hidden="true"><i><svg viewBox="0 0 24 24"><path d="M12 3l7 3v5c0 5-3 8-7 10-4-2-7-5-7-10V6z" /><path d="M9 12l2 2 4-4" /></svg></i><span><b>طبيب موثّق</b></span></div>
 
 				<div class="cl fx" data-clinic aria-hidden="true">
 					<div class="cl-bar"><i></i><i></i><i></i></div>
@@ -227,23 +238,7 @@ const MORE = [
 			</div>
 		</section>
 
-		<section class="pro">
-			<div class="pro-in">
-				<div>
-					<h2>هل أنت طبيب أو مختص؟</h2>
-					<p>DocSera Pro لإدارة عيادتك: المواعيد، وملفات المرضى، والتقارير، والمحاسبة، وأكثر.</p>
-				</div>
-				<a href="/pro" class="pro-btn">اكتشف DocSera Pro</a>
-			</div>
-		</section>
-
-		<section class="end">
-			<img class="end-gem" src="/images/app110/gem.webp" alt="" width="240" height="240" loading="lazy" decoding="async" />
-			<h2>حمّل DocSera</h2>
-			<p>مجاناً على آيفون وأندرويد.</p>
-			<StoreBadges adaptive size="lg" />
-			<p class="end-trust"><svg viewBox="0 0 24 24" aria-hidden="true"><rect x="5" y="10.5" width="14" height="10" rx="2.6" fill="currentColor" /><path d="M8.2 10.5V8a3.8 3.8 0 0 1 7.6 0v2.5" fill="none" stroke="currentColor" stroke-width="2" /></svg>{TRUST}</p>
-		</section>
+		<ClassicSections />
 	</main>
 	<script is:inline async src={bootUrl}></script>
 	<Footer />
@@ -258,7 +253,7 @@ const MORE = [
 		display: flex; align-items: center; justify-content: space-between; gap: 16px; padding: 0 12px 0 18px; padding-inline: 18px 8px;
 		background: rgba(255, 255, 255, .86); backdrop-filter: blur(14px); -webkit-backdrop-filter: blur(14px);
 		border: 1px solid rgba(0, 144, 146, .12); border-radius: 18px; box-shadow: 0 12px 30px -20px rgba(0, 60, 62, .5); }
-	.h-logo img { display: block; height: 19px; width: auto; }
+	.h-logo img { display: block; height: 16px; width: auto; }
 	.h-nav { display: flex; gap: 26px; }
 	.h-nav a { color: #2D3436; font-weight: 700; font-size: .96rem; text-decoration: none; }
 	.h-nav a:hover { color: var(--c-main-dark); }
@@ -289,6 +284,12 @@ const MORE = [
 	:global(html.story) .fx, :global(html.story) .a-hero, :global(html.story) .a-dial, :global(html.story) .bg { display: block; }
 	:global(html.story) .ch-shot { display: none; }
 	.bg { position: absolute; inset: 0; z-index: -2; opacity: 0; }
+	.bg-hero { opacity: 1; overflow: hidden; background: radial-gradient(70% 55% at 74% 16%, #0E7C7E 0%, rgba(14, 124, 126, 0) 70%), radial-gradient(60% 50% at 14% 88%, #0B5D62 0%, rgba(11, 93, 98, 0) 72%), #062A30; }
+	.au { position: absolute; width: 80vmax; height: 80vmax; border-radius: 50%; will-change: transform; }
+	.au1 { top: -46vmax; left: -22vmax; background: radial-gradient(closest-side, rgba(0, 196, 190, .26), rgba(0, 196, 190, 0)); animation: au1 16s ease-in-out infinite alternate; }
+	.au2 { bottom: -50vmax; right: -24vmax; background: radial-gradient(closest-side, rgba(255, 180, 148, .13), rgba(255, 180, 148, 0)); animation: au2 19s ease-in-out infinite alternate; }
+	@keyframes au1 { to { transform: translate3d(16vmax, 9vmax, 0) scale(1.12); } }
+	@keyframes au2 { to { transform: translate3d(-14vmax, -8vmax, 0) scale(1.1); } }
 	.bg-dusk { background: linear-gradient(180deg, #FFC49B 0%, #FFE0C8 42%, #D5EFEB 100%); }
 	.bg-twi { background: linear-gradient(180deg, #0E4A54 0%, #1F6C75 52%, #E8AE8C 100%); }
 	.bg-night { background: radial-gradient(90% 60% at 60% 8%, #10555B 0%, #0A343B 48%, #08282E 100%); }
@@ -305,9 +306,25 @@ const MORE = [
 	.pin-dot { fill: #8BF3EC; }
 
 	:global(html.story) .hero { position: absolute; z-index: 6; text-align: start; inset-inline-start: max(6vw, calc(50vw - 560px)); top: 50%; width: min(45vw, 560px); margin-top: -170px; }
-	.a-hero { position: absolute; left: max(3vw, calc(50vw - 610px)); top: 50%; translate: 0 -50%; width: min(44vw, 68vh); aspect-ratio: 1; }
+	.a-hero { position: absolute; left: calc(29vw - min(76vh, 640px) * .2307 - 135px); top: calc(50% - min(76vh, 640px) / 2 - 22px); width: min(22vw, 280px); aspect-ratio: 1; }
+	.a-fan { position: absolute; left: calc(29vw - min(76vh, 640px) * .2307); top: calc(50% - min(76vh, 640px) / 2 + 26px); height: min(76vh, 640px); aspect-ratio: 1290 / 2796; }
+	:global(html:not(.story)) .a-fan { display: none; }
+	:global(html.story) .a-fan { display: block; }
+	:global(html.story) .hero h1 { color: #fff; }
+	:global(html.story) .hero p { color: #D8EEEE; }
+	:global(html.story) .hero-web { color: #BFF2EE; }
+	.side { position: absolute; left: 0; top: 0; z-index: 2; aspect-ratio: 1290 / 2796; padding: 6px; background: #0F1A22; border-radius: 34px; opacity: 0; will-change: transform; box-shadow: 0 30px 60px -22px rgba(0, 0, 0, .7); }
+	.side .ph-in { border-radius: 28px; }
+	.side .ph-in img { opacity: 1; }
+	:global(html.story) .hchip { display: flex; }
+	.hchip { position: absolute; left: 0; top: 0; z-index: 5; display: flex; align-items: center; gap: 8px; padding: 8px 12px 8px 14px; border-radius: 14px; white-space: nowrap; opacity: 0; will-change: transform;
+		background: rgba(255, 255, 255, .95); box-shadow: 0 16px 30px -14px rgba(0, 0, 0, .6); }
+	.hchip i { width: 30px; height: 30px; flex: none; display: grid; place-items: center; border-radius: 9px; background: #E0F2F2; color: var(--c-main-dark); }
+	.hchip svg { width: 18px; height: 18px; fill: none; stroke: currentColor; stroke-width: 2; stroke-linecap: round; stroke-linejoin: round; }
+	.hchip small { display: block; font-size: .7rem; line-height: 1.3; color: #56636B; font-weight: 700; }
+	.hchip b { display: block; font-size: .84rem; line-height: 1.35; color: #0F1A22; font-weight: 800; }
 	.a-dial { position: absolute; inset-inline-start: max(6vw, calc(50vw - 560px)); top: calc(50% - 262px); width: 150px; aspect-ratio: 1; }
-	:global(html.story) .fl { position: absolute; left: 0; top: 0; margin: 0; z-index: 3; transform-origin: center; will-change: transform; }
+	:global(html.story) .fl { position: absolute; left: 0; top: 0; margin: 0; z-index: 1; transform-origin: center; will-change: transform; }
 	.hint { position: absolute; display: none; }
 	:global(html.story) .chs { position: absolute; z-index: 5; display: block; margin: 0; max-width: none; inset-inline-start: max(6vw, calc(50vw - 560px)); top: calc(50% - 96px); width: min(42vw, 520px); }
 	:global(html.story) .ch { position: absolute; inset: 0 0 auto 0; opacity: 0; visibility: hidden; }
@@ -326,7 +343,7 @@ const MORE = [
 	.p-rx .paper-art::before { content: 'Rx'; position: absolute; top: 4px; right: 8px; font: 800 .95rem Cairo, sans-serif; color: var(--c-main); }
 	.p-card .paper-art { height: 56px; background: linear-gradient(135deg, #009092, #66B8B8); }
 
-	.ph { position: absolute; z-index: 2; left: calc(34vw - min(82vh, 740px) * .2307); top: calc(50% - min(82vh, 740px) / 2 + 22px); height: min(82vh, 740px); aspect-ratio: 1290 / 2796;
+	.ph { position: absolute; z-index: 3; left: calc(34vw - min(82vh, 740px) * .2307); top: calc(50% - min(82vh, 740px) / 2 + 22px); height: min(82vh, 740px); aspect-ratio: 1290 / 2796;
 		padding: 9px; background: #0F1A22; border-radius: 46px; box-shadow: 0 40px 80px -30px rgba(0, 50, 54, .65); will-change: transform; opacity: 0; }
 	.ph-in { position: relative; width: 100%; height: 100%; overflow: hidden; border-radius: 38px; background: #E9F5F5; }
 	.ph-in img { position: absolute; inset: 0; width: 100%; height: 100%; object-fit: cover; opacity: 0; }
@@ -372,6 +389,7 @@ const MORE = [
 	.try-phone img:global(.on) { opacity: 1; }
 	.tabs { display: flex; gap: 8px; overflow-x: auto; padding: 4px 22px 8px; scrollbar-width: none; justify-content: safe center; flex-wrap: wrap; }
 	@media (min-width: 900px) {
+		:global(html.story) .hero p { max-width: 400px; }
 		.try { padding: 90px 0; }
 		.try-in { max-width: 1040px; padding: 0 30px; display: grid; grid-template-columns: 1fr auto; grid-template-areas: 'head phone' 'tabs phone'; gap: 22px 70px; align-content: center; text-align: start; }
 		.try-in .sec-h { grid-area: head; align-self: end; padding: 0; }
@@ -418,7 +436,7 @@ const MORE = [
 	/* ── on every screen ──────────────────────── */
 	.ex { position: relative; background: #08282E; color: #fff; padding: 60px 0; }
 	.ex-stick { position: relative; display: flex; flex-direction: column; align-items: center; gap: 26px; }
-	.ex-light { position: absolute; inset: 0; opacity: 0; background: #F7FBFB; z-index: 0; display: none; }
+	.ex-light { position: absolute; inset: 0; opacity: 0; background: #fff; z-index: 0; display: none; }
 	.ex-h { position: relative; z-index: 1; text-align: center; transition: color .35s; }
 	.dev { position: relative; z-index: 1; width: min(90vw, 760px); aspect-ratio: 4 / 3; overflow: hidden; background: #000; border: 8px solid #0F1A22; border-radius: 22px; box-shadow: 0 40px 80px -30px rgba(0, 0, 0, .6); }
 	.dev img { position: absolute; inset: 0; width: 100%; height: 100%; object-fit: cover; object-position: top; }
@@ -431,28 +449,22 @@ const MORE = [
 	:global(html.story) .dev-big { opacity: 0; }
 	.ex:global(.lit) .ex-h { color: #0F1A22; }
 
-	/* ── doctors + the end ────────────────────── */
-	.pro { background: #F7FBFB; padding: 30px 16px 10px; }
-	.pro-in { max-width: 1040px; margin: 0 auto; display: flex; align-items: center; justify-content: space-between; gap: 22px; padding: 28px 30px; border-radius: 26px; color: #fff; background: linear-gradient(120deg, #0F1A22, #10444A); }
-	.pro h2 { color: #fff; font-size: clamp(1.4rem, 2.6vw, 2rem); font-weight: 800; margin: 0 0 6px; }
-	.pro p { margin: 0; line-height: 1.7; color: #D5E8E9; }
-	.pro-btn { flex: none; background: #fff; color: var(--c-main-dark); font-weight: 800; padding: 12px 22px; border-radius: 14px; text-decoration: none; }
-	.end { background: #F7FBFB; text-align: center; padding: 34px 20px 70px; }
-	.end-gem { width: 150px; height: 150px; margin: 0 auto; display: block; animation: gem 6s ease-in-out infinite; }
-	@keyframes gem { 0%, 100% { translate: 0 0; } 50% { translate: 0 -9px; } }
-	.end h2 { font-size: clamp(2rem, 4.6vw, 3.4rem); font-weight: 800; color: #0F1A22; margin: 4px 0 4px; }
-	.end > p { color: #3D4A50; font-size: 1.1rem; margin: 0 0 20px; }
-	.end > p.end-trust { margin: 20px 0 0; color: var(--c-main-dark); font-size: .98rem; font-weight: 700; line-height: 1.6; }
-	.end-trust svg { width: 17px; height: 17px; display: inline-block; vertical-align: -3px; margin-inline-end: 6px; }
-
 	/* ── phones and small tablets ─────────────── */
 	@media (max-width: 899px) {
 		.h-nav { display: none; }
-		:global(html.story) .hero { inset: 84px 20px 22px; width: auto; margin: 0; text-align: center; display: flex; flex-direction: column; }
-		.hero-cta { margin-top: auto; }
+		:global(html.story) .hero { inset: 82px 20px auto; width: auto; margin: 0; text-align: center; }
+		.hero-cta { margin-top: 14px; }
+		.hero-web { margin-top: 6px; font-size: .9rem; }
 		.hero h1 { font-size: clamp(2rem, 9vw, 3rem); }
 		.hero p { margin-bottom: 0; font-size: 1.04rem; }
-		.a-hero { left: 50%; top: 55%; translate: -50% -50%; width: min(70vw, 38vh); }
+		.a-fan { left: calc(50% - min(56vw, 240px) / 2); top: clamp(342px, 42vh, 396px); width: min(56vw, 240px); height: auto; }
+		.a-hero { left: -3vw; top: calc(clamp(342px, 42vh, 396px) - 44px); width: 40vw; }
+		.side { padding: 5px; border-radius: 28px; }
+		.side .ph-in { border-radius: 23px; }
+		.hchip { padding: 6px 9px 6px 10px; gap: 6px; border-radius: 12px; }
+		.hchip i { width: 26px; height: 26px; }
+		.hchip small { font-size: .64rem; }
+		.hchip b { font-size: .76rem; }
 		.a-dial { inset-inline-start: auto; inset-inline-end: 6px; top: 72px; width: 104px; }
 		:global(html.story) .chs { inset-inline-start: 20px; top: 84px; width: calc(100% - 128px); }
 		.ch-key { margin-bottom: 4px; font-size: .92rem; }
@@ -483,11 +495,9 @@ const MORE = [
 		.shot img { border-radius: 17px; }
 		.wall-body { padding-top: 366px; }
 		.chips li { font-size: .92rem; padding: 6px 14px; }
-		.pro-in { flex-direction: column; align-items: stretch; text-align: center; padding: 24px 20px; }
-		.pro-btn { text-align: center; }
 	}
 	@media (prefers-reduced-motion: reduce) {
-		.track, .strip-track, .end-gem { animation: none; }
+		.track, .strip-track, .au { animation: none; }
 		.wall-toggle { display: none; }
 		.strip { -webkit-mask-image: none; mask-image: none; direction: rtl; }
 		.strip-track { width: auto; }
