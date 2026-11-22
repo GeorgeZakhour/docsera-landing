@@ -1,7 +1,7 @@
 // The DocSera mark as a slowly turning glass object — one small WebGL shader,
-// no library (~4 KB). Loaded only after the page has finished loading, and only
-// on devices that can afford it (see download.astro); everyone else keeps the
-// flat SVG mark drawn underneath, which looks almost the same at rest.
+// no library (~4 KB), part of the page's own script so it needs no extra request.
+// Nothing is shown until its first frame is drawn. A device that cannot run it
+// gets one still picture of the same 3D object (see download.astro).
 //
 // The mark is four teardrop petals (up, down, left, right) meeting at a small
 // hub. The shader ray-marches a signed distance field of that shape: the four
@@ -172,8 +172,7 @@ function shader(gl: WebGLRenderingContext, type: number, src: string): WebGLShad
 	const s = gl.createShader(type);
 	if (!s) return null;
 	gl.shaderSource(s, src);
-	gl.compileShader(s);
-	if (!gl.getShaderParameter(s, gl.COMPILE_STATUS)) { gl.deleteShader(s); return null; }
+	gl.compileShader(s); // a failed compile surfaces as a failed link
 	return s;
 }
 
@@ -181,7 +180,7 @@ function shader(gl: WebGLRenderingContext, type: number, src: string): WebGLShad
  * Can this GPU draw the mark as one solid piece? It needs real highp floats in
  * the fragment shader: phones run mediump as 16-bit, and the ray-march then
  * breaks into hundreds of dots (Android, 2026-11-23). A software renderer would
- * burn the CPU. In both cases the page keeps the flat mark.
+ * burn the CPU. In both cases the page shows the still picture.
  */
 export function canDrawFlower(gl: WebGLRenderingContext): boolean {
 	const high = gl.getShaderPrecisionFormat(gl.FRAGMENT_SHADER, gl.HIGH_FLOAT);
@@ -191,12 +190,19 @@ export function canDrawFlower(gl: WebGLRenderingContext): boolean {
 	return !/swiftshader|llvmpipe|software|basic render/i.test(renderer);
 }
 
+export interface FlowerEvents {
+	/** The first frame is on the canvas: show it. */
+	onReady?: () => void;
+	/** It cannot go on (failed link, lost context, too slow): show the still. */
+	onGiveUp?: () => void;
+}
+
 /**
  * Starts the flower on `canvas`. Returns false when WebGL is unavailable or
- * drawn in software. If the first second of frames is slow, it stops by
- * itself and calls `onGiveUp` (the page then keeps the flat mark).
+ * drawn in software. The shader compiles off the main thread where the browser
+ * can (KHR_parallel_shader_compile), so the page keeps moving meanwhile.
  */
-export function mountFlower(canvas: HTMLCanvasElement, onGiveUp?: () => void): boolean {
+export function mountFlower(canvas: HTMLCanvasElement, events: FlowerEvents = {}): boolean {
 	const gl = canvas.getContext('webgl', {
 		alpha: true, premultipliedAlpha: true, antialias: false, powerPreference: 'low-power',
 	}) as WebGLRenderingContext | null;
@@ -210,7 +216,21 @@ export function mountFlower(canvas: HTMLCanvasElement, onGiveUp?: () => void): b
 	gl.attachShader(prog, vs);
 	gl.attachShader(prog, fs);
 	gl.linkProgram(prog);
-	if (!gl.getProgramParameter(prog, gl.LINK_STATUS)) return false;
+
+	const parallel = gl.getExtension('KHR_parallel_shader_compile');
+	const whenLinked = () => {
+		if (parallel && !gl.getProgramParameter(prog, parallel.COMPLETION_STATUS_KHR)) {
+			requestAnimationFrame(whenLinked);
+			return;
+		}
+		if (!gl.getProgramParameter(prog, gl.LINK_STATUS)) { events.onGiveUp?.(); return; }
+		run(gl, prog, canvas, events);
+	};
+	whenLinked();
+	return true;
+}
+
+function run(gl: WebGLRenderingContext, prog: WebGLProgram, canvas: HTMLCanvasElement, events: FlowerEvents): void {
 	gl.useProgram(prog);
 
 	const buf = gl.createBuffer();
@@ -254,21 +274,9 @@ export function mountFlower(canvas: HTMLCanvasElement, onGiveUp?: () => void): b
 
 	const t0 = performance.now();
 	let last = 0, n = 0, slow = 0, stopped = false, turn = window.scrollY * 0.0045;
-	const frame = (now: number) => {
-		if (stopped) return;
-		requestAnimationFrame(frame);
-		if (!visible || document.hidden) { last = 0; return; }
-		// Watch the first 60 drawn frames: mostly slower than ~30 fps = give up.
-		if (last && n < 60) {
-			n++;
-			if (now - last > 34) slow++;
-			if (n === 60 && slow > 30) {
-				// First try half the pixels; only then fall back to the flat mark.
-				if (scale > 1) { scale = 1; resize(); n = 0; slow = 0; last = 0; return; }
-				stopped = true; onGiveUp?.(); return;
-			}
-		}
-		last = now;
+	canvas.addEventListener('webglcontextlost', () => { stopped = true; events.onGiveUp?.(); });
+
+	const draw = (now: number) => {
 		cx += (tx - cx) * 0.05; cy += (ty - cy) * 0.05;
 		turn += (window.scrollY * 0.0045 - turn) * 0.08; // scrolling turns it
 		gl.uniform1f(uTurn, turn);
@@ -276,6 +284,25 @@ export function mountFlower(canvas: HTMLCanvasElement, onGiveUp?: () => void): b
 		gl.uniform2f(uTilt, cx, -cy);
 		gl.drawArrays(gl.TRIANGLES, 0, 3);
 	};
+	const frame = (now: number) => {
+		if (stopped) return;
+		requestAnimationFrame(frame);
+		if (!visible || document.hidden) { last = 0; return; }
+		// Watch 60 drawn frames, after the page's own loading work has settled:
+		// mostly slower than ~30 fps = give up.
+		if (last && now - t0 > 1500 && n < 60) {
+			n++;
+			if (now - last > 34) slow++;
+			if (n === 60 && slow > 30) {
+				// First try half the pixels; only then fall back to the still.
+				if (scale > 1) { scale = 1; resize(); n = 0; slow = 0; last = 0; return; }
+				stopped = true; events.onGiveUp?.(); return;
+			}
+		}
+		last = now;
+		draw(now);
+	};
+	draw(t0);
+	events.onReady?.();
 	requestAnimationFrame(frame);
-	return true;
 }
