@@ -1,1198 +1,497 @@
 ---
+// PREVIEW (branch site-v2): the home page as one story, «أربع بتلات». The DocSera
+// mark has four petals and the app four great things: each petal opens a world.
+// Every phone screen is the real 1.1.0 app with fake data; nothing switched off
+// on production is shown, and no doctor counts. Without JS or with reduced motion
+// the same content is a plain column.
 import Layout from '../layouts/Layout.astro';
-import Navbar from '../components/Navbar.astro';
-import Hero from '../components/Hero.astro';
 import Footer from '../components/Footer.astro';
-import PhoneMockup from '../components/PhoneMockup.astro';
 import StoreBadges from '../components/StoreBadges.astro';
 import { WEB_APP_URL } from '../config/links';
+import bootUrl from '../scripts/home/boot.ts?worker&url';
+
+const TRUST = 'بياناتك الطبية محفوظة على خوادمنا داخل سوريا، ومشفّرة.';
+
+const PAPERS = [
+	{ label: 'تحليل دم شامل', kind: 'lines' },
+	{ label: 'صورة أشعة الصدر', kind: 'xray' },
+	{ label: 'تقرير المتابعة', kind: 'lines' },
+	{ label: 'وصفة', kind: 'rx' },
+	{ label: 'بطاقة التأمين', kind: 'card' },
+	{ label: 'نتيجة التحليل', kind: 'lines' },
+];
+
+const CHAPTERS = [
+	{ key: 'ملفك', title: 'ملفك الطبي، بلا أوراق', text: 'تقاريرك وتحاليلك وصور الأشعة وأدويتك، مرتّبة في مكان واحد.', shot: '/images/app110/health-640.webp' },
+	{ key: 'روتيني', title: 'لا تنسَ جرعة بعد اليوم', text: 'تذكير في وقت كل جرعة حتى دون إنترنت، ولأدوية أهلك أيضاً.', shot: '/images/app110/routine-640.webp' },
+	{ key: 'حجزك', title: 'موعدك بلمسات', text: 'ابحث عن طبيبك، وشاهد أقرب المواعيد المتاحة، واحجز مباشرة.', shot: '/images/app110/booking-640.webp' },
+	{ key: 'طبيبك', title: 'ملفك بإذنك', text: 'لا يطّلع طبيب على ملفك إلا برمز تعطيه له، وتسحبه متى شئت.', shot: '/images/app110/share-390.webp' },
+];
+
+const SHOTS = [
+	'/images/app110/health-640.webp', '/images/app110/routine-640.webp', '/images/app110/results-640.webp',
+	'/images/app110/booking-640.webp', '/images/home/confirmed.webp', '/images/app110/share-390.webp',
+];
+
+const ROADS = [
+	'M-20 210C180 190 300 260 470 240S820 150 1020 190', 'M-20 520C160 480 330 560 520 520S840 430 1020 470',
+	'M-20 820C200 790 360 850 560 800S860 730 1020 770', 'M160 -20C190 180 130 360 190 540S210 860 170 1020',
+	'M430 -20C400 170 480 330 450 520S520 830 470 1020', 'M760 -20C720 200 800 340 760 520S830 820 790 1020',
+	'M-20 360C240 420 420 340 640 400S900 360 1020 330', 'M-20 680C220 640 460 720 680 660S900 640 1020 620',
+	'M60 -20C260 240 420 420 620 620S900 900 1020 980', 'M980 -20C760 200 610 340 420 560S130 880 40 1020',
+	'M600 -20C620 140 570 300 620 450S640 800 610 1020', 'M300 -20C280 160 340 340 310 560S360 860 320 1020',
+];
+const PINS = [[190, 240], [470, 240], [760, 330], [320, 500], [620, 450], [860, 520], [170, 690], [470, 660], [770, 720], [610, 830]];
+
+const TRY = [
+	['الرئيسية', '/images/app110/home-640.webp'], ['البحث', '/images/home/search.webp'], ['الطبيب', '/images/home/doctor.webp'],
+	['الحجز', '/images/app110/booking-640.webp'], ['مواعيدي', '/images/home/appointments.webp'], ['ملفي', '/images/app110/health-640.webp'],
+	['التقارير', '/images/app110/wall/reports-390.webp'], ['الأدوية', '/images/app110/wall/medications-390.webp'],
+	['القياسات', '/images/app110/wall/vitals-390.webp'], ['روتيني', '/images/app110/routine-640.webp'],
+	['الرسائل', '/images/home/chat.webp'], ['العائلة', '/images/home/relatives.webp'],
+];
+
+const WALL = [
+	['reports', 'vaccines', 'messages', 'booking'], ['medications', 'offers', 'doctor', 'family'],
+	['vitals', 'search', 'appointments', 'surgeries'], ['allergies', 'notifications', 'wallet', 'relatives'],
+	['documents', 'chronic', 'vouchers', 'confirmed'],
+];
+const MORE = [
+	['الأقارب', 'الرسائل', 'الوصفات', 'التحاليل', 'صور الأشعة', 'اللقاحات', 'الحساسيات', 'العمليات', 'الأمراض المزمنة', 'التاريخ العائلي', 'نمط الحياة'],
+	['تذكير الفحوصات', 'أداة الشاشة الرئيسية', 'الأطباء المفضلون', 'تأجيل المواعيد', 'إضافة إلى التقويم', 'العروض والقسائم', 'النقاط والمكافآت', 'الدخول بالبصمة', 'الآيباد والويب', 'العربية والإنجليزية'],
+];
 ---
 
 <Layout
-	title="DocSera — دوكسيرا | صحتك.. ببساطة"
-	description="دوكسيرا منصة الرعاية الصحية الرقمية في سوريا. احجز مواعيدك، تواصل مع طبيبك عبر الشات، واحفظ ملفك الطبي وملفات عائلتك في مكان واحد."
+	title="DocSera — دوكسيرا | كل صحتك في تطبيق واحد"
+	description="دوكسيرا: ملفك الطبي، وتذكير أدويتك، وحجز مواعيدك، والتواصل مع طبيبك في تطبيق واحد."
 	path="/"
+	appBar={false}
 >
-	<Navbar />
-	<main>
-		<Hero />
-        
-        <!-- Stats Band -->
-        <section class="stats-band">
-            <div class="container stats-grid">
-                <div class="stat-item fade-up">
-                    <span class="stat-num">تحول رقمي</span>
-                    <span class="stat-label">للقطاع الطبي</span>
-                </div>
-                <div class="stat-sep"></div>
-                <div class="stat-item fade-up delay-1">
-                    <span class="stat-num">انطلاقة سورية</span>
-                    <span class="stat-label">بمعايير عالمية</span>
-                </div>
-                <div class="stat-sep"></div>
-                <div class="stat-item fade-up delay-2">
-                    <span class="stat-num">أمان وخصوصية</span>
-                    <span class="stat-label">حماية تامة للبيانات</span>
-                </div>
-            </div>
-        </section>
+	<script is:inline>
+		if (!matchMedia('(prefers-reduced-motion: reduce)').matches) document.documentElement.classList.add('story');
+	</script>
 
-        <!-- Features Carousel -->
-        <section class="features-carousel">
-            <div class="carousel-track">
-                <!-- Slide 1: Find Care -->
-                <div class="slide-item">
-                    <section class="value-sec">
+	<header class="h">
+		<a href="/" class="h-logo" aria-label="DocSera"><img src="/images/docsera_main.svg" alt="DocSera" width="118" height="19" /></a>
+		<nav class="h-nav" aria-label="الأقسام">
+			<a href="/features">عن التطبيق</a><a href="/about">من نحن</a><a href="/help">المساعدة</a><a href="/pro">للأطباء</a>
+		</nav>
+		<a href="/download" class="h-cta">حمّل التطبيق</a>
+	</header>
 
-                        <div class="container grid-split">
-                            <div class="text-side fade-up">
-                                <div class="pill-badge">سهولة الوصول</div>
-                                <h2 class="text-title">اختر طبيبك بذكاء</h2>
-                                <p>استعرض ملفات الأطباء، تعرف على خبراتهم ومؤهلاتهم، وشاهد موقع العيادة على الخريطة. كل المعلومات التي تحتاجها لاتخاذ القرار الصحيح.</p>
-                                <ul class="feature-list">
-                                    <li><span class="icon-check">✦</span> ملفات تعريفية شاملة</li>
-                                    <li><span class="icon-check">✦</span> بحث مخصص حسب الاختصاص</li>
-                                    <li><span class="icon-check">✦</span> خرائط جوجل مدمجة</li>
-                                </ul>
-                            </div>
-                            <div class="visual-side fade-up delay-1">
-                                <div class="mockup-scaler">
-                                    <PhoneMockup src="/images/raw/map.webp" alt="Map Search" />
-                                </div>
-                            </div>
-                        </div>
-                    </section>
-                </div>
-                
-                <!-- Slide 2: Family -->
-                <div class="slide-item">
-                     <section class="value-sec">
-                        <div class="container grid-split reverse">
-                            <div class="text-side fade-up">
-                                <div class="pill-badge">رعاية عائلية</div>
-                                <h2 class="text-title">حساب واحد للجميع</h2>
-                                <p>لن تحتاج لتطبيقات متعددة. أضف أطفالك، والديك، وشريك حياتك إلى حسابك. أدر مواعيدهم، احفظ وصفاتهم، وتابع لقاحاتهم من مكان واحد.</p>
-                                <ul class="feature-list">
-                                    <li><span class="icon-check">✦</span> ملفات مستقلة لكل فرد</li>
-                                    <li><span class="icon-check">✦</span> تذكير بمواعيد العائلة</li>
-                                    <li><span class="icon-check">✦</span> سجل مرضى متكامل</li>
-                                </ul>
-                            </div>
-                            <div class="visual-side fade-up delay-1">
-                                <div class="mockup-scaler">
-                                    <PhoneMockup src="/images/raw/family.webp" alt="Family Mode" />
-                                </div>
-                            </div>
-                        </div>
-                    </section>
-                </div>
+	<main class="m">
+		<section class="st" data-story>
+			<div class="stick" data-stick>
+				<div class="bg bg-dusk" data-dusk aria-hidden="true"></div>
+				<div class="bg bg-twi" data-twi aria-hidden="true"></div>
+				<div class="bg bg-night" data-night aria-hidden="true"></div>
+				<div class="sun fx" data-sun aria-hidden="true"><i class="disc" data-sun-disc></i><i class="moon" data-moon-disc></i></div>
 
-                <!-- Slide 3: Chat -->
-                <div class="slide-item">
-                    <section class="value-sec">
-                        <div class="container grid-split">
-                            <div class="text-side fade-up">
-                                <div class="pill-badge">تواصل مباشر</div>
-                                <h2 class="text-title">تواصل مع طبيبك</h2>
-                                <p>استشارات طبية فورية عبر الشات. أرسل الصور، التسجيلات الصوتية، والتقارير الطبية بكل أمان وخصوصية.</p>
-                                <ul class="feature-list">
-                                    <li><span class="icon-check">✦</span> محادثات مشفرة وآمنة</li>
-                                    <li><span class="icon-check">✦</span> إرسال صور وتقارير</li>
-                                    <li><span class="icon-check">✦</span> تسجيلات صوتية للتوضيح</li>
-                                </ul>
-                            </div>
-                            <div class="visual-side fade-up delay-1">
-                                <div class="mockup-scaler">
-                                    <PhoneMockup src="/images/raw/chat.webp" alt="Doctor Chat" />
-                                </div>
-                            </div>
-                        </div>
-                    </section>
-                </div>
+				<svg class="map fx" data-map viewBox="0 0 1000 1000" preserveAspectRatio="xMidYMid slice" aria-hidden="true">
+					{ROADS.map((d) => <path data-road d={d} pathLength="1" />)}
+					{PINS.map(([x, y]) => (
+						<g transform={`translate(${x} ${y})`}><g class="pin" data-pin><circle r="26" class="pin-glow" /><circle r="9" class="pin-dot" /></g></g>
+					))}
+				</svg>
 
-                <!-- Slide 4: Health Reports -->
-                <div class="slide-item">
-                     <section class="value-sec">
-                        <div class="container grid-split reverse">
-                            <div class="text-side fade-up">
-                                <div class="pill-badge">سجلك الصحي</div>
-                                <h2 class="text-title">ملفك الطبي بيدك</h2>
-                                <p>احتفظ بكل تقاريرك الطبية، وصفاتك، ونتائج التحاليل في مكان واحد. سهولة في الوصول ومشاركة فورية مع أي طبيب.</p>
-                                <ul class="feature-list">
-                                    <li><span class="icon-check">✦</span> أرشيف فحوصات كامل</li>
-                                    <li><span class="icon-check">✦</span> وصفات طبية إلكترونية</li>
-                                    <li><span class="icon-check">✦</span> متابعة اللقاحات</li>
-                                </ul>
-                            </div>
-                            <div class="visual-side fade-up delay-1">
-                                <div class="mockup-scaler">
-                                    <PhoneMockup src="/images/raw/health.webp" alt="Health Records" />
-                                </div>
-                            </div>
-                        </div>
-                    </section>
-                </div>
-            </div>
-            
-            <div class="carousel-dots">
-                <button class="dot active" data-index="0"></button>
-                <button class="dot" data-index="1"></button>
-                <button class="dot" data-index="2"></button>
-                <button class="dot" data-index="3"></button>
-            </div>
-        </section>
+				<div class="a-hero" data-a-hero aria-hidden="true"></div>
+				<div class="a-dial" data-a-dial aria-hidden="true"></div>
 
-        <!-- Manifesto: Editorial Typography (Moved Before Comparison) -->
-        <section class="manifesto-editorial">
-            <div class="container">
-                <div class="manifesto-content fade-up">
-                    <h2 class="huge-statement">
-                        نؤمن أن<br>
-                        <span class="highlight-text">الرعاية الصحية</span><br>
-                        في سوريا<br>
-                        تستحق الأفضل.
-                    </h2>
-                    <div class="manifesto-desc">
-                         <p>نحن هنا لنقود التحول الرقمي. نجمع بين أحدث التقنيات العالمية والاحتياجات المحلية لنضع بين يديك تجربة طبية تليق بك وبعائلتك.</p>
-                    </div>
-                </div>
-            </div>
-        </section>
+				<div class="papers fx" aria-hidden="true">
+					{PAPERS.map((x) => (
+						<div class={`paper p-${x.kind}`} data-paper><div class="paper-art"></div><span>{x.label}</span></div>
+					))}
+				</div>
 
-        <!-- High-Impact Comparison: Chaos vs Clarity (Light Version) -->
-        <section class="chaos-vs-clarity">
-            <div class="c-container">
-                <!-- The Old Way (Chaos) -->
-                <div class="side-old">
-                    <div class="pattern-grid"></div>
-                    <div class="content-box fade-up">
-                        <div class="label-badge chaos">الطريقة التقليدية</div>
-                        <h3 class="chaos-title">فوضى، انتظار،<br>وتفاصيل ضائعة.</h3>
-                        <div class="chaos-list">
-                            <div class="c-item">
-                                <svg class="c-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M22 16.92v3a2 2 0 0 1-2.18 2 19.79 19.79 0 0 1-8.63-3.07 19.5 19.5 0 0 1-6-6 19.79 19.79 0 0 1-3.07-8.67A2 2 0 0 1 4.11 2h3a2 2 0 0 1 2 1.72 12.84 12.84 0 0 0 .7 2.81 2 2 0 0 1-.45 2.11L8.09 9.91a16 16 0 0 0 6 6l1.27-1.27a2 2 0 0 1 2.11-.45 12.84 12.84 0 0 0 2.81.7A2 2 0 0 1 22 16.92z"/><line x1="23" y1="1" x2="17" y2="7"/><line x1="17" y1="1" x2="23" y2="7"/></svg>
-                                <span>خط مشغول واتصالات لا تنتهي</span>
-                            </div>
-                            <div class="c-item">
-                                <svg class="c-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"/><polyline points="14 2 14 8 20 8"/><line x1="9" y1="15" x2="15" y2="15"/></svg>
-                                <span>وصفات طبية ورقية تضيع بسهولة</span>
-                            </div>
-                            <div class="c-item">
-                                <svg class="c-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="12" r="10"/><polyline points="12 6 12 12 16 14"/></svg>
-                                <span>ساعات انتظار طويلة في العيادة</span>
-                            </div>
-                            <div class="c-item">
-                                <svg class="c-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M10.29 3.86L1.82 18a2 2 0 0 0 1.71 3h16.94a2 2 0 0 0 1.71-3L13.71 3.86a2 2 0 0 0-3.42 0z"/><line x1="12" y1="9" x2="12" y2="13"/><line x1="12" y1="17" x2="12.01" y2="17"/></svg>
-                                <span>تاريخ طبي مفقود وتشخيص ناقص</span>
-                            </div>
-                             <div class="c-item">
-                                <svg class="c-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="3" y="4" width="18" height="18" rx="2" ry="2"/><line x1="16" y1="2" x2="16" y2="6"/><line x1="8" y1="2" x2="8" y2="6"/><line x1="3" y1="10" x2="21" y2="10"/></svg>
-                                <span>مواعيد غير دقيقة وعشوائية</span>
-                            </div>
-                        </div>
-                    </div>
-                </div>
+				<div class="fl" data-fl aria-hidden="true">
+					<canvas data-fl-canvas></canvas>
+					<img data-fl-still data-src="/images/app110/gem.webp" alt="" width="480" height="480" decoding="async" />
+				</div>
 
-                <!-- The DocSera Way (Clarity) -->
-                <div class="side-new">
-                    <div class="glass-portal fade-up delay-1">
-                        <!-- <div class="glow-underlay"></div> -->
-                        <div class="portal-content">
-                            <div class="label-badge clarity">طريقة DocSera</div>
-                            <h3 class="clarity-title">تحكم كامل،<br>ورعاية ذكية.</h3>
-                            <div class="clarity-features">
-                                <div class="f-item">
-                                    <div class="icon-box"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><path d="M12 22s8-4 8-10V5l-8-3-8 3v7c0 6 8 10 8 10z"/></svg></div>
-                                    <div class="f-text">
-                                        <strong>سجلك الطبي بأمان</strong>
-                                        <small>كل تفاصيلك الصحية محمية ومشفرة</small>
-                                    </div>
-                                </div>
-                                <div class="f-item">
-                                    <div class="icon-box"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><rect x="3" y="4" width="18" height="18" rx="2" ry="2"/><line x1="16" y1="2" x2="16" y2="6"/><line x1="8" y1="2" x2="8" y2="6"/><line x1="8" y1="14" x2="16" y2="14"/></svg></div>
-                                    <div class="f-text">
-                                        <strong>حجز فوري 24/7</strong>
-                                        <small>اختر الوقت المناسب لك بضغطة زر</small>
-                                    </div>
-                                </div>
-                                <div class="f-item">
-                                    <div class="icon-box"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><path d="M17 21v-2a4 4 0 0 0-4-4H5a4 4 0 0 0-4 4v2"></path><circle cx="9" cy="7" r="4"></circle><path d="M23 21v-2a4 4 0 0 0-3-3.87"></path><path d="M16 3.13a4 4 0 0 1 0 7.75"></path></svg></div>
-                                    <div class="f-text">
-                                        <strong>رعاية لكل العائلة</strong>
-                                        <small>ملفات مستقلة لأطفالك وأحبائك</small>
-                                    </div>
-                                </div>
-                                 <div class="f-item">
-                                    <div class="icon-box"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><path d="M21 11.5a8.38 8.38 0 0 1-.9 3.8 8.5 8.5 0 0 1-7.6 4.7 8.38 8.38 0 0 1-3.8-.9L3 21l1.9-5.7a8.38 8.38 0 0 1-.9-3.8 8.5 8.5 0 0 1 4.7-7.6 8.38 8.38 0 0 1 3.8-.9h.5a8.48 8.48 0 0 1 8 8v.5z"/></svg></div>
-                                    <div class="f-text">
-                                        <strong>تواصل مباشر</strong>
-                                        <small>استشر طبيبك عبر الشات في أي وقت</small>
-                                    </div>
-                                </div>
-                                <div class="f-item">
-                                    <div class="icon-box"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><path d="M22 11.08V12a10 10 0 1 1-5.93-9.14"/><polyline points="22 4 12 14.01 9 11.01"/></svg></div>
-                                    <div class="f-text">
-                                        <strong>تحديثات فورية</strong>
-                                        <small>تنبيهات بموعدك ودورك في العيادة</small>
-                                    </div>
-                                </div>
-                            </div>
-                        </div>
-                    </div>
-                </div>
-            </div>
-        </section>
+				<div class="hero" data-hero>
+					<div class="hero-tx">
+						<h1>كل صحتك، في تطبيق واحد</h1>
+						<p>ملفك الطبي وأدويتك ومواعيدك وطبيبك، في مكان واحد.</p>
+					</div>
+					<div class="hero-cta">
+						<StoreBadges adaptive size="lg" align="start" centerOnMobile />
+						<a class="hero-web" href={WEB_APP_URL}>أو افتحه من المتصفح</a>
+					</div>
+					<span class="hint fx" aria-hidden="true"><i></i></span>
+				</div>
 
-        <!-- DocSera Pro Section (Dark Glassmorphism) -->
-        <section class="docsera-pro-section">
-            <div class="container">
-                <div class="pro-glass-card fade-up">
-                    <div class="pro-content">
-                        <div class="pro-badge">للأطباء والمختصين</div>
-                        <h2 class="pro-title">هل أنت طبيب أو مختص؟</h2>
-                        <p class="pro-desc">انضم إلى <strong>DocSera Pro</strong>. المنصة المتكاملة لإدارة عيادتك، تنظيم مواعيدك، والتواصل مع مرضاك بكفاءة عالية وبأدوات احترافية صممت خصيصاً لك.</p>
-                    </div>
-                    
-                    <div class="pro-action">
-                        <a href="/pro" class="btn-pro">
-                            <span>اكتشف DocSera Pro</span>
-                            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M18 13v6a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2V8a2 2 0 0 1 2-2h6"/><polyline points="15 3 21 3 21 9"/><line x1="10" y1="14" x2="21" y2="3"/></svg>
-                        </a>
-                    </div>
-                    
-                    <div class="pro-visual">
-                         <!-- Abstract Pro UI Elements -->
-                         <div class="pro-ui-card card-1">
-                            <div class="ui-header">
-                                <div class="ui-dot red"></div><div class="ui-dot yellow"></div><div class="ui-dot green"></div>
-                            </div>
-                            <div class="ui-body">
-                                <div class="ui-line w-70"></div>
-                                <div class="ui-line w-50"></div>
-                                <div class="ui-row">
-                                    <div class="ui-box"></div>
-                                    <div class="ui-box"></div>
-                                </div>
-                            </div>
-                         </div>
-                         <div class="pro-ui-card card-2">
-                            <div class="ui-icon-circle">
-                                 <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M16 21v-2a4 4 0 0 0-4-4H5a4 4 0 0 0-4 4v2"/><circle cx="8.5" cy="7" r="4"/><line x1="20" y1="8" x2="20" y2="14"/><line x1="23" y1="11" x2="17" y2="11"/></svg>
-                            </div>
-                            <div class="ui-line w-100"></div>
-                         </div>
-                         
-                         <!-- App Icon -->
-                         <div class="pro-app-icon">
-                             <img src="/images/docsera-pro-icon.webp" alt="DocSera Pro" loading="lazy" decoding="async" />
-                         </div>
+				<div class="chs">
+					{CHAPTERS.map((c, i) => (
+						<article class="ch" data-ch>
+							<span class="ch-key"><b>{i + 1}</b>{c.key}</span>
+							<h2>{c.title}</h2>
+							<p>{c.text}</p>
+							<img class="ch-shot" src={c.shot} alt="" loading="lazy" decoding="async" width="390" height="844" />
+						</article>
+					))}
+				</div>
 
-                         <!-- Glow Effect -->
-                         <div class="pro-glow"></div>
-                    </div>
-                </div>
-            </div>
-        </section>
-        <section class="faq-bridge">
-            <div class="container fade-up">
-                <div class="help-card">
-                    <div class="help-icon">
-                        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
-                           <path d="M21 11.5a8.38 8.38 0 0 1-.9 3.8 8.5 8.5 0 0 1-7.6 4.7 8.38 8.38 0 0 1-3.8-.9L3 21l1.9-5.7a8.38 8.38 0 0 1-.9-3.8 8.5 8.5 0 0 1 4.7-7.6 8.38 8.38 0 0 1 3.8-.9h.5a8.48 8.48 0 0 1 8 8v.5z"/>
-                        </svg>
-                    </div>
-                    <div class="help-content">
-                        <h3 class="help-title">هل لديك استفسارات؟</h3>
-                        <p class="help-text">لقد جمعنا لك إجابات مفصلة عن كل ما يخص DocSera في مكان واحد.</p>
-                    </div>
-                    <div class="help-action">
-                        <a href="/help" class="btn-help">
-                            تصفح الأسئلة الشائعة
-                            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M19 12H5"/><path d="M12 19l-7-7 7-7"/></svg>
-                        </a>
-                    </div>
-                </div>
-            </div>
-        </section>
+				<div class="ph fx" data-phone aria-hidden="true">
+					<div class="ph-in">
+						{SHOTS.map((s) => <img data-shot data-src={s} alt="" width="640" height="1387" decoding="async" />)}
+					</div>
+					<div class="notes">
+						<div class="note" data-note>
+							<div class="note-h"><img src="/apple-touch-icon.png" alt="" width="18" height="18" loading="lazy" /><b>DocSera</b><i>8:00 ص</i></div>
+							<p>حان موعد <bdi>Metformin</bdi></p>
+							<div class="note-a"><span class="main">أخذته ✓</span><span>بعد 10 دقائق</span></div>
+						</div>
+						<div class="note" data-note>
+							<div class="note-h"><img src="/apple-touch-icon.png" alt="" width="18" height="18" loading="lazy" /><b>DocSera</b><i>2:00 م</i></div>
+							<p>حان موعد دواء سميرة</p>
+							<div class="note-a"><span class="main">أخذها ✓</span><span>بعد 10 دقائق</span></div>
+						</div>
+						<div class="note" data-note>
+							<div class="note-h"><img src="/apple-touch-icon.png" alt="" width="18" height="18" loading="lazy" /><b>DocSera</b><i>9:00 م</i></div>
+							<p>علبة <bdi>Omega 3</bdi> على وشك النفاد</p>
+							<div class="note-a"><span class="main">عبّأتها</span><span>ذكّرني غداً</span></div>
+						</div>
+					</div>
+				</div>
 
-        <!-- CTA Wave + Download Hub -->
-        <section class="final-cta" id="download">
-            <div class="wave-top">
-                <svg viewBox="0 0 1440 180" preserveAspectRatio="none" xmlns="http://www.w3.org/2000/svg">
-                    <path fill="#ffffff" fill-opacity="1" d="M0,0 L1440,0 L1440,180 Q720,60 0,180 Z"></path>
-                </svg>
-            </div>
+				<div class="cl fx" data-clinic aria-hidden="true">
+					<div class="cl-bar"><i></i><i></i><i></i></div>
+					<p class="cl-t">الاطّلاع على الملف الطبي</p>
+					<div class="digits">
+						{['4', '8', '2', '7', '1', '5'].map((d) => <span data-box><b>{d}</b></span>)}
+					</div>
+					<div class="cl-ok" data-check><svg viewBox="0 0 24 24"><circle cx="12" cy="12" r="11" /><path d="M7 12.4l3.2 3.2L17.2 8.6" /></svg>برمز من المريض</div>
+				</div>
+				<div class="chip fx" data-chip aria-hidden="true">
+					<small>رمز الاطّلاع</small>
+					<div class="digits">{['4', '8', '2', '7', '1', '5'].map((d) => <span class="on"><b>{d}</b></span>)}</div>
+				</div>
+			</div>
+		</section>
 
-            <div class="container cta-content">
-                <h2 class="text-huge" style="color:white">ابدأ رحلتك الصحية اليوم</h2>
-                <p>مستقبل الطب الرقمي، يبدأ في سوريا</p>
+		<section class="try" data-try>
+			<div class="try-in">
+				<div class="sec-h">
+					<h2>جرّبه بنفسك</h2>
+					<p>اضغط واكتشف الشاشات الحقيقية للتطبيق.</p>
+				</div>
+				<div class="try-phone"><div class="ph-in">
+					{TRY.map(([, s]) => <img data-try-shot data-src={s} alt="" width="640" height="1387" decoding="async" />)}
+				</div></div>
+				<div class="tabs" role="group" aria-label="شاشات التطبيق">
+					{TRY.map(([l], i) => <button type="button" data-tab class={i === 0 ? 'on' : ''} aria-pressed={i === 0 ? 'true' : 'false'}>{l}</button>)}
+				</div>
+			</div>
+		</section>
 
-                <StoreBadges size="lg" adaptive />
+		<section class="wall" data-wall>
+			<div class="wall-scene" aria-hidden="true"><div class="wall-tilt">
+				{WALL.map((col, c) => (
+					<div class="col" style={`--d:${64 + c * 9}s`}><div class="track">
+						{[...col, ...col].map((n) => <div class="shot"><img data-src={`/images/app110/wall/${n}.webp`} alt="" width="260" height="563" decoding="async" /></div>)}
+					</div></div>
+				))}
+			</div></div>
+			<button class="wall-toggle" type="button" data-wall-toggle aria-pressed="false" aria-label="إيقاف الحركة" title="إيقاف الحركة">
+				<svg class="i-pause" viewBox="0 0 24 24" aria-hidden="true"><rect x="6.5" y="5" width="4" height="14" rx="1.3" /><rect x="13.5" y="5" width="4" height="14" rx="1.3" /></svg>
+				<svg class="i-play" viewBox="0 0 24 24" aria-hidden="true"><path d="M8 5.6v12.8a.8.8 0 0 0 1.2.7l10-6.4a.8.8 0 0 0 0-1.4l-10-6.4a.8.8 0 0 0-1.2.7z" /></svg>
+			</button>
+			<div class="wall-body">
+				<h2>وهذا جزء مما ستجده داخل التطبيق</h2>
+				<div class="strips">
+					{MORE.map((row, r) => (
+						<div class={`strip strip-${r}`}><div class="strip-track">
+							{[0, 1].map((copy) => (
+								<ul class="chips" aria-hidden={copy === 1 ? 'true' : undefined}>
+									{row.map((t) => <li>{t}</li>)}<li class="more">وأكثر</li>
+								</ul>
+							))}
+						</div></div>
+					))}
+				</div>
+			</div>
+		</section>
 
-                <div class="cta-more">
-                    <a href={WEB_APP_URL}>أو استخدمه من المتصفح دون تثبيت</a>
-                    <a href="/download">كل طرق التحميل</a>
-                </div>
-            </div>
-        </section>
+		<section class="ex" data-expand>
+			<div class="ex-stick">
+				<div class="ex-light" data-ex-light aria-hidden="true"></div>
+				<div class="sec-h ex-h">
+					<h2>على كل شاشاتك</h2>
+					<p>هاتفك، وآيبادك، ومتصفحك، بالحساب نفسه.</p>
+				</div>
+				<div class="dev" data-dev aria-hidden="true">
+					<img class="dev-small" src="/images/app110/home-640.webp" alt="" loading="lazy" decoding="async" width="640" height="1387" />
+					<img class="dev-big" data-dev-big src="/images/home/ipad.webp" alt="" loading="lazy" decoding="async" width="1100" height="825" />
+				</div>
+			</div>
+		</section>
 
+		<section class="pro">
+			<div class="pro-in">
+				<div>
+					<h2>هل أنت طبيب أو مختص؟</h2>
+					<p>DocSera Pro لإدارة عيادتك: المواعيد، وملفات المرضى، والتقارير، والمحاسبة، وأكثر.</p>
+				</div>
+				<a href="/pro" class="pro-btn">اكتشف DocSera Pro</a>
+			</div>
+		</section>
+
+		<section class="end">
+			<img class="end-gem" src="/images/app110/gem.webp" alt="" width="240" height="240" loading="lazy" decoding="async" />
+			<h2>حمّل DocSera</h2>
+			<p>مجاناً على آيفون وأندرويد.</p>
+			<StoreBadges adaptive size="lg" />
+			<p class="end-trust"><svg viewBox="0 0 24 24" aria-hidden="true"><rect x="5" y="10.5" width="14" height="10" rx="2.6" fill="currentColor" /><path d="M8.2 10.5V8a3.8 3.8 0 0 1 7.6 0v2.5" fill="none" stroke="currentColor" stroke-width="2" /></svg>{TRUST}</p>
+		</section>
 	</main>
+	<script is:inline async src={bootUrl}></script>
 	<Footer />
 </Layout>
 
-<script>
-	const observer = new IntersectionObserver((entries) => {
-		entries.forEach(entry => {
-			if (entry.isIntersecting) {
-				entry.target.classList.add('visible');
-			}
-		});
-	});
-	document.querySelectorAll('.fade-up').forEach((el) => observer.observe(el));
-</script>
-
 <style>
-    /* Stats Band */
-    .stats-band {
-        background: white;
-        padding: 40px 0;
-        border-bottom: 1px solid #F0F0F0;
-    }
-    .stats-grid {
-        display: flex;
-        justify-content: center;
-        align-items: center;
-        gap: 60px;
-    }
-    .stat-item { text-align: center; }
-    .stat-num { display: block; font-size: 2rem; font-weight: 800; color: var(--c-main); }
-    .stat-label { color: var(--c-text-muted); font-size: 0.9rem; }
-    .stat-sep { width: 1px; height: 40px; background: #eee; }
+	:global(body) { background: #F7FBFB; }
+	.m { overflow-x: clip; }
 
-    /* Value Sections */
-    .value-sec {
-        padding: 100px 0;
-        position: relative;
-        overflow: hidden;
-    }
-    .alt-bg { background: #FAFAFA; }
+	/* ── header ───────────────────────────────── */
+	.h { position: fixed; z-index: 50; top: 10px; left: 50%; translate: -50% 0; width: min(1180px, calc(100% - 20px)); height: 56px;
+		display: flex; align-items: center; justify-content: space-between; gap: 16px; padding: 0 12px 0 18px; padding-inline: 18px 8px;
+		background: rgba(255, 255, 255, .86); backdrop-filter: blur(14px); -webkit-backdrop-filter: blur(14px);
+		border: 1px solid rgba(0, 144, 146, .12); border-radius: 18px; box-shadow: 0 12px 30px -20px rgba(0, 60, 62, .5); }
+	.h-logo img { display: block; height: 19px; width: auto; }
+	.h-nav { display: flex; gap: 26px; }
+	.h-nav a { color: #2D3436; font-weight: 600; font-size: .96rem; text-decoration: none; }
+	.h-nav a:hover { color: var(--c-main-dark); }
+	.h-cta { background: var(--c-main-dark); color: #fff; font-weight: 700; font-size: .92rem; padding: 9px 16px; border-radius: 12px; text-decoration: none; white-space: nowrap; }
 
-    /* Organic Blobs via CSS/SVG */
-    .blob-bg {
-        position: absolute;
-        background-color: var(--c-main-light);
-        border-radius: 50%;
-        filter: blur(80px);
-        z-index: 0;
-    }
-    .blob-1 {
-        width: 600px; height: 600px;
-        top: 0; left: -200px;
-        opacity: 0.4;
-    }
+	/* ── the story: plain column by default ───── */
+	.st { position: relative; }
+	.stick { position: relative; padding: 96px 22px 30px; }
+	.fx, .a-hero, .a-dial, .bg { display: none; }
+	.fl { width: 220px; height: 220px; margin: 0 auto 20px; position: relative; }
+	.fl canvas, .fl img { position: absolute; inset: 0; width: 100%; height: 100%; opacity: 0; transition: opacity .3s ease; }
+	.fl canvas:global(.on), .fl img:global(.on) { opacity: 1; }
+	.hero { text-align: center; }
+	.hero h1 { font-size: clamp(2.2rem, 5.4vw, 4rem); font-weight: 800; line-height: 1.16; color: #0F1A22; margin: 0 0 12px; text-wrap: balance; }
+	.hero p { font-size: clamp(1.08rem, 2vw, 1.34rem); line-height: 1.7; color: #3D4A50; margin: 0 0 22px; }
+	.hero-web { display: inline-block; margin-top: 12px; color: var(--c-main-dark); font-weight: 700; font-size: .96rem; }
+	.chs { display: grid; gap: 40px; max-width: 560px; margin: 50px auto 0; }
+	.ch-key { display: inline-flex; align-items: center; gap: 8px; font-weight: 800; color: var(--c-main-dark); font-size: 1rem; margin-bottom: 8px; }
+	.ch-key b { width: 26px; height: 26px; border-radius: 9px; background: var(--c-main-dark); color: #fff; display: grid; place-items: center; font: 800 .86rem Montserrat, Cairo, sans-serif; }
+	.ch h2 { font-size: clamp(1.7rem, 3.5vw, 3rem); line-height: 1.2; font-weight: 800; color: #0F1A22; margin: 0 0 10px; text-wrap: balance; transition: color .4s; }
+	.ch p { font-size: clamp(1rem, 1.7vw, 1.26rem); line-height: 1.7; color: #3D4A50; margin: 0; transition: color .4s; }
+	.ch-shot { display: block; width: min(70vw, 280px); height: auto; margin: 20px auto 0; border: 7px solid #0F1A22; border-radius: 34px; }
 
-    .grid-split {
-        display: grid;
-        grid-template-columns: 1fr 1fr;
-        align-items: center;
-        gap: 80px;
-        position: relative;
-        z-index: 1;
-    }
-    .reverse { direction: ltr; }
-    .reverse .text-side { direction: rtl; }
+	/* ── the story: on stage ──────────────────── */
+	:global(html.story) .st { height: 640vh; height: 640svh; }
+	:global(html.story) .stick { position: sticky; top: 0; height: 100vh; height: 100svh; overflow: hidden; padding: 0; isolation: isolate;
+		background: radial-gradient(90% 70% at 70% 10%, #DFF3F3 0%, #F7FBFB 60%); }
+	:global(html.story) .fx, :global(html.story) .a-hero, :global(html.story) .a-dial, :global(html.story) .bg { display: block; }
+	:global(html.story) .ch-shot { display: none; }
+	.bg { position: absolute; inset: 0; z-index: -2; opacity: 0; }
+	.bg-dusk { background: linear-gradient(180deg, #FFC49B 0%, #FFE0C8 42%, #D5EFEB 100%); }
+	.bg-twi { background: linear-gradient(180deg, #0E4A54 0%, #1F6C75 52%, #E8AE8C 100%); }
+	.bg-night { background: radial-gradient(90% 60% at 60% 8%, #10555B 0%, #0A343B 48%, #08282E 100%); }
+	.sun { position: absolute; width: 110px; height: 110px; translate: -50% -50%; z-index: -1; opacity: 0; }
+	.sun i { position: absolute; inset: 0; border-radius: 50%; }
+	.disc { background: radial-gradient(circle at 42% 38%, #FFE4CF 0%, #FFB494 58%, #FF9C70 100%); box-shadow: 0 0 70px 24px rgba(255, 180, 148, .42); }
+	.moon { background: radial-gradient(circle at 38% 34%, #FFFFFF 0%, #DCEFF0 62%, #A9CFD1 100%); box-shadow: 0 0 60px 16px rgba(190, 235, 235, .28); opacity: 0; }
 
-    .pill-badge {
-        display: inline-block;
-        background: rgba(0, 144, 146, 0.1);
-        color: var(--c-main);
-        padding: 6px 16px;
-        border-radius: 20px;
-        font-weight: 700;
-        font-size: 0.85rem;
-        margin-bottom: 20px;
-    }
+	.map { position: absolute; inset: 0; width: 100%; height: 100%; z-index: -1; opacity: 0;
+		-webkit-mask-image: linear-gradient(90deg, #000 42%, transparent 62%); mask-image: linear-gradient(90deg, #000 42%, transparent 62%); }
+	.map path { fill: none; stroke: #2FB7B5; stroke-width: 2.2; stroke-opacity: .55; stroke-dasharray: 1; stroke-dashoffset: 1; vector-effect: non-scaling-stroke; }
+	.pin { transform-box: fill-box; transform-origin: center; opacity: 0; }
+	.pin-glow { fill: rgba(102, 232, 226, .2); }
+	.pin-dot { fill: #8BF3EC; }
 
-    .icon-check {
-        color: var(--c-main);
-        font-size: 1.2rem;
-        line-height: 1;
-        display: inline-block;
-        transform: translateY(2px);
-    }
-    .brand-check {
-        vertical-align: middle;
-        margin-inline-end: 8px; /* For spacing */
-    }
+	:global(html.story) .hero { position: absolute; z-index: 6; text-align: start; inset-inline-start: max(6vw, calc(50vw - 560px)); top: 50%; width: min(45vw, 560px); margin-top: -170px; }
+	.a-hero { position: absolute; left: max(3vw, calc(50vw - 610px)); top: 50%; translate: 0 -50%; width: min(44vw, 68vh); aspect-ratio: 1; }
+	.a-dial { position: absolute; inset-inline-start: max(6vw, calc(50vw - 560px)); top: calc(50% - 262px); width: 150px; aspect-ratio: 1; }
+	:global(html.story) .fl { position: absolute; left: 0; top: 0; margin: 0; z-index: 3; transform-origin: center; will-change: transform; }
+	.hint { position: absolute; display: none; }
+	:global(html.story) .chs { position: absolute; z-index: 5; display: block; margin: 0; max-width: none; inset-inline-start: max(6vw, calc(50vw - 560px)); top: calc(50% - 96px); width: min(42vw, 520px); }
+	:global(html.story) .ch { position: absolute; inset: 0 0 auto 0; opacity: 0; visibility: hidden; }
+	:global(.stick.dark) .ch h2 { color: #fff; }
+	:global(.stick.dark) .ch p { color: #D5E8E9; }
+	:global(.stick.dark) .ch-key { color: #7FE3DD; }
+	:global(.stick.dark) .ch-key b { background: #7FE3DD; color: #08282E; }
 
-    .feature-list {
-        list-style: none; padding: 0; margin-top: 24px;
-    }
-    .feature-list li {
-        margin-bottom: 12px;
-        font-size: 1.1rem;
-        color: var(--c-text);
-        font-weight: 500;
-    }
+	.paper { position: absolute; left: 0; top: 0; z-index: 2; width: 138px; padding: 10px 10px 9px; background: #fff; border-radius: 10px; font-size: .8rem; font-weight: 700; color: #2D3436;
+		box-shadow: 0 18px 30px -16px rgba(15, 26, 34, .45); will-change: transform; }
+	.papers { position: absolute; inset: 0; z-index: 4; pointer-events: none; }
+	.paper span { display: block; margin-top: 7px; }
+	.paper-art { height: 72px; border-radius: 6px; background: repeating-linear-gradient(180deg, #E4ECEC 0 4px, transparent 4px 11px) 0 8px / 100% 60px no-repeat, #F7FAFA; }
+	.p-xray .paper-art { background: radial-gradient(55% 60% at 50% 50%, #B9C7CC 0%, #6F7F86 45%, #263238 75%); }
+	.p-rx .paper-art { position: relative; background: repeating-linear-gradient(180deg, #E4ECEC 0 4px, transparent 4px 11px) 0 26px / 100% 40px no-repeat, #F7FAFA; }
+	.p-rx .paper-art::before { content: 'Rx'; position: absolute; top: 4px; right: 8px; font: 800 .95rem Montserrat, sans-serif; color: var(--c-main); }
+	.p-card .paper-art { height: 56px; background: linear-gradient(135deg, #009092, #66B8B8); }
 
-    /* Carousel CSS */
-    .features-carousel {
-        position: relative;
-        overflow: hidden;
-        width: 100%;
-        margin-bottom: 0;
-    }
-    .carousel-track {
-        display: flex;
-        width: 400%;
-        transition: transform 0.8s cubic-bezier(0.25, 1, 0.5, 1);
-    }
-    .slide-item {
-        width: 25%;
-        flex-shrink: 0;
-    }
-    .carousel-dots {
-        position: absolute;
-        bottom: 30px;
-        left: 50%;
-        transform: translateX(-50%);
-        display: flex;
-        gap: 10px;
-        z-index: 10;
-    }
-    .dot {
-        width: 12px; height: 12px;
-        border-radius: 50%;
-        background: #ddd;
-        border: none;
-        cursor: pointer;
-        transition: all 0.3s;
-    }
-    .dot.active {
-        background: var(--c-main);
-        width: 30px;
-        border-radius: 12px;
-    }
+	.ph { position: absolute; z-index: 2; left: calc(34vw - min(82vh, 740px) * .2307); top: calc(50% - min(82vh, 740px) / 2 + 22px); height: min(82vh, 740px); aspect-ratio: 1290 / 2796;
+		padding: 9px; background: #0F1A22; border-radius: 46px; box-shadow: 0 40px 80px -30px rgba(0, 50, 54, .65); will-change: transform; opacity: 0; }
+	.ph-in { position: relative; width: 100%; height: 100%; overflow: hidden; border-radius: 38px; background: #E9F5F5; }
+	.ph-in img { position: absolute; inset: 0; width: 100%; height: 100%; object-fit: cover; opacity: 0; }
+	.notes { position: absolute; top: 11%; inset-inline: -7%; height: 150px; }
+	.note { position: absolute; inset: 0 0 auto 0; padding: 11px 13px 12px; border-radius: 20px; background: rgba(255, 255, 255, .95); box-shadow: 0 22px 40px -18px rgba(0, 40, 44, .6); opacity: 0; }
+	.note-h { display: flex; align-items: center; gap: 7px; font-size: .78rem; color: #56636B; }
+	.note-h img { width: 18px; height: 18px; border-radius: 5px; }
+	.note-h b { color: #0F1A22; font: 700 .76rem Montserrat, Cairo, sans-serif; }
+	.note-h i { margin-inline-start: auto; font: 600 .78rem Montserrat, Cairo, sans-serif; color: #0F1A22; }
+	.note p { margin: 6px 0 0; font-weight: 800; font-size: .98rem; color: #0F1A22; }
+	.note-a { display: flex; gap: 8px; margin-top: 10px; }
+	.note-a span { flex: 1; text-align: center; font-size: .84rem; font-weight: 700; padding: 6px 4px; border-radius: 12px; background: #EEF3F4; color: #2D3436; }
+	.note-a .main { background: #E0F2F2; color: var(--c-main-dark); transition: background .25s, color .25s, transform .25s; }
+	.note:global(.tap) .main { background: var(--c-main); color: #fff; transform: scale(.96); }
 
-    /* Steps Section */
-    .steps-sec { padding: 80px 0; background: white; }
-    .sec-header { margin-bottom: 60px; }
-    .steps-grid {
-        display: flex;
-        justify-content: center;
-        align-items: center;
-        gap: 30px;
-    }
-    .step-card {
-        background: white;
-        padding: 30px;
-        border-radius: 20px;
-        box-shadow: 0 10px 30px rgba(0,0,0,0.05);
-        border: 1px solid #f5f5f5;
-        text-align: center;
-        width: 200px;
-    }
-    .step-icon { font-size: 2.5rem; margin-bottom: 16px; }
-    .step-arrow { font-size: 2rem; color: #ddd; font-weight: 300; margin-top: -30px;}
+	.cl { position: absolute; z-index: 4; left: max(2vw, calc(34vw - 500px)); top: calc(50% - 100px); width: min(21vw, 260px); padding: 10px 14px 14px; background: #fff; border-radius: 16px; opacity: 0;
+		box-shadow: 0 26px 50px -20px rgba(0, 0, 0, .6); }
+	.cl-bar { display: flex; gap: 4px; margin-bottom: 10px; }
+	.cl-bar i { width: 8px; height: 8px; border-radius: 50%; background: #C9D8DA; }
+	.cl-t { margin: 0 0 10px; font-weight: 800; font-size: .9rem; color: #0F1A22; }
+	.digits { direction: ltr; display: flex; gap: 3px; justify-content: center; }
+	.digits span { flex: 1; max-width: 30px; height: 36px; border-radius: 7px; border: 1.4px solid #BFD8D9; display: grid; place-items: center; background: #F3FAFA; }
+	.digits b { font: 700 .95rem Montserrat, sans-serif; color: #0F1A22; opacity: 0; transition: opacity .2s; }
+	.digits span:global(.on) { border-color: var(--c-main); }
+	.digits span:global(.on) b { opacity: 1; }
+	.cl-ok { display: flex; align-items: center; gap: 6px; margin-top: 10px; font-size: .82rem; font-weight: 700; color: var(--c-main-dark); opacity: 0; transform: translateY(4px); transition: opacity .3s, transform .3s; }
+	.cl-ok:global(.on) { opacity: 1; transform: none; }
+	.cl-ok svg { width: 18px; height: 18px; flex: none; }
+	.cl-ok circle { fill: var(--c-main-dark); }
+	.cl-ok path { fill: none; stroke: #fff; stroke-width: 2.4; stroke-linecap: round; stroke-linejoin: round; }
+	.chip { position: absolute; left: 0; top: 0; z-index: 7; width: 190px; padding: 8px 9px 10px; text-align: center; background: #fff; border-radius: 14px; opacity: 0; box-shadow: 0 18px 34px -12px rgba(0, 0, 0, .65); }
+	.chip small { display: block; font-size: .78rem; font-weight: 800; color: var(--c-main-dark); margin-bottom: 5px; }
 
-    /* Manifesto Brand Section (Full Width Immersive) */
-    .manifesto-editorial {
-        /* Full width background */
-        background: radial-gradient(circle at top right, #009092, #004d4d);
-        padding: 100px 0;
-        position: relative;
-        overflow: hidden;
-        color: white;
-        text-align: center;
-        /* Clip path for dynamic top edge? Optional, keep simple for now */
-    }
-    
-    .manifesto-content {
-        max-width: 1000px;
-        margin: 0 auto;
-        padding: 0 40px;
-        position: relative;
-        z-index: 2;
-    }
-    
-    /* Decorative Abstract Shapes (integrated into section) */
-    .manifesto-editorial::before {
-        content: '';
-        position: absolute;
-        top: -20%; right: -10%;
-        width: 600px; height: 600px;
-        background: rgba(255,255,255,0.03);
-        border-radius: 50%;
-        filter: blur(80px);
-        z-index: 1;
-    }
-    .manifesto-editorial::after {
-        content: '';
-        position: absolute;
-        bottom: -20%; left: -10%;
-        width: 500px; height: 500px;
-        background: rgba(0,255,255,0.05);
-        border-radius: 50%;
-        filter: blur(100px);
-        z-index: 1;
-    }
+	/* ── try it ───────────────────────────────── */
+	.try { position: relative; color: #fff; background: #08282E; padding: 70px 0 60px; }
+	.try-in { max-width: 860px; margin: 0 auto; text-align: center; }
+	.sec-h { padding: 0 22px; }
+	.sec-h h2 { font-size: clamp(1.9rem, 4.2vw, 3.2rem); font-weight: 800; line-height: 1.2; margin: 0 0 8px; color: inherit; }
+	.sec-h p { font-size: clamp(1rem, 1.8vw, 1.24rem); line-height: 1.7; margin: 0; opacity: .86; }
+	.try-phone { width: min(66vw, 290px); aspect-ratio: 1290 / 2796; margin: 28px auto 22px; padding: 8px; background: #000; border-radius: 40px; box-shadow: 0 0 0 1px rgba(255, 255, 255, .14), 0 34px 70px -24px rgba(0, 200, 200, .35); }
+	.try-phone .ph-in { border-radius: 33px; }
+	.try-phone img { transition: opacity .35s ease; }
+	.try-phone img:global(.on) { opacity: 1; }
+	.tabs { display: flex; gap: 8px; overflow-x: auto; padding: 4px 22px 8px; scrollbar-width: none; justify-content: safe center; flex-wrap: wrap; }
+	@media (min-width: 900px) {
+		.try { padding: 90px 0; }
+		.try-in { max-width: 1040px; padding: 0 30px; display: grid; grid-template-columns: 1fr auto; grid-template-areas: 'head phone' 'tabs phone'; gap: 22px 70px; align-content: center; text-align: start; }
+		.try-in .sec-h { grid-area: head; align-self: end; padding: 0; }
+		.try-phone { grid-area: phone; width: auto; height: min(78vh, 680px); margin: 0; }
+		.tabs { grid-area: tabs; align-self: start; justify-content: flex-start; padding: 4px 0 8px; overflow: visible; }
+	}
+	.tabs::-webkit-scrollbar { display: none; }
+	.tabs button { flex: none; font: 700 .95rem Cairo, sans-serif; color: #DDF3F3; background: rgba(255, 255, 255, .09); border: 1px solid rgba(255, 255, 255, .2); padding: 7px 16px; border-radius: 100px; cursor: pointer; transition: background .2s, color .2s; }
+	.tabs button:global(.on) { background: #fff; color: var(--c-main-dark); border-color: #fff; }
+	.tabs button:focus-visible { outline: 3px solid #fff; outline-offset: 2px; }
 
-    .huge-statement {
-        font-size: clamp(2rem, 5vw, 4.5rem);
-        font-weight: 900;
-        line-height: 1.2;
-        margin-bottom: 40px;
-        position: relative;
-        z-index: 2;
-    }
-    
-    .highlight-text {
-        color: #00E0E3; /* Cyan pop */
-        display: inline-block;
-        position: relative;
-    }
-    
-    .manifesto-desc {
-        max-width: 700px;
-        margin: 0 auto;
-        font-size: 1.3rem;
-        line-height: 1.8;
-        color: rgba(255, 255, 255, 0.9);
-        font-weight: 400;
-        position: relative;
-        z-index: 2;
-    }
-    .manifesto-desc p { border: none; padding: 0; }
+	/* ── the wall ─────────────────────────────── */
+	.wall { position: relative; isolation: isolate; overflow: hidden; color: #fff; background: linear-gradient(180deg, #08282E 0%, #0B5459 42%, #08282E 100%); }
+	.wall-scene { position: absolute; inset: 0 0 auto 0; height: 660px; z-index: -1; overflow: hidden;
+		-webkit-mask-image: linear-gradient(180deg, transparent 0, #000 12%, #000 48%, transparent 90%); mask-image: linear-gradient(180deg, transparent 0, #000 12%, #000 48%, transparent 90%); }
+	.wall-tilt { position: absolute; top: -150px; left: 50%; display: flex; align-items: flex-start; gap: 22px; direction: ltr; translate: -50% 0;
+		transform-origin: 50% 470px; transform: perspective(1500px) rotateX(24deg) rotateZ(-10deg) scale(1.14); }
+	.col { width: 236px; flex: none; }
+	.col:nth-child(even) { margin-top: -120px; }
+	.track { animation: rise var(--d) linear infinite; animation-play-state: paused; }
+	.col:nth-child(even) .track { animation-direction: reverse; }
+	.wall:global(.run) .track, .wall:global(.run) .strip-track { animation-play-state: running; }
+	.wall:global(.paused) .track, .wall:global(.paused) .strip-track { animation-play-state: paused; }
+	@keyframes rise { to { transform: translate3d(0, -50%, 0); } }
+	.shot { padding-bottom: 20px; }
+	.shot img { display: block; width: 100%; height: auto; border-radius: 24px; background: #0E5F63; opacity: .35; box-shadow: 0 18px 34px -14px rgba(0, 0, 0, .55); transition: opacity .7s ease; }
+	.shot img:global(.in) { opacity: .96; }
+	.wall-toggle { position: absolute; top: 16px; left: 16px; z-index: 2; width: 40px; height: 40px; padding: 10px; border: 0; border-radius: 50%; cursor: pointer; color: #fff; background: rgba(5, 40, 44, .62); }
+	.wall-toggle svg { display: block; width: 100%; height: 100%; fill: currentColor; }
+	.wall-toggle:focus-visible { outline: 3px solid #fff; outline-offset: 2px; }
+	.wall-toggle .i-play, .wall:global(.paused) .wall-toggle .i-pause { display: none; }
+	.wall:global(.paused) .wall-toggle .i-play { display: block; }
+	.wall-body { padding: 470px 0 64px; text-align: center; }
+	.wall-body h2 { color: #fff; font-size: clamp(1.75rem, 3.8vw, 2.9rem); font-weight: 800; line-height: 1.28; margin: 0 auto 26px; padding: 0 22px; max-width: 24em; text-wrap: balance; text-shadow: 0 2px 22px rgba(0, 30, 34, .75); }
+	.strips { display: grid; gap: 10px; }
+	.strip { overflow: hidden; direction: ltr; -webkit-mask-image: linear-gradient(90deg, transparent, #000 9%, #000 91%, transparent); mask-image: linear-gradient(90deg, transparent, #000 9%, #000 91%, transparent); }
+	.strip-track { display: flex; width: max-content; animation: slide 58s linear infinite; animation-play-state: paused; }
+	.strip-1 .strip-track { animation-direction: reverse; animation-duration: 66s; }
+	@keyframes slide { to { transform: translate3d(-50%, 0, 0); } }
+	.chips { direction: rtl; display: flex; gap: 10px; list-style: none; margin: 0; padding: 0 5px; }
+	.chips li { flex: none; white-space: nowrap; font-size: 1rem; font-weight: 700; color: #EAF8F8; padding: 7px 18px; border-radius: 100px; background: rgba(255, 255, 255, .11); border: 1px solid rgba(255, 255, 255, .2); }
+	.chips .more { background: #fff; color: var(--c-main-dark); border-color: #fff; font-weight: 800; }
 
-    @media (max-width: 900px) {
-        .manifesto-editorial { padding: 60px 20px; }
-        .manifesto-content { 
-            padding: 50px 24px; 
-            border-radius: 30px; 
-        }
-        .huge-statement { font-size: 2.2rem; margin-bottom: 30px; letter-spacing: -0.5px; }
-        .manifesto-desc { font-size: 1.1rem; line-height: 1.6; }
-    } /* Final CTA */
-    .final-cta {
-        background: var(--c-main);
-        color: white;
-        /* padding-bottom: 100px; */
-    }
-    .cta-content { padding: 60px 0 100px; text-align: center; }
-    .cta-content p { color: rgba(255,255,255,0.9); margin-bottom: 40px; font-size: 1.2rem; }
-    
-    /* MOCKUP SCALING: */
-    /* Wrap usage in index.astro with this class */
-    .mockup-scaler {
-        position: relative;
-        transform: scale(0.5);
-        transform-origin: center center;
-        /* Constrain flow dimensions */
-        width: 310px;
-        height: 672px; /* 1344 * 0.5 */
-        margin: 0 auto;
-        display: flex;
-        justify-content: center;
-    }
+	/* ── on every screen ──────────────────────── */
+	.ex { position: relative; background: #08282E; color: #fff; padding: 60px 0; }
+	.ex-stick { position: relative; display: flex; flex-direction: column; align-items: center; gap: 26px; }
+	.ex-light { position: absolute; inset: 0; opacity: 0; background: #F7FBFB; z-index: 0; display: none; }
+	.ex-h { position: relative; z-index: 1; text-align: center; transition: color .35s; }
+	.dev { position: relative; z-index: 1; width: min(90vw, 760px); aspect-ratio: 4 / 3; overflow: hidden; background: #000; border: 8px solid #0F1A22; border-radius: 22px; box-shadow: 0 40px 80px -30px rgba(0, 0, 0, .6); }
+	.dev img { position: absolute; inset: 0; width: 100%; height: 100%; object-fit: cover; object-position: top; }
+	.dev-small { display: none; }
+	:global(html.story) .ex { height: 260vh; height: 260svh; padding: 0; }
+	:global(html.story) .ex-stick { position: sticky; top: 0; height: 100vh; height: 100svh; justify-content: center; overflow: hidden; }
+	:global(html.story) .ex-light { display: block; }
+	:global(html.story) .dev { aspect-ratio: auto; width: 240px; height: 520px; }
+	:global(html.story) .dev-small { display: block; }
+	:global(html.story) .dev-big { opacity: 0; }
+	.ex:global(.lit) .ex-h { color: #0F1A22; }
 
-    @media (max-width: 900px) {
-        .grid-split { grid-template-columns: 1fr; text-align: center; gap: 40px; }
-        .stats-grid { flex-wrap: wrap; gap: 30px; }
-        .stat-sep { display: none; }
-        .steps-grid { flex-direction: column; gap: 20px; }
-        .step-arrow { transform: rotate(90deg); margin: 0; }
-        .reverse { direction: rtl; }
-        /* Reduce scaler slightly for mobile if needed, or keep 0.5 which is 280-310px */
-        .mockup-scaler {
-           /* On very small screens we might want 0.45 */
-           transform: scale(0.45);
-           height: 600px;
-        }
-    }
-    /* Download block: the official store badges, then two quiet links. */
-    .cta-more {
-        display: flex;
-        gap: 12px 28px;
-        justify-content: center;
-        flex-wrap: wrap;
-        margin-top: 30px;
-    }
-    .cta-more a {
-        color: rgba(255,255,255,0.92);
-        font-weight: 600;
-        font-size: 1rem;
-        text-decoration: underline;
-        text-decoration-color: rgba(255,255,255,0.4);
-        text-underline-offset: 5px;
-        transition: text-decoration-color 0.2s;
-    }
-    .cta-more a:hover { text-decoration-color: #fff; }
-    .cta-more a:focus-visible { outline: 3px solid #fff; outline-offset: 4px; border-radius: 4px; }
+	/* ── doctors + the end ────────────────────── */
+	.pro { background: #F7FBFB; padding: 30px 16px 10px; }
+	.pro-in { max-width: 1040px; margin: 0 auto; display: flex; align-items: center; justify-content: space-between; gap: 22px; padding: 28px 30px; border-radius: 26px; color: #fff; background: linear-gradient(120deg, #0F1A22, #10444A); }
+	.pro h2 { color: #fff; font-size: clamp(1.4rem, 2.6vw, 2rem); font-weight: 800; margin: 0 0 6px; }
+	.pro p { margin: 0; line-height: 1.7; color: #D5E8E9; }
+	.pro-btn { flex: none; background: #fff; color: var(--c-main-dark); font-weight: 800; padding: 12px 22px; border-radius: 14px; text-decoration: none; }
+	.end { background: #F7FBFB; text-align: center; padding: 34px 20px 70px; }
+	.end-gem { width: 150px; height: 150px; margin: 0 auto; display: block; animation: gem 6s ease-in-out infinite; }
+	@keyframes gem { 0%, 100% { translate: 0 0; } 50% { translate: 0 -9px; } }
+	.end h2 { font-size: clamp(2rem, 4.6vw, 3.4rem); font-weight: 800; color: #0F1A22; margin: 4px 0 4px; }
+	.end > p { color: #3D4A50; font-size: 1.1rem; margin: 0 0 20px; }
+	.end > p.end-trust { margin: 20px 0 0; color: var(--c-main-dark); font-size: .98rem; font-weight: 600; line-height: 1.6; }
+	.end-trust svg { width: 17px; height: 17px; display: inline-block; vertical-align: -3px; margin-inline-end: 6px; }
 
-    /* High-Impact Comparison (Light Theme) */
-    .chaos-vs-clarity {
-        padding: 100px 0;
-        display: flex;
-        align-items: center;
-        background: #FFFFFF;
-        position: relative;
-        overflow: hidden;
-    }
-    
-    .c-container {
-        display: grid;
-        grid-template-columns: 1fr 1fr;
-        width: 100%;
-        max-width: 1200px;
-        margin: 0 auto;
-        gap: 60px;
-        align-items: center;
-        padding: 0 40px;
-    }
-
-    /* OLD SIDE (CHAOS) - Light/Messy */
-    .side-old {
-        position: relative;
-        background: #F9F9F9;
-        border-radius: 40px;
-        padding: 60px 40px;
-        border: 1px dashed #E0E0E0;
-    }
-    .pattern-grid {
-        position: absolute;
-        top: 0; left: 0; width: 100%; height: 100%;
-        background-image: radial-gradient(#E0E0E0 1px, transparent 1px);
-        background-size: 20px 20px;
-        opacity: 0.5;
-        border-radius: 40px;
-    }
-    
-    .label-badge {
-        display: inline-block;
-        padding: 8px 16px;
-        border-radius: 30px;
-        font-size: 0.85rem;
-        font-weight: 700;
-        letter-spacing: 0.5px;
-        margin-bottom: 24px;
-        text-transform: uppercase;
-    }
-    .label-badge.chaos { background: #EAEAEA; color: #888; }
-    
-    .chaos-title {
-        font-size: 2.8rem;
-        color: #B0B0B0;
-        line-height: 1.1;
-        font-weight: 800;
-        margin-bottom: 40px;
-        letter-spacing: -1px;
-    }
-    
-    .chaos-list {
-        display: flex;
-        flex-direction: column;
-        gap: 20px;
-    }
-    .c-item {
-        display: flex;
-        align-items: center;
-        gap: 16px;
-        opacity: 0.7;
-    }
-    .c-icon {
-        width: 24px;
-        height: 24px;
-        stroke: #999;
-        flex-shrink: 0;
-    }
-    .c-item span {
-        color: #888;
-        font-size: 1.1rem;
-        font-weight: 500;
-        text-decoration: line-through; /* Crossed out effect for emphasis */
-        text-decoration-color: rgba(0,0,0,0.1);
-    }
-
-    /* NEW SIDE (CLARITY) - Light/Glass */
-    .side-new {
-        position: relative;
-        /* No background container, just the card */
-    }
-    
-    .glass-portal {
-        position: relative;
-        width: 100%;
-        background: linear-gradient(135deg, #FFFFFF, #F0FFFF);
-        border: 1px solid rgba(0, 144, 146, 0.15);
-        border-radius: 40px;
-        padding: 60px 50px;
-        box-shadow: 
-            0 30px 60px -12px rgba(0, 144, 146, 0.12),
-            0 18px 36px -18px rgba(0, 0, 0, 0.05);
-        overflow: hidden;
-        transition: transform 0.3s ease, box-shadow 0.3s ease;
-    }
-    .glass-portal:hover { 
-        transform: translateY(-8px);
-        box-shadow: 
-            0 40px 70px -12px rgba(0, 144, 146, 0.2),
-            0 22px 42px -18px rgba(0, 0, 0, 0.08);
-    }
-
-    .portal-content { position: relative; z-index: 2; }
-    
-    .label-badge.clarity { 
-        background: rgba(0, 144, 146, 0.1); 
-        color: var(--c-main); 
-    }
-    
-    .clarity-title {
-        font-size: 3rem;
-        color: #1a1a1a;
-        line-height: 1.1;
-        font-weight: 900;
-        margin-bottom: 50px;
-        letter-spacing: -1px;
-    }
-    
-    .clarity-features {
-        display: flex;
-        flex-direction: column;
-        gap: 24px;
-    }
-    .f-item {
-        display: flex;
-        align-items: flex-start; /* Align top for subtitle */
-        gap: 20px;
-        padding-bottom: 24px;
-        border-bottom: 1px solid rgba(0, 144, 146, 0.08);
-    }
-    .f-item:last-child { border-bottom: none; padding-bottom: 0; }
-    
-    .icon-box {
-        width: 48px;
-        height: 48px;
-        background: rgba(0, 144, 146, 0.1);
-        border-radius: 14px;
-        display: flex;
-        align-items: center;
-        justify-content: center;
-        color: var(--c-main);
-        flex-shrink: 0;
-    }
-    .icon-box svg { width: 24px; height: 24px; }
-    
-    .f-text { display: flex; flex-direction: column; }
-    .f-text strong {
-        font-size: 1.25rem;
-        color: #1a1a1a;
-        font-weight: 700;
-        margin-bottom: 4px;
-    }
-    .f-text small {
-        font-size: 0.95rem;
-        color: #666;
-        line-height: 1.4;
-    }
-
-    @media (max-width: 900px) {
-        /* Slider/Value Section Mobile Spacing */
-        .value-sec { padding: 40px 0; }
-        
-        .stats-grid { flex-direction: column; gap: 30px; }
-        .stat-sep { width: 100px; height: 1px; }
-        
-        .grid-split { 
-            grid-template-columns: 1fr; 
-            text-align: center; 
-            gap: 10px; /* Minimal gap */
-        }
-        .text-side { order: 1; }
-        .visual-side { 
-            order: 2; 
-            margin-top: 0; 
-            /* Negative margin if needed to pull phone up due to scaling whitespace */
-            margin-top: -20px; 
-        } 
-        .reverse { direction: rtl; }
-        .reverse .text-side { direction: rtl; }
-        
-        /* Reduce text margins to tighten vertically */
-        .text-title { margin-bottom: 10px; font-size: 1.8rem; }
-        .pill-badge { margin-bottom: 15px; }
-        .feature-list { margin-top: 20px; }
-        
-        .steps-grid { flex-direction: column; }
-        .step-arrow { transform: rotate(90deg); margin: 10px 0; }
-        
-        .c-container { grid-template-columns: 1fr; gap: 30px; padding: 0 16px; }
-        .chaos-vs-clarity { padding: 40px 0; }
-        
-        .side-old, .side-new { 
-            width: 100%; 
-            margin: 0; 
-            order: initial; 
-            box-sizing: border-box; 
-        }
-        .side-old { order: 2; padding: 40px 24px; }
-        .side-new { order: 1; margin-bottom: 20px; padding: 0; }
-
-        .glass-portal { 
-            width: 100%; max-width: 100%; 
-            padding: 30px 20px; 
-            border-radius: 24px; 
-            box-sizing: border-box; 
-        }
-        .portal-content { width: 100%; }
-        .clarity-features { width: 100%; }
-        .f-item { width: 100%; }
-        .clarity-title { font-size: 2rem; margin-bottom: 20px; word-wrap: break-word;}
-        .chaos-title { font-size: 1.8rem; margin-bottom: 20px; }
-        .f-item { gap: 12px; }
-        .icon-box { width: 36px; height: 36px; min-width: 36px; }
-        .icon-box svg { width: 18px; height: 18px; }
-        .f-text strong { font-size: 1rem; }
-        .f-text small { font-size: 0.8rem; }
-        
-        .mockup-scaler {
-            transform: scale(0.45);
-            height: 600px;
-        }
-    }
-
-    /* DocSera Pro Section (Dark Theme) */
-    .docsera-pro-section { padding: 80px 0; }
-    
-    .pro-glass-card {
-        background: #0f1515; /* Very Dark Teal/Black */
-        background-image: radial-gradient(circle at top right, #1a2a2a, #0f1515);
-        border-radius: 30px;
-        padding: 60px;
-        position: relative;
-        overflow: hidden;
-        color: white;
-        box-shadow: 0 20px 40px -10px rgba(0,0,0,0.4);
-        border: 1px solid rgba(255,255,255,0.1);
-        
-        /* Desktop Grid Layout */
-        display: grid;
-        grid-template-columns: 1fr 1fr;
-        grid-template-areas: 
-            "content visual"
-            "action visual";
-        gap: 40px;
-        align-items: center;
-    }
-    
-    /* Grid Areas */
-    .pro-content { grid-area: content; z-index: 2; position: relative; }
-    .pro-action { grid-area: action; z-index: 2; position: relative; align-self: start; }
-    .pro-visual { 
-        grid-area: visual; 
-        height: 100%; 
-        min-height: 300px; 
-        position: relative; 
-        display: flex; 
-        align-items: center; 
-        justify-content: center;
-    }
-    
-    .pro-badge {
-        display: inline-block;
-        background: rgba(0, 144, 146, 0.2);
-        color: #00E0E3;
-        padding: 6px 14px;
-        border-radius: 20px;
-        font-size: 0.85rem;
-        font-weight: 700;
-        margin-bottom: 20px;
-        border: 1px solid rgba(0, 144, 146, 0.3);
-    }
-    
-    .pro-title {
-        font-size: 2.5rem;
-        font-weight: 800;
-        margin-bottom: 20px;
-        line-height: 1.2;
-        background: linear-gradient(to right, #fff, #bcecec);
-        -webkit-background-clip: text;
-        -webkit-text-fill-color: transparent;
-    }
-    
-    .pro-desc {
-        font-size: 1.1rem;
-        color: rgba(255,255,255,0.7);
-        margin: 0;
-        line-height: 1.7;
-        max-width: 500px;
-    }
-    .pro-desc strong { color: white; }
-    
-    .btn-pro {
-        display: inline-flex;
-        align-items: center;
-        gap: 10px;
-        background: rgba(0, 144, 146, 0.8); /* Glassy Main Color */
-        backdrop-filter: blur(12px);
-        -webkit-backdrop-filter: blur(12px);
-        border: 1px solid rgba(255, 255, 255, 0.2);
-        color: white;
-        padding: 16px 32px;
-        border-radius: 14px;
-        font-weight: 700;
-        text-decoration: none;
-        transition: all 0.3s ease;
-        box-shadow: 0 10px 30px -5px rgba(0, 144, 146, 0.4);
-    }
-    .btn-pro:hover {
-        background: rgba(0, 144, 146, 0.95);
-        border-color: rgba(255, 255, 255, 0.4);
-        box-shadow: 0 0 30px rgba(0, 224, 227, 0.4);
-        transform: translateY(-2px);
-    }
-    .btn-pro svg { width: 20px; height: 20px; }
-    
-    /* Visual Cards (Abstract) */
-    .pro-ui-card {
-        background: rgba(255,255,255,0.05);
-        backdrop-filter: blur(10px);
-        border: 1px solid rgba(255,255,255,0.1);
-        border-radius: 16px;
-        position: absolute;
-        box-shadow: 0 10px 30px rgba(0,0,0,0.3);
-    }
-    .card-1 {
-        width: 260px; height: 180px;
-        z-index: 2;
-        padding: 15px;
-        top: 40px; right: 40px;
-        transform: rotate(-5deg);
-        animation: floatPro 6s ease-in-out infinite;
-    }
-    .card-2 {
-        width: 180px; height: 120px;
-        z-index: 3;
-        bottom: 30px; left: 40px;
-        background: rgba(30,30,30,0.6);
-        padding: 15px;
-        transform: rotate(5deg);
-        animation: floatPro 6s ease-in-out infinite 1s; /* delay */
-    }
-    
-    /* UI Internal Deco */
-    .ui-header { display: flex; gap: 6px; margin-bottom: 15px; }
-    .ui-dot { width: 8px; height: 8px; border-radius: 50%; opacity: 0.5; }
-    .ui-dot.red { background: #ff5f56; }
-    .ui-dot.yellow { background: #ffbd2e; }
-    .ui-dot.green { background: #27c93f; }
-    .ui-body { display: flex; flex-direction: column; gap: 10px; }
-    .ui-line { height: 8px; background: rgba(255,255,255,0.1); border-radius: 4px; }
-    .w-70 { width: 70%; } .w-50 { width: 50%; } .w-100 { width: 100%; }
-    .ui-row { display: flex; gap: 10px; margin-top: 10px; }
-    .ui-box { width: 40px; height: 40px; background: rgba(255,255,255,0.05); border-radius: 8px; }
-    .ui-icon-circle { 
-        width: 40px; height: 40px; 
-        background: rgba(0, 144, 146, 0.2); 
-        border-radius: 50%; 
-        display: flex; align-items: center; justify-content: center;
-        color: #00E0E3;
-        margin-bottom: 15px;
-    }
-    .ui-icon-circle svg { width: 20px; height: 20px; }
-
-    .pro-app-icon {
-        position: absolute;
-        width: 70px; height: 70px;
-        z-index: 10;
-        bottom: 40px; right: 40px; /* Moved to Bottom Right to balance Card 2 (BL) and Card 1 (TR) */
-        border-radius: 20px;
-        box-shadow: 0 15px 35px rgba(0,0,0,0.5);
-        animation: floatIcon 6s ease-in-out infinite;
-        border: 1px solid rgba(255,255,255,0.1);
-        overflow: hidden;
-    }
-    .pro-app-icon img { width: 100%; height: 100%; object-fit: cover; }
-
-    .pro-glow {
-        position: absolute;
-        width: 300px; height: 300px;
-        background: #009092;
-        border-radius: 50%;
-        filter: blur(120px);
-        opacity: 0.15;
-        top: 50%; left: 50%;
-        transform: translate(-50%, -50%);
-        z-index: 1;
-    }
-    
-    @keyframes floatPro {
-        0%, 100% { transform: translateY(0) rotate(-5deg); }
-        50% { transform: translateY(-10px) rotate(-4deg); }
-    }
-    @keyframes floatIcon {
-        0%, 100% { transform: translateY(0); }
-        50% { transform: translateY(-10px); }
-    }
-    
-    @media (max-width: 900px) {
-        .pro-glass-card { 
-            display: flex;
-            flex-direction: column; 
-            text-align: center; 
-            padding: 50px 24px 40px; 
-            gap: 30px; /* Space between flex items */
-        }
-        
-        .pro-content { order: 1; }
-        .pro-desc { margin: 0 auto; }
-        
-        /* Visual in middle, make it tall */
-        .pro-visual { 
-            order: 2; 
-            width: 100%; 
-            height: 320px; /* Taller container */
-            margin: 0;
-        }
-        
-        .pro-action { 
-            order: 3; 
-            width: 100%;
-            display: flex;
-            justify-content: center;
-        }
-        
-        /* Adjust cards to fit in the 320px visual box */
-        .card-1 { 
-            top: 20px; 
-            right: 50%; 
-            margin-right: -100px; 
-            transform: rotate(-5deg) scale(0.8);
-            animation: none; /* Disable complex float on mobile for safety? Or keep distinct */
-        } 
-        .card-2 { 
-            bottom: 10px;
-            left: 50%;
-            margin-left: -100px; 
-            transform: rotate(5deg) scale(0.8);
-        }
-        
-        .pro-app-icon {
-            width: 60px; height: 60px; 
-            bottom: 170px; 
-            right: auto;
-            left: 50%;
-            margin-left: 90px;
-        }
-    }
-    
-    /* FAQ Bridge (Help Card) */
-    .faq-bridge { padding: 60px 0 100px; background: #fff; }
-    
-    .help-card {
-        background: radial-gradient(circle at top left, #F0FDFD 0%, #F9F9F9 100%);
-        border: 1px solid rgba(0, 144, 146, 0.08);
-        border-radius: 20px;
-        padding: 40px;
-        display: flex;
-        align-items: center;
-        justify-content: space-between;
-        gap: 30px;
-        max-width: 900px;
-        margin: 0 auto;
-        box-shadow: 0 10px 40px -10px rgba(0, 144, 146, 0.05);
-        transition: transform 0.3s ease, box-shadow 0.3s ease;
-    }
-    .help-card:hover {
-        transform: translateY(-5px);
-        box-shadow: 0 15px 50px -10px rgba(0, 144, 146, 0.1);
-        border-color: rgba(0, 144, 146, 0.2);
-    }
-    
-    .help-icon {
-        color: var(--c-main);
-        flex-shrink: 0;
-        /* Removed circle background styles */
-        display: flex; 
-        align-items: center; 
-        justify-content: center;
-    }
-    .help-icon svg { width: 48px; height: 48px; opacity: 0.8; }
-    
-    .help-content { flex: 1; text-align: right; }
-    .help-title { font-size: 1.5rem; font-weight: 800; color: #1a1a1a; margin-bottom: 8px; }
-    .help-text { font-size: 1.1rem; color: #666; font-weight: 500; margin: 0; }
-    
-    .btn-help {
-        display: inline-flex;
-        align-items: center;
-        gap: 10px;
-        background: var(--c-main);
-        color: white;
-        padding: 14px 28px;
-        border-radius: 12px;
-        font-weight: 700;
-        text-decoration: none;
-        transition: all 0.3s ease;
-        white-space: nowrap;
-    }
-    .btn-help:hover {
-        background: #005f60;
-        transform: translateY(-2px);
-        box-shadow: 0 5px 15px rgba(0, 144, 146, 0.2);
-    }
-    .btn-help svg { width: 20px; height: 20px; transition: transform 0.3s; }
-    .btn-help:hover svg { transform: translateX(-4px); }
-
-    @media (max-width: 768px) {
-        .help-card { flex-direction: column; text-align: center; padding: 30px 20px; gap: 20px; }
-        .help-content { text-align: center; }
-        .help-action { width: 100%; }
-        .btn-help { 
-            width: 100%; 
-            justify-content: center; 
-            box-sizing: border-box; 
-            white-space: normal; /* Allow wrap */
-            padding: 14px 20px;
-        }
-    }
-
-    @media (max-width: 1000px) {
-        .comparison-grid { grid-template-columns: 1fr; gap: 40px; }
-        .comp-vs { display: none; }
-        .old-way { transform: scale(1); opacity: 1; order: 2; }
-        .docsera-way { order: 1; }
-        .manifesto-title { font-size: 2.5rem; }
-        .manifesto-text { font-size: 1.2rem; }
-    }
+	/* ── phones and small tablets ─────────────── */
+	@media (max-width: 899px) {
+		.h-nav { display: none; }
+		:global(html.story) .hero { inset: 84px 20px 22px; width: auto; margin: 0; text-align: center; display: flex; flex-direction: column; }
+		.hero-cta { margin-top: auto; }
+		.hero h1 { font-size: clamp(2rem, 9vw, 3rem); }
+		.hero p { margin-bottom: 0; font-size: 1.04rem; }
+		.a-hero { left: 50%; top: 55%; translate: -50% -50%; width: min(70vw, 38vh); }
+		.a-dial { inset-inline-start: auto; inset-inline-end: 6px; top: 72px; width: 104px; }
+		:global(html.story) .chs { inset-inline-start: 20px; top: 84px; width: calc(100% - 128px); }
+		.ch-key { margin-bottom: 4px; font-size: .92rem; }
+		.ch h2 { font-size: 1.56rem; margin-bottom: 6px; }
+		.ch p { font-size: .94rem; line-height: 1.6; }
+		.ph { --w: min(62vw, 270px); left: calc(50% - var(--w) / 2); top: 268px; width: var(--w); height: auto; padding: 7px; border-radius: 36px; }
+		.ph-in { border-radius: 30px; }
+		.notes { inset-inline: -9%; }
+		.note { padding: 9px 11px 10px; border-radius: 17px; }
+		.note p { font-size: .9rem; }
+		.note-a span { font-size: .78rem; }
+		.paper { width: 104px; font-size: .68rem; padding: 8px 8px 7px; }
+		.paper-art { height: 54px; }
+		.sun { width: 76px; height: 76px; }
+		.map { -webkit-mask-image: linear-gradient(180deg, transparent 25%, #000 37%); mask-image: linear-gradient(180deg, transparent 25%, #000 37%); }
+		.cl { left: 10px; top: auto; bottom: 5vh; width: 56vw; padding: 9px 11px 11px; }
+		.cl-t { font-size: .82rem; }
+		.digits span { height: 30px; }
+		.digits b { font-size: .84rem; }
+		.chip { width: 168px; }
+		.tabs { flex-wrap: nowrap; justify-content: flex-start; }
+		.wall-scene { height: 520px; }
+		.wall-tilt { top: -110px; gap: 12px; transform-origin: 50% 340px; transform: perspective(1000px) rotateX(22deg) rotateZ(-10deg) scale(1.16); }
+		.col { width: 136px; }
+		.col:nth-child(n + 4) { display: none; }
+		.col:nth-child(even) { margin-top: -80px; }
+		.shot { padding-bottom: 12px; }
+		.shot img { border-radius: 17px; }
+		.wall-body { padding-top: 366px; }
+		.chips li { font-size: .92rem; padding: 6px 14px; }
+		.pro-in { flex-direction: column; align-items: stretch; text-align: center; padding: 24px 20px; }
+		.pro-btn { text-align: center; }
+	}
+	@media (prefers-reduced-motion: reduce) {
+		.track, .strip-track, .end-gem { animation: none; }
+		.wall-toggle { display: none; }
+		.strip { -webkit-mask-image: none; mask-image: none; direction: rtl; }
+		.strip-track { width: auto; }
+		.chips { flex-wrap: wrap; justify-content: center; padding: 0 16px; }
+		.chips[aria-hidden='true'] { display: none; }
+	}
 </style>
-
-<script>
-    const track = document.querySelector('.carousel-track');
-    if (track) {
-      const slides = document.querySelectorAll('.slide-item');
-      const dots = document.querySelectorAll('.dot');
-      let currentSlide = 0;
-      
-      function updateSlide(index) {
-          const percent = index * 25; 
-          track.style.transform = `translateX(${percent}%)`;
-          dots.forEach((d, i) => d.classList.toggle('active', i === index));
-          currentSlide = index;
-      }
-      dots.forEach((dot, index) => {
-          dot.addEventListener('click', () => {
-              updateSlide(index);
-              resetTimer();
-          });
-      });
-      let timer = setInterval(() => {
-          updateSlide((currentSlide + 1) % slides.length);
-      }, 6000);
-      function resetTimer() {
-          clearInterval(timer);
-          timer = setInterval(() => {
-              updateSlide((currentSlide + 1) % slides.length);
-          }, 6000);
-      }
-    }
-</script>
