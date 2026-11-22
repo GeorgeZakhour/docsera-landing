@@ -1,260 +1,526 @@
 ---
+// /download — the page behind every ad (97% of its visitors in Nov 2026 came
+// from Meta ads, in two themes: «الملف» and «روتيني»). The hero finishes the
+// story the ad started: `?s=` containing "file" shows the medical-file story,
+// "routine" the routine story, anything else the general one. One big store
+// badge for the visitor's phone, the trust line, then the four features in
+// the founder's order (الملف ← روتيني ← الحجز ← المشاركة مع الطبيب).
+//
+// Every phone screen is the real 1.1.0 app rendered with fake data
+// (DocSera test/store_shots); nothing is redrawn. The papers, the
+// notifications and the code card are drawn here, with the app's own strings
+// (lib/l10n/app_ar.arb: routine_notif_*, routine_action_*, fileAccess*).
+//
+// Weight: the first view needs only this HTML, the CSS, Cairo and one screen
+// (≈45 KB). The 3D mark (src/scripts/flower3d.ts) loads after the page, on
+// capable devices only; reduced-motion visitors get a still page.
 import qrcode from 'qrcode-generator';
 import Layout from '../layouts/Layout.astro';
-import Navbar from '../components/Navbar.astro';
-import Footer from '../components/Footer.astro';
 import StoreBadges from '../components/StoreBadges.astro';
 import { APK_URL, WEB_APP_URL } from '../config/links';
 
-// The desktop QR is drawn at build time, so it needs no script in the
-// browser. It points back at this page: the phone that scans it then shows
-// its own store badge. `s=qr_site` tags those visits apart from the rest.
 const qr = qrcode(0, 'M');
 qr.addData('https://docsera.app/download?s=qr_site');
 qr.make();
 const qrSvg = qr.createSvgTag({ scalable: true, margin: 0 });
+
+const TRUST = 'بياناتك الطبية محفوظة على خوادمنا داخل سوريا، ومشفّرة.';
+
+const HERO = {
+	file: {
+		title: 'ملفك الطبي كله، على هاتفك',
+		sub: 'تقاريرك وتحاليلك وصور الأشعة مرتّبة في مكان واحد، بدل كيس الأوراق.',
+		screen: 'health',
+	},
+	routine: {
+		title: 'روتيني يذكّرك بأدويتك',
+		sub: 'تذكير في وقت كل جرعة حتى دون إنترنت، ولأدوية أهلك أيضاً.',
+		screen: 'routine',
+	},
+	general: {
+		title: 'صحتك كلها في تطبيق واحد',
+		sub: 'احجز مواعيدك، ونظّم ملفك الطبي، وتذكّر أدويتك.',
+		screen: 'home',
+	},
+} as const;
+
+const PAPERS = [
+	{ label: 'تحليل دم شامل', kind: 'lines' },
+	{ label: 'صورة أشعة الصدر', kind: 'xray' },
+	{ label: 'تقرير المتابعة', kind: 'lines' },
+	{ label: 'وصفة', kind: 'rx' },
+	{ label: 'بطاقة التأمين', kind: 'card' },
+];
+
+const FEATURES = [
+	{ id: 'file', title: 'ملفك الطبي', text: 'تقاريرك ووثائقك وأدويتك وقياساتك في مكان واحد.', screen: 'health' },
+	{ id: 'routine', title: 'روتيني', text: 'تذكير بكل جرعة، وسجلّ للضغط والسكر، ولأهلك أيضاً.', screen: 'routine' },
+	{ id: 'booking', title: 'حجز سريع', text: 'أقرب المواعيد المتاحة أمامك، والحجز بلمسات.', screen: 'results' },
+	{ id: 'share', title: 'برمز منك', text: 'لا يطّلع طبيب على ملفك إلا برمز تعطيه له، وتسحبه متى شئت.', screen: null },
+];
+
+const src = (name: string, w: 320 | 640) => `/images/app110/${name}-${w}.webp`;
 ---
 
 <Layout
 	title="حمّل دوكسيرا — App Store و Google Play"
-	description="حمّل تطبيق دوكسيرا مجاناً من App Store أو Google Play، أو استخدمه من المتصفح دون تثبيت. مواعيد، مراسلات، وملف طبي في مكان واحد."
+	description="حمّل تطبيق دوكسيرا مجاناً: ملفك الطبي، وتذكير أدويتك، وحجز مواعيدك في تطبيق واحد."
 	path="/download"
 	appBar={false}
 >
-	<Navbar />
-	<main class="dl-page">
-		<section class="dl-hero">
-			<div class="container">
-				<div class="dl-head">
-					<h1 class="dl-title">حمّل دوكسيرا</h1>
-					<p class="dl-sub">مجاناً على آيفون وأندرويد.</p>
+	<!-- Which story? Decided before the hero is painted, like data-os. The
+	     ?theme= / ?os= overrides exist for previews and are ignored on the
+	     live domain. -->
+	<script is:inline>
+		(function () {
+			var d = document.documentElement, q = new URLSearchParams(location.search);
+			var s = (q.get('s') || '').toLowerCase();
+			var live = /(^|\.)docsera\.app$/.test(location.hostname);
+			var t = s.indexOf('routine') >= 0 ? 'routine' : s.indexOf('file') >= 0 ? 'file' : 'general';
+			if (!live && /^(file|routine|general)$/.test(q.get('theme') || '')) t = q.get('theme');
+			d.setAttribute('data-theme', t);
+			if (!live && /^(ios|android|desktop)$/.test(q.get('os') || '')) d.setAttribute('data-os', q.get('os'));
+		})();
+	</script>
+
+	<header class="x-top">
+		<a href="/" class="x-logo" aria-label="DocSera"><img src="/images/docsera_main.svg" alt="DocSera" width="132" height="21" /></a>
+	</header>
+
+	<main class="x">
+		<section class="x-hero">
+			<div class="x-wrap">
+				<div class="x-copy">
+					<span class="x-eyebrow">مجاناً على آيفون وأندرويد</span>
+					{Object.entries(HERO).map(([k, h]) => (
+						<div class="x-variant" data-for={k}>
+							<h1 class="x-title">{h.title}</h1>
+							<p class="x-sub">{h.sub}</p>
+						</div>
+					))}
+					<div class="x-cta" data-hero-cta>
+						<StoreBadges adaptive size="lg" align="start" centerOnMobile medium="download" />
+						<div class="x-qr" aria-hidden="true">
+							<div class="x-qr-code" set:html={qrSvg} />
+							<p>وجّه كاميرا هاتفك<br />إلى الرمز</p>
+						</div>
+					</div>
+					<p class="x-trust">
+						<svg viewBox="0 0 24 24" aria-hidden="true"><rect x="5" y="10.5" width="14" height="10" rx="2.6" fill="currentColor" /><path d="M8.2 10.5V8a3.8 3.8 0 0 1 7.6 0v2.5" fill="none" stroke="currentColor" stroke-width="2" /></svg>
+						{TRUST}
+					</p>
 				</div>
 
-				<div class="dl-dock" data-dl-dock>
-					<div class="dl-dock-stores">
-						<StoreBadges size="lg" />
+				<div class="x-stage" data-stage>
+					<div class="x-sky" aria-hidden="true"></div>
+					<div class="x-gem" aria-hidden="true">
+						<img class="x-mark" src="/images/DocSera-shape-main.svg" alt="" width="300" height="289" />
+						<canvas class="x-flower" data-flower></canvas>
 					</div>
-					<div class="dl-dock-qr" aria-hidden="true">
-						<div class="dl-qr" set:html={qrSvg} />
-						<p>أو وجّه كاميرا هاتفك<br />إلى الرمز</p>
+
+					<div class="x-papers" aria-hidden="true">
+						{PAPERS.map((p, i) => (
+							<div class={`x-paper x-p${i} x-${p.kind}`}>
+								<div class="x-paper-art"></div>
+								<span>{p.label}</span>
+							</div>
+						))}
+					</div>
+
+					<div class="x-phone">
+						<div class="x-screen">
+							{Object.entries(HERO).map(([k, h]) => (
+								<img class="x-variant x-shot" data-for={k} src={src(h.screen, 640)}
+									srcset={`${src(h.screen, 320)} 320w, ${src(h.screen, 640)} 640w`}
+									sizes="(max-width: 768px) 230px, 290px" alt="" loading="lazy" decoding="async" width="640" height="1387" />
+							))}
+						</div>
+					</div>
+
+					<div class="x-notes" aria-hidden="true">
+						<div class="x-note" data-note="0">
+							<div class="x-note-head"><img src="/apple-touch-icon.png" alt="" width="18" height="18" /><b>DocSera</b><i>8:00 ص</i></div>
+							<p class="x-note-title">حان موعد <bdi>Metformin</bdi></p>
+							<div class="x-note-actions"><span class="x-act x-act-main">أخذته ✓</span><span class="x-act">بعد 10 دقائق</span></div>
+						</div>
+						<div class="x-note" data-note="1">
+							<div class="x-note-head"><img src="/apple-touch-icon.png" alt="" width="18" height="18" /><b>DocSera</b><i>2:00 م</i></div>
+							<p class="x-note-title">حان موعد دواء سميرة</p>
+							<div class="x-note-actions"><span class="x-act x-act-main">أخذها ✓</span><span class="x-act">بعد 10 دقائق</span></div>
+						</div>
+						<div class="x-note" data-note="2">
+							<div class="x-note-head"><img src="/apple-touch-icon.png" alt="" width="18" height="18" /><b>DocSera</b><i>9:00 م</i></div>
+							<p class="x-note-title">علبة <bdi>Omega 3</bdi> على وشك النفاد</p>
+							<p class="x-note-body">بقي 5</p>
+							<div class="x-note-actions"><span class="x-act x-act-main">عبّأتها</span><span class="x-act">ذكّرني غداً</span></div>
+						</div>
 					</div>
 				</div>
 			</div>
 		</section>
 
-		<section class="dl-alt">
-			<div class="container">
-				<h2 class="dl-h2">طرق أخرى</h2>
-
-				<div class="dl-alt-list">
-					<article class="dl-row">
-						<div class="dl-row-icon" aria-hidden="true">
-							<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"/><polyline points="7 10 12 15 17 10"/><line x1="12" y1="15" x2="12" y2="3"/></svg>
-						</div>
-						<div class="dl-row-text">
-							<h3>ملف التثبيت المباشر لأندرويد</h3>
-							<p>لهواتف أندرويد التي لا يتوفر عليها Google&nbsp;Play.</p>
-							<details class="dl-steps">
-								<summary>طريقة التثبيت</summary>
-								<ol>
-									<li>اضغط «تحميل الملف» وانتظر اكتمال التنزيل.</li>
-									<li>افتح الملف من شريط الإشعارات أو من مجلد التنزيلات.</li>
-									<li>إذا طُلب منك، فعّل «السماح بالتثبيت من هذا المصدر».</li>
-									<li>اضغط «تثبيت»، ثم افتح دوكسيرا.</li>
-								</ol>
-							</details>
-						</div>
-						<a href={APK_URL} class="dl-row-btn" download data-apk-link>تحميل الملف</a>
-					</article>
-
-					<article class="dl-row">
-						<div class="dl-row-icon" aria-hidden="true">
-							<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="10"/><line x1="2" y1="12" x2="22" y2="12"/><path d="M12 2a15.3 15.3 0 0 1 4 10 15.3 15.3 0 0 1-4 10 15.3 15.3 0 0 1-4-10 15.3 15.3 0 0 1 4-10z"/></svg>
-						</div>
-						<div class="dl-row-text">
-							<h3>تطبيق الويب</h3>
-							<p>يعمل من المتصفح على أي جهاز، دون تثبيت.</p>
-						</div>
-						<a href={WEB_APP_URL} class="dl-row-btn">افتح تطبيق الويب</a>
-					</article>
+		<section class="x-feats">
+			<div class="x-wrap-narrow">
+				<div class="x-grid">
+					{FEATURES.map((f, i) => (
+						<article class="x-feat" data-reveal style={`--i:${i}`}>
+							<div class="x-feat-art">
+								{f.screen ? (
+									<div class="x-mini"><img src={src(f.screen, 320)} srcset={`${src(f.screen, 320)} 320w, ${src(f.screen, 640)} 640w`}
+										sizes="150px" alt="" loading="lazy" decoding="async" width="320" height="694" /></div>
+								) : (
+									<div class="x-code">
+										<p class="x-code-title">الاطّلاع على الملف الطبي</p>
+										<div class="x-code-digits" aria-hidden="true"><span>4</span><span>8</span><span>2</span><span>7</span><span>1</span><span>5</span></div>
+										<div class="x-code-row">
+											<div><b>د. ريم منصور</b><small>مُنح الاطّلاع في 18 تشرين الثاني</small></div>
+											<span>سحب الصلاحية</span>
+										</div>
+									</div>
+								)}
+							</div>
+							<h2>{f.title}</h2>
+							<p>{f.text}</p>
+						</article>
+					))}
 				</div>
+
+				<div class="x-again">
+					<StoreBadges adaptive size="lg" medium="download" />
+					<p class="x-trust x-trust-c">{TRUST}</p>
+				</div>
+			</div>
+		</section>
+
+		<section class="x-more">
+			<div class="x-wrap-narrow">
+				<a class="x-row x-row-apk" href={APK_URL} download data-apk-link>
+					<span class="x-row-ic" aria-hidden="true"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"/><polyline points="7 10 12 15 17 10"/><line x1="12" y1="15" x2="12" y2="3"/></svg></span>
+					<span class="x-row-tx"><b>ملف التثبيت المباشر لأندرويد</b><small>لهواتف أندرويد التي لا يتوفر عليها Google&nbsp;Play.</small></span>
+				</a>
+				<a class="x-row" href={WEB_APP_URL}>
+					<span class="x-row-ic" aria-hidden="true"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="10"/><line x1="2" y1="12" x2="22" y2="12"/><path d="M12 2a15.3 15.3 0 0 1 4 10 15.3 15.3 0 0 1-4 10 15.3 15.3 0 0 1-4-10 15.3 15.3 0 0 1 4-10z"/></svg></span>
+					<span class="x-row-tx"><b>تطبيق الويب</b><small>يعمل من المتصفح على أي جهاز، دون تثبيت.</small></span>
+				</a>
+				<details class="x-steps">
+					<summary>طريقة تثبيت ملف أندرويد</summary>
+					<ol>
+						<li>اضغط «ملف التثبيت المباشر» وانتظر اكتمال التنزيل.</li>
+						<li>افتح الملف من شريط الإشعارات أو من مجلد التنزيلات.</li>
+						<li>إذا طُلب منك، فعّل «السماح بالتثبيت من هذا المصدر».</li>
+						<li>اضغط «تثبيت»، ثم افتح دوكسيرا.</li>
+					</ol>
+				</details>
 			</div>
 		</section>
 	</main>
-	<Footer />
+
+	<footer class="x-foot">
+		<a href="/">DocSera</a><a href="/privacy-policy/">سياسة الخصوصية</a><a href="/terms-of-service/">شروط الاستخدام</a><a href="/help">المساعدة</a>
+	</footer>
+
+	<div class="x-sticky" data-sticky aria-hidden="true">
+		<StoreBadges adaptive size="md" medium="download" />
+	</div>
 </Layout>
 
 <script>
-	import { attributionSource, fireBeacon, trackStoreTaps } from '../scripts/reach';
+	import { attributionSource, fireBeacon } from '../scripts/reach';
+	import { PLAY_PACKAGE } from '../config/links';
 
+	const root = document.documentElement;
+	const theme = root.getAttribute('data-theme') || 'general';
 	const source = attributionSource();
-	fireBeacon('download_page_viewed', 'acquisition', 'ds_beacon_download', { source });
-	trackStoreTaps(document, 'download');
+	const reduce = matchMedia('(prefers-reduced-motion: reduce)').matches;
 
-	document.querySelector('[data-apk-link]')?.addEventListener('click', () => {
-		fireBeacon('store_link_clicked', 'acquisition', null, {
-			store: 'apk', surface: 'download', source,
+	// Inside Instagram / Facebook on Android, a play.google.com link can stay in
+	// the in-app browser and show Play's web page. An intent: link opens the
+	// Play app itself, with the same install referrer; Chrome-based in-app
+	// browsers fall back to the web page when Play is missing.
+	const ua = navigator.userAgent;
+	const inApp = /Android/i.test(ua) && /Instagram|FBAN|FBAV|FB_IAB/.test(ua);
+	if (inApp) {
+		document.querySelectorAll<HTMLAnchorElement>('a[data-play-link]').forEach((a) => {
+			const web = a.href;
+			const ref = new URL(web).searchParams.get('referrer') || '';
+			a.href = 'intent://details?id=' + PLAY_PACKAGE + (ref ? '&referrer=' + encodeURIComponent(ref) : '') +
+				'#Intent;scheme=market;package=com.android.vending;S.browser_fallback_url=' + encodeURIComponent(web) + ';end';
+			a.dataset.link = 'intent';
+		});
+	}
+
+	fireBeacon('download_page_viewed', 'acquisition', 'ds_beacon_download', { source, theme });
+	document.querySelectorAll<HTMLAnchorElement>('a[data-store]').forEach((a) => {
+		a.addEventListener('click', () => {
+			fireBeacon('store_link_clicked', 'acquisition', null, {
+				store: a.dataset.store || '', surface: 'download', source, theme,
+				link: a.dataset.link || 'web',
+				place: a.closest('[data-sticky]') ? 'sticky' : a.closest('[data-hero-cta]') ? 'hero' : 'page',
+			});
 		});
 	});
+	document.querySelector('[data-apk-link]')?.addEventListener('click', () => {
+		fireBeacon('store_link_clicked', 'acquisition', null, { store: 'apk', surface: 'download', source, theme });
+	});
+
+	// The story plays once the hero is on screen.
+	const stage = document.querySelector<HTMLElement>('[data-stage]');
+	if (stage) {
+		if (reduce) {
+			stage.classList.add('done', 'still');
+		} else {
+			requestAnimationFrame(() => stage.classList.add('play'));
+			if (theme === 'routine') {
+				let n = 0;
+				const step = () => {
+					stage.dataset.phase = String(n % 3);
+					stage.classList.remove('tap');
+					setTimeout(() => stage.classList.add('tap'), 1500);
+					n++;
+				};
+				setTimeout(() => { step(); setInterval(step, 3400); }, 700);
+			}
+		}
+	}
+
+	// The 3D mark: after load, on devices that can afford it.
+	const canvas = document.querySelector<HTMLCanvasElement>('[data-flower]');
+	const conn = (navigator as Navigator & { connection?: { saveData?: boolean } }).connection;
+	const strong = (navigator.hardwareConcurrency || 2) >= 4 && !(conn && conn.saveData);
+	if (canvas && !reduce && strong) {
+		const start = () => import('../scripts/flower3d').then((m) => {
+			if (m.mountFlower(canvas, () => canvas.classList.remove('on'))) canvas.classList.add('on');
+		}).catch(() => {});
+		const idle = (cb: () => void) => ('requestIdleCallback' in window
+			? (window as Window & { requestIdleCallback: (f: () => void) => void }).requestIdleCallback(cb)
+			: setTimeout(cb, 300));
+		const later = () => setTimeout(() => idle(start), 2600);
+		if (document.readyState === 'complete') later();
+		else addEventListener('load', later, { once: true });
+	}
+
+	// Features fade in as they arrive; the sticky badge appears once the hero's
+	// badge has scrolled away.
+	const io = new IntersectionObserver((es) => es.forEach((e) => {
+		if (e.isIntersecting) { e.target.classList.add('in'); io.unobserve(e.target); }
+	}), { rootMargin: '0px 0px -8% 0px' });
+	document.querySelectorAll('[data-reveal]').forEach((el) => io.observe(el));
+
+	const sticky = document.querySelector<HTMLElement>('[data-sticky]');
+	const heroCta = document.querySelector('[data-hero-cta]');
+	const again = document.querySelector('.x-again');
+	if (sticky && heroCta) {
+		let pastHero = false, atAgain = false;
+		const sync = () => {
+			const show = pastHero && !atAgain;
+			sticky.classList.toggle('on', show);
+			sticky.setAttribute('aria-hidden', show ? 'false' : 'true');
+		};
+		new IntersectionObserver((es) => { pastHero = !es[0].isIntersecting && es[0].boundingClientRect.top < 0; sync(); }).observe(heroCta);
+		if (again) new IntersectionObserver((es) => { atAgain = es[0].isIntersecting; sync(); }).observe(again);
+	}
 </script>
 
 <style>
-	.dl-page { overflow-x: hidden; }
+	:global(body) { background: #F7FBFB; }
+	.x { overflow-x: hidden; }
 
-	.dl-hero {
-		padding: 150px 0 70px;
-		background: radial-gradient(circle at 50% 0%, #F0FDFD 0%, #FAFAFA 60%);
-		text-align: center;
-	}
-	.dl-title {
-		font-size: clamp(2.2rem, 5vw, 3.4rem);
-		font-weight: 900;
-		line-height: 1.15;
-		color: var(--c-text);
-		letter-spacing: -0.5px;
-		margin-bottom: 12px;
-	}
-	.dl-sub {
-		color: var(--c-text-muted);
-		font-size: 1.2rem;
-		margin: 0;
-	}
+	/* ── top ─────────────────────────────────────────── */
+	.x-top { position: absolute; top: 0; left: 0; right: 0; z-index: 5; display: flex; justify-content: center; padding: 22px 20px; }
+	.x-logo img { display: block; height: 22px; width: auto; }
 
-	/* The dock: one calm white plate holding the two store badges, with a
-	   scannable code beside them on screens that are not a phone. */
-	.dl-dock {
-		display: inline-flex;
-		align-items: center;
-		gap: 44px;
-		margin-top: 44px;
-		padding: 36px 44px;
-		background: #fff;
-		border-radius: 28px;
-		border: 1px solid rgba(0, 144, 146, 0.10);
-		box-shadow: 0 30px 70px -30px rgba(0, 116, 116, 0.28);
-	}
-	.dl-dock-qr {
-		display: flex;
-		align-items: center;
-		gap: 18px;
-		padding-inline-start: 44px;
-		border-inline-start: 1px solid rgba(0, 0, 0, 0.08);
-		text-align: start;
-	}
-	.dl-qr {
-		width: 108px; height: 108px;
-		flex-shrink: 0;
-	}
-	.dl-qr :global(svg) { display: block; width: 100%; height: 100%; }
-	.dl-dock-qr p {
-		margin: 0;
-		font-size: 0.95rem;
-		line-height: 1.6;
-		color: var(--c-text-muted);
-		font-weight: 600;
-	}
+	/* ── hero ────────────────────────────────────────── */
+	.x-hero { position: relative; padding: 96px 0 40px;
+		background: radial-gradient(120% 70% at 50% 0%, #E3F4F4 0%, #F7FBFB 62%); }
+	.x-wrap { max-width: 1120px; margin: 0 auto; padding: 0 22px; display: grid; grid-template-columns: 1fr 1fr; gap: 40px; align-items: center; }
+	.x-wrap-narrow { max-width: 1060px; margin: 0 auto; padding: 0 22px; }
 
-	/* A phone is the thing being pointed at — no code to scan there. The
-	   store that matches the phone comes first. */
-	:global(html[data-os='ios']) .dl-dock-qr,
-	:global(html[data-os='android']) .dl-dock-qr { display: none; }
-	:global(html[data-os='android']) .dl-dock :global([data-store='android']) { order: -1; }
+	.x-eyebrow { display: inline-block; font-size: 0.95rem; font-weight: 700; color: var(--c-main-dark);
+		background: #fff; border: 1px solid rgba(0, 144, 146, 0.18); border-radius: 100px; padding: 4px 14px; margin-bottom: 18px; }
+	.x-variant { display: none; }
+	:global(html:not([data-theme])) .x-variant[data-for='general'],
+	:global(html[data-theme='file']) .x-variant[data-for='file'],
+	:global(html[data-theme='routine']) .x-variant[data-for='routine'],
+	:global(html[data-theme='general']) .x-variant[data-for='general'] { display: block; }
+	.x-title { font-size: clamp(2.1rem, 5.2vw, 3.6rem); font-weight: 800; line-height: 1.18; color: #0F1A22; margin: 0 0 14px; letter-spacing: -0.3px; text-wrap: balance; }
+	.x-sub { font-size: clamp(1.08rem, 2vw, 1.3rem); line-height: 1.75; color: #3D4A50; margin: 0 0 26px; max-width: 30em; }
 
-	/* Other ways */
-	.dl-alt { padding: 70px 0 100px; background: #fff; }
-	.dl-h2 {
-		text-align: center;
-		font-size: clamp(1.4rem, 3vw, 1.8rem);
-		font-weight: 800;
-		color: var(--c-text);
-		margin-bottom: 32px;
-	}
-	.dl-alt-list {
-		max-width: 760px;
-		margin: 0 auto;
-		display: flex;
-		flex-direction: column;
-		gap: 16px;
-	}
-	.dl-row {
-		display: grid;
-		grid-template-columns: auto 1fr auto;
-		align-items: center;
-		gap: 20px;
-		padding: 24px 26px;
-		background: #F9FBFB;
-		border: 1px solid rgba(0, 144, 146, 0.10);
-		border-radius: 20px;
-	}
-	.dl-row-icon {
-		width: 52px; height: 52px;
-		border-radius: 14px;
-		background: rgba(0, 144, 146, 0.10);
-		color: var(--c-main);
-		display: grid;
-		place-items: center;
-		align-self: start;
-	}
-	.dl-row-icon svg { width: 26px; height: 26px; }
-	.dl-row-text h3 { font-size: 1.15rem; font-weight: 800; color: var(--c-text); margin-bottom: 4px; }
-	.dl-row-text p { margin: 0; font-size: 0.98rem; line-height: 1.6; color: var(--c-text-muted); }
-	.dl-row-btn {
-		background: #fff;
-		color: var(--c-main);
-		border: 1.5px solid var(--c-main);
-		font-weight: 700;
-		font-size: 0.98rem;
-		text-decoration: none;
-		padding: 11px 22px;
-		border-radius: 100px;
-		white-space: nowrap;
-		transition: background 0.2s, color 0.2s;
-	}
-	.dl-row-btn:hover { background: var(--c-main); color: #fff; }
-	.dl-row-btn:focus-visible { outline: 3px solid var(--c-main); outline-offset: 3px; }
+	.x-cta { display: flex; align-items: center; gap: 26px; flex-wrap: wrap; }
+	.x-qr { display: flex; align-items: center; gap: 14px; flex-basis: 100%; }
+	.x-qr-code { width: 92px; height: 92px; background: #fff; padding: 8px; border-radius: 14px; box-shadow: 0 10px 30px -14px rgba(0, 100, 100, 0.35); }
+	.x-qr-code :global(svg) { display: block; width: 100%; height: 100%; }
+	.x-qr p { margin: 0; font-size: 0.92rem; line-height: 1.6; color: var(--c-text-muted); font-weight: 600; }
+	:global(html[data-os='ios']) .x-qr, :global(html[data-os='android']) .x-qr { display: none; }
 
-	.dl-steps { margin-top: 10px; }
-	.dl-steps summary {
-		cursor: pointer;
-		color: var(--c-main);
-		font-weight: 700;
-		font-size: 0.95rem;
-		width: fit-content;
-	}
-	.dl-steps summary:focus-visible { outline: 3px solid var(--c-main); outline-offset: 3px; border-radius: 4px; }
-	.dl-steps ol {
-		margin: 12px 0 0;
-		padding-inline-start: 22px;
-		color: var(--c-text);
-		font-size: 0.98rem;
-		line-height: 1.9;
-	}
+	.x-trust { margin: 22px 0 0; font-size: 0.98rem; font-weight: 600; line-height: 1.6; color: var(--c-main-dark); }
+	.x-trust svg { width: 17px; height: 17px; display: inline-block; vertical-align: -3px; margin-inline-end: 6px; }
+	.x-trust-c { text-align: center; }
 
+	/* ── the stage: sky, mark, phone, papers, notifications ── */
+	.x-stage { position: relative; height: 640px; display: grid; place-items: center; isolation: isolate; }
+	.x-sky { position: absolute; inset: 6% 4%; border-radius: 48px; z-index: -2; opacity: 0;
+		background: linear-gradient(180deg, #DFF3F3 0%, #F1FAFA 100%); transition: background 1.2s ease, opacity .6s ease; }
+	/* the DocSera mark floats at the phone's top corner: flat SVG at rest, the
+	   glass 3D one replaces it on capable devices */
+	.x-gem { position: absolute; width: 240px; height: 240px; top: 0; right: calc(50% - 345px); z-index: 4; pointer-events: none;
+		animation: x-float 6s ease-in-out -2s infinite; }
+	.x-mark { position: absolute; width: 46%; height: auto; left: 27%; top: 27%; opacity: .9;
+		filter: drop-shadow(0 14px 18px rgba(0, 90, 92, .35)); transition: opacity .8s ease; }
+	.x-flower { position: absolute; inset: 0; width: 100%; height: 100%; opacity: 0; transition: opacity 1.2s ease;
+		filter: drop-shadow(0 24px 26px rgba(0, 80, 82, .35)); }
+	.x-flower.on { opacity: 1; }
+	.x-gem:has(.x-flower.on) .x-mark { opacity: 0; }
+	:global(html[data-theme='routine']) .x-gem { top: auto; bottom: 4%; }
+
+	.x-phone { position: relative; width: 290px; aspect-ratio: 1290 / 2796; border-radius: 46px; padding: 9px; background: #0F1A22;
+		box-shadow: 0 40px 80px -30px rgba(0, 70, 72, 0.55), 0 0 0 1px rgba(255, 255, 255, 0.06) inset; z-index: 1;
+		animation: x-float 7s ease-in-out infinite; }
+	.x-screen { position: relative; width: 100%; height: 100%; border-radius: 38px; overflow: hidden; background: #E9F5F5; }
+	.x-shot { position: absolute; inset: 0; width: 100%; height: 100%; object-fit: cover; }
+	@keyframes x-float { 0%, 100% { translate: 0 0; } 50% { translate: 0 -10px; } }
+
+	/* file: papers fly into the phone, then the screen arrives */
+	.x-papers { display: none; position: absolute; inset: 0; z-index: 2; pointer-events: none; }
+	:global(html[data-theme='file']) .x-papers { display: block; }
+	.x-paper { position: absolute; width: 132px; padding: 10px 10px 9px; background: #fff; border-radius: 10px;
+		box-shadow: 0 18px 30px -16px rgba(15, 26, 34, 0.45); font-size: 0.78rem; font-weight: 700; color: #2D3436;
+		left: 50%; top: 50%; transform: translate(-50%, -50%) translate(var(--x), var(--y)) rotate(var(--r)); }
+	.x-paper span { display: block; margin-top: 7px; }
+	.x-paper-art { height: 70px; border-radius: 6px; background:
+		repeating-linear-gradient(180deg, #E4ECEC 0 4px, transparent 4px 11px) 0 8px / 100% 60px no-repeat, #F7FAFA; }
+	.x-xray .x-paper-art { background: radial-gradient(55% 60% at 50% 50%, #B9C7CC 0%, #6F7F86 45%, #263238 75%); }
+	.x-rx .x-paper-art { background: repeating-linear-gradient(180deg, #E4ECEC 0 4px, transparent 4px 11px) 0 26px / 100% 40px no-repeat, #F7FAFA; position: relative; }
+	.x-rx .x-paper-art::before { content: 'Rx'; position: absolute; top: 4px; right: 8px; font-family: Montserrat, sans-serif; font-weight: 800; color: var(--c-main); font-size: .95rem; }
+	.x-card .x-paper-art { height: 54px; background: linear-gradient(135deg, #009092, #66B8B8); }
+	.x-p0 { --x: -205px; --y: -190px; --r: -9deg; }
+	.x-p1 { --x: 190px;  --y: -150px; --r: 8deg; }
+	.x-p2 { --x: -215px; --y: 70px;   --r: 6deg; }
+	.x-p3 { --x: 200px;  --y: 120px;  --r: -7deg; }
+	.x-p4 { --x: -40px;  --y: 250px;  --r: 4deg; }
+	.x-stage:global(.play) .x-paper { animation: x-fly 1.05s cubic-bezier(.6, 0, .25, 1) forwards; }
+	.x-stage:global(.play) .x-p0 { animation-delay: .55s; } .x-stage:global(.play) .x-p1 { animation-delay: .7s; }
+	.x-stage:global(.play) .x-p2 { animation-delay: .85s; } .x-stage:global(.play) .x-p3 { animation-delay: 1s; }
+	.x-stage:global(.play) .x-p4 { animation-delay: 1.15s; }
+	@keyframes x-fly {
+		0% { transform: translate(-50%, -50%) translate(var(--x), var(--y)) rotate(var(--r)) scale(1); opacity: 1; }
+		70% { opacity: 1; }
+		100% { transform: translate(-50%, -50%) translate(0, -40px) rotate(0deg) scale(.18); opacity: 0; }
+	}
+	:global(html[data-theme='file']) .x-shot { opacity: 0; transform: translateY(18px) scale(.98); }
+	:global(html[data-theme='file']) .x-stage:global(.play) .x-shot { animation: x-arrive .7s ease 1.75s forwards; }
+	:global(html[data-theme='file']) .x-stage:global(.still) .x-shot { opacity: 1; transform: none; animation: none; }
+	:global(html[data-theme='file']) .x-stage:global(.still) .x-paper { display: none; }
+	@keyframes x-arrive { to { opacity: 1; transform: none; } }
+
+	/* routine: one day — the sky turns, three real reminders arrive */
+	.x-notes { display: none; }
+	:global(html[data-theme='routine']) .x-notes { display: block; }
+	:global(html[data-theme='routine']) .x-sky { opacity: 1; }
+	.x-stage[data-phase='1'] .x-sky { background: linear-gradient(180deg, #CDEDED 0%, #EAF7F7 100%); }
+	.x-stage[data-phase='2'] .x-sky { background: linear-gradient(180deg, #0C4B52 0%, #1C6B70 100%); }
+	.x-notes { position: absolute; top: 9%; left: 50%; translate: -50% 0; width: 300px; height: 150px; z-index: 3; }
+	.x-note { position: absolute; inset: 0 0 auto 0; padding: 11px 13px 12px; border-radius: 20px; background: rgba(255, 255, 255, .93);
+		backdrop-filter: blur(14px); -webkit-backdrop-filter: blur(14px); box-shadow: 0 22px 40px -18px rgba(0, 40, 44, .55);
+		opacity: 0; transform: translateY(-26px) scale(.96); transition: opacity .45s ease, transform .55s cubic-bezier(.2, .9, .3, 1.2); }
+	.x-stage:not([data-phase]) [data-note='0'], .x-stage[data-phase='0'] [data-note='0'],
+	.x-stage[data-phase='1'] [data-note='1'], .x-stage[data-phase='2'] [data-note='2'] { opacity: 1; transform: none; }
+	.x-note-head { display: flex; align-items: center; gap: 7px; font-size: .78rem; color: #56636B; }
+	.x-note-head img { width: 18px; height: 18px; border-radius: 5px; }
+	.x-note-head b { color: #0F1A22; font-weight: 700; font-family: Montserrat, Cairo, sans-serif; font-size: .76rem; }
+	.x-note-head i { margin-inline-start: auto; font-style: normal; font-family: Montserrat, Cairo, sans-serif; font-weight: 600; color: #0F1A22; }
+	.x-note-title { margin: 6px 0 0; font-weight: 800; font-size: .98rem; color: #0F1A22; }
+	.x-note-body { margin: 2px 0 0; font-size: .86rem; color: #3D4A50; }
+	.x-note-actions { display: flex; gap: 8px; margin-top: 10px; }
+	.x-act { flex: 1; text-align: center; font-size: .84rem; font-weight: 700; padding: 6px 4px; border-radius: 12px; background: #EEF3F4; color: #2D3436; }
+	.x-act-main { background: #E0F2F2; color: var(--c-main-dark); transition: background .25s, color .25s, transform .25s; }
+	.x-stage:global(.tap) .x-note .x-act-main { background: var(--c-main); color: #fff; transform: scale(.96); }
+	.x-stage:global(.still) .x-notes { top: 12%; }
+
+	/* ── features ────────────────────────────────────── */
+	.x-feats { padding: 40px 0 70px; }
+	.x-grid { display: grid; grid-template-columns: repeat(4, 1fr); gap: 18px; }
+	.x-feat { background: #fff; border: 1px solid rgba(0, 144, 146, .1); border-radius: 26px; padding: 22px 18px 22px; text-align: center;
+		box-shadow: 0 24px 50px -36px rgba(0, 90, 92, .45); }
+	:global(html.js) .x-feat { opacity: 0; transform: translateY(22px); transition: opacity .7s ease calc(var(--i) * 90ms), transform .7s ease calc(var(--i) * 90ms); }
+	:global(html.js) .x-feat:global(.in) { opacity: 1; transform: none; }
+	.x-feat-art { height: 300px; display: grid; place-items: center; margin-bottom: 16px; border-radius: 20px;
+		background: radial-gradient(80% 70% at 50% 40%, #E3F4F4 0%, #F7FBFB 70%); }
+	.x-mini { width: 128px; aspect-ratio: 1290 / 2796; padding: 5px; background: #0F1A22; border-radius: 24px;
+		box-shadow: 0 22px 36px -22px rgba(0, 70, 72, .6); }
+	.x-mini img { display: block; width: 100%; height: 100%; border-radius: 19px; object-fit: cover; }
+	.x-feat h2 { font-size: 1.3rem; font-weight: 800; color: #0F1A22; margin: 0 0 6px; }
+	.x-feat p { font-size: 1rem; line-height: 1.7; color: #3D4A50; margin: 0; }
+
+	.x-code { width: 88%; background: #fff; border-radius: 18px; padding: 14px 14px 12px; text-align: start;
+		box-shadow: 0 22px 36px -22px rgba(0, 70, 72, .5); border: 1px solid rgba(0, 144, 146, .12); }
+	.x-code-title { margin: 0 0 12px; font-weight: 800; font-size: .92rem; color: #0F1A22; }
+	.x-code-digits { direction: ltr; display: flex; gap: 6px; justify-content: center; margin-bottom: 14px; }
+	.x-code-digits span { width: 30px; height: 38px; border-radius: 9px; border: 1.5px solid var(--c-main); display: grid; place-items: center;
+		font-family: Montserrat, sans-serif; font-weight: 700; font-size: 1.05rem; color: #0F1A22; background: #F3FAFA; }
+	.x-code-row { display: flex; align-items: center; gap: 8px; padding-top: 10px; border-top: 1px dashed rgba(0, 0, 0, .1); }
+	.x-code-row div { flex: 1; min-width: 0; }
+	.x-code-row b { display: block; font-size: .84rem; color: #0F1A22; }
+	.x-code-row small { display: block; font-size: .72rem; color: #56636B; }
+	.x-code-row > span { font-size: .74rem; font-weight: 700; color: #C0392B; border: 1px solid rgba(192, 57, 43, .3); border-radius: 100px; padding: 3px 8px; white-space: nowrap; }
+
+	.x-again { margin-top: 44px; display: flex; flex-direction: column; align-items: center; gap: 4px; }
+
+	/* ── other ways ──────────────────────────────────── */
+	.x-more { padding: 10px 0 56px; }
+	.x-more .x-wrap-narrow { max-width: 680px; display: grid; gap: 12px; }
+	.x-row { display: flex; align-items: center; gap: 14px; padding: 16px 18px; background: #fff; border: 1px solid rgba(0, 144, 146, .1);
+		border-radius: 18px; text-decoration: none; color: inherit; transition: border-color .2s, transform .2s; }
+	.x-row:hover { border-color: var(--c-main); transform: translateY(-1px); }
+	.x-row:focus-visible { outline: 3px solid var(--c-main); outline-offset: 3px; }
+	.x-row-ic { width: 44px; height: 44px; flex: none; border-radius: 12px; background: #E0F2F2; color: var(--c-main-dark); display: grid; place-items: center; }
+	.x-row-ic svg { width: 22px; height: 22px; }
+	.x-row-tx b { display: block; font-size: 1.02rem; color: #0F1A22; }
+	.x-row-tx small { display: block; font-size: .92rem; color: var(--c-text-muted); margin-top: 2px; }
+	:global(html[data-os='ios']) .x-row-apk, :global(html[data-os='ios']) .x-steps { display: none; }
+	.x-steps { padding: 4px 6px; }
+	.x-steps summary { cursor: pointer; color: var(--c-main-dark); font-weight: 700; font-size: .95rem; width: fit-content; }
+	.x-steps ol { margin: 10px 0 0; padding-inline-start: 22px; line-height: 1.9; color: #2D3436; }
+
+	.x-foot { display: flex; justify-content: center; flex-wrap: wrap; gap: 6px 22px; padding: 26px 20px 110px; font-size: .9rem; }
+	.x-foot a { color: var(--c-text-muted); text-decoration: none; }
+	.x-foot a:first-child { font-family: Montserrat, sans-serif; font-weight: 700; color: var(--c-main-dark); }
+
+	/* ── sticky badge (phones) ───────────────────────── */
+	.x-sticky { position: fixed; left: 0; right: 0; bottom: 0; z-index: 20; display: none; justify-content: center;
+		padding: 12px 16px calc(12px + env(safe-area-inset-bottom)); background: rgba(255, 255, 255, .9);
+		backdrop-filter: blur(14px); -webkit-backdrop-filter: blur(14px); border-top: 1px solid rgba(0, 144, 146, .12);
+		transform: translateY(110%); transition: transform .35s ease; }
+	:global(html[data-os='ios']) .x-sticky, :global(html[data-os='android']) .x-sticky { display: flex; }
+	.x-sticky:global(.on) { transform: none; }
+
+	/* ── tablet / phone ─────────────────────────────── */
+	@media (max-width: 1000px) {
+		.x-grid { grid-template-columns: repeat(2, 1fr); }
+	}
 	@media (max-width: 768px) {
-		.dl-hero { padding: 120px 0 50px; }
-		.dl-dock {
-			display: flex;
-			flex-direction: column;
-			gap: 28px;
-			margin-top: 34px;
-			padding: 30px 22px;
-		}
-		.dl-dock-qr {
-			padding-inline-start: 0;
-			border-inline-start: 0;
-			padding-top: 26px;
-			border-top: 1px solid rgba(0, 0, 0, 0.08);
-		}
-		.dl-alt { padding: 50px 0 70px; }
-		.dl-row {
-			grid-template-columns: auto 1fr;
-			padding: 22px 20px;
-			gap: 16px;
-		}
-		.dl-row-btn {
-			grid-column: 1 / -1;
-			text-align: center;
-			padding: 13px 22px;
-		}
+		.x-hero { padding: 80px 0 10px; }
+		.x-wrap { grid-template-columns: 1fr; gap: 6px; text-align: center; }
+		.x-sub { margin-inline: auto; }
+		.x-cta { justify-content: center; }
+		.x-stage { height: 560px; }
+		.x-phone { width: 230px; border-radius: 38px; padding: 7px; }
+		.x-screen { border-radius: 31px; }
+		.x-gem { width: 150px; height: 150px; right: auto; left: calc(50% - 190px); top: auto; bottom: 2%; }
+		:global(html[data-theme='routine']) .x-gem { bottom: 2%; }
+		.x-paper { width: 104px; font-size: .68rem; padding: 8px 8px 7px; }
+		.x-paper-art { height: 54px; }
+		.x-p0 { --x: -120px; --y: -170px; } .x-p1 { --x: 118px; --y: -128px; }
+		.x-p2 { --x: -128px; --y: 70px; } .x-p3 { --x: 122px; --y: 110px; } .x-p4 { --x: -10px; --y: 215px; }
+		.x-notes { width: 266px; top: 9%; }
+		.x-grid { display: flex; gap: 14px; overflow-x: auto; scroll-snap-type: x mandatory; margin: 0 -22px; padding: 4px 22px 18px;
+			scrollbar-width: none; -webkit-overflow-scrolling: touch; }
+		.x-grid::-webkit-scrollbar { display: none; }
+		.x-feat { flex: 0 0 78%; scroll-snap-align: center; }
+		.x-feat-art { height: 290px; }
+		.x-mini { width: 124px; }
+		.x-trust { font-size: .92rem; margin-top: 16px; }
+	}
+	@media (prefers-reduced-motion: reduce) {
+		.x-phone { animation: none; }
 	}
 </style>

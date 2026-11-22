@@ -45,6 +45,9 @@ export function fireBeacon(
 	// The local dev server talks to the production API — never let a
 	// developer's page loads land in the real numbers.
 	if (import.meta.env.DEV) return;
+	// Same for a built preview served from a laptop or a test host: only the
+	// live domain reports (a 2026-11-22 local preview sent one event before this).
+	if (!/(^|\.)docsera\.app$/.test(window.location.hostname)) return;
 	if (dedupeKey) {
 		try {
 			if (sessionStorage.getItem(dedupeKey)) return;
