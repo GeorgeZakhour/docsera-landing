@@ -1,6 +1,6 @@
 // «عن التطبيق»: one real phone walks through the whole app as the page scrolls. Each step
 // scrolls the real screen to one feature and lifts that card out of it in 3D.
-interface Step { c: number; k: number; p: string; r: number[] | null }
+interface Step { c: number; k: number; p: string; r: number[] | null; rad: number }
 interface TourData {
 	pages: Record<string, { h: number; foot: number }>;
 	steps: Step[];
@@ -45,7 +45,7 @@ export function startTour(root: HTMLElement): void {
 		return el;
 	};
 
-	let u = 0.45, view = 1387, heroPx = 1, stepPx = 1, wide = true, cur = -1, shownPage = '', liftTimer = 0, started = false;
+	let u = 0.45, view = 1387, heroPx = 1, stepPx = 1, wide = true, cur = -1, shownPage = '', liftTimer = 0, moveTimer = 0, started = false;
 	const measure = () => {
 		wide = innerWidth >= 900;
 		u = box.clientWidth / 640 || u;
@@ -80,21 +80,31 @@ export function startTour(root: HTMLElement): void {
 			if (!near.has(id) && id !== shownPage) { el.remove(); layers.delete(id); }
 		});
 		const el = layer(s.p), y = yFor(s), img = el.querySelector('img')!;
-		img.style.transform = `translate3d(0, calc(var(--u) * ${-y.toFixed(1)}), 0)`;
-		if (s.p !== shownPage) {
+		const target = `translate3d(0, calc(var(--u) * ${-y.toFixed(1)}), 0)`;
+		// A page always opens at its top, then travels to the feature.
+		const fresh = s.p !== shownPage;
+		clearTimeout(moveTimer);
+		if (fresh) {
+			img.style.transition = 'none';
+			img.style.transform = 'translate3d(0, 0, 0)';
+			void img.offsetHeight;
+			img.style.transition = '';
 			layers.get(shownPage)?.classList.remove('on');
 			el.classList.add('on');
 			shownPage = s.p;
 		}
+		const travels = fresh && y > 0;
+		if (travels) moveTimer = window.setTimeout(() => { img.style.transform = target; }, 300);
+		else img.style.transform = target;
 		status.classList.toggle('on', y > 26);
 		hideLift();
 		if (s.r) {
 			const [x, ry, w, h] = s.r;
 			liftTimer = window.setTimeout(() => {
-				lift.style.cssText = `--x:${x};--y:${ry};--top:${ry - y};--w:${w};--h:${h};background-image:url(${BASE}/${s.p}.webp)`;
+				lift.style.cssText = `--x:${x};--y:${ry};--top:${ry - y};--w:${w};--h:${h};--rad:${s.rad};background-image:url(${BASE}/${s.p}.webp)`;
 				lift.classList.add('on');
 				dim.classList.add('on');
-			}, 430);
+			}, travels ? 860 : 430);
 		}
 		if (!prev || prev.c !== s.c) {
 			chapters.forEach((c, k) => c.classList.toggle('on', k === s.c));
