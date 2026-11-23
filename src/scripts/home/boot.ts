@@ -13,7 +13,7 @@ const qa = <T extends Element = HTMLElement>(s: string, r: ParentNode = document
 const CH: [number, number][] = [[0.15, 0.35], [0.35, 0.56], [0.56, 0.76], [0.76, 0.985]];
 // Each phone screen: visible from..to, and when to start fetching it.
 const SHOTS: [number, number, number][] = [
-	[-1, 0.275, 0.002], [0.265, 0.345, 0.12], [0.335, 0.555, 0.24], [0.545, 0.625, 0.45],
+	[-1, 0.275, 0], [0.265, 0.345, 0.12], [0.335, 0.555, 0.24], [0.545, 0.625, 0.45],
 	[0.615, 0.69, 0.53], [0.68, 0.765, 0.6], [0.755, 2, 0.68],
 ];
 const NOTES: [number, number][] = [[0.372, 0.43], [0.432, 0.49], [0.492, 0.548]];
@@ -22,7 +22,7 @@ const PAPERS: [number, number, number][] = [
 	[-0.8, -0.3, -12], [0.72, -0.36, 9], [-0.88, 0.05, 7], [0.76, 0.1, -8], [-0.74, 0.37, 5], [0.68, 0.4, -6],
 ];
 // The small cards floating around the laptop, iPad and phone: x / y in the rig's size.
-const FLOATS: [number, number][] = [[0.15, 0.2], [0.88, 0.2], [0.58, 0.97]];
+const FLOATS: [number, number][] = [[0.13, 0.1], [0.86, 0.02], [0.5, 1.04]];
 
 const pose: DialPose = { tilt: 0.22, turn: 0.3, roll: 0, petals: [0, 0, 0, 0] };
 
@@ -110,13 +110,14 @@ function startStory(): void {
 		// The opening: a laptop, an iPad and the phone; the phone carries on into the story.
 		bgHero.style.opacity = String(1 - h);
 		const out = sm(0.025, 0.11), W = stick.clientWidth;
+		// One line: the devices rise, float and answer the pointer together.
+		const lineY = Math.sin(now / 1900) * (narrow ? 2.5 : 4) * (1 - out) - nudge * 20 + py * 5;
 		rigs.forEach((e, i) => {
 			const d = Number(e.dataset.rig) || 0;
 			const a = ease(clamp((now - t0 - i * 130) / 850)), o = 1 - sm(0.035, 0.085);
-			const bob = Math.sin(now / 1900 + i * 2.1) * (narrow ? 2.5 : 4) * (1 - out);
 			e.style.opacity = String(a * o);
 			e.style.visibility = o < 0.01 ? 'hidden' : 'visible';
-			e.style.transform = `translate3d(${d * out * W * 0.16 + px * (i + 1) * 5}px,${(1 - a) * 70 - out * 46 + bob - nudge * (16 + i * 8) + py * (i + 1) * 3}px,0)`;
+			e.style.transform = `translate3d(${d * out * W * 0.16 + px * 8}px,${(1 - a) * 70 - out * 46 + lineY}px,0)`;
 		});
 		floats.forEach((e, i) => {
 			const [fx, fy0] = FLOATS[i];
@@ -173,8 +174,9 @@ function startStory(): void {
 			c.style.visibility = o > 0.01 ? 'visible' : 'hidden';
 		});
 
-		phone.style.opacity = String(sm(0.03, 0.07) * (1 - off));
-		phone.style.transform = `translate3d(${(F.x - P.x) * (1 - h) + px * 11 * (1 - h)}px,${(F.y - P.y) * (1 - h) + (1 - enter) * 70 - off * 30 + (py * 6 - nudge * 34) * (1 - h)}px,0) scale(${lerp(F.w / P.w, 1, h) * (1 - 0.06 * off)})`;
+		// The phone of the opening IS the phone of the story: it turns to face you as it moves.
+		phone.style.opacity = String(enter * (1 - off));
+		phone.style.transform = `translate3d(${(F.x - P.x + px * 8) * (1 - h)}px,${(F.y - P.y + lineY) * (1 - h) + (1 - enter) * 70 - off * 30}px,0) perspective(620px) rotateY(${-14 * (1 - h)}deg) scale(${lerp(F.w / P.w, 1, h) * (1 - 0.06 * off)})`;
 		shots.forEach((img, i) => {
 			const [a, b, fetchAt] = SHOTS[i];
 			if (img.dataset.src && p >= fetchAt) { img.src = img.dataset.src; img.removeAttribute('data-src'); }
@@ -286,8 +288,6 @@ function startStory(): void {
 		img.srcset = img.dataset.late || '';
 	});
 	late();
-	// The flat first screen takes over from the 3D phone on the first scroll; fetch it once idle.
-	setTimeout(() => { const f = shots[0]; if (f?.dataset.src) { f.src = f.dataset.src; f.removeAttribute('data-src'); } }, 2600);
 }
 
 function startTry(): void {
