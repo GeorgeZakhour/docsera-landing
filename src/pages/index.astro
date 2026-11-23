@@ -129,8 +129,7 @@ const MORE = [
 				</div>
 				<div class="rig fx" data-rig-box aria-hidden="true">
 					<div class="a-hero" data-a-hero></div>
-					<div class="r3" style="left:28.47%;top:0;width:66.4%" data-rig="0"><img data-late="/images/home/3d/laptop-sm.webp 531w, /images/home/3d/laptop-lg.webp 1036w" sizes="(max-width: 899px) 68vw, 560px" alt="" width="1036" height="692" decoding="async" /></div>
-					<div class="r3" style="left:0;top:20.89%;width:41.87%" data-rig="-1"><img data-late="/images/home/3d/tablet-sm.webp 335w, /images/home/3d/tablet-lg.webp 653w" sizes="(max-width: 899px) 42vw, 350px" alt="" width="653" height="547" decoding="async" /></div>
+					<div class="r3" style="left:0;top:0;width:100%" data-rig="0"><img data-late="/images/home/3d/trio-sm.webp 900w, /images/home/3d/trio-lg.webp 1720w" sizes="(max-width: 899px) 112vw, 880px" alt="" width="1720" height="947" decoding="async" /></div>
 					<div class="a-fan" data-a-fan></div>
 				</div>
 
@@ -171,6 +170,7 @@ const MORE = [
 				</div>
 
 				<div class="ph fx" data-phone aria-hidden="true">
+					<i class="ph-side" data-ph-side></i><i class="ph-face"></i>
 					<div class="ph-in">
 						{SHOTS.map((s, i) => i === 0
 							? <img data-shot src={s} srcset="/images/app110/home-320.webp 320w, /images/app110/home-480.webp 480w, /images/app110/home-640.webp 640w" sizes="(max-width: 899px) 270px, 340px" alt="" width="640" height="1387" decoding="async" fetchpriority="high" />
@@ -344,12 +344,12 @@ const MORE = [
 	.pin-d { fill: #06343A; }
 
 	:global(html.story) .hero { position: absolute; z-index: 6; text-align: start; inset-inline-start: max(6vw, calc(50vw - 560px)); top: 50%; width: min(45vw, 560px); margin-top: -170px; }
-	.rig { position: absolute; z-index: 2; left: max(1.5vw, calc(50vw - 680px)); top: 52%; translate: 0 -50%; width: min(53vw, 800px, 150vh); aspect-ratio: 2.2556; pointer-events: none; }
+	.rig { position: absolute; z-index: 2; left: max(1.5vw, calc(50vw - 770px)); top: 52%; translate: 0 -50%; width: min(55.5vw, 880px, 150vh); aspect-ratio: 1.8162; pointer-events: none; }
 	.r3 { position: absolute; opacity: 0; will-change: transform, opacity; }
 	.r3 img { display: block; width: 100%; height: auto; opacity: 0; transition: opacity .5s; }
 	.r3 img:global(.in) { opacity: 1; }
 	.a-hero { position: absolute; left: 60%; top: 2%; width: 22%; aspect-ratio: 1; }
-	.a-fan { position: absolute; left: 84%; top: 14.89%; width: 15.91%; aspect-ratio: 1290 / 2796; }
+	.a-fan { position: absolute; left: 45.0%; top: 10.35%; width: 20.37%; aspect-ratio: 1290 / 2796; }
 	.cue { position: absolute; z-index: 7; left: 50%; bottom: calc(var(--bar, 0px) + clamp(12px, 2.8svh, 28px)); translate: -50% 0; align-items: center; gap: 7px; padding: 8px 17px 8px 12px; border: 1px solid rgba(191, 242, 238, .38); border-radius: 999px; background: rgba(5, 38, 44, .78); color: #fff; font: inherit; font-size: .92rem; font-weight: 700; cursor: pointer; opacity: 0; }
 	:global(html.story) .cue { display: flex; }
 	.cue:focus-visible { outline: 3px solid #BFF2EE; outline-offset: 3px; }
@@ -398,6 +398,9 @@ const MORE = [
 
 	.ph { position: absolute; z-index: 3; left: calc(34vw - min(82vh, 740px) * .2307); top: calc(50% - min(82vh, 740px) / 2 + 22px); height: min(82vh, 740px); aspect-ratio: 1290 / 2796;
 		padding: 9px; background: #0F1A22; border-radius: 46px; box-shadow: 0 40px 80px -30px rgba(0, 50, 54, .65); will-change: transform; opacity: 0; }
+	.ph-side, .ph-face { position: absolute; inset: 0; z-index: -1; border-radius: inherit; }
+	.ph-side { inset: -6px; border-radius: 52px; background: linear-gradient(135deg, #E4EBED, #76858B 32%, #3B474D 58%, #B4C0C4); }
+	.ph-face { background: #0F1A22; }
 	.ph-in { position: relative; width: 100%; height: 100%; overflow: hidden; border-radius: 38px; background: #E9F5F5; }
 	.ph-in img { position: absolute; inset: 0; width: 100%; height: 100%; object-fit: cover; opacity: 0; }
 	.notes { position: absolute; top: 11%; inset-inline: -7%; height: 150px; }
@@ -510,7 +513,7 @@ const MORE = [
 		.hero-web { margin-top: 6px; font-size: .9rem; }
 		.hero h1 { font-size: clamp(2rem, 9vw, 3rem); }
 		.hero p { margin-bottom: 0; font-size: 1.04rem; }
-		.rig { left: 50%; top: calc(318px + max(0px, (100svh - 318px - 76px - 47vw) / 2)); translate: -55.2% 0; width: min(106vw, 700px); }
+		.rig { --rw: min(136vw, calc((100svh - 392px) * 1.8162), 880px); left: 50%; right: auto; top: calc(318px + max(0px, (100svh - 394px - var(--rw) / 1.8162) / 2)); translate: -55.19% 0; width: var(--rw); }
 		.hchip { padding: 6px 9px 6px 10px; gap: 6px; border-radius: 12px; }
 		.hchip i { width: 26px; height: 26px; }
 		.hchip small { font-size: .64rem; }

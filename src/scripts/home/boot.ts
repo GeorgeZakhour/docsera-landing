@@ -22,7 +22,7 @@ const PAPERS: [number, number, number][] = [
 	[-0.8, -0.3, -12], [0.72, -0.36, 9], [-0.88, 0.05, 7], [0.76, 0.1, -8], [-0.74, 0.37, 5], [0.68, 0.4, -6],
 ];
 // The small cards floating around the laptop, iPad and phone: x / y in the rig's size.
-const FLOATS: [number, number][] = [[0.13, 0.1], [0.86, 0.02], [0.5, 1.04]];
+const FLOATS: [number, number][] = [[0.15, 0.07], [0.85, 0.17], [0.2, 0.93]];
 
 const pose: DialPose = { tilt: 0.22, turn: 0.3, roll: 0, petals: [0, 0, 0, 0] };
 
@@ -58,7 +58,7 @@ function startStory(): void {
 	const hero = q('[data-hero]')!, phone = q('[data-phone]')!, aFan = q('[data-a-fan]')!, bgHero = q('[data-bg-hero]')!;
 	const silk = q('[data-silk]')!, vault = q('[data-vault]')!, vaultDial = q('[data-vault-dial]')!, aVault = q('[data-a-vault]')!;
 	let safeLoaded = false, V = { x: 0, y: 0, s: 1 };
-	const rigBox = q('[data-rig-box]')!, rigs = qa('[data-rig]'), floats = qa('[data-float]'), cue = q<HTMLButtonElement>('[data-cue]')!;
+	const rigBox = q('[data-rig-box]')!, rigs = qa('[data-rig]'), floats = qa('[data-float]'), cue = q<HTMLButtonElement>('[data-cue]')!, phSide = q('[data-ph-side]')!;
 	const t0 = performance.now();
 	// «There is more below»: until the first scroll the devices lift now and then.
 	let nudge = 0, nudgeAt = t0 + 2400, nudges = 0, touched = false;
@@ -174,9 +174,11 @@ function startStory(): void {
 			c.style.visibility = o > 0.01 ? 'visible' : 'hidden';
 		});
 
-		// The phone of the opening IS the phone of the story: it turns to face you as it moves.
+		// The phone of the opening IS the phone of the story.
 		phone.style.opacity = String(enter * (1 - off));
-		phone.style.transform = `translate3d(${(F.x - P.x + px * 8) * (1 - h)}px,${(F.y - P.y + lineY) * (1 - h) + (1 - enter) * 70 - off * 30}px,0) perspective(620px) rotateY(${-14 * (1 - h)}deg) scale(${lerp(F.w / P.w, 1, h) * (1 - 0.06 * off)})`;
+		const turn = 1 - h;
+		phone.style.transform = `translate3d(${(F.x - P.x + px * 8) * turn}px,${(F.y - P.y + lineY) * turn + (1 - enter) * 70 - off * 30}px,0) scale(${lerp(F.w / P.w, 1, h) * (1 - 0.06 * off)})`;
+		phSide.style.opacity = String(1 - clamp(h * 2.4));
 		shots.forEach((img, i) => {
 			const [a, b, fetchAt] = SHOTS[i];
 			if (img.dataset.src && p >= fetchAt) { img.src = img.dataset.src; img.removeAttribute('data-src'); }
