@@ -1,35 +1,51 @@
 ---
-// «من نحن»: one idea told by scrolling. Two banks with the everyday problems falling
-// into the gap, then a bridge. Without JS or with reduced motion it is a plain column
-// with the bridge already built.
+// «من نحن»: the story of a distance and the bridge across it. One scroll takes a night
+// over two banks to dawn: a patient's ordinary day falls into the gap, the insight lands,
+// and the bridge is built plank by plank over a path-traced canyon. Without JS or with
+// reduced motion it is a plain column with the bridge already built.
 import Layout from '../layouts/Layout.astro';
 import Footer from '../components/Footer.astro';
 import SiteHeader from '../components/site/SiteHeader.astro';
 import StoreBadges from '../components/StoreBadges.astro';
 
-const PROBLEMS = [
-	['الانتظار الطويل', 25, 6, -7], ['صور وتحاليل ضائعة', 51, 0, 5],
-	['صعوبة إيجاد الطبيب', 21, 35, 4], ['فوضى المواعيد', 53, 31, -5],
-] as const;
-
-// The suspension bridge: towers at x 320 and 680.
-const deckY = (x: number) => { const s = (x - 215) / 570; return 270 - 2 * s * (1 - s) * 30; };
-const cableY = (x: number) => { const t = (x - 320) / 360; return 112 + 2 * t * (1 - t) * 128; };
-const HANGERS = Array.from({ length: 11 }, (_, i) => 350 + i * 30).map((x) => `M${x} ${cableY(x).toFixed(1)}V${deckY(x).toFixed(1)}`).join('');
-
-const VALUES = [
-	{ title: 'بياناتك أمانة', text: 'بياناتك الطبية محفوظة على خوادمنا داخل سوريا، ومشفّرة.',
-		icon: '<path d="M12 3 5 6v5.5c0 4.4 2.9 7.8 7 9.5 4.1-1.7 7-5.1 7-9.5V6z"/><path d="m9 12 2.2 2.2L15.2 10"/>' },
-	{ title: 'مصمَّم لواقعنا', text: 'عربي أولاً، خفيف على الإنترنت الضعيف، ويذكّرك بأدويتك حتى دون اتصال.',
-		icon: '<path d="M3 9.5a14 14 0 0 1 18 0M6.5 13a9 9 0 0 1 11 0M10 16.5a4 4 0 0 1 4 0"/><circle cx="12" cy="19.5" r=".8"/>' },
-	{ title: 'نتطوّر معكم', text: 'نسمع من المرضى والأطباء، ونحسّن التطبيق بناءً على ما يحتاجونه فعلاً.',
-		icon: '<path d="M20 12a8 8 0 1 1-2.6-5.9"/><path d="M20.5 3.5V8H16"/>' },
+const DAY = [
+	['8:10 ص', 'الخط مشغول.', 'تعيد الاتصال بالعيادة للمرة الرابعة، فقط لتسأل عن موعد.'],
+	['10:40 ص', 'ساعتان في الانتظار.', 'لا أحد يعرف متى يأتي دورك.'],
+	['11:20 ص', 'أين تحاليلك القديمة؟', 'في كيس داخل الخزانة، أو ضاعت مع آخر انتقال.'],
+	['1:05 م', 'وصفة بخط اليد.', 'تُطوى في الجيب، وقد لا تعود إليها أبداً.'],
+	['9:00 م', 'جرعة المساء؟', 'تتذكرها متأخراً، أو لا تتذكرها.'],
 ];
+const PLANKS = [
+	['موعد واضح', 'تحجز في أي وقت، وتعرف موعدك بدقة.'],
+	['ملف واحد', 'تقاريرك وتحاليلك معك، أينما ذهبت.'],
+	['تواصل منظَّم', 'تراسل عيادتك بدل أن تنتظر على الخط.'],
+	['تذكير في وقته', 'لكل جرعة، حتى دون إنترنت.'],
+	['إذن منك', 'لا يطّلع طبيب على ملفك إلا برمز تعطيه له.'],
+];
+const RELAY = [
+	['p', 'يحجز موعده', 'يختار الطبيب والسبب والوقت من هاتفه.'],
+	['c', 'يصل الطلب', 'يظهر في جدول العيادة، دون مكالمة واحدة.'],
+	['p', 'يصله التأكيد', 'ومعه تذكير قبل الموعد.'],
+	['c', 'يكتب الطبيب تقريره', 'التشخيص والتعليمات، بعد الزيارة.'],
+	['p', 'يبقى في ملفه', 'تقرير يعود إليه متى احتاج.'],
+	['c', 'يطّلع طبيب آخر', 'فقط برمز يعطيه المريض، ويسحبه متى شاء.'],
+];
+const BELIEFS = [
+	['السجل ملك صاحبه', 'حجز موعد لا يفتح ملفك. يفتحه رمز تعطيه لطبيبك، وتسحبه متى شئت.'],
+	['خصوصيتك أولاً', 'بياناتك الطبية محفوظة على خوادمنا داخل سوريا، ومشفّرة.'],
+	['القرار لطبيبك', 'لا يقدّم DocSera رأياً طبياً. القرار يبقى للطبيب، ونحن ننظّم كل ما حوله.'],
+	['مبني لواقعنا', 'عربي أولاً، خفيف على الشبكات الضعيفة، ويذكّرك بأدويتك حتى دون إنترنت.'],
+	['ضفتان معاً', 'نبني تطبيق المريض وأدوات العيادة معاً، لأن الجسر لا يقوم على ضفة واحدة.'],
+];
+
+const PROPS = ['phone', 'clock', 'folder', 'prescription', 'pills', 'stethoscope'];
+const PARTS = ['towers', 'cables', 'deck'];
+const shot = (cam: string, name: string) => `/images/about/${cam}-${name}.webp`;
 ---
 
 <Layout
 	title="من نحن — DocSera"
-	description="قصة دوكسيرا: منصة سورية تصل المريض بطبيبه، وتجمع المواعيد والملف الطبي في مكان واحد."
+	description="قصة دوكسيرا: منصة سورية تصل المريض بعيادته، وتبقي تاريخه الصحي معه، لأن المعلومة الطبية يجب أن تعبر."
 	path="/about"
 	appBar={false}
 >
@@ -40,55 +56,71 @@ const VALUES = [
 	<main>
 		<section class="b" data-bridge>
 			<div class="b-stick" data-b-stick>
-				<img class="silk" src="/images/home/3d/silk-860.webp" srcset="/images/home/3d/silk-860.webp 860w, /images/home/3d/silk-1600.webp 1600w" sizes="max(100vw, 160vh)" alt="" width="1600" height="1000" decoding="async" />
-				<div class="b-lines">
-					<div class="b-line" data-l><h1>بدأنا من مشكلة يعرفها كل سوري.</h1></div>
-					<div class="b-line" data-l><h2>لم تكن المشكلة في الأطباء.<br />كان ينقص ما يصلهم بالمرضى.</h2></div>
-					<div class="b-line" data-l><h2>فبنينا الجسر.</h2><p>منصة واحدة تنظّم رعايتك الصحية، وتعيد إليها سهولتها وإنسانيتها.</p></div>
+				<div class="scene" data-scene aria-hidden="true">
+					<picture><source media="(max-aspect-ratio: 1/1)" srcset={shot('p', 'bg-night')} /><img class="lay" src={shot('d', 'bg-night')} alt="" width="1760" height="1100" fetchpriority="high" decoding="async" /></picture>
+					<img class="lay" data-dawn data-d={shot('d', 'bg-dawn')} data-p={shot('p', 'bg-dawn')} alt="" width="1760" height="1100" decoding="async" />
+					{PARTS.map((part) => (
+						<div class="part" data-part={part}>
+							<img class="lay" data-d={shot('d', `${part}-night`)} data-p={shot('p', `${part}-night`)} alt="" width="1760" height="1100" decoding="async" />
+							<img class="lay" data-part-dawn data-d={shot('d', `${part}-dawn`)} data-p={shot('p', `${part}-dawn`)} alt="" width="1760" height="1100" decoding="async" />
+						</div>
+					))}
+					<span class="who who-l" data-anchor="doc">الطبيب</span>
+					<span class="who who-r" data-anchor="pat">المريض</span>
+					<span class="mark" data-anchor="mark" data-mark><img src="/images/DocSera-shape-main.svg" alt="" width="40" height="40" /></span>
+					<i class="pulse" data-pulse></i><i class="pulse" data-pulse></i><i class="pulse" data-pulse></i>
 				</div>
-				<div class="b-scene" aria-hidden="true">
-					{PROBLEMS.map(([label, x, y, r]) => <span class="b-p" data-p style={`left:${x}%;top:${y}%;--r:${r}deg`}>{label}</span>)}
-					<svg viewBox="0 0 1000 420">
-						<defs>
-							<linearGradient id="bank" gradientUnits="userSpaceOnUse" x1="0" y1="258" x2="0" y2="660"><stop offset="0" stop-color="#2C8F8D" /><stop offset="1" stop-color="#0A3B41" stop-opacity="0" /></linearGradient>
-						</defs>
-						<path class="bank" d="M-1400 262H0C90 258 170 262 214 272C232 300 244 356 250 700H-1400Z" />
-						<path class="bank" d="M2400 262H1000C910 258 830 262 786 272C768 300 756 356 750 700H2400Z" />
-						<path class="tw" data-draw d="M320 300V100" pathLength="1" />
-						<path class="tw" data-draw d="M680 300V100" pathLength="1" />
-						<path class="cable" data-draw d="M205 270L320 112Q500 240 680 112L795 270" pathLength="1" />
-						<path class="hang" data-hang d={HANGERS} />
-						<path class="deck" data-draw d="M215 270Q500 240 785 270" pathLength="1" />
-					</svg>
-					<span class="b-who b-who-r">المريض</span>
-					<span class="b-who b-who-l">الطبيب</span>
-					<span class="b-mark" data-mark><img src="/images/DocSera-shape-main.svg" alt="" width="34" height="34" /></span>
+				<div class="scrim" aria-hidden="true"></div>
+				{PROPS.map((n, i) => <img class="prop" data-prop={i} data-src={`/images/about/prop-${n}.webp`} alt="" width="520" height="520" decoding="async" aria-hidden="true" />)}
+
+				<div class="beats">
+					<div class="beat beat-hero" data-beat="-1,.075"><h1>بين المريض وطبيبه،<br />كانت هناك مسافة.</h1><p>هذه قصة عبورها.</p><span class="cue" aria-hidden="true"><svg viewBox="0 0 24 24"><path d="M12 5v13M6.5 12.5 12 18l5.5-5.5" /></svg></span></div>
+					{DAY.map(([t, h, s], i) => (
+						<div class="beat" data-beat={`${(0.09 + i * 0.062).toFixed(3)},${(0.148 + i * 0.062).toFixed(3)}`} data-fall={i % 2 ? '-7' : '6'}>
+							<time>{t}</time><h2>{h}</h2><p>{s}</p>
+						</div>
+					))}
+					<div class="beat" data-beat=".405,.47" data-fall="5"><h2>وعلى الضفة الأخرى، طبيب.</h2><p>هاتف لا يهدأ، ومواعيد لا يحضرها أصحابها، وتاريخ مرضي يُروى من الذاكرة.</p></div>
+					<div class="beat beat-big" data-beat=".48,.56"><h2>لم ينقص سوريا الأطباء.</h2><h2 class="soft">كان ينقصها طريق تعبر منه المعلومة.</h2></div>
+					{PLANKS.map(([h, s], i) => (
+						<div class="beat beat-plank" data-beat={`${(0.635 + i * 0.044).toFixed(3)},${(0.68 + i * 0.044).toFixed(3)}`}><h2>{h}</h2><p>{s}</p></div>
+					))}
+					<div class="beat beat-done" data-beat=".875,2"><h2>هذا هو DocSera.</h2><p>منصة واحدة تصل المريض بعيادته، وتبقي تاريخه الصحي معه.</p></div>
 				</div>
 			</div>
 		</section>
 
-		<section class="vals">
-			<h2>ما يقودنا</h2>
-			<div class="vals-list">
-				{VALUES.map((v) => (
-					<article>
-						<i><svg viewBox="0 0 24 24" aria-hidden="true" set:html={v.icon} /></i>
-						<h3>{v.title}</h3>
-						<p>{v.text}</p>
-					</article>
+		<section class="rel" data-relay>
+			<div class="sec-h"><h2>رحلة موعد واحد</h2><p>كل خطوة عند المريض لها وجه عند العيادة.</p></div>
+			<div class="rel-sides" aria-hidden="true"><span>العيادة</span><span>المريض</span></div>
+			<ol class="rel-list">
+				<i class="rel-line"><b data-relay-fill></b></i>
+				{RELAY.map(([side, h, s]) => (
+					<li class:list={['r-step', side === 'p' ? 'is-p' : 'is-c']} data-r>
+						<i class="r-dot"></i>
+						<div><small>{side === 'p' ? 'المريض' : 'العيادة'}</small><h3>{h}</h3><p>{s}</p></div>
+					</li>
 				))}
+			</ol>
+		</section>
+
+		<section class="bel">
+			<h2>ما نؤمن به</h2>
+			<div class="bel-list">
+				{BELIEFS.map(([h, s]) => <article data-r><h3>{h}</h3><p>{s}</p></article>)}
 			</div>
 		</section>
 
-		<section class="doors">
-			<h2>مكانك معنا</h2>
-			<div class="doors-grid">
-				<div class="door">
+		<section class="vis">
+			<blockquote data-r>نريد أن يأتي يوم لا يحمل فيه مريض في سوريا ملفه الطبي في كيس.</blockquote>
+			<p data-r>مستقبل الطب الرقمي، يبدأ في سوريا.</p>
+			<div class="doors">
+				<div class="door" data-r>
 					<h3>أنا مريض</h3>
 					<p>مواعيدك وأدويتك وملفك الطبي في تطبيق واحد.</p>
 					<StoreBadges adaptive size="md" />
 				</div>
-				<div class="door door-pro">
+				<div class="door door-pro" data-r>
 					<h3>أنا طبيب، مختص، أو صاحب مركز</h3>
 					<p>أدر عيادتك أو مركزك بأدوات صُممت لك.</p>
 					<a href="/pro">اكتشف DocSera Pro</a>
@@ -100,99 +132,226 @@ const VALUES = [
 </Layout>
 
 <script>
+	import sceneMeta from '../data/aboutScene.json';
+
+	type Cam = 'd' | 'p';
+	const meta = sceneMeta as Record<Cam, { w: number; h: number; deck: number[][]; mark: number[]; doc: number[]; pat: number[] }>;
 	const root = document.querySelector<HTMLElement>('[data-bridge]');
 	const stick = root?.querySelector<HTMLElement>('[data-b-stick]');
-	if (root && stick && document.documentElement.classList.contains('anim')) {
+	const anim = document.documentElement.classList.contains('anim');
+	const tall = matchMedia('(max-aspect-ratio: 1/1)');
+	const cam = (): Cam => (tall.matches ? 'p' : 'd');
+	const layers = Array.from(document.querySelectorAll<HTMLImageElement>('img[data-d]'));
+	let layersOn = false;
+	const loadLayers = () => {
+		layersOn = true;
+		layers.forEach((img) => { const src = img.dataset[cam()] || ''; if (img.getAttribute('src') !== src) img.src = src; });
+	};
+	tall.addEventListener('change', () => { if (layersOn) loadLayers(); });
+
+	if (root && stick && anim) {
 		const clamp = (v: number) => Math.min(1, Math.max(0, v));
+		const lerp = (a: number, b: number, t: number) => a + (b - a) * t;
 		const seg = (p: number, a: number, b: number) => { const t = clamp((p - a) / (b - a)); return t * t * (3 - 2 * t); };
-		const lines = Array.from(root.querySelectorAll<HTMLElement>('[data-l]'));
-		const probs = Array.from(root.querySelectorAll<HTMLElement>('[data-p]'));
-		const draws = Array.from(root.querySelectorAll<SVGPathElement>('[data-draw]'));
-		const hang = root.querySelector<SVGPathElement>('[data-hang]');
-		const mark = root.querySelector<HTMLElement>('[data-mark]');
-		const WIN: [number, number][] = [[-1, 0.27], [0.3, 0.57], [0.66, 2]];
-		const DRAW: [number, number][] = [[0.46, 0.58], [0.5, 0.62], [0.58, 0.76], [0.54, 0.68]];
-		let ticking = false;
-		const paint = () => {
-			ticking = false;
-			const r = root.getBoundingClientRect();
-			const p = clamp(-r.top / Math.max(1, r.height - stick.offsetHeight));
-			lines.forEach((l, i) => {
-				const [a, b] = WIN[i];
-				const v = seg(p, a, a + 0.07) * (1 - seg(p, b, b + 0.06));
-				l.style.opacity = String(v);
-				l.style.transform = `translateY(${(1 - seg(p, a, a + 0.07)) * 22 - seg(p, b, b + 0.06) * 22}px)`;
-			});
-			probs.forEach((e, i) => {
-				const f = seg(p, 0.27 + i * 0.035, 0.48 + i * 0.035);
-				e.style.opacity = String(1 - seg(p, 0.36 + i * 0.035, 0.5 + i * 0.035));
-				e.style.transform = `translateY(${f * f * 260}px) rotate(calc(var(--r) * ${1 + f * 3}))`;
-			});
-			draws.forEach((d, i) => { d.style.strokeDashoffset = String(1 - seg(p, DRAW[i][0], DRAW[i][1])); });
-			if (hang) hang.style.opacity = String(seg(p, 0.72, 0.82));
-			if (mark) {
-				const m = seg(p, 0.8, 0.9);
-				mark.style.opacity = String(m);
-				mark.style.transform = `translate(-50%, -50%) scale(${0.6 + m * 0.4})`;
-			}
+		const all = <T extends Element = HTMLElement>(s: string) => Array.from(root.querySelectorAll<T>(s));
+		const one = <T extends Element = HTMLElement>(s: string) => root.querySelector<T>(s)!;
+		const beats = all('[data-beat]').map((el) => {
+			const [a, b] = (el.dataset.beat || '0,1').split(',').map(Number);
+			return { el, a, b, fall: el.dataset.fall ? Number(el.dataset.fall) : null };
+		});
+		const falling = beats.filter((b) => b.fall !== null);
+		const props = all<HTMLImageElement>('[data-prop]');
+		const scene = one('[data-scene]'), dawn = one('[data-dawn]');
+		const partDawn = all('[data-part-dawn]'), mark = one('[data-mark]'), pulses = all('[data-pulse]');
+		const part = (n: string) => one(`[data-part="${n}"]`);
+		const towers = part('towers'), cables = part('cables'), deck = part('deck');
+		const doc = one('[data-anchor="doc"]'), pat = one('[data-anchor="pat"]');
+		let W = 1, H = 1, ox = 0, oy = 0, iw = 1, ih = 1, propsOn = false, queued = false, p = 0, running = false;
+		const toXY = (u: number, v: number): [number, number] => [ox + u * iw, oy + v * ih];
+		const measure = () => {
+			const m = meta[cam()];
+			W = scene.clientWidth; H = scene.clientHeight;
+			const k = Math.max(W / m.w, H / m.h);
+			iw = m.w * k; ih = m.h * k; ox = (W - iw) / 2; oy = H - ih;
+			const put = (el: HTMLElement, at: number[]) => {
+				const [x, y] = toXY(at[0], at[1]), half = el.offsetWidth / 2 + 8;
+				el.style.left = `${Math.min(W - half, Math.max(half, x))}px`;
+				el.style.top = `${y}px`;
+			};
+			put(doc, m.doc); put(pat, m.pat); put(mark, m.mark);
 		};
-		const ask = () => { if (!ticking) { ticking = true; requestAnimationFrame(paint); } };
+		const deckAt = (t: number) => {
+			const pts = meta[cam()].deck, f = clamp(t) * (pts.length - 1), i = Math.min(pts.length - 2, Math.floor(f)), k = f - i;
+			return toXY(lerp(pts[i][0], pts[i + 1][0], k), lerp(pts[i][1], pts[i + 1][1], k));
+		};
+		const flow = (now: number) => {
+			if (p < 0.885) { running = false; pulses.forEach((d) => { d.style.opacity = '0'; }); return; }
+			const fade = seg(p, 0.885, 0.92);
+			pulses.forEach((d, i) => {
+				const raw = (now / 5200 + i / 3) % 1, t = i === 1 ? 1 - raw : raw;
+				const [x, y] = deckAt(t);
+				d.style.opacity = String(fade * Math.min(1, Math.min(raw, 1 - raw) * 9));
+				d.style.transform = `translate3d(${x.toFixed(1)}px,${y.toFixed(1)}px,0)`;
+			});
+			requestAnimationFrame(flow);
+		};
+		const paint = () => {
+			queued = false;
+			const r = root.getBoundingClientRect();
+			p = clamp(-r.top / Math.max(1, r.height - stick.offsetHeight));
+			if (p > 0.002 && !propsOn) { propsOn = true; props.forEach((img) => { img.src = img.dataset.src || ''; }); }
+			if (p > 0.2 && !layersOn) loadLayers();
+			beats.forEach(({ el, a, b, fall }) => {
+				const inT = seg(p, a, a + 0.016), outT = seg(p, b - 0.018, b);
+				const v = inT * (1 - (fall === null ? outT : seg(p, b - 0.024, b - 0.012)));
+				if (v <= 0.002) { if (el.style.visibility !== 'hidden') el.style.visibility = 'hidden'; return; }
+				el.style.visibility = 'visible';
+				el.style.opacity = String(v);
+				el.style.transform = `translateY(${(1 - inT) * 18 - (fall === null ? outT : seg(p, b - 0.024, b - 0.012)) * 14}px)`;
+			});
+			props.forEach((img, i) => {
+				const b = falling[i];
+				if (!b) return;
+				const inT = seg(p, b.a, b.a + 0.018), d = seg(p, b.b - 0.022, b.b + 0.016);
+				const v = inT * (1 - seg(p, b.b + 0.002, b.b + 0.016));
+				if (v <= 0.002) { if (img.style.visibility !== 'hidden') img.style.visibility = 'hidden'; return; }
+				img.style.visibility = 'visible';
+				img.style.opacity = String(v);
+				img.style.transform = `translate(-50%, -50%) translateY(${(1 - inT) * -34 + d * d * 58 * innerHeight / 100}px) rotate(${(b.fall || 0) * (1 - inT) + d * d * (b.fall || 1) * 13}deg) scale(${lerp(0.88, 1, inT) * (1 - d * 0.56)})`;
+			});
+			const dn = seg(p, 0.6, 0.93);
+			dawn.style.opacity = String(dn);
+			partDawn.forEach((e) => { e.style.opacity = String(dn); });
+			const tw = seg(p, 0.545, 0.61);
+			towers.style.visibility = tw > 0 ? 'visible' : 'hidden';
+			towers.style.clipPath = `inset(${(lerp(H, oy + ih * 0.3, tw)).toFixed(1)}px 0 0 0)`;
+			const cb = seg(p, 0.6, 0.655);
+			cables.style.visibility = cb > 0 ? 'visible' : 'hidden';
+			const side = (1 - cb) * W / 2;
+			cables.style.clipPath = `inset(0 ${side.toFixed(1)}px 0 ${side.toFixed(1)}px)`;
+			let laid = 0;
+			for (let i = 0; i < 5; i++) laid += seg(p, 0.64 + i * 0.044, 0.678 + i * 0.044);
+			laid /= 5;
+			deck.style.visibility = laid > 0 ? 'visible' : 'hidden';
+			const pts = meta[cam()].deck, right = toXY(pts[pts.length - 1][0] + 0.03, 0)[0], left = toXY(pts[0][0] - 0.03, 0)[0];
+			deck.style.clipPath = `inset(0 0 0 ${Math.max(0, lerp(right, left, laid)).toFixed(1)}px)`;
+			const m = seg(p, 0.86, 0.9);
+			mark.style.opacity = String(m);
+			mark.style.transform = `translate(-50%, -50%) scale(${0.55 + m * 0.45})`;
+			if (p >= 0.885 && !running) { running = true; requestAnimationFrame(flow); }
+		};
+		const ask = () => { if (!queued) { queued = true; requestAnimationFrame(paint); } };
 		addEventListener('scroll', ask, { passive: true });
-		addEventListener('resize', ask);
+		addEventListener('resize', () => { measure(); ask(); });
+		tall.addEventListener('change', () => { measure(); ask(); });
+		measure();
 		paint();
+		document.fonts?.ready.then(() => { measure(); ask(); });
+	} else loadLayers();
+
+	// Quiet reveals below the story, and the light travelling down the relay.
+	const items = Array.from(document.querySelectorAll<HTMLElement>('[data-r]'));
+	if (anim) {
+		const io = new IntersectionObserver((es) => es.forEach((e) => { if (e.isIntersecting) { e.target.classList.add('in'); io.unobserve(e.target); } }), { rootMargin: '0px 0px -12% 0px' });
+		items.forEach((el) => { el.classList.add('wait'); io.observe(el); });
+		const relay = document.querySelector<HTMLElement>('[data-relay] .rel-list');
+		const fill = document.querySelector<HTMLElement>('[data-relay-fill]');
+		if (relay && fill) {
+			let q = false;
+			const go = () => { q = false; const r = relay.getBoundingClientRect(); fill.style.transform = `scaleY(${Math.min(1, Math.max(0, (innerHeight * 0.68 - r.top) / r.height))})`; };
+			addEventListener('scroll', () => { if (!q) { q = true; requestAnimationFrame(go); } }, { passive: true });
+			go();
+		}
 	}
 </script>
 
 <style>
-	.silk { position: absolute; inset: 0; width: 100%; height: 100%; object-fit: cover; }
-	.b { position: relative; color: #fff; background: #06262B; }
-	.b-stick { position: relative; display: flex; flex-direction: column; gap: 26px; padding: 104px 22px 40px; overflow: hidden; }
-	.b-lines { position: relative; display: grid; gap: 22px; max-width: 900px; margin: 0 auto; text-align: center; }
-	.b-line h1, .b-line h2 { margin: 0; font-size: clamp(2.1rem, 5.2vw, 4.2rem); font-weight: 800; line-height: 1.22; color: #fff; text-wrap: balance; }
-	.b-line p { margin: 12px 0 0; font-size: clamp(1.06rem, 1.8vw, 1.34rem); color: #DDF3F1; }
-	.b-scene { --sw: min(1000px, 118vw); --who: 10%; position: relative; flex: none; width: var(--sw); margin-inline: calc((100% - var(--sw)) / 2); aspect-ratio: 1000 / 420; }
-	.b-scene svg { position: absolute; inset: 0; width: 100%; height: 100%; overflow: visible; }
-	.bank { fill: url(#bank); }
-	.tw, .cable, .deck, .hang { fill: none; stroke-linecap: round; }
-	.tw { stroke: #F2FBFA; stroke-width: 9; }
-	.cable { stroke: #8FE3D9; stroke-width: 3.5; stroke-linejoin: round; }
-	.deck { stroke: #fff; stroke-width: 9; }
-	.hang { stroke: #8FE3D9; stroke-width: 1.6; opacity: .85; }
-	.b-p { display: none; }
-	.b-who-r { right: var(--who); }
-	.b-who-l { left: var(--who); }
-	.b-who { position: absolute; top: 72%; padding: 4px 12px; font-size: clamp(.8rem, 1.5vw, 1.04rem); font-weight: 800; color: #06343A; background: #fff; border-radius: 999px; }
-	.b-mark { position: absolute; left: 50%; top: 42%; display: grid; place-items: center; width: clamp(46px, 7vw, 70px); aspect-ratio: 1; background: #fff; border-radius: 50%; transform: translate(-50%, -50%); box-shadow: 0 0 0 7px rgba(255, 255, 255, .14), 0 0 44px 10px rgba(143, 227, 217, .5); }
-	.b-mark img { width: 58%; height: auto; }
+	.b { position: relative; color: #fff; background: #041C20; }
+	.b-stick { position: relative; overflow: hidden; padding: 100px 20px 0; }
+	.scene { position: relative; width: calc(100% + 40px); margin: 22px -20px 0; aspect-ratio: 16 / 10; overflow: hidden; }
+	.scene picture { display: contents; }
+	.lay { position: absolute; inset: 0; width: 100%; height: 100%; object-fit: cover; object-position: 50% 100%; }
+	.part { position: absolute; inset: 0; }
+	.scrim, .prop, .pulse { display: none; }
+	.who { position: absolute; z-index: 2; left: 25%; top: 80%; padding: 4px 13px; font-size: clamp(.84rem, 1.2vw, 1.04rem); font-weight: 800; white-space: nowrap; color: #06343A; background: #fff; border-radius: 999px; box-shadow: 0 10px 22px -10px rgba(0, 0, 0, .6); translate: -50% -50%; }
+	.who-r { left: 75%; }
+	.mark { position: absolute; z-index: 2; left: 50%; top: 61%; display: grid; place-items: center; width: clamp(48px, 5vw, 76px); aspect-ratio: 1; background: #fff; border-radius: 50%; transform: translate(-50%, -50%); box-shadow: 0 0 0 7px rgba(255, 255, 255, .22), 0 0 46px 12px rgba(255, 244, 214, .72); }
+	.mark img { width: 60%; height: auto; }
 
-	:global(html.anim) .b { height: 340vh; }
-	:global(html.anim) .b-stick { position: sticky; top: 0; height: 100vh; height: 100lvh; box-sizing: border-box; justify-content: center; gap: clamp(14px, 5vh, 54px); padding: 84px 16px 24px; }
-	:global(html.anim) .b-lines { display: block; width: 100%; min-height: clamp(150px, 26vh, 240px); }
-	:global(html.anim) .b-line { position: absolute; inset: 0 0 auto; opacity: 0; will-change: transform, opacity; }
-	:global(html.anim) .b-p { position: absolute; z-index: 2; display: block; padding: 6px 13px; font-size: clamp(.78rem, 1.5vw, 1.02rem); font-weight: 800; white-space: nowrap; color: #5C2D12; background: #FFE9D6; border-radius: 12px; box-shadow: 0 12px 24px -12px rgba(0, 0, 0, .6); will-change: transform, opacity; }
-	:global(html.anim) .tw, :global(html.anim) .cable, :global(html.anim) .deck { stroke-dasharray: 1; stroke-dashoffset: 1; }
-	:global(html.anim) .hang, :global(html.anim) .b-mark { opacity: 0; }
+	.beats { position: relative; z-index: 4; display: grid; gap: 26px; max-width: 860px; margin: 0 auto; text-align: center; }
+	.beat h1, .beat h2 { margin: 0; font-size: clamp(2rem, 4.8vw, 3.9rem); font-weight: 800; line-height: 1.25; color: #fff; text-wrap: balance; text-shadow: 0 2px 26px rgba(3, 34, 38, .5); }
+	.beat p { margin: 8px auto 0; max-width: 34em; font-size: clamp(1.06rem, 1.7vw, 1.32rem); line-height: 1.65; color: #EAF8F5; text-wrap: balance; text-shadow: 0 1px 16px rgba(3, 34, 38, .62); }
+	.beat time { display: inline-block; margin-bottom: 8px; padding: 3px 13px; font: 700 clamp(.95rem, 1.4vw, 1.12rem) Montserrat, Cairo, sans-serif; color: #FFE3AE; background: rgba(4, 40, 45, .5); border: 1px solid rgba(255, 227, 174, .42); border-radius: 999px; direction: rtl; }
+	.beat-big .soft { margin-top: 6px; color: #BDF2E8; }
+	.cue { display: none; }
 
-	.vals { padding: clamp(60px, 9vw, 110px) 24px; background: #F6FBFB; }
-	.vals h2 { margin: 0 0 clamp(26px, 4vw, 46px); text-align: center; font-size: clamp(1.9rem, 4vw, 3.1rem); font-weight: 800; color: #0F1A22; }
-	.vals-list { display: grid; grid-template-columns: repeat(3, minmax(0, 1fr)); gap: clamp(24px, 4vw, 52px); max-width: 1060px; margin: 0 auto; }
-	.vals i { display: grid; place-items: center; width: 52px; height: 52px; margin-bottom: 14px; color: #fff; background: var(--c-main-dark); border-radius: 16px; }
-	.vals svg { width: 27px; height: 27px; fill: none; stroke: currentColor; stroke-width: 2; stroke-linecap: round; stroke-linejoin: round; }
-	.vals h3 { margin: 0 0 6px; font-size: 1.4rem; font-weight: 800; color: #0F1A22; }
-	.vals p { margin: 0; font-size: 1.06rem; color: #46565D; }
+	:global(html.anim) .b { height: 900vh; }
+	:global(html.anim) .b-stick { position: sticky; top: 0; height: 100vh; height: 100lvh; padding: 0; }
+	:global(html.anim) .scene { position: absolute; inset: 0; width: auto; height: auto; margin: 0; aspect-ratio: auto; }
+	:global(html.anim) [data-dawn], :global(html.anim) [data-part-dawn], :global(html.anim) .mark { opacity: 0; }
+	:global(html.anim) .part { visibility: hidden; }
+	:global(html.anim) .scrim { display: block; position: absolute; z-index: 1; inset: 0 0 auto; height: 58%; background: linear-gradient(180deg, rgba(3, 34, 38, .56), rgba(3, 34, 38, .24) 55%, transparent); pointer-events: none; }
+	:global(html.anim) .pulse { display: block; position: absolute; z-index: 2; left: -4px; top: -4px; width: 8px; height: 8px; background: #fff; border-radius: 50%; box-shadow: 0 0 12px 5px rgba(255, 240, 205, .92); opacity: 0; will-change: transform, opacity; }
+	:global(html.anim) .prop { --pw: min(35vh, 62vw, 340px); --tx: clamp(86px, 13vh, 124px); display: block; position: absolute; z-index: 3; left: 50%; top: calc(var(--tx) + clamp(128px, 20vh, 190px) + var(--pw) / 2); width: var(--pw); height: auto; opacity: 0; visibility: hidden; transform: translate(-50%, -50%); will-change: transform, opacity; pointer-events: none; }
+	:global(html.anim) .beats { position: absolute; inset: clamp(86px, 13vh, 124px) 20px auto; display: block; max-width: none; margin: 0; }
+	:global(html.anim) .beat { position: absolute; inset: 0 0 auto; margin: 0 auto; max-width: 900px; opacity: 0; visibility: hidden; will-change: transform, opacity; }
+	:global(html.anim) .beat-hero { opacity: 1; visibility: visible; }
+	:global(html.anim) .cue { display: inline-grid; place-items: center; width: 40px; height: 40px; margin-top: 18px; color: #fff; background: rgba(255, 255, 255, .1); border: 1px solid rgba(255, 255, 255, .3); border-radius: 50%; }
+	.cue svg { width: 20px; height: 20px; fill: none; stroke: currentColor; stroke-width: 2.4; stroke-linecap: round; stroke-linejoin: round; animation: cue 1.5s ease-in-out infinite; }
+	@keyframes cue { 0%, 100% { transform: translateY(-2px); } 50% { transform: translateY(3px); } }
 
-	.doors { padding: clamp(60px, 9vw, 110px) 22px; text-align: center; color: #fff; background: radial-gradient(90% 80% at 50% 118%, rgba(255, 214, 170, .3), rgba(66, 190, 178, .28) 42%, transparent 72%), linear-gradient(180deg, #06262B, #0A4148 72%, #0E5C60); }
-	.doors h2 { margin: 0 0 30px; font-size: clamp(2rem, 4.6vw, 3.6rem); font-weight: 800; color: #fff; }
-	.doors-grid { display: grid; grid-template-columns: repeat(2, minmax(0, 1fr)); gap: 16px; max-width: 920px; margin: 0 auto; }
-	.door { display: flex; flex-direction: column; align-items: center; justify-content: space-between; gap: 14px; padding: 28px 22px; background: rgba(255, 255, 255, .08); border: 1px solid rgba(255, 255, 255, .18); border-radius: 22px; }
+	.rel { padding: clamp(64px, 9vw, 120px) 22px; background: linear-gradient(180deg, #0C5A5C 0, #CBEAE5 7%, #F6FBFB 18%); color: #0F1A22; }
+	.sec-h { text-align: center; }
+	.sec-h h2, .bel h2 { margin: 0 0 8px; font-size: clamp(2rem, 4.4vw, 3.5rem); font-weight: 800; line-height: 1.2; }
+	.sec-h p { margin: 0; font-size: clamp(1.04rem, 1.7vw, 1.28rem); color: #46565D; }
+	.rel-sides { display: grid; grid-template-columns: 1fr 1fr; max-width: 900px; margin: 34px auto 10px; text-align: center; font-weight: 800; color: var(--c-main-dark); direction: ltr; }
+	.rel-list { position: relative; display: grid; gap: 14px; max-width: 900px; margin: 0 auto; padding: 0; list-style: none; }
+	.rel-line { position: absolute; top: 6px; bottom: 6px; left: 50%; width: 3px; margin-left: -1.5px; overflow: hidden; background: #D8EAE9; border-radius: 3px; }
+	.rel-line b { display: block; width: 100%; height: 100%; background: linear-gradient(180deg, #2BB5AE, var(--c-main-dark)); transform: scaleY(0); transform-origin: 50% 0; }
+	.r-step { position: relative; display: flex; width: 50%; box-sizing: border-box; }
+	.r-step.is-p { margin-right: 0; margin-left: auto; padding-left: 34px; justify-content: flex-start; }
+	.r-step.is-c { margin-right: auto; margin-left: 0; padding-right: 34px; }
+	.r-step > div { width: 100%; padding: 16px 20px; background: #fff; border: 1px solid #E1EEEE; border-radius: 20px; box-shadow: 0 22px 40px -30px rgba(0, 70, 74, .5); }
+	.r-step.is-c > div { background: #0B5F62; border-color: #0B5F62; color: #fff; }
+	.r-dot { position: absolute; top: 26px; width: 15px; height: 15px; background: #fff; border: 4px solid var(--c-main-dark); border-radius: 50%; }
+	.r-step.is-p .r-dot { left: -7.5px; }
+	.r-step.is-c .r-dot { right: -7.5px; }
+	.r-step small { display: none; }
+	.r-step h3 { margin: 0 0 3px; font-size: clamp(1.18rem, 2vw, 1.46rem); font-weight: 800; }
+	.r-step p { margin: 0; font-size: 1rem; line-height: 1.6; color: #46565D; }
+	.r-step.is-c p { color: #D9F2EF; }
+
+	.bel { padding: clamp(64px, 9vw, 120px) 22px; color: #fff; background: #06262B; }
+	.bel h2 { margin-bottom: clamp(26px, 4vw, 48px); text-align: center; color: #fff; }
+	.bel-list { display: grid; grid-template-columns: repeat(6, minmax(0, 1fr)); gap: 14px; max-width: 1100px; margin: 0 auto; }
+	.bel article { grid-column: span 2; padding: 26px 24px; background: rgba(255, 255, 255, .055); border: 1px solid rgba(255, 255, 255, .13); border-radius: 22px; }
+	.bel article:nth-child(n + 4) { grid-column: span 3; }
+	.bel h3 { margin: 0 0 8px; font-size: clamp(1.4rem, 2.3vw, 1.85rem); font-weight: 800; color: #A9EADF; }
+	.bel p { margin: 0; font-size: 1.06rem; line-height: 1.75; color: #E4F6F4; }
+
+	.vis { padding: clamp(80px, 12vw, 150px) 22px clamp(64px, 9vw, 110px); text-align: center; color: #fff; background: radial-gradient(90% 60% at 50% 104%, rgba(255, 214, 170, .32), rgba(66, 190, 178, .3) 44%, transparent 74%), linear-gradient(180deg, #06262B, #0A4148 66%, #0E5C60); }
+	.vis blockquote { max-width: 980px; margin: 0 auto 16px; font-size: clamp(2rem, 5vw, 4.1rem); font-weight: 800; line-height: 1.3; text-wrap: balance; }
+	.vis > p { margin: 0 0 clamp(36px, 5vw, 60px); font-size: clamp(1.08rem, 1.8vw, 1.36rem); color: #BDEDE5; }
+	.doors { display: grid; grid-template-columns: repeat(2, minmax(0, 1fr)); gap: 16px; max-width: 920px; margin: 0 auto; }
+	.door { display: flex; flex-direction: column; align-items: center; justify-content: space-between; gap: 14px; padding: 28px 22px; background: rgba(255, 255, 255, .09); border: 1px solid rgba(255, 255, 255, .2); border-radius: 22px; }
 	.door h3 { margin: 0; font-size: clamp(1.3rem, 2.2vw, 1.6rem); font-weight: 800; color: #fff; }
 	.door p { margin: 0; font-size: 1.04rem; color: #E4F6F4; }
 	.door-pro a { padding: 12px 24px; font-weight: 800; color: var(--c-main-dark); text-decoration: none; background: #fff; border-radius: 14px; }
 
+	[data-r]:global(.wait) { opacity: 0; transform: translateY(22px); transition: opacity .6s ease, transform .6s ease; }
+	[data-r]:global(.in) { opacity: 1; transform: none; }
+
 	@media (max-width: 760px) {
-		.b-scene { --sw: 150vw; --who: 18%; }
-		.vals-list, .doors-grid { grid-template-columns: minmax(0, 1fr); }
-		.vals article { text-align: center; }
-		.vals i { margin-inline: auto; }
+		.rel-sides { display: none; }
+		.rel-line { left: auto; right: 7px; margin: 0; }
+		.r-step, .r-step.is-p, .r-step.is-c { width: 100%; margin: 0; padding: 0 34px 0 0; }
+		.r-step.is-p .r-dot, .r-step.is-c .r-dot { left: auto; right: 1px; }
+		.r-step small { display: block; margin-bottom: 2px; font-size: .84rem; font-weight: 800; color: var(--c-main-dark); }
+		.r-step.is-c small { color: #A9EADF; }
+		.bel-list, .doors { grid-template-columns: minmax(0, 1fr); }
+		.bel article, .bel article:nth-child(n + 4) { grid-column: auto; }
+	}
+	@media (prefers-reduced-motion: reduce) {
+		.cue svg { animation: none; }
 	}
 </style>
