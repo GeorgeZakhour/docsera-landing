@@ -1,17 +1,23 @@
 ---
-// «من نحن»: a quiet page. One sentence, then one hairline drawn between two words while
-// the story is read. Nothing glows and nothing falls. Without JS or with reduced motion
-// it is a plain column with the line already drawn.
+// «من نحن»: a quiet page that opens on one question. The dot of its question mark falls
+// and becomes the patient; a broken path runs to the doctor; while the story is read, one
+// hairline crosses it and each everyday friction turns into what replaced it. Without JS
+// or with reduced motion it is a plain column with the line already drawn.
 import Layout from '../layouts/Layout.astro';
 import Footer from '../components/Footer.astro';
 import SiteHeader from '../components/site/SiteHeader.astro';
 import StoreBadges from '../components/StoreBadges.astro';
 
 const STORY = [
-	['ما رأيناه', 'أطباء أكفاء ورعاية صادقة، لكن تفاصيلها موزّعة بين مكالمات وأوراق وذاكرة الناس.'],
+	['ما رأيناه', 'أطباء أكفاء ورعاية صادقة، لكن تفاصيلها موزّعة بين مكالمات وانتظار وأوراق وذاكرة الناس.'],
 	['ما فهمناه', 'لم يكن الطب هو ما ينقص. كان ينقص طريق واضح تصل به المعلومة إلى من يحتاجها، في وقتها، وبإذن صاحبها.'],
-	['ما بنيناه', 'منصة واحدة تصل المريض بعيادته، وتبقي تاريخه الصحي معه. هذه هي DocSera.'],
+	['ما بنيناه', 'منصة واحدة تصل المريض بعيادته، وتبقي تاريخه الصحي معه.'],
 ];
+// Each friction on the path, and what replaced it once the line crossed it.
+const STATIONS = [['مكالمات', 'رسائل', 18], ['انتظار', 'موعد', 39], ['أوراق', 'ملف', 61], ['ذاكرة', 'تذكير', 82]] as const;
+// The Arabic question mark of Cairo, drawn as two shapes so that its dot can leave it.
+const QM_HOOK = 'M285 202H220V237Q220 270 198 296Q176 323 132 360Q93 393 73 418Q53 442 46 470Q39 498 39 541Q39 599 62 634Q84 670 129 686Q174 702 241 702Q266 702 296 697Q327 692 357 685Q387 678 409 671L403 608Q382 613 354 618Q326 624 298 628Q270 631 249 631Q182 631 150 609Q119 587 119 535Q119 507 126 488Q133 468 152 448Q171 427 207 396Q234 373 254 352Q275 331 287 310Q299 288 299 264Q299 245 294 229Q290 213 285 202Z';
+const QM_DOT = 'M296 1H212V116H296Z';
 const BELIEFS = [
 	['السجل ملك صاحبه', 'حجز موعد لا يفتح ملفك. يفتحه رمز تعطيه لطبيبك، وتسحبه متى شئت.'],
 	['خصوصيتك أولاً', 'بياناتك الطبية محفوظة على خوادمنا داخل سوريا، ومشفّرة.'],
@@ -35,25 +41,38 @@ const BELIEFS = [
 		<section class="q" data-q>
 			<div class="q-stick" data-q-stick>
 				<div class="q-text">
-					<h1 class="q-line q-hero" data-q-hero><span class="q-rise">بين المريض وطبيبه،<br />كانت هناك مسافة.</span></h1>
+					<h1 class="q-line q-ask" data-q-ask><span class="q-rise" data-q-rise>من نحن<span class="q-sr">؟</span><svg class="qm" viewBox="0 -720 446 740" aria-hidden="true"><g transform="scale(1 -1)"><path data-q-hook d={QM_HOOK} /><path data-q-tittle d={QM_DOT} /></g></svg></span></h1>
+					<p class="q-line q-say" data-q-say=".125,.155,.235,.265">بين المريض وطبيبه،<br />كانت هناك مسافة.</p>
 					{STORY.map(([label, text]) => (
 						<article class="q-line q-par" data-q-par>
 							<h2>{label}</h2>
 							<p>{text.split(' ').map((w) => <Fragment><span class="w">{w}</span>{' '}</Fragment>)}</p>
 						</article>
 					))}
+					<h2 class="q-line q-say q-answer" data-q-say=".885,.915,2,3">نحن DocSera.</h2>
 				</div>
 				<div class="q-ends" aria-hidden="true">
-					<span class="q-end"><i class="q-dot on"></i>المريض</span>
-					<span class="q-wire"><i data-q-wire></i><span class="q-mark" data-q-mark><img src="/images/DocSera-shape-main.svg" alt="" width="24" height="24" /></span></span>
-					<span class="q-end"><i class="q-dot" data-q-dot></i>الطبيب</span>
+					<span class="q-end"><i class="q-dot on" data-q-dot-r></i><span data-q-word-r>المريض</span></span>
+					<span class="q-wire">
+						<i class="q-dash" data-q-dash></i>
+						<i class="q-solid" data-q-wire></i>
+						{STATIONS.map(([from, to, at]) => (
+							<span class="st" style={`right:${at}%`} data-st={at / 100}>
+								<span class="st-a">{from}</span><span class="st-b">{to}</span><i class="st-t"></i>
+							</span>
+						))}
+						<span class="q-mark" data-q-mark><img src="/images/DocSera-shape-main.svg" alt="" width="24" height="24" /></span>
+					</span>
+					<span class="q-end" data-q-end-l><i class="q-dot" data-q-dot></i>الطبيب</span>
 				</div>
+				<i class="q-fly" data-q-fly aria-hidden="true"></i>
+				<i class="q-ring" data-q-ring aria-hidden="true"></i>
 				<span class="q-cue" data-q-cue aria-hidden="true">مرّر<i></i></span>
 			</div>
 		</section>
 
-		<section class="dev">
-			<img data-r src="/images/about/devices-sm.webp" srcset="/images/about/devices-sm.webp 960w, /images/about/devices-lg.webp 1640w" sizes="(max-width: 899px) 116vw, 1040px" alt="DocSera على الحاسوب والهاتف والآيباد" width="1640" height="986" loading="lazy" decoding="async" />
+		<section class="dev" data-dev>
+			<img data-dev-img src="/images/about/devices-sm.webp" srcset="/images/about/devices-sm.webp 960w, /images/about/devices-lg.webp 1640w" sizes="(max-width: 899px) 116vw, 1040px" alt="DocSera على الحاسوب والهاتف والآيباد" width="1640" height="986" loading="lazy" decoding="async" />
 			<p data-r>على الهاتف والآيباد والويب، بحساب واحد.</p>
 		</section>
 
@@ -86,34 +105,71 @@ const BELIEFS = [
 
 <script>
 	const anim = document.documentElement.classList.contains('anim');
+	const clamp = (v: number) => Math.min(1, Math.max(0, v));
+	const seg = (p: number, a: number, b: number) => { const t = clamp((p - a) / (b - a)); return t * t * (3 - 2 * t); };
 	const root = document.querySelector<HTMLElement>('[data-q]');
 	const stick = root?.querySelector<HTMLElement>('[data-q-stick]');
 	if (root && stick && anim) {
-		const clamp = (v: number) => Math.min(1, Math.max(0, v));
-		const seg = (p: number, a: number, b: number) => { const t = clamp((p - a) / (b - a)); return t * t * (3 - 2 * t); };
-		const one = (s: string) => root.querySelector<HTMLElement>(s)!;
-		const hero = one('[data-q-hero]'), wire = one('[data-q-wire]'), mark = one('[data-q-mark]'), dot = one('[data-q-dot]'), cue = one('[data-q-cue]');
+		const one = <T extends Element = HTMLElement>(s: string) => root.querySelector<T>(s)!;
+		const ask = one('[data-q-ask]'), tittle = one<SVGPathElement>('[data-q-tittle]'), fly = one('[data-q-fly]'), ring = one('[data-q-ring]');
+		const dotR = one('[data-q-dot-r]'), wordR = one('[data-q-word-r]'), endL = one('[data-q-end-l]'), dot = one('[data-q-dot]');
+		const dash = one('[data-q-dash]'), wire = one('[data-q-wire]'), mark = one('[data-q-mark]'), cue = one('[data-q-cue]');
+		const says = Array.from(root.querySelectorAll<HTMLElement>('[data-q-say]')).map((el) => ({ el, t: (el.dataset.qSay || '').split(',').map(Number) }));
 		// [fade in from, to, ink from, to, fade out from, to]
-		const TIMES = [[0.17, 0.205, 0.215, 0.365, 0.395, 0.43], [0.44, 0.475, 0.485, 0.635, 0.665, 0.7], [0.71, 0.745, 0.755, 0.885, 2, 3]];
+		const TIMES = [[0.275, 0.305, 0.312, 0.405, 0.432, 0.462], [0.472, 0.502, 0.51, 0.612, 0.635, 0.665], [0.675, 0.705, 0.712, 0.79, 0.85, 0.88]];
 		const pars = Array.from(root.querySelectorAll<HTMLElement>('[data-q-par]')).map((el, i) => ({ el, t: TIMES[i], words: Array.from(el.querySelectorAll<HTMLElement>('.w')), last: [] as number[] }));
-		const STOPS = [[0.13, 0], [0.375, 1 / 3], [0.645, 2 / 3], [0.89, 1]];
-		const reach = (p: number) => {
-			if (p <= STOPS[0][0]) return 0;
-			for (let i = 1; i < STOPS.length; i++) if (p <= STOPS[i][0]) {
-				const [a, va] = STOPS[i - 1], [b, vb] = STOPS[i];
-				return va + (vb - va) * seg(p, a, b);
-			}
-			return 1;
+		const stations = Array.from(root.querySelectorAll<HTMLElement>('[data-st]')).map((el, i) => ({
+			el, at: Number(el.dataset.st), i,
+			from: el.querySelector<HTMLElement>('.st-a')!, to: el.querySelector<HTMLElement>('.st-b')!, tick: el.querySelector<HTMLElement>('.st-t')!,
+		}));
+		// Where the question's dot starts and where it lands.
+		let S = { x: 0, y: 0, w: 8, h: 11 }, E = { x: 0, y: 0 };
+		const measure = () => {
+			const keep = ask.style.transform;
+			ask.style.transform = 'none';
+			const base = stick.getBoundingClientRect(), a = tittle.getBoundingClientRect(), b = dotR.getBoundingClientRect();
+			ask.style.transform = keep;
+			S = { x: a.left + a.width / 2 - base.left, y: a.top + a.height / 2 - base.top, w: a.width, h: a.height };
+			E = { x: b.left + b.width / 2 - base.left, y: b.top + b.height / 2 - base.top };
+			ring.style.left = `${E.x}px`;
+			ring.style.top = `${E.y}px`;
 		};
 		const paint = (p: number) => {
-			const h = seg(p, 0.095, 0.16);
-			hero.style.opacity = String(1 - h);
-			hero.style.transform = `translateY(${-10 * h}px)`;
-			cue.style.opacity = String(1 - seg(p, 0, 0.035));
+			const leave = seg(p, 0.045, 0.09);
+			ask.style.opacity = String(1 - leave);
+			ask.style.transform = `translateY(${-12 * leave}px)`;
+			cue.style.opacity = String(1 - seg(p, 0, 0.028));
+
+			// The dot of the question mark falls and becomes the patient.
+			const f = clamp((p - 0.045) / 0.077);
+			tittle.style.opacity = p < 0.045 ? '1' : '0';
+			if (p < 0.045 || f >= 1) fly.style.opacity = '0';
+			else {
+				const x = S.x + (E.x - S.x) * (f * f * (3 - 2 * f)), y = S.y + (E.y - S.y) * Math.pow(f, 2.1);
+				const w = S.w + (7 - S.w) * f, h = S.h + (7 - S.h) * f, c = (a: number, b: number) => Math.round(a + (b - a) * f);
+				fly.style.opacity = '1';
+				fly.style.width = `${w.toFixed(2)}px`;
+				fly.style.height = `${h.toFixed(2)}px`;
+				fly.style.borderRadius = `${(1 + f * 3).toFixed(1)}px`;
+				fly.style.background = `rgb(${c(18, 0)},${c(40, 116)},${c(44, 116)})`;
+				fly.style.transform = `translate3d(${(x - w / 2).toFixed(2)}px,${(y - h / 2).toFixed(2)}px,0)`;
+			}
+			dotR.style.opacity = f >= 1 ? '1' : '0';
+			const rg = clamp((p - 0.122) / 0.04);
+			ring.style.opacity = rg > 0 && rg < 1 ? String((1 - rg) * 0.55) : '0';
+			ring.style.transform = `translate(-50%, -50%) scale(${(1 + rg * 3.6).toFixed(3)})`;
+			wordR.style.opacity = String(seg(p, 0.118, 0.142));
+			endL.style.opacity = String(seg(p, 0.14, 0.172));
+
+			says.forEach(({ el, t }) => {
+				const a = seg(p, t[0], t[1]), o = seg(p, t[2], t[3]);
+				el.style.opacity = String(a * (1 - o));
+				el.style.transform = `translateY(${(1 - a) * 12 - o * 12}px)`;
+			});
 			pars.forEach(({ el, t, words, last }) => {
 				const a = seg(p, t[0], t[1]), o = seg(p, t[4], t[5]);
 				el.style.opacity = String(a * (1 - o));
-				el.style.transform = `translateY(${(1 - a) * 10 - o * 10}px)`;
+				el.style.transform = `translateY(${(1 - a) * 12 - o * 12}px)`;
 				if (a <= 0 || o >= 1) return;
 				const n = words.length, span = t[3] - t[2];
 				words.forEach((w, i) => {
@@ -121,18 +177,30 @@ const BELIEFS = [
 					if (Math.abs((last[i] ?? -1) - v) > 0.006) { w.style.opacity = v.toFixed(3); last[i] = v; }
 				});
 			});
-			const r = reach(p);
+
+			// A broken path; then one line crosses it, and each friction turns into its answer.
+			dash.style.opacity = String(seg(p, 0.298, 0.336));
+			const r = seg(p, 0.7, 0.868);
 			wire.style.transform = `scaleX(${r.toFixed(4)})`;
+			stations.forEach(({ el, at, i, from, to, tick }) => {
+				const show = seg(p, 0.316 + i * 0.021, 0.342 + i * 0.021), done = seg(r, at - 0.012, at + 0.035);
+				el.style.opacity = String(show);
+				from.style.opacity = String(1 - done);
+				from.style.transform = `translateY(${-5 * done}px)`;
+				to.style.opacity = String(done);
+				to.style.transform = `translateY(${5 * (1 - done)}px)`;
+				tick.classList.toggle('on', done > 0.5);
+			});
 			dot.classList.toggle('on', r > 0.997);
-			const m = seg(p, 0.89, 0.935);
+			const m = seg(p, 0.868, 0.908);
 			mark.style.opacity = String(m);
-			mark.style.transform = `translate(-50%, -50%) scale(${(0.86 + m * 0.14).toFixed(3)})`;
+			mark.style.transform = `translate(-50%, -50%) scale(${(0.82 + m * 0.18).toFixed(3)})`;
 		};
 		// The page follows the scroll with a little weight, so nothing ever jumps.
 		let cur = 0, target = 0, running = false;
 		const loop = () => {
 			const d = target - cur;
-			cur = Math.abs(d) < 0.0004 ? target : cur + d * 0.13;
+			cur = Math.abs(d) < 0.0003 ? target : cur + d * 0.12;
 			paint(cur);
 			if (cur !== target) requestAnimationFrame(loop); else running = false;
 		};
@@ -142,10 +210,30 @@ const BELIEFS = [
 			if (!running) { running = true; requestAnimationFrame(loop); }
 		};
 		addEventListener('scroll', read, { passive: true });
-		addEventListener('resize', read);
+		addEventListener('resize', () => { measure(); read(); });
+		one('[data-q-rise]').addEventListener('animationend', measure);
+		document.fonts?.ready.then(measure);
+		measure();
 		const r0 = root.getBoundingClientRect();
 		cur = target = clamp(-r0.top / Math.max(1, r0.height - stick.offsetHeight));
 		paint(cur);
+
+		// The devices settle into place as they arrive.
+		const dev = document.querySelector<HTMLElement>('[data-dev]'), img = document.querySelector<HTMLElement>('[data-dev-img]');
+		if (dev && img) {
+			let q = false;
+			const settle = () => {
+				q = false;
+				const b = dev.getBoundingClientRect();
+				if (b.top > innerHeight || b.bottom < 0) return;
+				const t = seg((innerHeight - b.top) / (innerHeight * 0.82), 0, 1);
+				img.style.opacity = String(seg(t, 0, 0.55));
+				img.style.transform = `translate3d(0, ${(44 * (1 - t)).toFixed(1)}px, 0) scale(${(0.965 + 0.035 * t).toFixed(4)})`;
+			};
+			img.style.opacity = '0';
+			addEventListener('scroll', () => { if (!q) { q = true; requestAnimationFrame(settle); } }, { passive: true });
+			settle();
+		}
 	}
 
 	// Quiet reveals below the story.
@@ -159,36 +247,60 @@ const BELIEFS = [
 <style>
 	.q { --paper: #F8F9F6; --ink: #12282C; --soft: #5E6E71; position: relative; color: var(--ink); background: var(--paper); }
 	.q-stick { position: relative; padding: 124px 24px 56px; }
-	.q-text { display: grid; gap: 64px; max-width: 880px; margin: 0 auto; text-align: center; }
-	.q-line h1, .q-hero, .q-par p { margin: 0; font-size: clamp(1.9rem, 3.9vw, 3.5rem); font-weight: 400; line-height: 1.6; color: var(--ink); text-wrap: balance; }
+	.q-fly, .q-ring, .q-cue, .q-dash { display: none; }
+	.q-sr { position: absolute; width: 1px; height: 1px; overflow: hidden; clip-path: inset(50%); white-space: nowrap; }
+	.q-text { position: relative; display: grid; gap: 64px; max-width: 880px; margin: 0 auto; text-align: center; }
+	.q-ask { margin: 0; font-size: clamp(3.1rem, 7.6vw, 6.6rem); font-weight: 400; line-height: 1.4; color: var(--ink); }
+	.qm { display: inline-block; width: .446em; height: .74em; margin-inline-start: .05em; vertical-align: -.02em; overflow: visible; fill: currentColor; }
 	.q-rise { display: block; }
+	.q-say, .q-par p { margin: 0; font-size: clamp(1.9rem, 3.9vw, 3.5rem); font-weight: 400; line-height: 1.6; color: var(--ink); text-wrap: balance; }
+	.q-say.q-answer { font-size: clamp(3.1rem, 7.6vw, 6.6rem); line-height: 1.4; }
 	.q-par h2 { margin: 0 0 16px; font-size: 1.06rem; font-weight: 600; line-height: 1.6; color: var(--c-main-dark); }
-	.q-ends { display: flex; align-items: center; gap: 16px; max-width: 960px; margin: 72px auto 0; font-size: 1.06rem; font-weight: 600; color: var(--ink); }
+	.q-ends { position: relative; display: flex; align-items: center; gap: 16px; max-width: 960px; margin: 96px auto 30px; font-size: 1.06rem; font-weight: 600; color: var(--ink); }
 	.q-end { flex: none; display: inline-flex; align-items: center; gap: 9px; }
 	.q-dot { width: 7px; height: 7px; box-sizing: border-box; border: 1px solid var(--c-main-dark); border-radius: 50%; transition: background .5s ease; }
 	.q-dot:global(.on) { background: var(--c-main-dark); }
 	.q-wire { position: relative; flex: 1; height: 1px; }
-	.q-wire > i { position: absolute; inset: 0; background: var(--c-main-dark); transform-origin: 100% 50%; }
+	.q-solid { position: absolute; inset: 0; background: var(--c-main-dark); transform-origin: 100% 50%; }
+	.st { position: absolute; bottom: 0; display: grid; justify-items: center; padding-bottom: 13px; font-size: 1rem; font-weight: 400; transform: translateX(50%); }
+	.st-a, .st-b { grid-area: 1 / 1; white-space: nowrap; }
+	.st-a { visibility: hidden; color: var(--soft); }
+	.st-b { font-weight: 600; color: var(--c-main-dark); }
+	.st-t { position: absolute; left: 50%; bottom: -3px; width: 7px; height: 7px; margin-left: -3.5px; box-sizing: border-box; background: var(--c-main-dark); border: 1px solid var(--c-main-dark); border-radius: 50%; transition: background .35s ease, border-color .35s ease; }
 	.q-mark { position: absolute; left: 50%; top: 50%; display: grid; place-items: center; padding: 0 14px; background: var(--paper); transform: translate(-50%, -50%); }
 	.q-mark img { display: block; width: 24px; height: 24px; }
-	.q-cue { display: none; }
 
-	:global(html.anim) .q { height: 560vh; }
+	:global(html.anim) .q { height: 780vh; }
 	:global(html.anim) .q-stick { position: sticky; top: 0; height: 100vh; height: 100lvh; box-sizing: border-box; padding: 0; overflow: hidden; }
-	:global(html.anim) .q-text { position: absolute; inset: 76px 28px 30%; display: grid; place-items: center; gap: 0; max-width: none; margin: 0; }
+	:global(html.anim) .q-text { position: absolute; inset: 76px 28px 31%; display: grid; place-items: center; gap: 0; max-width: none; margin: 0; }
 	:global(html.anim) .q-line { grid-area: 1 / 1; max-width: 880px; opacity: 0; will-change: transform, opacity; pointer-events: none; }
-	:global(html.anim) .q-hero { opacity: 1; }
-	:global(html.anim) .q-rise { animation: q-rise 1.1s cubic-bezier(.2, .7, .2, 1) both; }
+	:global(html.anim) .q-ask { opacity: 1; }
+	:global(html.anim) .q-rise { animation: q-rise 1.2s cubic-bezier(.2, .7, .2, 1) both; }
 	:global(html.anim) .q-par .w { opacity: .15; }
-	:global(html.anim) .q-ends { position: absolute; inset-inline: max(28px, calc(50% - 480px)); top: 73%; max-width: none; margin: 0; animation: q-fade 1.1s ease .45s both; }
-	:global(html.anim) .q-wire > i { transform: scaleX(0); will-change: transform; }
+	:global(html.anim) .q-ends { position: absolute; inset-inline: max(28px, calc(50% - 480px)); top: 72%; max-width: none; margin: 0; }
+	:global(html.anim) .q-ends .q-end:last-child, :global(html.anim) [data-q-word-r], :global(html.anim) [data-q-dot-r] { opacity: 0; }
+	:global(html.anim) .q-dash { display: block; position: absolute; inset: 0; opacity: 0; background: repeating-linear-gradient(to left, rgba(18, 40, 44, .34) 0 5px, transparent 5px 12px); }
+	:global(html.anim) .q-solid { transform: scaleX(0); will-change: transform; }
+	:global(html.anim) .st { opacity: 0; }
+	:global(html.anim) .st-a { visibility: visible; }
+	:global(html.anim) .st-b { opacity: 0; }
+	:global(html.anim) .st-t { background: var(--paper); border-color: rgba(18, 40, 44, .42); }
+	.st-t:global(.on) { background: var(--c-main-dark) !important; border-color: var(--c-main-dark) !important; }
 	:global(html.anim) .q-mark { opacity: 0; }
+	:global(html.anim) .q-fly { display: block; position: absolute; z-index: 3; left: 0; top: 0; opacity: 0; will-change: transform; pointer-events: none; }
+	:global(html.anim) .q-ring { display: block; position: absolute; z-index: 2; width: 8px; height: 8px; border: 1px solid var(--c-main-dark); border-radius: 50%; opacity: 0; pointer-events: none; }
 	:global(html.anim) .q-cue { position: absolute; left: 50%; bottom: 26px; display: grid; justify-items: center; gap: 8px; font-size: .92rem; color: var(--soft); translate: -50% 0; animation: q-fade 1.1s ease 1s backwards; }
 	.q-cue i { position: relative; display: block; width: 1px; height: 34px; overflow: hidden; background: rgba(18, 40, 44, .14); }
 	.q-cue i::after { content: ''; position: absolute; inset: 0; background: var(--c-main-dark); animation: q-drop 2.2s cubic-bezier(.6, 0, .3, 1) infinite; }
 	@keyframes q-rise { from { opacity: 0; transform: translateY(12px); } to { opacity: 1; transform: none; } }
 	@keyframes q-fade { from { opacity: 0; } to { opacity: 1; } }
 	@keyframes q-drop { 0% { transform: translateY(-100%); } 60%, 100% { transform: translateY(100%); } }
+	@media (max-width: 620px) {
+		.q-ends { gap: 10px; font-size: 1rem; }
+		.st { font-size: .86rem; }
+		.st:nth-of-type(even) { bottom: auto; top: 0; padding: 13px 0 0; }
+		.st:nth-of-type(even) .st-t { bottom: auto; top: -3px; }
+	}
 
 	.dev { padding: clamp(36px, 6vw, 80px) 20px clamp(72px, 10vw, 136px); overflow: hidden; text-align: center; color: #5E6E71; background: #F8F9F6; }
 	.dev img { --w: min(1040px, 116vw); display: block; width: var(--w); max-width: none; height: auto; margin-inline: calc((100% - var(--w)) / 2); }
