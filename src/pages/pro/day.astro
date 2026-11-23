@@ -1,0 +1,321 @@
+---
+// CONCEPT PREVIEW of the new /pro page: one day in a clinic. The page's sky moves from
+// dawn to night while a laptop walks through the real Pro app (real widgets, fake data,
+// built by landing-3d/pro-day/build.py), and at the end of the day the lid closes.
+// Not linked from anywhere; it replaces pro/index.astro only after the founder's approval.
+import Layout from '../../layouts/Layout.astro';
+import Footer from '../../components/Footer.astro';
+import SiteHeader from '../../components/site/SiteHeader.astro';
+import { proWhatsAppUrl } from '../../config/links';
+import { WHATSAPP_TEXT } from '../../config/pro-join';
+
+const WA = proWhatsAppUrl(WHATSAPP_TEXT);
+const CHAPTERS = [
+	{ screen: 'calendar', lift: 'calendar', time: '8:30', ap: 'ص', title: 'جدول اليوم',
+		body: 'كل مواعيدك بلمحة، تنظّمها بالطبيب والسبب والحالة وحقولك الخاصة، والمريض يحجز بنفسه في الأوقات التي تحددها، وأكثر.' },
+	{ screen: 'dashboard', lift: 'waiting', time: '10:00', ap: 'ص', title: 'غرفة الانتظار',
+		body: 'من وصل وكم انتظر كل مريض، بترتيب عادل تعدّله بالسحب، واستدعاء المريض بضغطة، وأكثر.' },
+	{ screen: 'file', lift: 'file', time: '11:30', ap: 'ص', title: 'ملف شامل',
+		body: 'ملف لكل مريض يجمع معلوماته وزياراته وتقاريره وتاريخه الطبي وغيرها، مرتبطاً بملفه المركزي على دوكسيرا.' },
+	{ screen: 'dashboard', lift: 'round', time: '6:30', ap: 'م', title: 'جولة التذكير',
+		body: 'مرضى الغد في قائمة واحدة، تذكّرهم واحداً بعد الآخر بواتساب أو SMS أو اتصال، ومن لديه التطبيق يصله التذكير تلقائياً.' },
+];
+const MORE = ['التقارير الطبية', 'محاسبة ذكية', 'مراسلة المرضى', 'إدارة الفريق', 'إحصاءات العيادة', 'مخطط الأسنان', 'عروض وخصومات', 'نقاط الولاء', 'مرضى جدد', 'وأكثر'];
+const img = (id: string) => `/images/pro/day/${id}`;
+---
+
+<Layout title="DocSera Pro — عيادتك كلها" description="DocSera Pro لإدارة العيادة والمركز الطبي: المواعيد، غرفة الانتظار، ملفات المرضى، التقارير، المحاسبة، وأكثر." appBanner="none" appBar={false}>
+	<SiteHeader current="pro" cta={{ href: '/pro/join', label: 'ابدأ التجربة' }} />
+
+	<main class="pd">
+		<section class="day" data-day>
+			<div class="stick" data-stick>
+				<div class="sky" aria-hidden="true">
+					<img class="silk" src="/images/home/3d/silk-860.webp" srcset="/images/home/3d/silk-860.webp 860w, /images/home/3d/silk-1600.webp 1600w" sizes="max(100vw, 160vh)" alt="" width="1600" height="1000" fetchpriority="high" decoding="async" />
+					{[0, 1, 2, 3, 4, 5].map((i) => <i class={`s s${i}`} data-sky></i>)}
+				</div>
+
+				<div class="hero" data-hero>
+					<img class="hero-logo" src="/images/pro/logo-full-teal.png" alt="DocSera Pro" width="170" height="34" />
+					<h1>عيادتك كلها</h1>
+					<p>من أول موعد في الصباح إلى آخر تذكير في المساء، في مكان واحد.</p>
+					<div class="acts">
+						<a class="btn" href="/pro/join">ابدأ تجربتك المجانية</a>
+						<a class="lnk" href={WA} target="_blank" rel="noopener">تواصل معنا على واتساب</a>
+					</div>
+				</div>
+
+				<div class="scene" data-scene aria-hidden="true">
+					<div class="lap" data-lap>
+						<div class="deck">
+							<i class="keys"></i><i class="pad"></i>
+							<i class="deck-front"></i>
+						</div>
+						<div class="lid">
+							<i class="lid-edge"></i>
+							<div class="lid-face">
+								<div class="screen" data-screen>
+									{CHAPTERS.map((c, i) => (
+										<img class:list={['shot', { on: i === 0 }]} data-shot
+											src={i === 0 ? `${img(c.screen)}.webp` : undefined}
+											srcset={i === 0 ? `${img(c.screen)}-sm.webp 1000w, ${img(c.screen)}.webp 2880w` : undefined}
+											data-src={i === 0 ? undefined : `${img(c.screen)}.webp`}
+											data-srcset={i === 0 ? undefined : `${img(c.screen)}-sm.webp 1000w, ${img(c.screen)}.webp 2880w`}
+											sizes="(max-width: 899px) 96vw, 60vw" alt="" width="1440" height="900" decoding="async" />
+									))}
+									<i class="glare"></i>
+								</div>
+							</div>
+							<div class="lid-back"><img src="/images/DocSera-shape-main.svg" alt="" width="60" height="60" /></div>
+						</div>
+					</div>
+				</div>
+
+				{CHAPTERS.map((c) => <img class="lift" data-lift={c.lift} data-src={`${img(c.lift)}-lift.webp`} alt="" decoding="async" aria-hidden="true" />)}
+
+				<div class="txt">
+					<svg class="arc" viewBox="0 0 320 92" aria-hidden="true">
+						<path class="arc-base" d="M312 84C250 8 70 8 8 84" />
+						<path class="arc-run" data-arc d="M312 84C250 8 70 8 8 84" />
+						<circle class="sun-glow" data-sun-glow r="13" /><circle class="sun" data-sun r="6" />
+					</svg>
+					<div class="blocks">
+						{CHAPTERS.map((c) => (
+							<article class="b" data-block>
+								<p class="time"><b>{c.time}</b><span>{c.ap}</span></p>
+								<h2>{c.title}</h2>
+								<p class="body">{c.body}</p>
+							</article>
+						))}
+					</div>
+				</div>
+
+				<div class="end" data-end>
+					<p class="time"><b>9:00</b><span>م</span></p>
+					<h2>والكثير غيرها</h2>
+					<ul>{MORE.map((m) => <li>{m}</li>)}</ul>
+					<div class="acts">
+						<a class="btn" href="/pro/join">ابدأ تجربتك المجانية</a>
+						<a class="lnk" href={WA} target="_blank" rel="noopener">تواصل معنا على واتساب</a>
+					</div>
+				</div>
+
+				<div class="cue" data-cue aria-hidden="true">مرّر لتعيش يوماً في العيادة<svg viewBox="0 0 24 24"><path d="m6 9.500 6 6 6-6" /></svg></div>
+			</div>
+		</section>
+	</main>
+
+	<Footer seamless />
+</Layout>
+
+<script>
+	import LIFTS from '../../../public/images/pro/day/lift.json';
+
+	const day = document.querySelector<HTMLElement>('[data-day]')!;
+	const stick = document.querySelector<HTMLElement>('[data-stick]')!;
+	const screen = document.querySelector<HTMLElement>('[data-screen]')!;
+	const shots = Array.from(document.querySelectorAll<HTMLImageElement>('[data-shot]'));
+	const blocks = Array.from(document.querySelectorAll<HTMLElement>('[data-block]'));
+	const skies = Array.from(document.querySelectorAll<HTMLElement>('[data-sky]'));
+	const lifts = Array.from(document.querySelectorAll<HTMLImageElement>('[data-lift]'));
+	const arc = document.querySelector<SVGPathElement>('[data-arc]')!;
+	const sun = document.querySelector<SVGCircleElement>('[data-sun]')!;
+	const glow = document.querySelector<SVGCircleElement>('[data-sun-glow]')!;
+	const LAST = 5;
+	const arcLength = arc.getTotalLength();
+	arc.style.strokeDasharray = String(arcLength);
+	const still = matchMedia('(prefers-reduced-motion: reduce)').matches;
+	const clamp = (v: number, a = 0, b = 1) => Math.min(b, Math.max(a, v));
+	const ease = (t: number) => t * t * (3 - 2 * t);
+
+	const load = (el: HTMLImageElement) => {
+		if (el.dataset.srcset) { el.srcset = el.dataset.srcset; el.removeAttribute('data-srcset'); }
+		if (el.dataset.src) { el.src = el.dataset.src; el.removeAttribute('data-src'); }
+	};
+
+	// Where a card sits on the laptop's screen, and where it rises to.
+	function placeLift(el: HTMLImageElement) {
+		const r = (LIFTS as any)[el.dataset.lift!];
+		const box = screen.getBoundingClientRect(), stage = stick.getBoundingClientRect();
+		const k = box.width / 1440;
+		const [fx, fy, fw, fh] = r.from || [r.x, r.y, r.w, r.h];
+		const from = { x: box.left - stage.left + fx * k, y: box.top - stage.top + fy * k, w: fw * k, h: fh * k };
+		const ratio = r.ratio || r.w / r.h;
+		const phone = innerWidth < 900;
+		const small = el.dataset.lift === 'calendar' ? 0.68 : 1;
+		const maxW = (phone ? Math.min(innerWidth * 0.76, 320) : Math.min(innerWidth * 0.25, 370)) * small;
+		const maxH = phone ? innerHeight * 0.4 : innerHeight * 0.66;
+		const w = Math.min(maxW, maxH * ratio), h = w / ratio;
+		// The waiting room rises over its own widget, so the empty one is never beside it.
+		const own = el.dataset.lift === 'waiting' && !phone;
+		const cx = phone ? innerWidth / 2 : own ? Math.max(w / 2 + 14, from.x + from.w / 2) : box.left - stage.left + box.width * 0.72;
+		const cy = phone ? box.top - stage.top + box.height * 0.56 : box.top - stage.top + box.height * 0.52;
+		const to = { x: cx - w / 2, y: clamp(cy - h / 2, 76, innerHeight - h - 16), w, h };
+		el.style.width = `${to.w}px`;
+		el.style.height = `${to.h}px`;
+		el.style.left = `${to.x}px`;
+		el.style.top = `${to.y}px`;
+		const sx = from.w / to.w;
+		el.style.setProperty('--from', `translate(${from.x + from.w / 2 - (to.x + to.w / 2)}px, ${from.y + from.h / 2 - (to.y + to.h / 2)}px) scale(${sx})`);
+	}
+
+	let cur = -1, liftOn = -1;
+	function setChapter(i: number) {
+		if (i === cur) return;
+		cur = i;
+		load(shots[i]);
+		if (shots[i + 1]) load(shots[i + 1]);
+		if (lifts[i + 1]) load(lifts[i + 1]);
+		shots.forEach((s, k) => s.classList.toggle('on', k === i));
+	}
+	function setLift(i: number) {
+		if (i === liftOn) return;
+		liftOn = i;
+		lifts.forEach((l, k) => {
+			if (k === i) { load(l); placeLift(l); }
+			l.classList.toggle('on', k === i);
+		});
+	}
+
+	let queued = false;
+	function frame() {
+		queued = false;
+		const span = day.offsetHeight - stick.offsetHeight;
+		const pos = clamp((scrollY - day.offsetTop) / Math.max(1, span)) * LAST;
+		const q = ease(clamp(pos / 0.8));
+		const f = ease(clamp((pos - 4.28) / 0.6));
+		day.style.setProperty('--q', q.toFixed(4));
+		day.style.setProperty('--f', f.toFixed(4));
+
+		skies.forEach((s, i) => { s.style.opacity = String(clamp(1 - Math.abs(pos - i))); });
+
+		const t = clamp(pos / LAST);
+		const p = arc.getPointAtLength(arcLength * t);
+		sun.setAttribute('cx', String(p.x)); sun.setAttribute('cy', String(p.y));
+		glow.setAttribute('cx', String(p.x)); glow.setAttribute('cy', String(p.y));
+		arc.style.strokeDashoffset = String(arcLength * (1 - t));
+		day.style.setProperty('--night', clamp((pos - 4) / 0.8).toFixed(3));
+
+		const ch = clamp(Math.round(pos), 1, CHAPTER_COUNT) - 1;
+		setChapter(ch);
+		const near = Math.abs(pos - (ch + 1));
+		blocks.forEach((b, k) => b.classList.toggle('on', k === ch && near < 0.42));
+		setLift(near < 0.3 && pos > 0.72 && pos < 4.3 ? ch : -1);
+		day.classList.toggle('at-hero', pos < 0.42);
+		day.classList.toggle('at-end', pos > 4.62);
+		day.classList.toggle('moved', pos > 0.05);
+	}
+	const CHAPTER_COUNT = blocks.length;
+	const ask = () => { if (!queued) { queued = true; requestAnimationFrame(frame); } };
+	addEventListener('scroll', ask, { passive: true });
+	addEventListener('resize', () => { const l = liftOn; liftOn = -1; setLift(l); ask(); });
+	if (still) day.classList.add('still');
+	frame();
+</script>
+
+<style>
+	.pd { background: #03191E; color: #fff; }
+	.day { --q: 0; --f: 0; --night: 0; position: relative; height: 640vh; }
+	.stick { position: sticky; top: 0; height: 100vh; height: 100svh; overflow: hidden; background: #03191E; }
+
+	.sky, .silk, .s { position: absolute; inset: 0; }
+	.silk { width: 100%; height: 100%; object-fit: cover; object-position: 34% 50%; }
+	.s { opacity: 0; will-change: opacity; }
+	.s0 { opacity: 1; background: radial-gradient(90% 58% at 50% 108%, rgba(255, 176, 120, .34), rgba(255, 150, 100, .08) 48%, transparent 72%), linear-gradient(180deg, rgba(4, 34, 40, .74), rgba(6, 44, 50, .42)); }
+	.s1 { background: radial-gradient(80% 60% at 82% 2%, rgba(170, 240, 230, .36), transparent 62%), linear-gradient(180deg, rgba(10, 104, 108, .7), rgba(5, 56, 62, .56)); }
+	.s2 { background: radial-gradient(84% 64% at 62% -8%, rgba(206, 248, 240, .5), transparent 64%), linear-gradient(180deg, rgba(18, 138, 140, .78), rgba(7, 78, 84, .6)); }
+	.s3 { background: radial-gradient(80% 60% at 38% -6%, rgba(246, 240, 204, .42), transparent 64%), linear-gradient(180deg, rgba(16, 122, 124, .74), rgba(7, 66, 72, .6)); }
+	.s4 { background: radial-gradient(96% 66% at 16% 104%, rgba(255, 156, 100, .5), rgba(206, 100, 92, .18) 50%, transparent 74%), linear-gradient(180deg, rgba(16, 36, 58, .84), rgba(34, 40, 56, .6)); }
+	.s5 { background: radial-gradient(40% 30% at 18% 14%, rgba(180, 220, 226, .12), transparent 70%), linear-gradient(180deg, rgba(2, 13, 18, .94), rgba(3, 24, 30, .88)); }
+
+	.btn { display: inline-flex; align-items: center; justify-content: center; padding: 13px 26px; font-size: 1.08rem; font-weight: 800; color: #063A3C; text-decoration: none; background: #fff; border-radius: 15px; box-shadow: 0 16px 30px -16px rgba(0, 0, 0, .7); transition: transform .2s ease; }
+	.btn:hover { transform: translateY(-1px); }
+	.btn:focus-visible, .lnk:focus-visible { outline: 3px solid #8FE7DC; outline-offset: 3px; }
+	.lnk { font-size: .98rem; font-weight: 700; color: #D8F3EF; text-underline-offset: 5px; }
+	.lnk:hover { color: #fff; }
+	.acts { display: flex; flex-wrap: wrap; align-items: center; justify-content: center; gap: 12px 22px; }
+
+	.hero { position: absolute; z-index: 5; top: clamp(84px, 11vh, 118px); inset-inline: 20px; text-align: center; opacity: calc(1 - var(--q) * 2.4); transform: translateY(calc(var(--q) * -34px)); }
+	.day:not(.at-hero) .hero { pointer-events: none; visibility: hidden; }
+	.hero-logo { display: block; width: auto; height: 28px; margin: 0 auto 10px; filter: brightness(0) invert(1); }
+	.hero h1 { margin: 0; font-size: clamp(2.7rem, 6.4vw, 5.2rem); font-weight: 900; line-height: 1.16; color: #fff; }
+	.hero p { max-width: 34em; margin: 8px auto 18px; font-size: clamp(1.04rem, 1.6vw, 1.3rem); line-height: 1.7; color: #DDF3F1; }
+
+	.cue { position: absolute; z-index: 6; bottom: 16px; left: 50%; display: inline-flex; align-items: center; gap: 6px; padding: 7px 15px; font-size: .9rem; font-weight: 700; white-space: nowrap; color: #fff; background: rgba(3, 25, 30, .62); border: 1px solid rgba(255, 255, 255, .16); border-radius: 999px; -webkit-backdrop-filter: blur(8px); backdrop-filter: blur(8px); transform: translateX(-50%); transition: opacity .3s ease; }
+	.day.moved .cue { opacity: 0; }
+	.cue svg { width: 16px; height: 16px; fill: none; stroke: currentColor; stroke-width: 2.4; stroke-linecap: round; stroke-linejoin: round; animation: nudge 1.4s ease-in-out infinite; }
+	@keyframes nudge { 0%, 100% { transform: translateY(-1.5px); } 50% { transform: translateY(2.5px); } }
+
+	/* ── the laptop: a real lid on a real hinge ── */
+	.scene { --w: min(52vw, calc((100vh - 230px) * 1.26)); position: absolute; z-index: 2; left: 50%; top: 50%; width: var(--w); height: calc(var(--w) * .625); perspective: calc(var(--w) * 2.4); transform: translate(calc(-50% + var(--q) * -19vw), calc(-50% + (1 - var(--q)) * 27vh - var(--q) * 6vh - var(--f) * 12vh)) scale(calc(1.26 - var(--q) * .26 - var(--f) * .2)); will-change: transform; }
+	.lap { position: absolute; inset: 0; transform-style: preserve-3d; transform: rotateX(calc(-9deg - var(--f) * 22deg)) rotateY(calc(var(--q) * 13deg - var(--f) * 13deg)); }
+	.lid { position: absolute; inset: 0; transform-origin: 50% 100%; transform-style: preserve-3d; transform: rotateX(calc(5deg - var(--f) * 95deg)); }
+	.lid-edge { position: absolute; inset: 0; background: #3A4547; border-radius: calc(var(--w) * .024); transform: translateZ(calc(var(--w) * -.005)); }
+	.lid-face { position: absolute; inset: 0; padding: calc(var(--w) * .012); box-sizing: border-box; background: #070B0C; border-radius: calc(var(--w) * .024); box-shadow: inset 0 0 0 1px rgba(255, 255, 255, .16); -webkit-backface-visibility: hidden; backface-visibility: hidden; }
+	.screen { position: relative; width: 100%; height: 100%; overflow: hidden; background: #0E1A20; border-radius: calc(var(--w) * .011); filter: brightness(calc(1 - var(--f) * .7)); }
+	.shot { position: absolute; inset: 0; width: 100%; height: 100%; object-fit: cover; opacity: 0; transition: opacity .5s ease; }
+	.shot:global(.on) { opacity: 1; }
+	.glare { position: absolute; inset: 0; background: linear-gradient(118deg, rgba(255, 255, 255, .08), transparent 34%); pointer-events: none; }
+	.lid-back { position: absolute; inset: 0; display: grid; place-items: center; background: linear-gradient(150deg, #3F4B4D, #20292B 62%, #171E20); border-radius: calc(var(--w) * .024); box-shadow: inset 0 0 0 1px rgba(255, 255, 255, .14); -webkit-backface-visibility: hidden; backface-visibility: hidden; transform: rotateY(180deg) translateZ(calc(var(--w) * .006)); }
+	.lid-back img { width: 15%; height: auto; filter: brightness(0) invert(1); opacity: .72; }
+	.deck { position: absolute; top: 100%; left: -1.5%; width: 103%; height: calc(var(--w) * .62); transform-origin: 50% 0; transform-style: preserve-3d; transform: rotateX(90deg); background: linear-gradient(180deg, #2A3335, #384345 60%, #414D4F); border-radius: calc(var(--w) * .006) calc(var(--w) * .006) calc(var(--w) * .03) calc(var(--w) * .03); box-shadow: inset 0 0 0 1px rgba(255, 255, 255, .1); }
+	.keys { position: absolute; top: 7%; left: 8%; right: 8%; height: 50%; background: repeating-linear-gradient(90deg, rgba(8, 12, 13, .85) 0 5.2%, transparent 5.2% 6.6%), repeating-linear-gradient(0deg, rgba(8, 12, 13, .85) 0 15%, transparent 15% 20%); border-radius: 4px; opacity: .78; }
+	.pad { position: absolute; top: 62%; left: 34%; right: 34%; bottom: 6%; background: rgba(255, 255, 255, .05); border: 1px solid rgba(255, 255, 255, .1); border-radius: calc(var(--w) * .012); }
+	.deck-front { position: absolute; left: 0; right: 0; bottom: 0; height: calc(var(--w) * .014); background: linear-gradient(180deg, #5A6668, #262E30); border-radius: 0 0 calc(var(--w) * .012) calc(var(--w) * .012); transform-origin: 50% 100%; transform: rotateX(-90deg); }
+
+	/* the card that rises out of the screen */
+	.lift { position: absolute; z-index: 4; opacity: 0; pointer-events: none; transform: var(--from, none); filter: drop-shadow(0 26px 34px rgba(0, 10, 12, .72)); transition: transform .62s cubic-bezier(.2, .8, .2, 1), opacity .32s ease; }
+	.lift:global(.on) { opacity: 1; transform: none; }
+
+	/* the day's text */
+	.txt { position: absolute; z-index: 5; top: 50%; right: max(24px, calc((100vw - 1320px) / 2)); width: min(400px, 31vw); transform: translateY(-50%); opacity: calc((var(--q) - .5) * 3 - var(--night) * 3); }
+	.day.at-hero .txt, .day.at-end .txt { visibility: hidden; }
+	.arc { display: block; width: 100%; max-width: 300px; height: auto; margin-bottom: 10px; overflow: visible; }
+	.arc path { fill: none; stroke-linecap: round; }
+	.arc-base { stroke: rgba(255, 255, 255, .2); stroke-width: 1.5; stroke-dasharray: 2 6; }
+	.arc-run { stroke: #FFE2B8; stroke-width: 2; }
+	.sun { fill: #FFF3DC; }
+	.sun-glow { fill: rgba(255, 214, 160, .24); }
+	.blocks { position: relative; display: grid; }
+	.b { grid-area: 1 / 1; opacity: 0; transform: translateY(14px); transition: opacity .34s ease, transform .4s cubic-bezier(.2, .7, .2, 1); }
+	.b:global(.on) { opacity: 1; transform: none; }
+	.time { display: flex; align-items: baseline; gap: 7px; margin: 0; color: #FFE9CB; }
+	.time b { font-family: Montserrat, sans-serif; font-size: clamp(2.6rem, 4.4vw, 4rem); font-weight: 800; line-height: 1.1; direction: ltr; }
+	.time span { font-size: 1.3rem; font-weight: 800; }
+	.b h2 { margin: 4px 0 8px; font-size: clamp(1.9rem, 3vw, 2.7rem); font-weight: 900; line-height: 1.25; color: #fff; }
+	.body { margin: 0; font-size: clamp(1.02rem, 1.3vw, 1.16rem); line-height: 1.85; color: #E2F4F1; }
+
+	/* the end of the day */
+	.end { position: absolute; z-index: 6; top: 50%; right: max(24px, calc((100vw - 1320px) / 2)); width: min(520px, 42vw); opacity: 0; visibility: hidden; transform: translateY(calc(-50% + 16px)); transition: opacity .42s ease, transform .5s cubic-bezier(.2, .7, .2, 1), visibility 0s linear .42s; }
+	.day.at-end .end { opacity: 1; visibility: visible; transform: translateY(-50%); transition: opacity .42s ease, transform .5s cubic-bezier(.2, .7, .2, 1); }
+	.end h2 { margin: 2px 0 16px; font-size: clamp(2rem, 3.6vw, 3.2rem); font-weight: 900; line-height: 1.2; color: #fff; }
+	.end ul { display: flex; flex-wrap: wrap; gap: 8px; margin: 0 0 24px; padding: 0; list-style: none; }
+	.end li { padding: 6px 14px; font-size: .98rem; font-weight: 700; color: #E9FAF7; background: rgba(255, 255, 255, .1); border: 1px solid rgba(255, 255, 255, .18); border-radius: 12px; }
+	.end .acts { justify-content: flex-start; }
+
+	@media (max-width: 899px) {
+		.day { height: 620vh; }
+		.scene { --w: min(88vw, calc((100vh - 330px) * 1.5)); top: auto; bottom: calc(26vh - var(--w) * .2); left: 50%; transform: translate(-50%, calc((1 - var(--q)) * 4vh + var(--f) * 6vh)) scale(calc(1.02 - var(--q) * .02 - var(--f) * .22)); }
+		.lap { transform: rotateX(calc(-9deg - var(--f) * 22deg)) rotateY(0deg); }
+		.hero { top: 80px; }
+		.hero h1 { font-size: 2.9rem; }
+		.hero p { margin: 6px auto 14px; font-size: 1.04rem; line-height: 1.6; }
+		.hero-logo { height: 22px; margin-bottom: 6px; }
+		.txt { top: 76px; right: 20px; left: 20px; width: auto; transform: none; }
+		.arc { position: absolute; top: 2px; left: 0; width: 112px; margin: 0; }
+		.time b { font-size: 2.1rem; }
+		.time span { font-size: 1.05rem; }
+		.b h2 { margin: 0 0 3px; font-size: 1.62rem; }
+		.body { font-size: .98rem; line-height: 1.68; }
+		.end { top: 76px; right: 20px; left: 20px; width: auto; transform: translateY(16px); }
+		.day.at-end .end { transform: none; }
+		.end h2 { margin-bottom: 11px; font-size: 1.9rem; }
+		.end ul { gap: 6px; margin-bottom: 16px; }
+		.end li { padding: 4px 11px; font-size: .9rem; }
+		.end .acts { justify-content: center; }
+	}
+	@media (prefers-reduced-motion: reduce) {
+		.cue svg { animation: none; }
+		.lift, .b, .end, .shot, .btn { transition: none; }
+	}
+</style>
