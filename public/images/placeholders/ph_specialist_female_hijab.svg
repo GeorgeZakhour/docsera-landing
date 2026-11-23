@@ -1,0 +1,18 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 120 120" width="120" height="120">
+  <defs>
+    <linearGradient id="phBg" x1="0" y1="0" x2="0" y2="1"><stop offset="0" stop-color="#EAF8F6"/><stop offset="1" stop-color="#C9ECE8"/></linearGradient>
+    <linearGradient id="phHijab2" x1="0" y1="0" x2="0" y2="1"><stop offset="0" stop-color="#4CCBC6"/><stop offset="1" stop-color="#22ABA8"/></linearGradient>
+    <linearGradient id="phScrub" x1="0" y1="0" x2="0" y2="1"><stop offset="0" stop-color="#1AA3A1"/><stop offset="1" stop-color="#0B7C7B"/></linearGradient>
+    <linearGradient id="phSkin" x1="0" y1="0" x2="0" y2="1"><stop offset="0" stop-color="#F6D2B6"/><stop offset="1" stop-color="#EDBE9E"/></linearGradient>
+  </defs>
+  <rect width="120" height="120" fill="url(#phBg)"/><circle cx="60" cy="50" r="40" fill="#fff" opacity=".5"/><circle cx="96" cy="22" r="6" fill="#FFA070" opacity=".35"/><circle cx="20" cy="34" r="3.5" fill="#009092" opacity=".18"/>
+  <path d="M8 120c2-22 18-33 38-36h28c20 3 36 14 38 36z" fill="url(#phScrub)"/>
+  <path d="M33 120c0-15 4-27 12-36-4-7-7-15-7-25 0-19 10-31 22-31s22 12 22 31c0 10-3 18-7 25 8 9 12 21 12 36z" fill="url(#phHijab2)"/>
+  <path d="M44 83c5 3 10 4 16 4s11-1 16-4" fill="none" stroke="#127C7A" stroke-width="1.6" opacity=".5"/>
+  <path d="M49 96c3 8 5 16 6 24M71 96c-3 8-5 16-6 24M60 91v29" fill="none" stroke="#127C7A" stroke-width="1.6" stroke-linecap="round" opacity=".38"/>
+  <ellipse cx="60" cy="56" rx="15" ry="18" fill="#1C9C99"/>
+  <ellipse cx="60" cy="56.5" rx="12.6" ry="15.6" fill="url(#phSkin)"/>
+  <path d="M47 62c2 10 7 16 13 16s11-6 13-16c0 13-5 22-13 24-8-2-13-11-13-24z" fill="#22A6A3"/>
+  <path d="M47.5 47c3-7 7.5-10 12.5-10s9.5 3 12.5 10" fill="none" stroke="#fff" stroke-width="1.4" opacity=".35"/>
+  <rect x="88" y="98" width="13" height="16" rx="2.5" fill="#fff"/><rect x="88" y="98" width="13" height="4.5" rx="2" fill="#FFA070"/><rect x="91" y="106" width="7" height="2" rx="1" fill="#C9E3E2"/>
+</svg>

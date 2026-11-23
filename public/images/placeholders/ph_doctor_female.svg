@@ -1,0 +1,17 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 120 120" width="120" height="120">
+  <defs>
+    <linearGradient id="phBg" x1="0" y1="0" x2="0" y2="1"><stop offset="0" stop-color="#EAF8F6"/><stop offset="1" stop-color="#C9ECE8"/></linearGradient>
+    <linearGradient id="phCoat" x1="0" y1="0" x2="0" y2="1"><stop offset="0" stop-color="#FFFFFF"/><stop offset="1" stop-color="#EAF3F3"/></linearGradient>
+    <linearGradient id="phSkin" x1="0" y1="0" x2="0" y2="1"><stop offset="0" stop-color="#F6D2B6"/><stop offset="1" stop-color="#EDBE9E"/></linearGradient>
+  </defs>
+  <rect width="120" height="120" fill="url(#phBg)"/><circle cx="60" cy="50" r="40" fill="#fff" opacity=".5"/><circle cx="96" cy="22" r="6" fill="#FFA070" opacity=".35"/><circle cx="20" cy="34" r="3.5" fill="#009092" opacity=".18"/>
+  <path d="M39 54c-2-22 10-28 21-28 12 0 23 6 21 28 1 15 4 24 9 31H30c5-7 8-16 9-31z" fill="#4A2F25"/>
+  <path d="M8 120c2-22 18-33 38-36h28c20 3 36 14 38 36z" fill="url(#phCoat)"/>
+  <path d="M50 84l10 18 10-18z" fill="#0E8F8E"/>
+  <path d="M46 84l9 21-6 15M74 84l-9 21 6 15" fill="none" stroke="#D3E4E4" stroke-width="2"/>
+  <path d="M53 68h14v14c0 5-14 5-14 0z" fill="#E5B193"/>
+  <ellipse cx="60" cy="53" rx="16" ry="19" fill="url(#phSkin)"/>
+  <path d="M43 53c0-15 8-22 18-22 10 0 17 7 17 19-9-3-17-9-21-14-3 8-8 13-14 17z" fill="#5C3A2D"/>
+  <path d="M49 85c-3 10 2 19 11 19M72 85c3 8 2 15-2 19" fill="none" stroke="#0B5E5F" stroke-width="2.4" stroke-linecap="round"/>
+  <circle cx="70" cy="106" r="4.6" fill="#FFA070" stroke="#fff" stroke-width="1.6"/>
+</svg>

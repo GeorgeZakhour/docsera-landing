@@ -1,6 +1,8 @@
 ---
 // Doctor landing page, rendered for every /doctor/<token> URL: what a patient sees after
-// scanning the clinic's QR. A quiet profile card with one action.
+// scanning the clinic's QR. The doctor's card is the app's own profile header made into a
+// physical object on the home page's silk: it tilts, its layers separate in depth, and it
+// turns over to show the doctor's QR.
 //
 // Routing: this file builds to dist/doctor/index.html. The companion nginx rule (see
 // nginx/default.conf) maps any /doctor/<anything> URL to this file via try_files, so a
@@ -10,7 +12,7 @@
 // the public_doctors view (anon read, RLS-gated) and shows one of these states:
 //
 //   - loading    placeholder until the script runs
-//   - doctor     valid token → profile (skeleton first) + EntityCta
+//   - doctor     valid token → card (skeleton first) + EntityCta
 //   - not-found  token didn't match an active doctor
 //   - invalid    no token in the path, or it failed the safety regex (alnum + - + _, max 64)
 //
@@ -21,6 +23,18 @@ import Layout from '../layouts/Layout.astro';
 import Footer from '../components/Footer.astro';
 import EntityCta from '../components/EntityCta.astro';
 import SiteHeader from '../components/site/SiteHeader.astro';
+
+const silk = '/images/home/3d/silk-860.webp 860w, /images/home/3d/silk-1600.webp 1600w';
+const I = {
+	qr: '<rect x="4" y="4" width="6.5" height="6.5" rx="1.4"/><rect x="13.5" y="4" width="6.5" height="6.5" rx="1.4"/><rect x="4" y="13.5" width="6.5" height="6.5" rx="1.4"/><path d="M14 14h2.5v2.5M20 14v.01M14 20h.01M17.5 20H20v-3"/>',
+	clock: '<circle cx="12" cy="12" r="8.5"/><path d="M12 7.5V12l3 2"/>',
+	pin: '<path d="M12 21s7-5.6 7-11.2A7 7 0 0 0 5 9.8C5 15.4 12 21 12 21z"/><circle cx="12" cy="9.8" r="2.5"/>',
+	plus: '<rect x="4" y="7" width="16" height="13" rx="3"/><path d="M9 7V5.5A1.5 1.5 0 0 1 10.5 4h3A1.5 1.5 0 0 1 15 5.5V7M12 10.8v5.4M9.3 13.5h5.4"/>',
+	user: '<circle cx="12" cy="8" r="3.6"/><path d="M5 20c.7-4 3.4-6 7-6s6.3 2 7 6"/>',
+	globe: '<circle cx="12" cy="12" r="8.5"/><path d="M3.5 12h17M12 3.5c2.4 2.4 3.6 5.2 3.6 8.5s-1.2 6.1-3.6 8.5c-2.4-2.4-3.6-5.2-3.6-8.5S9.6 5.900 12 3.500z"/>',
+	go: '<path d="m4 11 16-7-7 16-2.2-6.800z"/>',
+	cal: '<rect x="4" y="5" width="16" height="15" rx="3"/><path d="M4 10h16M9 3v4M15 3v4"/>',
+};
 ---
 
 <Layout title="DocSera — ملف الطبيب" appBanner="entity" appBar={false}>
@@ -32,84 +46,127 @@ import SiteHeader from '../components/site/SiteHeader.astro';
 			<p>جارٍ تحميل بيانات الطبيب…</p>
 		</div>
 
-		<div class="state state-doctor" data-state="doctor" hidden>
-			<div class="dp-grid">
-				<article class="dp-main is-loading" data-doctor-card>
-					<header class="dp-id">
-						<div class="photo">
-							<div class="photo-fallback" data-doctor-fallback></div>
-							<img data-doctor-image alt="" />
+		<div class="state" data-state="doctor" hidden>
+			<section class="st" data-stage>
+				<div class="st-bg" aria-hidden="true"><img class="silk" src="/images/home/3d/silk-860.webp" srcset={silk} sizes="max(100vw, 160vh)" alt="" width="1600" height="1000" fetchpriority="high" decoding="async" /></div>
+				<div class="st-in">
+					<div class="hx">
+						<h1><span data-hx-lead>احجز موعدك مع</span><br /><b data-hx-name>طبيبك</b></h1>
+						<p data-hx-sub></p>
+						<div class="hx-cta">
+							<button type="button" class="btn" data-book-open><svg viewBox="0 0 24 24" aria-hidden="true" set:html={I.cal} /><span data-book-label>احجز موعداً</span></button>
+							<a class="hx-web" data-hx-web href="#" rel="noopener">أو افتحه من المتصفح</a>
 						</div>
-						<h1 class="name" data-doctor-name></h1>
-						<p class="spec" data-doctor-specialty></p>
-						<p class="ok" data-doctor-verified hidden>
-							<svg viewBox="0 0 24 24" aria-hidden="true"><path d="m5 12.5 4.6 4.6L19 7.6" /></svg>
-							طبيب موثّق
-						</p>
-						<p class="card-offline" data-doctor-offline hidden>
-							تعذّر تحميل بيانات الطبيب. تحقق من اتصالك بالإنترنت.
-							<button type="button" data-doctor-retry>إعادة المحاولة</button>
-						</p>
-					</header>
+					</div>
 
-					<section class="row" data-row="bio" hidden>
-						<h2>نبذة</h2>
-						<div>
-							<p class="bio" data-doctor-bio></p>
-							<button type="button" class="more" data-bio-more hidden>اقرأ المزيد</button>
+					<div class="cd-wrap" data-cd-wrap>
+						<div class="cd is-loading" data-cd data-doctor-card>
+							<i class="sl" style="--z:-7"></i><i class="sl" style="--z:-5"></i><i class="sl" style="--z:-3"></i><i class="sl" style="--z:-1"></i>
+							<div class="cd-front" data-cd-front>
+								<i class="cd-face" aria-hidden="true"><b></b><b></b><img src="/images/DocSera-shape-main.svg" alt="" width="60" height="60" /></i>
+								<div class="cd-top">
+									<img src="/images/docsera_main.svg" alt="DocSera" width="101" height="16" />
+									<button type="button" data-cd-flip aria-label="رمز QR للطبيب" title="رمز QR للطبيب"><svg viewBox="0 0 24 24" aria-hidden="true" set:html={I.qr} /></button>
+								</div>
+								<div class="cd-who">
+									<div class="cd-photo">
+										<span class="cd-pic"><img data-doctor-image alt="" /></span>
+										<i class="cd-tick" data-doctor-tick hidden><svg viewBox="0 0 24 24" aria-hidden="true"><path d="m6 12.500 4 4L18 8" /></svg></i>
+									</div>
+									<h2 class="cd-name" data-doctor-name></h2>
+									<p class="cd-spec" data-doctor-specialty></p>
+									<p class="cd-place" data-doctor-card-place hidden><svg viewBox="0 0 24 24" aria-hidden="true" set:html={I.pin} /><span data-doctor-card-place-t></span></p>
+									<p class="cd-offline" data-doctor-offline hidden>
+										تعذّر تحميل بيانات الطبيب. تحقق من اتصالك بالإنترنت.
+										<button type="button" data-doctor-retry>إعادة المحاولة</button>
+									</p>
+								</div>
+								<div class="cd-tags" data-doctor-tags hidden></div>
+								<i class="cd-sheen" data-cd-sheen aria-hidden="true"></i>
+							</div>
+							<div class="cd-back" data-cd-back>
+								<img class="cd-blogo" src="/images/docsera_main.svg" alt="" width="101" height="16" />
+								<div class="cd-qr" data-cd-qr></div>
+								<b data-cd-back-name></b>
+								<p>امسح الرمز لفتح الملف على DocSera</p>
+								<button type="button" data-cd-flip>العودة إلى البطاقة</button>
+							</div>
 						</div>
-					</section>
-					<section class="row" data-row="place" hidden>
-						<h2>المكان</h2>
+						<div class="chips">
+							<div class="chip chip-a" data-chip="hours" hidden><i><svg viewBox="0 0 24 24" aria-hidden="true" set:html={I.clock} /></i><span><small data-chip-hours-k>اليوم</small><b data-chip-hours></b></span></div>
+							<div class="chip chip-c" data-chip="svc" hidden><i><svg viewBox="0 0 24 24" aria-hidden="true" set:html={I.plus} /></i><span><small>الخدمات</small><b data-chip-svc></b></span></div>
+						</div>
+					</div>
+				</div>
+			</section>
+
+			<section class="pf">
+				<div class="pf-grid">
+					<article class="sc" data-sec="bio" hidden>
+						<header><i><svg viewBox="0 0 24 24" aria-hidden="true" set:html={I.user} /></i><h2>الملف الشخصي</h2></header>
+						<p class="bio" data-doctor-bio></p>
+						<button type="button" class="more" data-bio-more hidden>عرض المزيد</button>
+					</article>
+					<article class="sc" data-sec="hours" hidden>
+						<header><i><svg viewBox="0 0 24 24" aria-hidden="true" set:html={I.clock} /></i><h2>ساعات العمل</h2><span class="now" data-doctor-now></span></header>
+						<p class="today"><span>اليوم</span><b data-doctor-today></b></p>
+						<details class="week">
+							<summary>كل أيام الأسبوع</summary>
+							<dl data-doctor-week></dl>
+						</details>
+					</article>
+					<article class="sc" data-sec="services" hidden>
+						<header><i><svg viewBox="0 0 24 24" aria-hidden="true" set:html={I.plus} /></i><h2>الخدمات المقدمة</h2></header>
+						<ul class="svc" data-doctor-services></ul>
+						<button type="button" class="more" data-svc-more hidden>عرض الكل</button>
+					</article>
+					<article class="sc sc-map" data-sec="place" hidden>
+						<div class="map" aria-hidden="true">
+							<svg viewBox="0 0 640 210" preserveAspectRatio="xMidYMid slice">
+								<rect width="640" height="210" fill="#EEF3F2" />
+								<path d="M70 -10C98 44 62 96 112 140S210 178 196 230" fill="none" stroke="#BFE7E2" stroke-width="20" />
+								<path d="M-10 66 660 34M-10 150 660 118M250 -10 214 220M452 -10 482 220" fill="none" stroke="#fff" stroke-width="11" />
+								<path d="M-10 108 660 76M150 -10 122 220M352 -10 346 220M560 -10 592 220" fill="none" stroke="#fff" stroke-width="5" />
+								<path d="M320 118c-6-16-27-26-27-48a27 27 0 0 1 54 0c0 22-21 32-27 48z" fill="#007474" /><circle cx="320" cy="70" r="10" fill="#fff" />
+							</svg>
+						</div>
 						<div class="place">
-							<b data-doctor-clinic></b>
-							<span data-doctor-address-text></span>
+							<div><b data-doctor-clinic></b><span data-doctor-address-text></span></div>
+							<a class="go" data-doctor-map href="#" target="_blank" rel="noopener" hidden><svg viewBox="0 0 24 24" aria-hidden="true" set:html={I.go} />خرائط</a>
 						</div>
-					</section>
-					<section class="row" data-row="hours" hidden>
-						<h2>ساعات العمل</h2>
-						<div>
-							<p class="today"><span>اليوم</span> <b data-doctor-today></b></p>
-							<details class="week">
-								<summary>كل أيام الأسبوع</summary>
-								<dl data-doctor-week></dl>
-							</details>
-						</div>
-					</section>
-					<section class="row" data-row="services" hidden>
-						<h2>الخدمات</h2>
-						<div>
-							<ul class="svc" data-doctor-services></ul>
-							<button type="button" class="more" data-svc-more hidden>عرض الكل</button>
-						</div>
-					</section>
-					<section class="row" data-row="langs" hidden>
-						<h2>اللغات</h2>
-						<p class="plain" data-doctor-langs></p>
-					</section>
-				</article>
+					</article>
+					<article class="sc" data-sec="langs" hidden>
+						<header><i><svg viewBox="0 0 24 24" aria-hidden="true" set:html={I.globe} /></i><h2>اللغات المتحدث بها</h2></header>
+						<div class="langs" data-doctor-langs></div>
+					</article>
+				</div>
+			</section>
 
-				<aside class="bk" data-book-sheet>
-					<button type="button" class="bk-x" data-book-close aria-label="إغلاق" title="إغلاق">
-						<svg viewBox="0 0 24 24" aria-hidden="true"><path d="M6 6l12 12M18 6 6 18" /></svg>
-					</button>
-					<EntityCta kind="doctor" quiet />
-				</aside>
-			</div>
+			<section class="end">
+				<h2 data-end-title>احجز موعدك عبر DocSera</h2>
+				<button type="button" class="btn btn-w" data-book-open><svg viewBox="0 0 24 24" aria-hidden="true" set:html={I.cal} /><span data-book-label>احجز موعداً</span></button>
+			</section>
+
+			<aside class="bk" data-book-sheet>
+				<button type="button" class="bk-x" data-book-close aria-label="إغلاق" title="إغلاق">
+					<svg viewBox="0 0 24 24" aria-hidden="true"><path d="M6 6l12 12M18 6 6 18" /></svg>
+				</button>
+				<EntityCta kind="doctor" quiet />
+			</aside>
 			<div class="bk-scrim" data-book-scrim></div>
-			<div class="bk-bar"><button type="button" data-book-open>احجز موعداً</button></div>
+			<div class="bk-bar"><button type="button" class="btn" data-book-open><svg viewBox="0 0 24 24" aria-hidden="true" set:html={I.cal} /><span data-book-label>احجز موعداً</span></button></div>
 		</div>
 
 		<div class="state state-msg" data-state="not-found" hidden>
 			<h1>لم نعثر على هذا الطبيب</h1>
 			<p>قد يكون الرابط منتهي الصلاحية أو حذف الطبيب ملفه. تحقق من الرابط وحاول مرة أخرى.</p>
-			<a href="/" class="btn-main">العودة للرئيسية</a>
+			<a href="/" class="btn">العودة للرئيسية</a>
 		</div>
 
 		<div class="state state-msg" data-state="invalid" hidden>
 			<h1>رابط غير صحيح</h1>
 			<p>الرابط لا يحتوي على معرّف طبيب صالح. الرجاء العودة للرئيسية.</p>
-			<a href="/" class="btn-main">العودة للرئيسية</a>
+			<a href="/" class="btn">العودة للرئيسية</a>
 		</div>
 	</main>
 
@@ -117,6 +174,7 @@ import SiteHeader from '../components/site/SiteHeader.astro';
 </Layout>
 
 <script>
+	import qrcode from 'qrcode-generator';
 	import { SUPABASE_URL, SUPABASE_ANON_KEY, attributionSource, fireBeacon } from '../scripts/reach';
 	import { initEntityCta } from '../scripts/entity-cta';
 
@@ -150,7 +208,10 @@ import SiteHeader from '../components/site/SiteHeader.astro';
 		// Buttons first, profile second.
 		initEntityCta('doctor', token);
 		showState('doctor');
+		const web = document.querySelector<HTMLAnchorElement>('[data-entity-cta] [data-webapp-link]');
+		if (web) (byData('hx-web') as HTMLAnchorElement).href = web.href;
 		wireSheet();
+		startCard();
 		byData('doctor-retry').addEventListener('click', () => fetchDoctor(token));
 		fetchDoctor(token);
 	}
@@ -163,30 +224,11 @@ import SiteHeader from '../components/site/SiteHeader.astro';
 			return;
 		}
 
-		// Only the columns we actually render: avoids pulling internal
-		// fields from the view even though RLS already gates them.
-		const select = [
-			'id',
-			'public_token',
-			'first_name',
-			'middle_name',
-			'last_name',
-			'title',
-			'specialty',
-			'specialties',
-			'gender',
-			'doctor_image',
-			'clinic',
-			'address',
-			'profile_description',
-			'opening_hours',
-			'offered_services',
-			'languages',
-			'verification_status',
-		].join(',');
-
+		// select=*: placeholder_style must never be named in a select list (it is read
+		// from whole rows, the same rule as the apps), and RLS + the view already blank
+		// every private column.
 		const url = SUPABASE_URL + '/rest/v1/public_doctors' +
-			'?select=' + encodeURIComponent(select) +
+			'?select=*' +
 			'&public_token=eq.' + encodeURIComponent(token) +
 			'&is_active=eq.true' +
 			'&limit=1';
@@ -232,6 +274,8 @@ import SiteHeader from '../components/site/SiteHeader.astro';
 		byData('doctor-offline').hidden = state !== 'offline';
 	}
 
+	const isPhysician = (d: any) => ['د.', '.د', 'dr.', 'د', 'doctor'].includes(String(d.title || '').toLowerCase().trim());
+
 	function renderDoctor(d: any) {
 		const titlePart = (d.title || '').trim();
 		const namePart = [d.first_name, d.middle_name, d.last_name]
@@ -239,8 +283,13 @@ import SiteHeader from '../components/site/SiteHeader.astro';
 			.filter(Boolean)
 			.join(' ');
 		const fullName = [titlePart, namePart].filter(Boolean).join(' ').trim();
+		const shown = fullName || 'طبيب';
 
-		byData('doctor-name').textContent = fullName || 'طبيب';
+		const nameEl = byData('doctor-name');
+		nameEl.textContent = shown;
+		nameEl.style.setProperty('--fs', String(shown.length > 26 ? 23 : shown.length > 19 ? 26 : 31));
+		byData('hx-name').textContent = shown;
+		byData('cd-back-name').textContent = shown;
 		document.title = fullName ? (fullName + ' — DocSera') : 'DocSera — ملف الطبيب';
 
 		const spec = d.specialty ||
@@ -248,7 +297,19 @@ import SiteHeader from '../components/site/SiteHeader.astro';
 				? d.specialties[0]
 				: '');
 		byData('doctor-specialty').textContent = spec || 'طبيب';
-		byData('doctor-verified').hidden = d.verification_status !== 'verified';
+		const clinic = (d.clinic || '').trim(), city = (d.address?.city || '').trim();
+		byData('hx-sub').textContent = [spec, [clinic, city].filter(Boolean).join('، ')].filter(Boolean).join(' · ');
+
+		// The same three tags, under the same conditions, as the app's profile header.
+		const bookable = d.is_bookable_subscription === true;
+		const verified = d.verification_status === 'verified';
+		byData('doctor-tick').hidden = !verified;
+		renderTags([
+			bookable && d.require_confirmation === false ? ['bolt', 'حجز فوري'] : null,
+			verified ? ['check', isPhysician(d) ? 'طبيب موثّق' : 'مختص موثّق'] : null,
+			bookable && d.messages_enabled === true && d.is_messageable_subscription === true ? ['msg', 'يستقبل الرسائل'] : null,
+		].filter(Boolean) as string[][]);
+		applyBookable(bookable, shown);
 
 		renderBio(d.profile_description);
 		renderPlace(d);
@@ -257,12 +318,44 @@ import SiteHeader from '../components/site/SiteHeader.astro';
 		renderLanguages(d.languages);
 		renderImage(d, fullName);
 		setCardState('ready');
-		revealRows();
+		revealCards();
 	}
 
-	function showRow(name: string, on: boolean) {
-		const row = document.querySelector<HTMLElement>(`[data-row="${name}"]`);
-		if (row) row.hidden = !on;
+	// A doctor who cannot be booked right now is still opened, never promised a booking.
+	function applyBookable(bookable: boolean, name: string) {
+		const label = bookable ? 'احجز موعداً' : 'افتح في التطبيق';
+		document.querySelectorAll('[data-book-label]').forEach((el) => { el.textContent = label; });
+		byData('hx-lead').textContent = bookable ? 'احجز موعدك مع' : 'تعرّف على';
+		byData('end-title').textContent = bookable ? `احجز موعدك مع ${name}` : `تابع ${name} على DocSera`;
+		const title = document.querySelector('[data-entity-cta] .cta-title');
+		if (title && !bookable) title.textContent = 'افتح هذا الملف في تطبيق DocSera';
+	}
+
+	const TAG_ICONS: Record<string, string> = {
+		bolt: '<path d="M13 3 5 13.500h6L10 21l8-10.500h-6z"/>',
+		check: '<path d="m5 12.500 4.600 4.600L19 7.600"/>',
+		msg: '<path d="M20.500 12a8.500 8.500 0 0 1-12.400 7.500L3.500 21l1.500-4.600A8.500 8.500 0 1 1 20.500 12z"/>',
+	};
+	function renderTags(tags: string[][]) {
+		const box = byData('doctor-tags');
+		box.hidden = tags.length === 0;
+		box.replaceChildren(...tags.map(([icon, label]) => {
+			const t = document.createElement('span'), i = document.createElement('i'), b = document.createElement('b');
+			t.className = icon === 'bolt' ? 'tag tag-ok' : 'tag';
+			i.innerHTML = `<svg viewBox="0 0 24 24" aria-hidden="true">${TAG_ICONS[icon]}</svg>`;
+			b.textContent = label;
+			t.append(i, b);
+			return t;
+		}));
+	}
+
+	function showSec(name: string, on: boolean) {
+		const el = document.querySelector<HTMLElement>(`[data-sec="${name}"]`);
+		if (el) el.hidden = !on;
+	}
+	function showChip(name: string, on: boolean) {
+		const el = document.querySelector<HTMLElement>(`[data-chip="${name}"]`);
+		if (el) el.hidden = !on;
 	}
 
 	// ----- Sections: each one stays hidden when the doctor left it empty ----------
@@ -280,7 +373,7 @@ import SiteHeader from '../components/site/SiteHeader.astro';
 
 	function renderBio(value: any) {
 		const text = bioText(value);
-		showRow('bio', !!text);
+		showSec('bio', !!text);
 		if (!text) return;
 		const el = byData('doctor-bio'), more = byData('bio-more');
 		el.textContent = text;
@@ -291,10 +384,18 @@ import SiteHeader from '../components/site/SiteHeader.astro';
 
 	function renderPlace(d: any) {
 		const clinic = (d.clinic || '').trim(), addr = formatAddress(d.address);
-		byData('doctor-clinic').textContent = clinic;
-		byData('doctor-clinic').hidden = !clinic;
-		byData('doctor-address-text').textContent = addr;
-		showRow('place', !!(clinic || addr));
+		byData('doctor-clinic').textContent = clinic || addr;
+		byData('doctor-clinic').hidden = !(clinic || addr);
+		byData('doctor-address-text').textContent = clinic ? addr : '';
+		showSec('place', !!(clinic || addr));
+		const city = (d.address?.city || '').trim();
+		const where = (clinic && city && !clinic.includes(city) ? `${clinic}، ${city}` : clinic || city) || addr;
+		byData('doctor-card-place-t').textContent = where;
+		byData('doctor-card-place').hidden = !where;
+		const lat = Number(d.location?.lat), lng = Number(d.location?.lng), map = byData('doctor-map') as HTMLAnchorElement;
+		const has = Number.isFinite(lat) && Number.isFinite(lng) && !(lat === 0 && lng === 0) && d.location?.lat != null && d.location?.lng != null;
+		map.hidden = !has;
+		if (has) map.href = `https://www.google.com/maps/search/?api=1&query=${lat},${lng}`;
 	}
 
 	function formatAddress(addr: any): string {
@@ -327,17 +428,30 @@ import SiteHeader from '../components/site/SiteHeader.astro';
 		if (!Array.isArray(list)) return '';
 		return list.map((x: any) => (x?.from && x?.to ? `${clock(x.from)} – ${clock(x.to)}` : '')).filter(Boolean).join('،  ');
 	}
+	const minutes = (t: string) => { const [h, m] = String(t).split(':').map(Number); return h * 60 + (m || 0); };
 	function renderHours(hours: any) {
 		const any = !!hours && typeof hours === 'object' && DAYS.some(([k]) => ranges(hours[k]));
-		showRow('hours', any);
+		showSec('hours', any);
+		showChip('hours', any);
 		if (!any) return;
-		const now = new Intl.DateTimeFormat('en-US', { timeZone: 'Asia/Damascus', weekday: 'short' }).format(new Date()).toLowerCase();
-		byData('doctor-today').textContent = ranges(hours[now]) || 'مغلق';
+		const parts = new Intl.DateTimeFormat('en-US', { timeZone: 'Asia/Damascus', weekday: 'short', hour: '2-digit', minute: '2-digit', hourCycle: 'h23' }).formatToParts(new Date());
+		const get = (k: string) => parts.find((p) => p.type === k)?.value || '';
+		const today = get('weekday').toLowerCase(), nowM = Number(get('hour')) * 60 + Number(get('minute'));
+		const list: any[] = Array.isArray(hours[today]) ? hours[today].filter((x: any) => x?.from && x?.to) : [];
+		const open = list.find((x) => nowM >= minutes(x.from) && nowM < minutes(x.to));
+		const next = list.find((x) => nowM < minutes(x.from));
+		const status = open ? `مفتوح حتى ${clock(open.to)}` : next ? `يفتح اليوم ${clock(next.from)}` : 'مغلق الآن';
+		const pill = byData('doctor-now');
+		pill.textContent = status;
+		pill.classList.toggle('on', !!open);
+		byData('doctor-today').textContent = ranges(list) || 'مغلق';
+		byData('chip-hours-k').textContent = open ? 'مفتوح الآن' : 'اليوم';
+		byData('chip-hours').textContent = open ? `حتى ${clock(open.to)}` : next ? `يفتح ${clock(next.from)}` : (list.length ? 'انتهى الدوام' : 'مغلق');
 		const week = byData('doctor-week');
 		week.replaceChildren();
 		DAYS.forEach(([key, label]) => {
 			const line = document.createElement('div'), dt = document.createElement('dt'), dd = document.createElement('dd');
-			if (key === now) line.className = 'is-today';
+			if (key === today) line.className = 'is-today';
 			dt.textContent = label;
 			dd.textContent = ranges(hours[key]) || 'مغلق';
 			line.append(dt, dd);
@@ -356,92 +470,151 @@ import SiteHeader from '../components/site/SiteHeader.astro';
 	}
 	function renderServices(v: any) {
 		const items = serviceTitles(v);
-		showRow('services', items.length > 0);
+		showSec('services', items.length > 0);
+		showChip('svc', items.length > 0);
 		if (!items.length) return;
+		byData('chip-svc').textContent = items[0];
 		const ul = byData('doctor-services'), more = byData('svc-more');
-		const draw = (list: string[]) => ul.replaceChildren(...list.map((t) => { const li = document.createElement('li'); li.textContent = t; return li; }));
-		draw(items.slice(0, 5));
-		more.hidden = items.length <= 5;
+		const draw = (list: string[]) => ul.replaceChildren(...list.map((t) => {
+			const li = document.createElement('li');
+			li.innerHTML = '<svg viewBox="0 0 24 24" aria-hidden="true"><path d="m5 12.500 4.600 4.600L19 7.600"/></svg>';
+			li.append(document.createTextNode(t));
+			return li;
+		}));
+		draw(items.slice(0, 6));
+		more.hidden = items.length <= 6;
 		more.onclick = () => { draw(items); more.hidden = true; };
 	}
 
 	const LANGS: Record<string, string> = { ar: 'العربية', en: 'الإنجليزية', fr: 'الفرنسية', de: 'الألمانية', ru: 'الروسية', tr: 'التركية', es: 'الإسبانية', it: 'الإيطالية', fa: 'الفارسية', ku: 'الكردية', hy: 'الأرمنية' };
 	function renderLanguages(v: any) {
 		const list = (Array.isArray(v) ? v : []).map((x: any) => String(x).trim()).filter(Boolean).map((x: string) => LANGS[x.toLowerCase()] || x);
-		showRow('langs', list.length > 0);
-		byData('doctor-langs').textContent = list.join('، ');
+		showSec('langs', list.length > 0);
+		byData('doctor-langs').replaceChildren(...list.map((l) => { const s = document.createElement('span'); s.textContent = l; return s; }));
 	}
 
+	// The photo, or the app's approved illustration: never initials.
+	function placeholderFor(d: any): string {
+		const g = String(d.gender || '').toLowerCase().trim();
+		const male = g === 'ذكر' || g === 'male';
+		const hijab = !male && String(d.placeholder_style || '').toLowerCase().trim() === 'hijab';
+		const who = isPhysician(d) ? 'doctor' : 'specialist';
+		return `/images/placeholders/ph_${who}_${male ? 'male' : hijab ? 'female_hijab' : 'female'}.svg`;
+	}
 	function renderImage(d: any, fullName: string) {
 		const img = byData('doctor-image') as HTMLImageElement;
-		const fb = byData('doctor-fallback');
-
-		// Always populate the fallback initials first, so the circle is
-		// never blank even if the image hasn't started loading yet.
-		fb.textContent = initialsFor(d);
-
+		const fallback = placeholderFor(d);
+		img.alt = fullName;
+		img.onload = () => img.classList.add('is-loaded');
 		const path = (d.doctor_image || '').trim();
-		if (!path) {
-			img.hidden = true;
-			return;
-		}
-
+		if (!path) { img.onerror = null; img.src = fallback; return; }
 		// Preserve slashes in the path (it's typically uuid/profile/file.ext)
 		// while still escaping any unsafe characters within each segment.
-		const url = path.startsWith('/images/') && demo ? path : SUPABASE_URL + '/storage/v1/object/public/doctor/' +
+		img.onerror = () => { img.onerror = null; img.src = fallback; };
+		img.src = SUPABASE_URL + '/storage/v1/object/public/doctor/' +
 			path.split('/').map((seg: string) => encodeURIComponent(seg)).join('/');
-
-		img.alt = fullName;
-		img.onload = () => {
-			// Reveal the image: it now sits on top of the initials fallback.
-			img.classList.add('is-loaded');
-		};
-		img.onerror = () => {
-			img.hidden = true;
-			// fallback initials are already populated and visible
-		};
-		img.src = url;
 	}
 
-	function initialsFor(d: any): string {
-		const a = ((d.first_name || '').trim().charAt(0) || '');
-		const b = ((d.last_name || '').trim().charAt(0) || '');
-		return (a + b).toUpperCase() || '?';
+	// ----- The card: tilt, depth, sheen, and a turn to its QR ------
+	function startCard() {
+		const stage = byData('stage'), wrap = byData('cd-wrap'), card = byData('cd');
+		const front = byData('cd-front'), back = byData('cd-back'), sheen = byData('cd-sheen');
+		const still = matchMedia('(prefers-reduced-motion: reduce)').matches;
+		let rx = still ? 0 : 15, ry = still ? 0 : -26, tx = 0, ty = 0, flip = 0, flipTo = 0, sx = 30, sy = 18, tsx = 30, tsy = 18;
+		let lastInput = 0, inView = true, running = false, showing = true, qrDone = false;
+		const drawQr = () => {
+			if (qrDone) return;
+			qrDone = true;
+			const qr = qrcode(0, 'M');
+			qr.addData(window.location.href);
+			qr.make();
+			byData('cd-qr').innerHTML = qr.createSvgTag({ scalable: true, margin: 0 });
+		};
+		const apply = () => {
+			const a = ry + flip;
+			card.style.transform = `rotateX(${rx.toFixed(2)}deg) rotateY(${a.toFixed(2)}deg)`;
+			const faceFront = Math.cos((a * Math.PI) / 180) >= 0;
+			if (faceFront !== showing) {
+				showing = faceFront;
+				front.style.visibility = faceFront ? 'visible' : 'hidden';
+				back.style.visibility = faceFront ? 'hidden' : 'visible';
+			}
+			sheen.style.setProperty('--sx', `${sx.toFixed(1)}%`);
+			sheen.style.setProperty('--sy', `${sy.toFixed(1)}%`);
+		};
+		const tick = (t: number) => {
+			if (!inView) { running = false; return; }
+			if (performance.now() - lastInput > 1600 && !still) {
+				tx = Math.cos(t / 3100) * 3.4;
+				ty = Math.sin(t / 2300) * 8;
+				tsx = 50 + ty * 3.4;
+				tsy = 26 - tx * 4;
+			}
+			rx += (tx - rx) * 0.075;
+			ry += (ty - ry) * 0.075;
+			flip += (flipTo - flip) * 0.1;
+			sx += (tsx - sx) * 0.1;
+			sy += (tsy - sy) * 0.1;
+			apply();
+			requestAnimationFrame(tick);
+		};
+		const run = () => { if (!running && inView && !still) { running = true; requestAnimationFrame(tick); } };
+		const aim = (x: number, y: number) => {
+			const r = wrap.getBoundingClientRect();
+			const nx = Math.max(-1, Math.min(1, (x - r.left - r.width / 2) / (r.width * 0.75)));
+			const ny = Math.max(-1, Math.min(1, (y - r.top - r.height / 2) / (r.height * 0.75)));
+			ty = nx * 17; tx = -ny * 12;
+			tsx = 50 + nx * 46; tsy = 40 + ny * 46;
+			stage.style.setProperty('--px', nx.toFixed(3));
+			stage.style.setProperty('--py', ny.toFixed(3));
+			lastInput = performance.now();
+		};
+		if (!still) {
+			stage.addEventListener('pointermove', (e) => { if (e.pointerType === 'mouse') aim(e.clientX, e.clientY); });
+			wrap.addEventListener('pointerdown', (e) => { if (e.pointerType !== 'mouse') aim(e.clientX, e.clientY); });
+			wrap.addEventListener('pointermove', (e) => { if (e.pointerType !== 'mouse') aim(e.clientX, e.clientY); });
+			new IntersectionObserver(([e]) => { inView = e.isIntersecting; run(); }).observe(stage);
+		}
+		document.querySelectorAll<HTMLElement>('[data-cd-flip]').forEach((b) => b.addEventListener('click', () => {
+			drawQr();
+			flipTo = flipTo === 0 ? 180 : 0;
+			wrap.classList.toggle('is-flipped', flipTo !== 0);
+			if (still) { flip = flipTo; apply(); }
+		}));
+		apply();
+		run();
 	}
 
-	// ----- The sections arrive quietly, each with its hairline ----
-	function revealRows() {
-		const rows = Array.from(document.querySelectorAll<HTMLElement>('.row:not([hidden])'));
-		if (matchMedia('(prefers-reduced-motion: reduce)').matches) { rows.forEach((r) => r.classList.add('in')); return; }
+	function revealCards() {
+		const cards = Array.from(document.querySelectorAll<HTMLElement>('.sc:not([hidden])'));
+		if (matchMedia('(prefers-reduced-motion: reduce)').matches) { cards.forEach((c) => c.classList.add('in')); return; }
 		const io = new IntersectionObserver((es) => es.forEach((e) => {
 			if (e.isIntersecting) { e.target.classList.add('in'); io.unobserve(e.target); }
 		}), { rootMargin: '0px 0px -6% 0px' });
-		rows.forEach((r, i) => { r.style.setProperty('--d', `${Math.min(i, 3) * 70}ms`); io.observe(r); });
+		cards.forEach((c, i) => { c.style.setProperty('--d', `${(i % 2) * 90}ms`); io.observe(c); });
 	}
 
-	// ----- On a phone the booking steps rise as a sheet ------------
+	// ----- The booking steps rise as a sheet (a dialog on wide screens) -----
 	function wireSheet() {
 		const sheet = document.querySelector<HTMLElement>('[data-book-sheet]')!;
 		const scrim = document.querySelector<HTMLElement>('[data-book-scrim]')!;
-		const openBtn = document.querySelector<HTMLElement>('[data-book-open]')!;
 		const closeBtn = document.querySelector<HTMLElement>('[data-book-close]')!;
-		const narrow = matchMedia('(max-width: 899px)');
+		let opener: HTMLElement | null = null;
 		const setOpen = (on: boolean, focus = true) => {
 			sheet.classList.toggle('open', on);
 			scrim.classList.toggle('open', on);
 			document.documentElement.classList.toggle('bk-lock', on);
 			if (on) { sheet.setAttribute('role', 'dialog'); sheet.setAttribute('aria-modal', 'true'); sheet.setAttribute('aria-label', 'احجز موعداً'); }
 			else { sheet.removeAttribute('role'); sheet.removeAttribute('aria-modal'); sheet.removeAttribute('aria-label'); }
-			if (focus) (on ? closeBtn : openBtn).focus();
+			if (focus) (on ? closeBtn : opener)?.focus();
 		};
-		openBtn.addEventListener('click', () => setOpen(true));
+		document.querySelectorAll<HTMLElement>('[data-book-open]').forEach((b) => b.addEventListener('click', () => { opener = b; setOpen(true); }));
 		closeBtn.addEventListener('click', () => setOpen(false));
 		scrim.addEventListener('click', () => setOpen(false));
 		document.addEventListener('keydown', (e) => { if (e.key === 'Escape' && sheet.classList.contains('open')) setOpen(false); });
-		narrow.addEventListener('change', () => { if (!narrow.matches && sheet.classList.contains('open')) setOpen(false, false); });
 		// Back from the store, step 2 is the thing to press: bring it back.
 		const back = () => {
-			if (narrow.matches && document.visibilityState === 'visible' && sheet.querySelector('[data-step-open].is-ready')) setOpen(true, false);
+			if (document.visibilityState === 'visible' && sheet.querySelector('[data-step-open].is-ready')) setOpen(true, false);
 		};
 		document.addEventListener('visibilitychange', back);
 		back();
@@ -460,99 +633,198 @@ import SiteHeader from '../components/site/SiteHeader.astro';
 </script>
 
 <style>
-	.dp { --paper: #F8F9F6; --ink: #12282C; --soft: #5E6E71; --hair: rgba(18, 40, 44, .14); min-height: 100vh; min-height: 100svh; box-sizing: border-box; padding: clamp(104px, 13vh, 136px) 24px 88px; color: var(--ink); background: var(--paper); }
+	.dp { --main: #009092; --deep: #007474; --ink: #0E2B2C; --sub: #5B7071; --line: #E2EDED; --border: #E9F2F2; --tint: #E6F6F5; --page: #F4FAF9; --ok: #2E7D32; --okbg: #EAF5EA; min-height: 100vh; min-height: 100svh; color: var(--ink); background: #03191E; }
 	.state[hidden], [hidden] { display: none !important; }
 
-	.state-loading { padding-top: 22vh; text-align: center; color: var(--soft); }
-	.state-loading p { margin: 16px 0 0; font-size: 1rem; }
+	.state-loading { min-height: 100vh; min-height: 100svh; display: grid; place-content: center; justify-items: center; gap: 14px; color: #CFEDE9; }
+	.state-loading p { margin: 0; font-size: 1rem; }
 	.dots { display: inline-flex; gap: 7px; }
-	.dots i { width: 6px; height: 6px; background: var(--c-main-dark); border-radius: 50%; animation: dot 1.1s ease-in-out infinite; }
+	.dots i { width: 7px; height: 7px; background: #5FD6CB; border-radius: 50%; animation: dot 1.1s ease-in-out infinite; }
 	.dots i:nth-child(2) { animation-delay: .14s; }
 	.dots i:nth-child(3) { animation-delay: .28s; }
-	@keyframes dot { 0%, 100% { opacity: .2; } 50% { opacity: 1; } }
+	@keyframes dot { 0%, 100% { opacity: .25; } 50% { opacity: 1; } }
 
-	.dp-grid { display: grid; grid-template-columns: minmax(0, 1fr) 372px; align-items: start; gap: clamp(48px, 7vw, 108px); max-width: 1120px; margin: 0 auto; }
+	.btn { display: inline-flex; align-items: center; justify-content: center; gap: 9px; padding: 14px 28px; font: 800 1.1rem Cairo, sans-serif; color: #fff; text-decoration: none; cursor: pointer; background: linear-gradient(150deg, #008485, #007172); border: 0; border-radius: 16px; box-shadow: 0 14px 28px -14px rgba(0, 116, 116, .85); transition: transform .2s ease, box-shadow .2s ease; }
+	.btn:hover { transform: translateY(-1px); box-shadow: 0 18px 32px -14px rgba(0, 116, 116, .95); }
+	.btn:focus-visible { outline: 3px solid #fff; outline-offset: 2px; }
+	.btn svg { width: 21px; height: 21px; fill: none; stroke: currentColor; stroke-width: 2; stroke-linecap: round; stroke-linejoin: round; }
+	.btn-w { color: var(--deep); background: #fff; box-shadow: 0 14px 30px -16px rgba(0, 0, 0, .6); }
 
-	/* who */
-	.dp-id { padding-bottom: clamp(30px, 4vw, 44px); }
-	.photo { position: relative; width: 132px; height: 132px; margin-bottom: 26px; overflow: hidden; background: #E6F1EF; border-radius: 50%; box-shadow: 0 0 0 1px var(--hair), 0 0 0 7px var(--paper), 0 0 0 8px rgba(0, 116, 116, .22); }
-	.photo img { position: absolute; z-index: 2; inset: 0; display: block; width: 100%; height: 100%; object-fit: cover; object-position: 50% 8%; opacity: 0; transition: opacity .5s ease; }
-	.photo img.is-loaded { opacity: 1; }
-	.photo-fallback { position: absolute; z-index: 1; inset: 0; display: grid; place-items: center; font-size: 2.3rem; font-weight: 400; color: var(--c-main-dark); }
-	.name { margin: 0; font-size: clamp(2.1rem, 4.5vw, 3.6rem); font-weight: 400; line-height: 1.35; color: var(--ink); text-wrap: balance; }
-	.spec { margin: 4px 0 0; font-size: clamp(1.14rem, 1.7vw, 1.34rem); font-weight: 600; line-height: 1.6; color: var(--c-main-dark); }
-	.ok { display: inline-flex; align-items: center; gap: 6px; margin: 10px 0 0; font-size: .98rem; line-height: 1.6; color: var(--soft); }
-	.ok svg { width: 16px; height: 16px; fill: none; stroke: var(--c-main-dark); stroke-width: 2.2; stroke-linecap: round; stroke-linejoin: round; }
+	/* ── the stage: the home page's silk ── */
+	.st { --px: 0; --py: 0; position: relative; display: flex; align-items: center; min-height: 100vh; min-height: 100svh; box-sizing: border-box; padding: 92px 24px 76px; overflow: hidden; color: #fff; }
+	.st-bg { position: absolute; inset: 0; background: radial-gradient(85% 72% at 30% 52%, #0A4A50 0%, rgba(10, 74, 80, 0) 70%), linear-gradient(200deg, #05282E 0%, #031B20 58%, #021418 100%); }
+	.silk { position: absolute; inset: 0; width: 100%; height: 100%; object-fit: cover; object-position: 34% 50%; }
+	.st-in { position: relative; display: grid; grid-template-columns: minmax(0, 1fr) auto; align-items: center; gap: clamp(40px, 7vw, 110px); width: min(1160px, 100%); margin: 0 auto; }
+	.hx { animation: rise .9s cubic-bezier(.2, .7, .2, 1) .1s both; }
+	.hx h1 { margin: 0 0 12px; font-size: clamp(2.2rem, 4.5vw, 3.9rem); font-weight: 800; line-height: 1.22; color: #fff; text-wrap: balance; }
+	.hx h1 span { font-weight: 400; color: #CFEDE9; font-size: .68em; }
+	.hx h1 b { font-weight: 800; }
+	.hx > p { margin: 0 0 26px; font-size: clamp(1.06rem, 1.6vw, 1.28rem); line-height: 1.7; color: #DDF3F1; }
+	.hx-cta { display: flex; flex-wrap: wrap; align-items: center; gap: 12px 22px; }
+	.hx-web { font-size: .98rem; font-weight: 700; color: #CFEFEB; text-underline-offset: 5px; }
+	.hx-web:hover { color: #fff; }
+	@keyframes rise { from { opacity: 0; transform: translateY(14px); } to { opacity: 1; transform: none; } }
 
-	.dp-main.is-loading .name, .dp-main.is-loading .spec { width: min(300px, 74%); color: transparent; background: #ECEFEB; border-radius: 8px; animation: pulse 1.2s ease-in-out infinite alternate; }
-	.dp-main.is-loading .name { height: 1.2em; }
-	.dp-main.is-loading .spec { width: min(160px, 44%); height: 1.1em; margin-top: 14px; }
-	@keyframes pulse { from { opacity: 1; } to { opacity: .5; } }
-	.dp-main.is-offline .name, .dp-main.is-offline .spec { display: none; }
-	.dp-main.is-ready .dp-id > * { animation: rise .8s cubic-bezier(.2, .7, .2, 1) both; }
-	.dp-main.is-ready .name { animation-delay: .06s; }
-	.dp-main.is-ready .spec { animation-delay: .13s; }
-	.dp-main.is-ready .ok { animation-delay: .2s; }
-	@keyframes rise { from { opacity: 0; transform: translateY(10px); } to { opacity: 1; transform: none; } }
-	.card-offline { margin: 0; font-size: 1rem; line-height: 1.7; color: var(--soft); }
-	.card-offline button, .more { display: block; margin-top: 8px; padding: 0; font: inherit; font-size: .98rem; font-weight: 600; color: var(--c-main-dark); cursor: pointer; background: none; border: 0; text-decoration: underline; text-decoration-thickness: 1px; text-underline-offset: 5px; }
-	.more:focus-visible, .card-offline button:focus-visible, .week summary:focus-visible { outline: 2px solid var(--c-main-dark); outline-offset: 3px; border-radius: 3px; }
+	/* ── the card ── */
+	.cd-wrap { --cw: min(84vw, 384px, calc((100vh - 190px) * .7)); --u: calc(var(--cw) / 372); position: relative; width: var(--cw); aspect-ratio: 372 / 532; perspective: calc(var(--u) * 1500); touch-action: pan-y; animation: card-in 1.1s cubic-bezier(.16, .8, .24, 1) both; }
+	@supports (height: 100svh) { .cd-wrap { --cw: min(84vw, 384px, calc((100svh - 190px) * .7)); } }
+	@keyframes card-in { from { opacity: 0; transform: translateY(46px) scale(.94); } to { opacity: 1; transform: none; } }
+	.cd { position: absolute; inset: 0; transform-style: preserve-3d; will-change: transform; }
+	.sl, .cd-front, .cd-back, .cd-face { position: absolute; inset: 0; border-radius: calc(var(--u) * 34); }
+	.sl { background: linear-gradient(120deg, #63D2C8, #046A6D 34%, #03484C 66%, #3FB5AD); transform: translateZ(calc(var(--u) * var(--z))); }
+	.cd-front { display: flex; flex-direction: column; padding: calc(var(--u) * 18); box-sizing: border-box; transform-style: preserve-3d; box-shadow: 0 calc(var(--u) * 38) calc(var(--u) * 64) calc(var(--u) * -22) rgba(0, 8, 10, .85); }
+	.cd-face { overflow: hidden; background: linear-gradient(150deg, #0AA3A5, #007677); box-shadow: inset 0 0 0 1px rgba(255, 255, 255, .24); }
+	.cd-face b { position: absolute; display: block; background: #fff; border-radius: 50%; }
+	.cd-face b:nth-child(1) { left: calc(var(--u) * -80); top: calc(var(--u) * -120); width: calc(var(--u) * 300); height: calc(var(--u) * 300); opacity: .07; }
+	.cd-face b:nth-child(2) { right: calc(var(--u) * -50); bottom: calc(var(--u) * 80); width: calc(var(--u) * 190); height: calc(var(--u) * 190); opacity: .05; }
+	.cd-face img { position: absolute; right: calc(var(--u) * -58); top: calc(var(--u) * 150); width: calc(var(--u) * 250); height: auto; filter: brightness(0) invert(1); opacity: .055; transform: rotate(16deg); }
+	.cd-top { position: relative; display: flex; align-items: center; justify-content: space-between; transform: translateZ(calc(var(--u) * 16)); }
+	.cd-top img { display: block; width: calc(var(--u) * 104); height: auto; filter: brightness(0) invert(1); }
+	.cd-top button { display: grid; place-items: center; width: calc(var(--u) * 42); height: calc(var(--u) * 42); padding: 0; color: #fff; cursor: pointer; background: rgba(255, 255, 255, .16); border: 1px solid rgba(255, 255, 255, .26); border-radius: calc(var(--u) * 13); }
+	.cd-top button:hover { background: rgba(255, 255, 255, .26); }
+	.cd-top button:focus-visible, .cd-back button:focus-visible { outline: 2px solid #fff; outline-offset: 2px; }
+	.cd-top svg { width: 58%; height: 58%; fill: none; stroke: currentColor; stroke-width: 2; stroke-linecap: round; stroke-linejoin: round; }
+	.cd-who { position: relative; flex: 1; display: flex; flex-direction: column; align-items: center; justify-content: center; min-height: 0; text-align: center; transform-style: preserve-3d; }
+	.cd-photo { position: relative; width: calc(var(--u) * 158); height: calc(var(--u) * 158); margin-bottom: calc(var(--u) * 14); transform: translateZ(calc(var(--u) * 44)); }
+	.cd-pic { position: absolute; inset: 0; overflow: hidden; background: #EAF8F6; border: calc(var(--u) * 4) solid rgba(255, 255, 255, .72); border-radius: calc(var(--u) * 38); box-shadow: 0 calc(var(--u) * 18) calc(var(--u) * 30) calc(var(--u) * -12) rgba(0, 36, 38, .7); }
+	.cd-pic img { display: block; width: 100%; height: 100%; object-fit: cover; opacity: 0; transition: opacity .45s ease; }
+	.cd-pic img.is-loaded { opacity: 1; }
+	.cd-tick { position: absolute; left: calc(var(--u) * -5); bottom: calc(var(--u) * -5); display: grid; place-items: center; width: calc(var(--u) * 36); height: calc(var(--u) * 36); color: #fff; background: var(--main); border: calc(var(--u) * 4) solid #fff; border-radius: 50%; box-sizing: border-box; }
+	.cd-tick svg { width: 70%; height: 70%; fill: none; stroke: currentColor; stroke-width: 3.4; stroke-linecap: round; stroke-linejoin: round; }
+	.cd-name { --fs: 31; margin: 0; font-size: calc(var(--u) * var(--fs)); font-weight: 800; line-height: 1.3; color: #fff; text-wrap: balance; text-shadow: 0 2px 14px rgba(0, 54, 56, .35); transform: translateZ(calc(var(--u) * 30)); }
+	.cd-spec { margin: calc(var(--u) * 8) 0 0; padding: calc(var(--u) * 4) calc(var(--u) * 14); font-size: calc(var(--u) * 14.5); font-weight: 800; line-height: 1.6; color: #fff; background: rgba(255, 255, 255, .16); border: 1px solid rgba(255, 255, 255, .26); border-radius: calc(var(--u) * 11); transform: translateZ(calc(var(--u) * 24)); }
+	.cd-place { display: flex; align-items: center; justify-content: center; gap: calc(var(--u) * 5); max-width: 100%; margin: calc(var(--u) * 10) 0 0; font-size: calc(var(--u) * 14); font-weight: 600; line-height: 1.5; color: #E4F7F4; transform: translateZ(calc(var(--u) * 20)); }
+	.cd-place svg { flex: none; width: calc(var(--u) * 16); height: calc(var(--u) * 16); fill: none; stroke: currentColor; stroke-width: 2; stroke-linecap: round; stroke-linejoin: round; }
+	.cd-place span { min-width: 0; overflow: hidden; text-overflow: ellipsis; white-space: nowrap; }
+	.cd-offline { margin: 0; font-size: calc(var(--u) * 15); line-height: 1.7; color: #fff; transform: translateZ(calc(var(--u) * 24)); }
+	.cd-offline button { display: block; margin: 8px auto 0; padding: 0; font: inherit; font-weight: 800; color: #fff; cursor: pointer; background: none; border: 0; text-decoration: underline; text-underline-offset: 4px; }
+	.cd-tags { position: relative; display: flex; justify-content: space-around; gap: calc(var(--u) * 4); padding: calc(var(--u) * 12) calc(var(--u) * 6); background: #fff; border: 1px solid var(--border); border-radius: calc(var(--u) * 22); box-shadow: 0 calc(var(--u) * 16) calc(var(--u) * 26) calc(var(--u) * -14) rgba(0, 36, 38, .65); transform: translateZ(calc(var(--u) * 36)); }
+	.cd-tags :global(.tag) { flex: 1; display: grid; justify-items: center; gap: calc(var(--u) * 6); min-width: 0; }
+	.cd-tags :global(.tag i) { display: grid; place-items: center; width: calc(var(--u) * 36); height: calc(var(--u) * 36); color: var(--main); background: var(--tint); border-radius: calc(var(--u) * 11); }
+	.cd-tags :global(.tag-ok i) { color: var(--ok); background: var(--okbg); }
+	.cd-tags :global(.tag svg) { width: 60%; height: 60%; fill: none; stroke: currentColor; stroke-width: 2.2; stroke-linecap: round; stroke-linejoin: round; }
+	.cd-tags :global(.tag b) { font-size: calc(var(--u) * 12.5); font-weight: 800; line-height: 1.35; text-align: center; color: var(--ink); }
+	.cd-sheen { --sx: 30%; --sy: 18%; position: absolute; inset: 0; z-index: 3; overflow: hidden; pointer-events: none; background: radial-gradient(circle at var(--sx) var(--sy), rgba(255, 255, 255, .3), rgba(255, 255, 255, .07) 30%, transparent 56%); border-radius: calc(var(--u) * 34); transform: translateZ(calc(var(--u) * 50)); }
+	.cd.is-loading .cd-name, .cd.is-loading .cd-spec { width: calc(var(--u) * 210); color: transparent; text-shadow: none; background: rgba(255, 255, 255, .2); border: 0; border-radius: calc(var(--u) * 10); animation: pulse 1.2s ease-in-out infinite alternate; }
+	.cd.is-loading .cd-name { height: calc(var(--u) * 34); }
+	.cd.is-loading .cd-spec { width: calc(var(--u) * 120); height: calc(var(--u) * 26); padding: 0; }
+	@keyframes pulse { from { opacity: 1; } to { opacity: .45; } }
+	.cd.is-offline .cd-name, .cd.is-offline .cd-spec, .cd.is-offline .cd-place { display: none; }
 
-	/* details: lines, no cards */
-	.row { position: relative; display: grid; grid-template-columns: 132px minmax(0, 1fr); gap: 20px; padding: 24px 0; opacity: 0; transform: translateY(8px); transition: opacity .6s ease var(--d, 0ms), transform .6s ease var(--d, 0ms); }
-	.row::before { content: ''; position: absolute; inset: 0 0 auto; height: 1px; background: var(--hair); transform: scaleX(0); transform-origin: 100% 50%; transition: transform .9s cubic-bezier(.3, .7, .2, 1) var(--d, 0ms); }
-	.row:global(.in) { opacity: 1; transform: none; }
-	.row:global(.in)::before { transform: none; }
-	.row h2 { margin: 0; font-size: 1rem; font-weight: 600; line-height: 1.75; color: var(--soft); }
-	.bio, .plain { margin: 0; font-size: 1.1rem; line-height: 1.9; color: var(--ink); white-space: pre-line; }
-	.bio.short { display: -webkit-box; -webkit-box-orient: vertical; -webkit-line-clamp: 4; overflow: hidden; }
-	.place { display: grid; gap: 2px; font-size: 1.1rem; line-height: 1.75; }
-	.place b { font-weight: 600; }
-	.place span { color: var(--soft); }
-	.today { margin: 0; font-size: 1.1rem; line-height: 1.75; }
-	.today span { color: var(--soft); }
-	.today b { font-weight: 600; }
-	.week { margin-top: 6px; }
-	.week summary { display: inline-block; font-size: .98rem; font-weight: 600; color: var(--c-main-dark); cursor: pointer; list-style: none; text-decoration: underline; text-decoration-thickness: 1px; text-underline-offset: 5px; }
+	.cd-back { display: flex; flex-direction: column; align-items: center; justify-content: center; padding: calc(var(--u) * 24); box-sizing: border-box; text-align: center; color: var(--ink); visibility: hidden; background: #fff; box-shadow: inset 0 0 0 1px var(--border), 0 calc(var(--u) * 38) calc(var(--u) * 64) calc(var(--u) * -22) rgba(0, 8, 10, .85); transform: rotateY(180deg) translateZ(calc(var(--u) * 8)); }
+	.cd-blogo { width: calc(var(--u) * 112); height: auto; margin-bottom: calc(var(--u) * 20); }
+	.cd-qr { width: calc(var(--u) * 216); height: calc(var(--u) * 216); padding: calc(var(--u) * 12); background: #fff; border: 1px solid var(--line); border-radius: calc(var(--u) * 22); box-sizing: content-box; }
+	.cd-qr :global(svg) { display: block; width: 100%; height: 100%; }
+	.cd-qr :global(path) { fill: #005C5E; }
+	.cd-back b { margin-top: calc(var(--u) * 16); font-size: calc(var(--u) * 20); font-weight: 800; line-height: 1.4; }
+	.cd-back p { margin: calc(var(--u) * 2) 0 calc(var(--u) * 14); font-size: calc(var(--u) * 13.5); line-height: 1.6; color: var(--sub); }
+	.cd-back button { padding: calc(var(--u) * 7) calc(var(--u) * 16); font: 800 calc(var(--u) * 13.5) Cairo, sans-serif; color: var(--deep); cursor: pointer; background: var(--tint); border: 0; border-radius: calc(var(--u) * 12); }
+
+	/* the glass chips of the home page */
+	.chip { position: absolute; z-index: 4; display: flex; align-items: center; gap: 9px; max-width: 230px; padding: 8px 14px 8px 12px; color: var(--ink); background: rgba(255, 255, 255, .92); border: 1px solid rgba(255, 255, 255, .7); border-radius: 15px; box-shadow: 0 18px 34px -18px rgba(0, 12, 14, .85); -webkit-backdrop-filter: blur(10px); backdrop-filter: blur(10px); translate: calc(var(--px) * var(--m) * 1px) calc(var(--py) * var(--m) * 1px); transition: opacity .3s ease .3s, visibility 0s linear .3s; animation: chip-in .8s cubic-bezier(.2, .8, .2, 1) var(--at) backwards, chip-float 6s ease-in-out calc(var(--at) + .8s) infinite; }
+	.chips { display: contents; }
+	.cd-wrap:global(.is-flipped) .chip { opacity: 0; visibility: hidden; pointer-events: none; transition: opacity .18s ease, visibility 0s linear .18s; }
+	.chip i { flex: none; display: grid; place-items: center; width: 34px; height: 34px; color: var(--main); background: var(--tint); border-radius: 10px; }
+	.chip svg { width: 20px; height: 20px; fill: none; stroke: currentColor; stroke-width: 2; stroke-linecap: round; stroke-linejoin: round; }
+	.chip span { min-width: 0; }
+	.chip small, .chip b { display: block; overflow: hidden; text-overflow: ellipsis; white-space: nowrap; }
+	.chip small { font-size: .74rem; font-weight: 700; line-height: 1.35; color: var(--sub); }
+	.chip b { font-size: .9rem; font-weight: 800; line-height: 1.35; }
+	.chip-a { --m: 14; --at: .55s; top: 13%; left: calc(100% - 26px); }
+	.chip-c { --m: -11; --at: .72s; top: 64%; left: calc(100% - 22px); }
+	@media (min-width: 1500px) { .chip-a { --m: -16; left: auto; right: calc(100% - 40px); max-width: 170px; } }
+	@keyframes chip-in { from { opacity: 0; transform: translateY(14px) scale(.92); } to { opacity: 1; transform: none; } }
+	@keyframes chip-float { 0%, 100% { transform: translateY(0); } 50% { transform: translateY(-7px); } }
+
+	/* ── the profile, in the app's own cards ── */
+	.pf { position: relative; z-index: 2; margin-top: -30px; padding: clamp(34px, 5vw, 60px) 20px clamp(44px, 6vw, 76px); background: var(--page); border-radius: 32px 32px 0 0; }
+	.pf-grid { columns: 2; column-gap: 16px; max-width: 1040px; margin: 0 auto; }
+	.sc { display: block; margin: 0 0 16px; padding: 20px; overflow: hidden; background: #fff; border: 1px solid var(--border); border-radius: 22px; box-shadow: 0 16px 30px -24px rgba(0, 70, 74, .5); break-inside: avoid; opacity: 0; transform: translateY(16px); transition: opacity .6s ease var(--d, 0ms), transform .6s cubic-bezier(.2, .7, .2, 1) var(--d, 0ms); }
+	.sc:global(.in) { opacity: 1; transform: none; }
+	.sc header { display: flex; align-items: center; gap: 10px; margin-bottom: 12px; }
+	.sc header i { flex: none; display: grid; place-items: center; width: 36px; height: 36px; color: var(--main); background: var(--tint); border-radius: 11px; }
+	.sc header svg { width: 21px; height: 21px; fill: none; stroke: currentColor; stroke-width: 2; stroke-linecap: round; stroke-linejoin: round; }
+	.sc h2 { flex: 1; margin: 0; font-size: 1.14rem; font-weight: 800; line-height: 1.4; color: var(--ink); }
+	.bio { margin: 0; font-size: 1.04rem; line-height: 1.85; color: #33484A; white-space: pre-line; }
+	.bio.short { display: -webkit-box; -webkit-box-orient: vertical; -webkit-line-clamp: 5; overflow: hidden; }
+	.more { display: inline-block; margin-top: 8px; padding: 0; font: 800 .96rem Cairo, sans-serif; color: var(--deep); cursor: pointer; background: none; border: 0; }
+	.more:focus-visible, .week summary:focus-visible, .go:focus-visible { outline: 2px solid var(--deep); outline-offset: 3px; border-radius: 4px; }
+	.now { flex: none; padding: 3px 11px; font-size: .84rem; font-weight: 800; color: var(--sub); background: #F1F5F5; border-radius: 999px; }
+	.now:global(.on) { color: var(--ok); background: var(--okbg); }
+	.today { display: flex; justify-content: space-between; gap: 14px; margin: 0; padding: 11px 14px; font-size: 1rem; line-height: 1.6; background: #F2FAF9; border-radius: 13px; }
+	.today span { font-weight: 800; color: var(--deep); }
+	.today b { font-weight: 700; text-align: end; }
+	.week { margin-top: 10px; }
+	.week summary { display: inline-block; font-size: .96rem; font-weight: 800; color: var(--deep); cursor: pointer; list-style: none; }
 	.week summary::-webkit-details-marker { display: none; }
-	.week dl { display: grid; gap: 4px; max-width: 420px; margin: 12px 0 0; }
-	.week dl :global(div) { display: flex; justify-content: space-between; gap: 18px; font-size: 1rem; line-height: 1.75; color: var(--soft); }
-	.week dl :global(div.is-today) { font-weight: 600; color: var(--ink); }
+	.week dl { display: grid; gap: 3px; margin: 10px 0 0; }
+	.week dl :global(div) { display: flex; justify-content: space-between; gap: 16px; padding: 3px 2px; font-size: .98rem; line-height: 1.7; color: var(--sub); }
+	.week dl :global(div.is-today) { font-weight: 800; color: var(--ink); }
 	.week dl :global(dt), .week dl :global(dd) { margin: 0; }
-	.svc { display: grid; gap: 3px; margin: 0; padding: 0; font-size: 1.1rem; line-height: 1.75; list-style: none; }
+	.svc { display: flex; flex-wrap: wrap; gap: 7px; margin: 0; padding: 0; list-style: none; }
+	.svc :global(li) { display: inline-flex; align-items: center; gap: 6px; padding: 6px 12px; font-size: .94rem; font-weight: 700; line-height: 1.5; color: var(--ink); background: #fff; border: 1px solid var(--line); border-radius: 12px; }
+	.svc :global(svg) { flex: none; width: 15px; height: 15px; fill: none; stroke: var(--main); stroke-width: 2.6; stroke-linecap: round; stroke-linejoin: round; }
+	.sc-map { padding: 0; }
+	.map { height: 136px; overflow: hidden; }
+	.map svg { display: block; width: 100%; height: 100%; }
+	.place { display: flex; align-items: center; justify-content: space-between; gap: 12px; padding: 14px 20px 16px; }
+	.place > div { min-width: 0; display: grid; }
+	.place b { font-size: 1.08rem; font-weight: 800; line-height: 1.5; }
+	.place span { font-size: .96rem; line-height: 1.6; color: var(--sub); }
+	.go { flex: none; display: inline-flex; align-items: center; gap: 6px; padding: 8px 15px; font-size: .94rem; font-weight: 800; color: #fff; text-decoration: none; background: linear-gradient(150deg, #008485, #007172); border-radius: 12px; }
+	.go svg { width: 15px; height: 15px; fill: none; stroke: currentColor; stroke-width: 2.2; stroke-linejoin: round; }
+	.langs { display: flex; flex-wrap: wrap; gap: 7px; }
+	.langs :global(span) { padding: 5px 14px; font-size: .96rem; font-weight: 700; color: var(--deep); background: var(--tint); border-radius: 11px; }
 
-	/* the one action */
-	.bk { position: sticky; top: 96px; padding: 28px 26px; background: #fff; border: 1px solid rgba(18, 40, 44, .09); border-radius: 22px; }
-	.bk-x, .bk-scrim, .bk-bar { display: none; }
+	.end { padding: clamp(50px, 7vw, 86px) 22px; text-align: center; color: #fff; background: radial-gradient(90% 90% at 50% 120%, rgba(66, 190, 178, .34), transparent 70%), linear-gradient(180deg, #06262B, #0A4148); }
+	.end h2 { margin: 0 0 20px; font-size: clamp(1.7rem, 3.6vw, 2.8rem); font-weight: 800; line-height: 1.3; color: #fff; text-wrap: balance; }
 
-	.state-msg { max-width: 560px; margin: 0 auto; padding-top: 18vh; text-align: center; }
-	.state-msg h1 { margin: 0 0 10px; font-size: clamp(1.9rem, 3.9vw, 3rem); font-weight: 400; line-height: 1.5; color: var(--ink); }
-	.state-msg p { margin: 0 0 26px; font-size: 1.1rem; line-height: 1.8; color: var(--soft); }
-	.btn-main { display: inline-block; padding: 12px 26px; font-weight: 600; color: #fff; text-decoration: none; background: var(--c-main-dark); border-radius: 13px; }
+	/* ── the booking steps ── */
+	.bk { position: fixed; z-index: 70; left: 50%; top: 50%; width: min(440px, calc(100vw - 32px)); max-height: 88vh; overflow-y: auto; box-sizing: border-box; padding: 28px 26px; background: #fff; border-radius: 26px; box-shadow: 0 40px 90px -24px rgba(0, 16, 18, .75); opacity: 0; visibility: hidden; transform: translate(-50%, -46%) scale(.97); transition: opacity .28s ease, transform .34s cubic-bezier(.2, .8, .2, 1), visibility 0s linear .34s; }
+	.bk:global(.open) { opacity: 1; visibility: visible; transform: translate(-50%, -50%); transition: opacity .28s ease, transform .34s cubic-bezier(.2, .8, .2, 1); }
+	.bk-x { position: absolute; z-index: 2; top: 14px; inset-inline-end: 14px; display: grid; place-items: center; width: 38px; height: 38px; color: var(--sub); cursor: pointer; background: #F1F4F2; border: 0; border-radius: 50%; }
+	.bk-x:focus-visible { outline: 2px solid var(--deep); outline-offset: 2px; }
+	.bk-x svg { width: 18px; height: 18px; fill: none; stroke: currentColor; stroke-width: 2.2; stroke-linecap: round; }
+	.bk-scrim { position: fixed; z-index: 65; inset: 0; background: rgba(3, 25, 30, .55); -webkit-backdrop-filter: blur(3px); backdrop-filter: blur(3px); opacity: 0; pointer-events: none; transition: opacity .3s ease; }
+	.bk-scrim:global(.open) { opacity: 1; pointer-events: auto; }
+	.bk-bar { display: none; }
+	:global(html.bk-lock), :global(html.bk-lock body) { overflow: hidden; }
 
+	.state-msg { position: relative; display: grid; place-content: center; justify-items: center; min-height: 100vh; min-height: 100svh; box-sizing: border-box; padding: 100px 24px; text-align: center; color: #fff; background: radial-gradient(85% 72% at 50% 46%, #0A4A50 0%, rgba(10, 74, 80, 0) 70%), linear-gradient(200deg, #05282E, #021418); }
+	.state-msg h1 { margin: 0 0 10px; font-size: clamp(2rem, 4.4vw, 3.3rem); font-weight: 800; line-height: 1.3; color: #fff; }
+	.state-msg p { max-width: 32em; margin: 0 0 24px; font-size: 1.1rem; line-height: 1.8; color: #DDF3F1; }
+
+	@media (min-width: 900px) and (max-width: 1180px) { .chip { max-width: 158px; } }
 	@media (max-width: 899px) {
-		.dp { padding: 100px 24px 112px; }
-		.dp-grid { grid-template-columns: minmax(0, 1fr); gap: 0; }
-		.dp-id { display: flex; flex-direction: column; align-items: center; text-align: center; }
-		.photo { width: 118px; height: 118px; margin-bottom: 22px; }
-		.row { grid-template-columns: minmax(0, 1fr); gap: 4px; padding: 20px 0; }
-		.dp-main.is-loading .name, .dp-main.is-loading .spec { margin-inline: auto; }
-		.card-offline button { margin-inline: auto; }
-		.bk { position: fixed; z-index: 70; inset: auto 0 0; top: auto; max-height: 88vh; max-height: 88svh; overflow-y: auto; box-sizing: border-box; padding: 26px 24px calc(24px + env(safe-area-inset-bottom)); border: 0; border-radius: 26px 26px 0 0; box-shadow: 0 -24px 60px -24px rgba(6, 42, 47, .45); visibility: hidden; transform: translateY(104%); transition: transform .42s cubic-bezier(.2, .8, .2, 1), visibility 0s linear .42s; }
-		.bk:global(.open) { visibility: visible; transform: none; transition: transform .42s cubic-bezier(.2, .8, .2, 1); }
-		.bk-x { position: absolute; top: 14px; inset-inline-end: 14px; display: grid; place-items: center; width: 38px; height: 38px; color: var(--soft); cursor: pointer; background: #F1F4F2; border: 0; border-radius: 50%; }
-		.bk-x svg { width: 18px; height: 18px; fill: none; stroke: currentColor; stroke-width: 2.2; stroke-linecap: round; }
-		.bk-scrim { position: fixed; z-index: 65; inset: 0; display: block; background: rgba(9, 34, 38, .36); opacity: 0; pointer-events: none; transition: opacity .3s ease; }
-		.bk-scrim:global(.open) { opacity: 1; pointer-events: auto; }
-		.bk-bar { position: fixed; z-index: 60; inset: auto 0 0; display: block; padding: 12px 20px calc(12px + env(safe-area-inset-bottom)); background: rgba(248, 249, 246, .9); -webkit-backdrop-filter: blur(12px); backdrop-filter: blur(12px); border-top: 1px solid rgba(18, 40, 44, .08); }
-		.bk-bar button { display: block; width: 100%; max-width: 520px; margin: 0 auto; padding: 14px; font: 700 1.12rem Cairo, sans-serif; color: #fff; cursor: pointer; background: var(--c-main-dark); border: 0; border-radius: 15px; }
-		.bk-bar button:focus-visible, .bk-x:focus-visible { outline: 2px solid var(--c-main-dark); outline-offset: 2px; }
-		:global(html.bk-lock), :global(html.bk-lock body) { overflow: hidden; }
+		.st { align-items: center; padding: 76px 16px 84px; }
+		.st-in { grid-template-columns: minmax(0, 1fr); justify-items: center; gap: 0; }
+		.hx { position: absolute; width: 1px; height: 1px; overflow: hidden; clip-path: inset(50%); animation: none; }
+		.cd-wrap { --cw: min(88vw, 384px, calc((100vh - 182px) * .7)); }
+		.chips { display: none; }
+		.chip { position: relative; inset: auto; flex: 1 1 0; min-width: 0; max-width: none; box-sizing: border-box; padding: 6px 10px 6px 8px; gap: 7px; border-radius: 13px; translate: none; }
+		.chip i { width: 28px; height: 28px; border-radius: 9px; }
+		.chip svg { width: 17px; height: 17px; }
+		.chip small { font-size: .7rem; }
+		.chip b { font-size: .82rem; }
+		.pf-grid { columns: 1; }
+		.bk { inset: auto 0 0; top: auto; left: 0; width: auto; max-height: 88vh; max-height: 88svh; padding: 26px 24px calc(24px + env(safe-area-inset-bottom)); border-radius: 26px 26px 0 0; opacity: 1; transform: translateY(104%); transition: transform .42s cubic-bezier(.2, .8, .2, 1), visibility 0s linear .42s; }
+		.bk:global(.open) { transform: none; transition: transform .42s cubic-bezier(.2, .8, .2, 1); }
+		.bk-bar { position: fixed; z-index: 60; inset: auto 0 0; display: block; padding: 11px 16px calc(11px + env(safe-area-inset-bottom)); background: rgba(255, 255, 255, .86); -webkit-backdrop-filter: blur(14px); backdrop-filter: blur(14px); border-top: 1px solid rgba(14, 43, 44, .08); }
+		.bk-bar .btn { display: flex; width: 100%; max-width: 520px; margin: 0 auto; padding: 13px; }
+		.bk-bar .btn:focus-visible { outline-color: var(--deep); }
+		.end { padding-bottom: 104px; }
+	}
+	@media (max-width: 899px) and (min-height: 720px) {
+		.cd-wrap { --cw: min(88vw, 384px, calc((100vh - 270px) * .7)); margin-bottom: 66px; }
+		.chips { position: absolute; top: calc(100% + 14px); inset-inline: 0; display: flex; gap: 10px; }
+	}
+	@supports (height: 100svh) {
+		@media (max-width: 899px) { .cd-wrap { --cw: min(88vw, 384px, calc((100svh - 182px) * .7)); } }
+		@media (max-width: 899px) and (min-height: 720px) { .cd-wrap { --cw: min(88vw, 384px, calc((100svh - 270px) * .7)); } }
 	}
 	@media (prefers-reduced-motion: reduce) {
-		.dots i, .dp-main.is-loading .name, .dp-main.is-loading .spec, .dp-main.is-ready .dp-id > * { animation: none; }
-		.row, .row::before, .bk { transition: none; }
-		.row { opacity: 1; transform: none; }
-		.row::before { transform: none; }
+		.dots i, .hx, .cd-wrap, .chip, .cd.is-loading .cd-name, .cd.is-loading .cd-spec { animation: none; }
+		.sc, .bk, .btn { transition: none; }
+		.sc { opacity: 1; transform: none; }
 	}
 </style>

@@ -1,0 +1,15 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 120 120" width="120" height="120">
+  <defs>
+    <linearGradient id="phBg" x1="0" y1="0" x2="0" y2="1"><stop offset="0" stop-color="#EAF8F6"/><stop offset="1" stop-color="#C9ECE8"/></linearGradient>
+    <linearGradient id="phScrub" x1="0" y1="0" x2="0" y2="1"><stop offset="0" stop-color="#1AA3A1"/><stop offset="1" stop-color="#0B7C7B"/></linearGradient>
+    <linearGradient id="phSkin" x1="0" y1="0" x2="0" y2="1"><stop offset="0" stop-color="#F6D2B6"/><stop offset="1" stop-color="#EDBE9E"/></linearGradient>
+  </defs>
+  <rect width="120" height="120" fill="url(#phBg)"/><circle cx="60" cy="50" r="40" fill="#fff" opacity=".5"/><circle cx="96" cy="22" r="6" fill="#FFA070" opacity=".35"/><circle cx="20" cy="34" r="3.5" fill="#009092" opacity=".18"/>
+  <path d="M8 120c2-22 18-33 38-36h28c20 3 36 14 38 36z" fill="url(#phScrub)"/>
+  <path d="M49 84l11 15 11-15" fill="#0A6B6A" stroke="#7FD3CF" stroke-width="1.6" stroke-linejoin="round"/>
+  <path d="M52 68h16v14c0 5-16 5-16 0z" fill="#E5B193"/>
+  <circle cx="43.5" cy="54" r="4" fill="#EDBE9E"/><circle cx="76.5" cy="54" r="4" fill="#EDBE9E"/>
+  <ellipse cx="60" cy="52" rx="17" ry="20" fill="url(#phSkin)"/>
+  <path d="M43 50c-1-15 8-22 17-22 10 0 19 6 17 22-2-5-6-9-10-10-6 3-16 4-24 10z" fill="#2E211B"/>
+  <rect x="74" y="97" width="13" height="16" rx="2.5" fill="#fff"/><rect x="74" y="97" width="13" height="4.5" rx="2" fill="#FFA070"/><rect x="77" y="105" width="7" height="2" rx="1" fill="#C9E3E2"/>
+</svg>
