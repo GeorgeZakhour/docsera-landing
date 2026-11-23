@@ -1,6 +1,5 @@
 // What the doctor and centre pages share: the 3D card (tilt, depth, sheen, the turn to its
 // QR), the booking sheet, and the profile sections that read the same columns.
-import qrcode from 'qrcode-generator';
 
 export const byData = (name: string) => document.querySelector(`[data-${name}]`) as HTMLElement;
 
@@ -163,9 +162,10 @@ export function startCard() {
 	const still = matchMedia('(prefers-reduced-motion: reduce)').matches;
 	let rx = still ? 0 : 15, ry = still ? 0 : -26, tx = 0, ty = 0, flip = 0, flipTo = 0, sx = 30, sy = 18, tsx = 30, tsy = 18;
 	let lastInput = 0, inView = true, running = false, showing = true, qrDone = false;
-	const drawQr = () => {
+	const drawQr = async () => {
 		if (qrDone) return;
 		qrDone = true;
+		const { default: qrcode } = await import('qrcode-generator');
 		const qr = qrcode(0, 'M');
 		// The page's own address, without whatever query brought this visitor here.
 		qr.addData(window.location.origin + window.location.pathname);
