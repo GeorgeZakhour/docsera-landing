@@ -1,34 +1,16 @@
 ---
-// «من نحن»: the story of a distance and the bridge across it. One scroll takes a night
-// over two banks to dawn: a patient's ordinary day falls into the gap, the insight lands,
-// and the bridge is built plank by plank over a path-traced canyon. Without JS or with
-// reduced motion it is a plain column with the bridge already built.
+// «من نحن»: a quiet page. One sentence, then one hairline drawn between two words while
+// the story is read. Nothing glows and nothing falls. Without JS or with reduced motion
+// it is a plain column with the line already drawn.
 import Layout from '../layouts/Layout.astro';
 import Footer from '../components/Footer.astro';
 import SiteHeader from '../components/site/SiteHeader.astro';
 import StoreBadges from '../components/StoreBadges.astro';
 
-const DAY = [
-	['8:10 ص', 'الخط مشغول.', 'تعيد الاتصال بالعيادة للمرة الرابعة، فقط لتسأل عن موعد.'],
-	['10:40 ص', 'ساعتان في الانتظار.', 'لا أحد يعرف متى يأتي دورك.'],
-	['11:20 ص', 'أين تحاليلك القديمة؟', 'في كيس داخل الخزانة، أو ضاعت مع آخر انتقال.'],
-	['1:05 م', 'وصفة بخط اليد.', 'تُطوى في الجيب، وقد لا تعود إليها أبداً.'],
-	['9:00 م', 'جرعة المساء؟', 'تتذكرها متأخراً، أو لا تتذكرها.'],
-];
-const PLANKS = [
-	['موعد واضح', 'تحجز في أي وقت، وتعرف موعدك بدقة.'],
-	['ملف واحد', 'تقاريرك وتحاليلك معك، أينما ذهبت.'],
-	['تواصل منظَّم', 'تراسل عيادتك بدل أن تنتظر على الخط.'],
-	['تذكير في وقته', 'لكل جرعة، حتى دون إنترنت.'],
-	['إذن منك', 'لا يطّلع طبيب على ملفك إلا برمز تعطيه له.'],
-];
-const RELAY = [
-	['p', 'يحجز موعده', 'يختار الطبيب والسبب والوقت من هاتفه.'],
-	['c', 'يصل الطلب', 'يظهر في جدول العيادة، دون مكالمة واحدة.'],
-	['p', 'يصله التأكيد', 'ومعه تذكير قبل الموعد.'],
-	['c', 'يكتب الطبيب تقريره', 'التشخيص والتعليمات، بعد الزيارة.'],
-	['p', 'يبقى في ملفه', 'تقرير يعود إليه متى احتاج.'],
-	['c', 'يطّلع طبيب آخر', 'فقط برمز يعطيه المريض، ويسحبه متى شاء.'],
+const STORY = [
+	['ما رأيناه', 'أطباء أكفاء ورعاية صادقة، لكن تفاصيلها موزّعة بين مكالمات وأوراق وذاكرة الناس.'],
+	['ما فهمناه', 'لم يكن الطب هو ما ينقص. كان ينقص طريق واضح تصل به المعلومة إلى من يحتاجها، في وقتها، وبإذن صاحبها.'],
+	['ما بنيناه', 'منصة واحدة تصل المريض بعيادته، وتبقي تاريخه الصحي معه. هذه هي DocSera.'],
 ];
 const BELIEFS = [
 	['السجل ملك صاحبه', 'حجز موعد لا يفتح ملفك. يفتحه رمز تعطيه لطبيبك، وتسحبه متى شئت.'],
@@ -37,10 +19,6 @@ const BELIEFS = [
 	['مبني لواقعنا', 'عربي أولاً، خفيف على الشبكات الضعيفة، ويذكّرك بأدويتك حتى دون إنترنت.'],
 	['ضفتان معاً', 'نبني تطبيق المريض وأدوات العيادة معاً، لأن الجسر لا يقوم على ضفة واحدة.'],
 ];
-
-const PROPS = ['phone', 'clock', 'folder', 'prescription', 'pills', 'stethoscope'];
-const PARTS = ['towers', 'cables', 'deck'];
-const shot = (cam: string, name: string) => `/images/about/${cam}-${name}.webp`;
 ---
 
 <Layout
@@ -54,54 +32,29 @@ const shot = (cam: string, name: string) => `/images/about/${cam}-${name}.webp`;
 	</script>
 	<SiteHeader current="about" />
 	<main>
-		<section class="b" data-bridge>
-			<div class="b-stick" data-b-stick>
-				<div class="scene" data-scene aria-hidden="true">
-					<picture><source media="(max-aspect-ratio: 1/1)" srcset={shot('p', 'bg-night')} /><img class="lay" src={shot('d', 'bg-night')} alt="" width="1760" height="1100" fetchpriority="high" decoding="async" /></picture>
-					<img class="lay" data-dawn data-d={shot('d', 'bg-dawn')} data-p={shot('p', 'bg-dawn')} alt="" width="1760" height="1100" decoding="async" />
-					{PARTS.map((part) => (
-						<div class="part" data-part={part}>
-							<img class="lay" data-d={shot('d', `${part}-night`)} data-p={shot('p', `${part}-night`)} alt="" width="1760" height="1100" decoding="async" />
-							<img class="lay" data-part-dawn data-d={shot('d', `${part}-dawn`)} data-p={shot('p', `${part}-dawn`)} alt="" width="1760" height="1100" decoding="async" />
-						</div>
+		<section class="q" data-q>
+			<div class="q-stick" data-q-stick>
+				<div class="q-text">
+					<h1 class="q-line q-hero" data-q-hero><span class="q-rise">بين المريض وطبيبه،<br />كانت هناك مسافة.</span></h1>
+					{STORY.map(([label, text]) => (
+						<article class="q-line q-par" data-q-par>
+							<h2>{label}</h2>
+							<p>{text.split(' ').map((w) => <Fragment><span class="w">{w}</span>{' '}</Fragment>)}</p>
+						</article>
 					))}
-					<span class="who who-l" data-anchor="doc">الطبيب</span>
-					<span class="who who-r" data-anchor="pat">المريض</span>
-					<span class="mark" data-anchor="mark" data-mark><img src="/images/DocSera-shape-main.svg" alt="" width="40" height="40" /></span>
-					<i class="pulse" data-pulse></i><i class="pulse" data-pulse></i><i class="pulse" data-pulse></i>
 				</div>
-				<div class="scrim" aria-hidden="true"></div>
-				{PROPS.map((n, i) => <img class="prop" data-prop={i} data-src={`/images/about/prop-${n}.webp`} alt="" width="520" height="520" decoding="async" aria-hidden="true" />)}
-
-				<div class="beats">
-					<div class="beat beat-hero" data-beat="-1,.075"><h1>بين المريض وطبيبه،<br />كانت هناك مسافة.</h1><p>هذه قصة عبورها.</p><span class="cue" aria-hidden="true"><svg viewBox="0 0 24 24"><path d="M12 5v13M6.5 12.5 12 18l5.5-5.5" /></svg></span></div>
-					{DAY.map(([t, h, s], i) => (
-						<div class="beat" data-beat={`${(0.09 + i * 0.062).toFixed(3)},${(0.148 + i * 0.062).toFixed(3)}`} data-fall={i % 2 ? '-7' : '6'}>
-							<time>{t}</time><h2>{h}</h2><p>{s}</p>
-						</div>
-					))}
-					<div class="beat" data-beat=".405,.47" data-fall="5"><h2>وعلى الضفة الأخرى، طبيب.</h2><p>هاتف لا يهدأ، ومواعيد لا يحضرها أصحابها، وتاريخ مرضي يُروى من الذاكرة.</p></div>
-					<div class="beat beat-big" data-beat=".48,.56"><h2>لم ينقص سوريا الأطباء.</h2><h2 class="soft">كان ينقصها طريق تعبر منه المعلومة.</h2></div>
-					{PLANKS.map(([h, s], i) => (
-						<div class="beat beat-plank" data-beat={`${(0.635 + i * 0.044).toFixed(3)},${(0.68 + i * 0.044).toFixed(3)}`}><h2>{h}</h2><p>{s}</p></div>
-					))}
-					<div class="beat beat-done" data-beat=".875,2"><h2>هذا هو DocSera.</h2><p>منصة واحدة تصل المريض بعيادته، وتبقي تاريخه الصحي معه.</p></div>
+				<div class="q-ends" aria-hidden="true">
+					<span class="q-end"><i class="q-dot on"></i>المريض</span>
+					<span class="q-wire"><i data-q-wire></i><span class="q-mark" data-q-mark><img src="/images/DocSera-shape-main.svg" alt="" width="24" height="24" /></span></span>
+					<span class="q-end"><i class="q-dot" data-q-dot></i>الطبيب</span>
 				</div>
+				<span class="q-cue" data-q-cue aria-hidden="true">مرّر<i></i></span>
 			</div>
 		</section>
 
-		<section class="rel" data-relay>
-			<div class="sec-h"><h2>رحلة موعد واحد</h2><p>كل خطوة عند المريض لها وجه عند العيادة.</p></div>
-			<div class="rel-sides" aria-hidden="true"><span>العيادة</span><span>المريض</span></div>
-			<ol class="rel-list">
-				<i class="rel-line"><b data-relay-fill></b></i>
-				{RELAY.map(([side, h, s]) => (
-					<li class:list={['r-step', side === 'p' ? 'is-p' : 'is-c']} data-r>
-						<i class="r-dot"></i>
-						<div><small>{side === 'p' ? 'المريض' : 'العيادة'}</small><h3>{h}</h3><p>{s}</p></div>
-					</li>
-				))}
-			</ol>
+		<section class="dev">
+			<img data-r src="/images/about/devices-sm.webp" srcset="/images/about/devices-sm.webp 960w, /images/about/devices-lg.webp 1640w" sizes="(max-width: 899px) 116vw, 1040px" alt="DocSera على الحاسوب والهاتف والآيباد" width="1640" height="986" loading="lazy" decoding="async" />
+			<p data-r>على الهاتف والآيباد والويب، بحساب واحد.</p>
 		</section>
 
 		<section class="bel">
@@ -132,195 +85,116 @@ const shot = (cam: string, name: string) => `/images/about/${cam}-${name}.webp`;
 </Layout>
 
 <script>
-	import sceneMeta from '../data/aboutScene.json';
-
-	type Cam = 'd' | 'p';
-	const meta = sceneMeta as Record<Cam, { w: number; h: number; deck: number[][]; mark: number[]; doc: number[]; pat: number[] }>;
-	const root = document.querySelector<HTMLElement>('[data-bridge]');
-	const stick = root?.querySelector<HTMLElement>('[data-b-stick]');
 	const anim = document.documentElement.classList.contains('anim');
-	const tall = matchMedia('(max-aspect-ratio: 1/1)');
-	const cam = (): Cam => (tall.matches ? 'p' : 'd');
-	const layers = Array.from(document.querySelectorAll<HTMLImageElement>('img[data-d]'));
-	let layersOn = false;
-	const loadLayers = () => {
-		layersOn = true;
-		layers.forEach((img) => { const src = img.dataset[cam()] || ''; if (img.getAttribute('src') !== src) img.src = src; });
-	};
-	tall.addEventListener('change', () => { if (layersOn) loadLayers(); });
-
+	const root = document.querySelector<HTMLElement>('[data-q]');
+	const stick = root?.querySelector<HTMLElement>('[data-q-stick]');
 	if (root && stick && anim) {
 		const clamp = (v: number) => Math.min(1, Math.max(0, v));
-		const lerp = (a: number, b: number, t: number) => a + (b - a) * t;
 		const seg = (p: number, a: number, b: number) => { const t = clamp((p - a) / (b - a)); return t * t * (3 - 2 * t); };
-		const all = <T extends Element = HTMLElement>(s: string) => Array.from(root.querySelectorAll<T>(s));
-		const one = <T extends Element = HTMLElement>(s: string) => root.querySelector<T>(s)!;
-		const beats = all('[data-beat]').map((el) => {
-			const [a, b] = (el.dataset.beat || '0,1').split(',').map(Number);
-			return { el, a, b, fall: el.dataset.fall ? Number(el.dataset.fall) : null };
-		});
-		const falling = beats.filter((b) => b.fall !== null);
-		const props = all<HTMLImageElement>('[data-prop]');
-		const scene = one('[data-scene]'), dawn = one('[data-dawn]');
-		const partDawn = all('[data-part-dawn]'), mark = one('[data-mark]'), pulses = all('[data-pulse]');
-		const part = (n: string) => one(`[data-part="${n}"]`);
-		const towers = part('towers'), cables = part('cables'), deck = part('deck');
-		const doc = one('[data-anchor="doc"]'), pat = one('[data-anchor="pat"]');
-		let W = 1, H = 1, ox = 0, oy = 0, iw = 1, ih = 1, propsOn = false, queued = false, p = 0, running = false;
-		const toXY = (u: number, v: number): [number, number] => [ox + u * iw, oy + v * ih];
-		const measure = () => {
-			const m = meta[cam()];
-			W = scene.clientWidth; H = scene.clientHeight;
-			const k = Math.max(W / m.w, H / m.h);
-			iw = m.w * k; ih = m.h * k; ox = (W - iw) / 2; oy = H - ih;
-			const put = (el: HTMLElement, at: number[]) => {
-				const [x, y] = toXY(at[0], at[1]), half = el.offsetWidth / 2 + 8;
-				el.style.left = `${Math.min(W - half, Math.max(half, x))}px`;
-				el.style.top = `${y}px`;
-			};
-			put(doc, m.doc); put(pat, m.pat); put(mark, m.mark);
+		const one = (s: string) => root.querySelector<HTMLElement>(s)!;
+		const hero = one('[data-q-hero]'), wire = one('[data-q-wire]'), mark = one('[data-q-mark]'), dot = one('[data-q-dot]'), cue = one('[data-q-cue]');
+		// [fade in from, to, ink from, to, fade out from, to]
+		const TIMES = [[0.17, 0.205, 0.215, 0.365, 0.395, 0.43], [0.44, 0.475, 0.485, 0.635, 0.665, 0.7], [0.71, 0.745, 0.755, 0.885, 2, 3]];
+		const pars = Array.from(root.querySelectorAll<HTMLElement>('[data-q-par]')).map((el, i) => ({ el, t: TIMES[i], words: Array.from(el.querySelectorAll<HTMLElement>('.w')), last: [] as number[] }));
+		const STOPS = [[0.13, 0], [0.375, 1 / 3], [0.645, 2 / 3], [0.89, 1]];
+		const reach = (p: number) => {
+			if (p <= STOPS[0][0]) return 0;
+			for (let i = 1; i < STOPS.length; i++) if (p <= STOPS[i][0]) {
+				const [a, va] = STOPS[i - 1], [b, vb] = STOPS[i];
+				return va + (vb - va) * seg(p, a, b);
+			}
+			return 1;
 		};
-		const deckAt = (t: number) => {
-			const pts = meta[cam()].deck, f = clamp(t) * (pts.length - 1), i = Math.min(pts.length - 2, Math.floor(f)), k = f - i;
-			return toXY(lerp(pts[i][0], pts[i + 1][0], k), lerp(pts[i][1], pts[i + 1][1], k));
-		};
-		const flow = (now: number) => {
-			if (p < 0.885) { running = false; pulses.forEach((d) => { d.style.opacity = '0'; }); return; }
-			const fade = seg(p, 0.885, 0.92);
-			pulses.forEach((d, i) => {
-				const raw = (now / 5200 + i / 3) % 1, t = i === 1 ? 1 - raw : raw;
-				const [x, y] = deckAt(t);
-				d.style.opacity = String(fade * Math.min(1, Math.min(raw, 1 - raw) * 9));
-				d.style.transform = `translate3d(${x.toFixed(1)}px,${y.toFixed(1)}px,0)`;
+		const paint = (p: number) => {
+			const h = seg(p, 0.095, 0.16);
+			hero.style.opacity = String(1 - h);
+			hero.style.transform = `translateY(${-10 * h}px)`;
+			cue.style.opacity = String(1 - seg(p, 0, 0.035));
+			pars.forEach(({ el, t, words, last }) => {
+				const a = seg(p, t[0], t[1]), o = seg(p, t[4], t[5]);
+				el.style.opacity = String(a * (1 - o));
+				el.style.transform = `translateY(${(1 - a) * 10 - o * 10}px)`;
+				if (a <= 0 || o >= 1) return;
+				const n = words.length, span = t[3] - t[2];
+				words.forEach((w, i) => {
+					const from = t[2] + span * 0.84 * (i / n), v = 0.15 + 0.85 * seg(p, from, from + span * 0.16);
+					if (Math.abs((last[i] ?? -1) - v) > 0.006) { w.style.opacity = v.toFixed(3); last[i] = v; }
+				});
 			});
-			requestAnimationFrame(flow);
-		};
-		const paint = () => {
-			queued = false;
-			const r = root.getBoundingClientRect();
-			p = clamp(-r.top / Math.max(1, r.height - stick.offsetHeight));
-			if (p > 0.002 && !propsOn) { propsOn = true; props.forEach((img) => { img.src = img.dataset.src || ''; }); }
-			if (p > 0.2 && !layersOn) loadLayers();
-			beats.forEach(({ el, a, b, fall }) => {
-				const inT = seg(p, a, a + 0.016), outT = seg(p, b - 0.018, b);
-				const v = inT * (1 - (fall === null ? outT : seg(p, b - 0.024, b - 0.012)));
-				if (v <= 0.002) { if (el.style.visibility !== 'hidden') el.style.visibility = 'hidden'; return; }
-				el.style.visibility = 'visible';
-				el.style.opacity = String(v);
-				el.style.transform = `translateY(${(1 - inT) * 18 - (fall === null ? outT : seg(p, b - 0.024, b - 0.012)) * 14}px)`;
-			});
-			props.forEach((img, i) => {
-				const b = falling[i];
-				if (!b) return;
-				const inT = seg(p, b.a, b.a + 0.018), d = seg(p, b.b - 0.022, b.b + 0.016);
-				const v = inT * (1 - seg(p, b.b + 0.002, b.b + 0.016));
-				if (v <= 0.002) { if (img.style.visibility !== 'hidden') img.style.visibility = 'hidden'; return; }
-				img.style.visibility = 'visible';
-				img.style.opacity = String(v);
-				img.style.transform = `translate(-50%, -50%) translateY(${(1 - inT) * -34 + d * d * 58 * innerHeight / 100}px) rotate(${(b.fall || 0) * (1 - inT) + d * d * (b.fall || 1) * 13}deg) scale(${lerp(0.88, 1, inT) * (1 - d * 0.56)})`;
-			});
-			const dn = seg(p, 0.6, 0.93);
-			dawn.style.opacity = String(dn);
-			partDawn.forEach((e) => { e.style.opacity = String(dn); });
-			const tw = seg(p, 0.545, 0.61);
-			towers.style.visibility = tw > 0 ? 'visible' : 'hidden';
-			towers.style.clipPath = `inset(${(lerp(H, oy + ih * 0.3, tw)).toFixed(1)}px 0 0 0)`;
-			const cb = seg(p, 0.6, 0.655);
-			cables.style.visibility = cb > 0 ? 'visible' : 'hidden';
-			const side = (1 - cb) * W / 2;
-			cables.style.clipPath = `inset(0 ${side.toFixed(1)}px 0 ${side.toFixed(1)}px)`;
-			let laid = 0;
-			for (let i = 0; i < 5; i++) laid += seg(p, 0.64 + i * 0.044, 0.678 + i * 0.044);
-			laid /= 5;
-			deck.style.visibility = laid > 0 ? 'visible' : 'hidden';
-			const pts = meta[cam()].deck, right = toXY(pts[pts.length - 1][0] + 0.03, 0)[0], left = toXY(pts[0][0] - 0.03, 0)[0];
-			deck.style.clipPath = `inset(0 0 0 ${Math.max(0, lerp(right, left, laid)).toFixed(1)}px)`;
-			const m = seg(p, 0.86, 0.9);
+			const r = reach(p);
+			wire.style.transform = `scaleX(${r.toFixed(4)})`;
+			dot.classList.toggle('on', r > 0.997);
+			const m = seg(p, 0.89, 0.935);
 			mark.style.opacity = String(m);
-			mark.style.transform = `translate(-50%, -50%) scale(${0.55 + m * 0.45})`;
-			if (p >= 0.885 && !running) { running = true; requestAnimationFrame(flow); }
+			mark.style.transform = `translate(-50%, -50%) scale(${(0.86 + m * 0.14).toFixed(3)})`;
 		};
-		const ask = () => { if (!queued) { queued = true; requestAnimationFrame(paint); } };
-		addEventListener('scroll', ask, { passive: true });
-		addEventListener('resize', () => { measure(); ask(); });
-		tall.addEventListener('change', () => { measure(); ask(); });
-		measure();
-		paint();
-		document.fonts?.ready.then(() => { measure(); ask(); });
-	} else loadLayers();
+		// The page follows the scroll with a little weight, so nothing ever jumps.
+		let cur = 0, target = 0, running = false;
+		const loop = () => {
+			const d = target - cur;
+			cur = Math.abs(d) < 0.0004 ? target : cur + d * 0.13;
+			paint(cur);
+			if (cur !== target) requestAnimationFrame(loop); else running = false;
+		};
+		const read = () => {
+			const r = root.getBoundingClientRect();
+			target = clamp(-r.top / Math.max(1, r.height - stick.offsetHeight));
+			if (!running) { running = true; requestAnimationFrame(loop); }
+		};
+		addEventListener('scroll', read, { passive: true });
+		addEventListener('resize', read);
+		const r0 = root.getBoundingClientRect();
+		cur = target = clamp(-r0.top / Math.max(1, r0.height - stick.offsetHeight));
+		paint(cur);
+	}
 
-	// Quiet reveals below the story, and the light travelling down the relay.
+	// Quiet reveals below the story.
 	const items = Array.from(document.querySelectorAll<HTMLElement>('[data-r]'));
 	if (anim) {
 		const io = new IntersectionObserver((es) => es.forEach((e) => { if (e.isIntersecting) { e.target.classList.add('in'); io.unobserve(e.target); } }), { rootMargin: '0px 0px -12% 0px' });
 		items.forEach((el) => { el.classList.add('wait'); io.observe(el); });
-		const relay = document.querySelector<HTMLElement>('[data-relay] .rel-list');
-		const fill = document.querySelector<HTMLElement>('[data-relay-fill]');
-		if (relay && fill) {
-			let q = false;
-			const go = () => { q = false; const r = relay.getBoundingClientRect(); fill.style.transform = `scaleY(${Math.min(1, Math.max(0, (innerHeight * 0.68 - r.top) / r.height))})`; };
-			addEventListener('scroll', () => { if (!q) { q = true; requestAnimationFrame(go); } }, { passive: true });
-			go();
-		}
 	}
 </script>
 
 <style>
-	.b { position: relative; color: #fff; background: #041C20; }
-	.b-stick { position: relative; overflow: hidden; padding: 100px 20px 0; }
-	.scene { position: relative; width: calc(100% + 40px); margin: 22px -20px 0; aspect-ratio: 16 / 10; overflow: hidden; }
-	.scene picture { display: contents; }
-	.lay { position: absolute; inset: 0; width: 100%; height: 100%; object-fit: cover; object-position: 50% 100%; }
-	.part { position: absolute; inset: 0; }
-	.scrim, .prop, .pulse { display: none; }
-	.who { position: absolute; z-index: 2; left: 25%; top: 80%; padding: 4px 13px; font-size: clamp(.84rem, 1.2vw, 1.04rem); font-weight: 800; white-space: nowrap; color: #06343A; background: #fff; border-radius: 999px; box-shadow: 0 10px 22px -10px rgba(0, 0, 0, .6); translate: -50% -50%; }
-	.who-r { left: 75%; }
-	.mark { position: absolute; z-index: 2; left: 50%; top: 61%; display: grid; place-items: center; width: clamp(48px, 5vw, 76px); aspect-ratio: 1; background: #fff; border-radius: 50%; transform: translate(-50%, -50%); box-shadow: 0 0 0 7px rgba(255, 255, 255, .22), 0 0 46px 12px rgba(255, 244, 214, .72); }
-	.mark img { width: 60%; height: auto; }
+	.q { --paper: #F8F9F6; --ink: #12282C; --soft: #5E6E71; position: relative; color: var(--ink); background: var(--paper); }
+	.q-stick { position: relative; padding: 124px 24px 56px; }
+	.q-text { display: grid; gap: 64px; max-width: 880px; margin: 0 auto; text-align: center; }
+	.q-line h1, .q-hero, .q-par p { margin: 0; font-size: clamp(1.9rem, 3.9vw, 3.5rem); font-weight: 400; line-height: 1.6; color: var(--ink); text-wrap: balance; }
+	.q-rise { display: block; }
+	.q-par h2 { margin: 0 0 16px; font-size: 1.06rem; font-weight: 600; line-height: 1.6; color: var(--c-main-dark); }
+	.q-ends { display: flex; align-items: center; gap: 16px; max-width: 960px; margin: 72px auto 0; font-size: 1.06rem; font-weight: 600; color: var(--ink); }
+	.q-end { flex: none; display: inline-flex; align-items: center; gap: 9px; }
+	.q-dot { width: 7px; height: 7px; box-sizing: border-box; border: 1px solid var(--c-main-dark); border-radius: 50%; transition: background .5s ease; }
+	.q-dot:global(.on) { background: var(--c-main-dark); }
+	.q-wire { position: relative; flex: 1; height: 1px; }
+	.q-wire > i { position: absolute; inset: 0; background: var(--c-main-dark); transform-origin: 100% 50%; }
+	.q-mark { position: absolute; left: 50%; top: 50%; display: grid; place-items: center; padding: 0 14px; background: var(--paper); transform: translate(-50%, -50%); }
+	.q-mark img { display: block; width: 24px; height: 24px; }
+	.q-cue { display: none; }
 
-	.beats { position: relative; z-index: 4; display: grid; gap: 26px; max-width: 860px; margin: 0 auto; text-align: center; }
-	.beat h1, .beat h2 { margin: 0; font-size: clamp(2rem, 4.8vw, 3.9rem); font-weight: 800; line-height: 1.25; color: #fff; text-wrap: balance; text-shadow: 0 2px 26px rgba(3, 34, 38, .5); }
-	.beat p { margin: 8px auto 0; max-width: 34em; font-size: clamp(1.06rem, 1.7vw, 1.32rem); line-height: 1.65; color: #EAF8F5; text-wrap: balance; text-shadow: 0 1px 16px rgba(3, 34, 38, .62); }
-	.beat time { display: inline-block; margin-bottom: 8px; padding: 3px 13px; font: 700 clamp(.95rem, 1.4vw, 1.12rem) Montserrat, Cairo, sans-serif; color: #FFE3AE; background: rgba(4, 40, 45, .5); border: 1px solid rgba(255, 227, 174, .42); border-radius: 999px; direction: rtl; }
-	.beat-big .soft { margin-top: 6px; color: #BDF2E8; }
-	.cue { display: none; }
+	:global(html.anim) .q { height: 560vh; }
+	:global(html.anim) .q-stick { position: sticky; top: 0; height: 100vh; height: 100lvh; box-sizing: border-box; padding: 0; overflow: hidden; }
+	:global(html.anim) .q-text { position: absolute; inset: 76px 28px 30%; display: grid; place-items: center; gap: 0; max-width: none; margin: 0; }
+	:global(html.anim) .q-line { grid-area: 1 / 1; max-width: 880px; opacity: 0; will-change: transform, opacity; pointer-events: none; }
+	:global(html.anim) .q-hero { opacity: 1; }
+	:global(html.anim) .q-rise { animation: q-rise 1.1s cubic-bezier(.2, .7, .2, 1) both; }
+	:global(html.anim) .q-par .w { opacity: .15; }
+	:global(html.anim) .q-ends { position: absolute; inset-inline: max(28px, calc(50% - 480px)); top: 73%; max-width: none; margin: 0; animation: q-fade 1.1s ease .45s both; }
+	:global(html.anim) .q-wire > i { transform: scaleX(0); will-change: transform; }
+	:global(html.anim) .q-mark { opacity: 0; }
+	:global(html.anim) .q-cue { position: absolute; left: 50%; bottom: 26px; display: grid; justify-items: center; gap: 8px; font-size: .92rem; color: var(--soft); translate: -50% 0; animation: q-fade 1.1s ease 1s backwards; }
+	.q-cue i { position: relative; display: block; width: 1px; height: 34px; overflow: hidden; background: rgba(18, 40, 44, .14); }
+	.q-cue i::after { content: ''; position: absolute; inset: 0; background: var(--c-main-dark); animation: q-drop 2.2s cubic-bezier(.6, 0, .3, 1) infinite; }
+	@keyframes q-rise { from { opacity: 0; transform: translateY(12px); } to { opacity: 1; transform: none; } }
+	@keyframes q-fade { from { opacity: 0; } to { opacity: 1; } }
+	@keyframes q-drop { 0% { transform: translateY(-100%); } 60%, 100% { transform: translateY(100%); } }
 
-	:global(html.anim) .b { height: 900vh; }
-	:global(html.anim) .b-stick { position: sticky; top: 0; height: 100vh; height: 100lvh; padding: 0; }
-	:global(html.anim) .scene { position: absolute; inset: 0; width: auto; height: auto; margin: 0; aspect-ratio: auto; }
-	:global(html.anim) [data-dawn], :global(html.anim) [data-part-dawn], :global(html.anim) .mark { opacity: 0; }
-	:global(html.anim) .part { visibility: hidden; }
-	:global(html.anim) .scrim { display: block; position: absolute; z-index: 1; inset: 0 0 auto; height: 58%; background: linear-gradient(180deg, rgba(3, 34, 38, .56), rgba(3, 34, 38, .24) 55%, transparent); pointer-events: none; }
-	:global(html.anim) .pulse { display: block; position: absolute; z-index: 2; left: -4px; top: -4px; width: 8px; height: 8px; background: #fff; border-radius: 50%; box-shadow: 0 0 12px 5px rgba(255, 240, 205, .92); opacity: 0; will-change: transform, opacity; }
-	:global(html.anim) .prop { --pw: min(35vh, 62vw, 340px); --tx: clamp(86px, 13vh, 124px); display: block; position: absolute; z-index: 3; left: 50%; top: calc(var(--tx) + clamp(128px, 20vh, 190px) + var(--pw) / 2); width: var(--pw); height: auto; opacity: 0; visibility: hidden; transform: translate(-50%, -50%); will-change: transform, opacity; pointer-events: none; }
-	:global(html.anim) .beats { position: absolute; inset: clamp(86px, 13vh, 124px) 20px auto; display: block; max-width: none; margin: 0; }
-	:global(html.anim) .beat { position: absolute; inset: 0 0 auto; margin: 0 auto; max-width: 900px; opacity: 0; visibility: hidden; will-change: transform, opacity; }
-	:global(html.anim) .beat-hero { opacity: 1; visibility: visible; }
-	:global(html.anim) .cue { display: inline-grid; place-items: center; width: 40px; height: 40px; margin-top: 18px; color: #fff; background: rgba(255, 255, 255, .1); border: 1px solid rgba(255, 255, 255, .3); border-radius: 50%; }
-	.cue svg { width: 20px; height: 20px; fill: none; stroke: currentColor; stroke-width: 2.4; stroke-linecap: round; stroke-linejoin: round; animation: cue 1.5s ease-in-out infinite; }
-	@keyframes cue { 0%, 100% { transform: translateY(-2px); } 50% { transform: translateY(3px); } }
+	.dev { padding: clamp(36px, 6vw, 80px) 20px clamp(72px, 10vw, 136px); overflow: hidden; text-align: center; color: #5E6E71; background: #F8F9F6; }
+	.dev img { --w: min(1040px, 116vw); display: block; width: var(--w); max-width: none; height: auto; margin-inline: calc((100% - var(--w)) / 2); }
+	.dev p { margin: clamp(14px, 2.4vw, 28px) 0 0; font-size: 1.06rem; line-height: 1.7; color: #5E6E71; }
 
-	.rel { padding: clamp(64px, 9vw, 120px) 22px; background: linear-gradient(180deg, #0C5A5C 0, #CBEAE5 7%, #F6FBFB 18%); color: #0F1A22; }
-	.sec-h { text-align: center; }
-	.sec-h h2, .bel h2 { margin: 0 0 8px; font-size: clamp(2rem, 4.4vw, 3.5rem); font-weight: 800; line-height: 1.2; }
-	.sec-h p { margin: 0; font-size: clamp(1.04rem, 1.7vw, 1.28rem); color: #46565D; }
-	.rel-sides { display: grid; grid-template-columns: 1fr 1fr; max-width: 900px; margin: 34px auto 10px; text-align: center; font-weight: 800; color: var(--c-main-dark); direction: ltr; }
-	.rel-list { position: relative; display: grid; gap: 14px; max-width: 900px; margin: 0 auto; padding: 0; list-style: none; }
-	.rel-line { position: absolute; top: 6px; bottom: 6px; left: 50%; width: 3px; margin-left: -1.5px; overflow: hidden; background: #D8EAE9; border-radius: 3px; }
-	.rel-line b { display: block; width: 100%; height: 100%; background: linear-gradient(180deg, #2BB5AE, var(--c-main-dark)); transform: scaleY(0); transform-origin: 50% 0; }
-	.r-step { position: relative; display: flex; width: 50%; box-sizing: border-box; }
-	.r-step.is-p { margin-right: 0; margin-left: auto; padding-left: 34px; justify-content: flex-start; }
-	.r-step.is-c { margin-right: auto; margin-left: 0; padding-right: 34px; }
-	.r-step > div { width: 100%; padding: 16px 20px; background: #fff; border: 1px solid #E1EEEE; border-radius: 20px; box-shadow: 0 22px 40px -30px rgba(0, 70, 74, .5); }
-	.r-step.is-c > div { background: #0B5F62; border-color: #0B5F62; color: #fff; }
-	.r-dot { position: absolute; top: 26px; width: 15px; height: 15px; background: #fff; border: 4px solid var(--c-main-dark); border-radius: 50%; }
-	.r-step.is-p .r-dot { left: -7.5px; }
-	.r-step.is-c .r-dot { right: -7.5px; }
-	.r-step small { display: none; }
-	.r-step h3 { margin: 0 0 3px; font-size: clamp(1.18rem, 2vw, 1.46rem); font-weight: 800; }
-	.r-step p { margin: 0; font-size: 1rem; line-height: 1.6; color: #46565D; }
-	.r-step.is-c p { color: #D9F2EF; }
-
+	.bel h2 { margin: 0 0 8px; font-size: clamp(2rem, 4.4vw, 3.5rem); font-weight: 800; line-height: 1.2; }
 	.bel { padding: clamp(64px, 9vw, 120px) 22px; color: #fff; background: #06262B; }
 	.bel h2 { margin-bottom: clamp(26px, 4vw, 48px); text-align: center; color: #fff; }
 	.bel-list { display: grid; grid-template-columns: repeat(6, minmax(0, 1fr)); gap: 14px; max-width: 1100px; margin: 0 auto; }
@@ -342,16 +216,10 @@ const shot = (cam: string, name: string) => `/images/about/${cam}-${name}.webp`;
 	[data-r]:global(.in) { opacity: 1; transform: none; }
 
 	@media (max-width: 760px) {
-		.rel-sides { display: none; }
-		.rel-line { left: auto; right: 7px; margin: 0; }
-		.r-step, .r-step.is-p, .r-step.is-c { width: 100%; margin: 0; padding: 0 34px 0 0; }
-		.r-step.is-p .r-dot, .r-step.is-c .r-dot { left: auto; right: 1px; }
-		.r-step small { display: block; margin-bottom: 2px; font-size: .84rem; font-weight: 800; color: var(--c-main-dark); }
-		.r-step.is-c small { color: #A9EADF; }
 		.bel-list, .doors { grid-template-columns: minmax(0, 1fr); }
 		.bel article, .bel article:nth-child(n + 4) { grid-column: auto; }
 	}
 	@media (prefers-reduced-motion: reduce) {
-		.cue svg { animation: none; }
+		.q-cue i::after { animation: none; }
 	}
 </style>
