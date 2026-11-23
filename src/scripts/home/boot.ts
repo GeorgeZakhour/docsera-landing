@@ -21,6 +21,8 @@ const NOTES: [number, number][] = [[0.372, 0.43], [0.432, 0.49], [0.492, 0.548]]
 const PAPERS: [number, number, number][] = [
 	[-0.8, -0.3, -12], [0.72, -0.36, 9], [-0.88, 0.05, 7], [0.76, 0.1, -8], [-0.74, 0.37, 5], [0.68, 0.4, -6],
 ];
+// The small cards floating around the laptop, iPad and phone: x / y in the rig's size.
+const FLOATS: [number, number][] = [[0.15, 0.2], [0.88, 0.2], [0.58, 0.97]];
 
 const pose: DialPose = { tilt: 0.22, turn: 0.3, roll: 0, petals: [0, 0, 0, 0] };
 
@@ -52,23 +54,13 @@ function startStory(): void {
 	const root = q('[data-story]');
 	const stick = q('[data-stick]');
 	if (!root || !stick) return;
-	const fl = q('[data-fl]')!, aDial = q('[data-a-dial]')!;
-	const hero = q('[data-hero]')!, phone = q('[data-phone]')!, bgHero = q('[data-bg-hero]')!;
+	const fl = q('[data-fl]')!, aHero = q('[data-a-hero]')!, aDial = q('[data-a-dial]')!;
+	const hero = q('[data-hero]')!, phone = q('[data-phone]')!, aFan = q('[data-a-fan]')!, bgHero = q('[data-bg-hero]')!;
 	const silk = q('[data-silk]')!, vault = q('[data-vault]')!, vaultDial = q('[data-vault-dial]')!, aVault = q('[data-a-vault]')!;
 	let safeLoaded = false, V = { x: 0, y: 0, s: 1 };
-	const cue = q<HTMLButtonElement>('[data-cue]')!;
-	// The opening is one product shot. `?hero=a` is a preview-only switch between the two directions.
-	const heroShot = q<HTMLImageElement>('[data-hero-shot]');
-	let shotAt = 0;
-	if (heroShot) {
-		const base = `/images/home/3d/shot-${new URLSearchParams(location.search).get('hero') === 'a' ? 'a' : 'b'}`;
-		const small = matchMedia('(max-width: 899px)').matches;
-		heroShot.sizes = small ? '100vw' : 'max(100vw, 160vh)';
-		heroShot.addEventListener('load', () => { heroShot.classList.add('in'); shotAt = performance.now(); }, { once: true });
-		heroShot.srcset = small ? `${base}-m-560.webp 560w, ${base}-m-820.webp 820w` : `${base}-d-1000.webp 1000w, ${base}-d-1600.webp 1600w`;
-	}
+	const rigBox = q('[data-rig-box]')!, rigs = qa('[data-rig]'), floats = qa('[data-float]'), cue = q<HTMLButtonElement>('[data-cue]')!;
 	const t0 = performance.now();
-	// «There is more below»: until the first scroll the scene lifts now and then.
+	// «There is more below»: until the first scroll the devices lift now and then.
 	let nudge = 0, nudgeAt = t0 + 2400, nudges = 0, touched = false;
 	let mx = 0, my = 0, px = 0, py = 0;
 	const chapters = qa('[data-ch]'), papers = qa('[data-paper]'), notes = qa('[data-note]');
@@ -80,18 +72,22 @@ function startStory(): void {
 
 	let A = { x: 0, y: 0, s: 1 }, B = { x: 0, y: 0, s: 1 };
 	let from = { x: 0, y: 0 }, to = { x: 0, y: 0 };
-	let P = { x: 0, y: 0, w: 1, h: 1 };
+	let F = { x: 0, y: 0, w: 1, h: 1 }, P = { x: 0, y: 0, w: 1, h: 1 }, R = { x: 0, y: 0, w: 1, h: 1 };
 	const layout = () => {
 		const sr = stick.getBoundingClientRect();
 		const c = (e: HTMLElement) => { const r = e.getBoundingClientRect(); return { x: r.left - sr.left + r.width / 2, y: r.top - sr.top + r.height / 2, s: r.width }; };
-		A = c(aDial); B = A; V = c(aVault);
+		A = c(aHero); B = c(aDial); V = c(aVault);
 		vault.style.left = V.x + 'px';
 		vault.style.top = V.y + 'px';
 		vault.style.width = V.s * 2.58 + 'px';
 		fl.style.width = fl.style.height = A.s + 'px';
 		const off = (e: HTMLElement) => ({ x: e.offsetLeft + e.offsetWidth / 2, y: e.offsetTop + e.offsetHeight / 2 });
 		const ph = off(phone);
+		const fr = aFan.getBoundingClientRect();
+		F = { x: fr.left - sr.left + fr.width / 2, y: fr.top - sr.top + fr.height / 2, w: fr.width, h: fr.height };
 		P = { x: ph.x, y: ph.y, w: phone.offsetWidth, h: phone.offsetHeight };
+		const rr = rigBox.getBoundingClientRect();
+		R = { x: rr.left - sr.left, y: rr.top - sr.top, w: rr.width, h: rr.height };
 		from = { x: ph.x, y: ph.y - phone.offsetHeight * 0.14 };
 		to = off(clinic);
 		last = -1;
@@ -108,15 +104,30 @@ function startStory(): void {
 		const seg = (a: number, b: number) => clamp((p - a) / (b - a));
 		const sm = (a: number, b: number) => ease(seg(a, b));
 		const narrow = window.innerWidth < 900;
-		const off = sm(0.972, 0.998);
+		const enter = ease(clamp((now - t0) / 950));
+		const h = sm(0.05, 0.15), off = sm(0.972, 0.998);
 
-		// The opening: a slow push-in on the shot; the story's phone rises as it fades.
-		bgHero.style.opacity = String(1 - sm(0.04, 0.095));
-		const out = sm(0.025, 0.11);
-		if (heroShot) {
-			const push = shotAt ? ease(clamp((now - shotAt) / 1700)) : 0;
-			heroShot.style.transform = `translate3d(${-px * 12}px,${-py * 7 - nudge * 10 - out * 26}px,0) scale(${lerp(1.1, 1.045, push) + out * 0.16})`;
-		}
+		// The opening: a laptop, an iPad and the phone; the phone carries on into the story.
+		bgHero.style.opacity = String(1 - h);
+		const out = sm(0.025, 0.11), W = stick.clientWidth;
+		rigs.forEach((e, i) => {
+			const d = Number(e.dataset.rig) || 0;
+			const a = ease(clamp((now - t0 - i * 130) / 850)), o = 1 - sm(0.035, 0.085);
+			const bob = Math.sin(now / 1900 + i * 2.1) * (narrow ? 2.5 : 4) * (1 - out);
+			e.style.opacity = String(a * o);
+			e.style.visibility = o < 0.01 ? 'hidden' : 'visible';
+			e.style.transform = `translate3d(${d * out * W * 0.16 + px * (i + 1) * 5}px,${(1 - a) * 70 - out * 46 + bob - nudge * (16 + i * 8) + py * (i + 1) * 3}px,0)`;
+		});
+		floats.forEach((e, i) => {
+			const [fx, fy0] = FLOATS[i];
+			const fy = fy0;
+			const a = ease(clamp((now - t0 - 450 - i * 140) / 600)), o = 1 - sm(0.02, 0.07);
+			const w = e.offsetWidth, hh = e.offsetHeight;
+			const x = clamp(R.x + fx * R.w, w / 2 + 8, W - w / 2 - 8);
+			e.style.opacity = String(a * o);
+			e.style.visibility = o < 0.01 ? 'hidden' : 'visible';
+			e.style.transform = `translate3d(${x - w / 2 + px * 16}px,${R.y + fy * R.h - hh / 2 + Math.sin(now / 1300 + i * 2) * 5 + (1 - a) * 16 - nudge * 22 + py * 8}px,0) scale(${lerp(0.9, 1, a)})`;
+		});
 		const cueIn = ease(clamp((now - t0 - 1000) / 500)), cueOut = 1 - sm(0.003, 0.028);
 		cue.style.opacity = String(cueIn * cueOut);
 		cue.style.visibility = cueOut < 0.01 ? 'hidden' : 'visible';
@@ -162,9 +173,8 @@ function startStory(): void {
 			c.style.visibility = o > 0.01 ? 'visible' : 'hidden';
 		});
 
-		const rise = 1 - sm(0.085, 0.16);
-		phone.style.opacity = String(sm(0.085, 0.135) * (1 - off));
-		phone.style.transform = `translate3d(0,${rise * P.h * 0.2 - off * 30}px,0) scale(${lerp(1, 0.9, rise) * (1 - 0.06 * off)})`;
+		phone.style.opacity = String(sm(0.03, 0.07) * (1 - off));
+		phone.style.transform = `translate3d(${(F.x - P.x) * (1 - h) + px * 11 * (1 - h)}px,${(F.y - P.y) * (1 - h) + (1 - enter) * 70 - off * 30 + (py * 6 - nudge * 34) * (1 - h)}px,0) scale(${lerp(F.w / P.w, 1, h) * (1 - 0.06 * off)})`;
 		shots.forEach((img, i) => {
 			const [a, b, fetchAt] = SHOTS[i];
 			if (img.dataset.src && p >= fetchAt) { img.src = img.dataset.src; img.removeAttribute('data-src'); }
@@ -270,6 +280,12 @@ function startStory(): void {
 		const r = root.getBoundingClientRect();
 		scrollTo({ top: scrollY + r.top + (r.height - stick.offsetHeight) * 0.2, behavior: 'smooth' });
 	});
+	// The 3D devices and their backdrop.
+	const late = () => qa<HTMLImageElement>('img[data-late]', stick).forEach((img) => {
+		img.addEventListener('load', () => img.classList.add('in'), { once: true });
+		img.srcset = img.dataset.late || '';
+	});
+	late();
 	// The flat first screen takes over from the 3D phone on the first scroll; fetch it once idle.
 	setTimeout(() => { const f = shots[0]; if (f?.dataset.src) { f.src = f.dataset.src; f.removeAttribute('data-src'); } }, 2600);
 }
