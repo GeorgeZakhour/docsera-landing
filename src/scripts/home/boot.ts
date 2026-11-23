@@ -316,11 +316,154 @@ function startExpand(): void {
 	}).observe(root);
 }
 
+// The comparison: a line of light passes over a cluttered desk, and each paper it
+// reaches turns over into its tidy card. The handle only scrubs the page's scroll,
+// so there is one source of truth and dragging can never fight scrolling.
+const MESS: [number, number, number][] = [[0.035, 0.006, -2.6], [-0.04, -0.004, 1.6], [0.045, 0.004, -1.4], [-0.03, -0.006, 2.2], [0.03, 0.004, -1.8]];
+
+function startCompare(): void {
+	const root = q('[data-cmp]'), stage = q('[data-cmp-stage]'), night = q('[data-cmp-night]');
+	const inner = q('[data-cmp-night-in]'), line = q('[data-cmp-line]'), grip = q('[data-cmp-grip]'), hint = q('[data-cmp-hint]');
+	if (!root || !stage || !night || !inner || !line || !grip || !hint) return;
+	const items = qa('[data-pair]', root).map((slot) => ({ slot, card: q('[data-pair-in]', slot)!, y: 0 }));
+	let H = 1, W = 1, p = 0, last = -1, on = false, shown = -1, radius = -1;
+	const START = 90;
+	const travel = () => Math.max(1, root.offsetHeight - stage.offsetHeight);
+	const measure = () => {
+		H = stage.offsetHeight; W = stage.offsetWidth;
+		const top = stage.getBoundingClientRect().top;
+		items.forEach((it) => { const r = it.slot.getBoundingClientRect(); it.y = r.top - top + r.height / 2; });
+		last = -1;
+	};
+	const apply = () => {
+		const s = clamp((p - 0.05) / 0.87);
+		const y = lerp(START, H + 26, s);
+		// Two opposite moves instead of a clip-path: only the compositor works.
+		night.style.transform = `translate3d(0,${y - H}px,0)`;
+		inner.style.transform = `translate3d(0,${H - y}px,0)`;
+		line.style.transform = `translate3d(0,${y}px,0)`;
+		line.style.opacity = String(1 - clamp((s - 0.96) / 0.04));
+		hint.style.opacity = String(1 - clamp(s / 0.05));
+		const band = Math.max(40, H * 0.075), wide = W >= 900 ? 1.35 : 1;
+		items.forEach((it, i) => {
+			const [mx, my, r] = MESS[i];
+			const f = ease(clamp((y - (it.y - band)) / (2 * band)));
+			const k = 1 - f;
+			it.card.style.transform = `perspective(800px) translate3d(${mx * W * wide * k}px,${my * H * k}px,${Math.sin(Math.PI * f) * 46}px) rotate(${r * k}deg) rotateX(${f * 180}deg) scale(${lerp(0.94, 1, f)})`;
+		});
+		const v = Math.round(s * 100);
+		if (v !== shown) { shown = v; grip.setAttribute('aria-valuenow', String(v)); }
+	};
+	const tick = () => {
+		if (!on) return;
+		requestAnimationFrame(tick);
+		const r = root.getBoundingClientRect();
+		const target = clamp(-r.top / travel());
+		p += (target - p) * 0.17;
+		if (Math.abs(target - p) < 0.0005) p = target;
+		if (p !== last) { apply(); last = p; }
+		const rr = Math.round(clamp(r.top / 120) * 30);
+		if (rr !== radius) { radius = rr; stage.style.borderRadius = rr ? `${rr}px ${rr}px 0 0` : ''; }
+	};
+	let drag: { y: number; s: number } | null = null;
+	grip.addEventListener('pointerdown', (e) => {
+		drag = { y: e.clientY, s: scrollY };
+		grip.setPointerCapture(e.pointerId);
+		e.preventDefault();
+	});
+	grip.addEventListener('pointermove', (e) => {
+		if (!drag) return;
+		const k = (travel() * 0.87) / Math.max(1, H + 26 - START);
+		scrollTo({ top: drag.s + (e.clientY - drag.y) * k, behavior: 'instant' as ScrollBehavior });
+	});
+	const end = () => { drag = null; };
+	grip.addEventListener('pointerup', end);
+	grip.addEventListener('pointercancel', end);
+	grip.addEventListener('keydown', (e) => {
+		const d = e.key === 'ArrowDown' || e.key === 'ArrowLeft' ? 1 : e.key === 'ArrowUp' || e.key === 'ArrowRight' ? -1 : 0;
+		if (!d) return;
+		e.preventDefault();
+		scrollBy({ top: d * travel() * 0.08, behavior: 'instant' as ScrollBehavior });
+	});
+	new ResizeObserver(measure).observe(stage);
+	measure();
+	apply();
+	new IntersectionObserver((es) => {
+		const v = es[0].isIntersecting;
+		if (v && !on) { measure(); on = true; requestAnimationFrame(tick); }
+		if (!v) on = false;
+	}, { rootMargin: '120px 0px' }).observe(root);
+}
+
+// The clinic scene: the cards hang at different depths and answer scroll and pointer.
+function startPro(): void {
+	const root = q('[data-pro]'), scene = q('[data-pro-scene]');
+	if (!root || !scene) return;
+	const parts = qa('[data-depth]', scene).map((el) => ({ el, d: Number(el.dataset.depth) || 0, base: el.classList.contains('pv-board') ? 'translate(-50%,-50%) ' : '' }));
+	parts.forEach((x) => { if (x.base) x.el.style.translate = 'none'; });
+	let on = false, mx = 0, my = 0, cx = 0, cy = 0;
+	addEventListener('pointermove', (e) => {
+		if (!on || e.pointerType === 'touch') return;
+		mx = (e.clientX / innerWidth - 0.5) * 2;
+		my = (e.clientY / innerHeight - 0.5) * 2;
+	}, { passive: true });
+	const tick = (now: number) => {
+		if (!on) return;
+		requestAnimationFrame(tick);
+		cx += (mx - cx) * 0.07; cy += (my - cy) * 0.07;
+		const r = root.getBoundingClientRect();
+		const t = clamp((innerHeight - r.top) / (innerHeight + r.height));
+		const wide = innerWidth >= 900;
+		scene.style.transform = `rotateY(${(wide ? 9 : 0) + cx * 5}deg) rotateX(${(wide ? 5 : 4) - cy * 4}deg)`;
+		parts.forEach((x, i) => {
+			const bob = x.d ? Math.sin(now / 1500 + i * 1.9) * 5 : 0;
+			x.el.style.transform = `${x.base}translate3d(${cx * x.d * 9}px,${(0.5 - t) * x.d * 90 + bob}px,${x.d * 46}px)`;
+		});
+	};
+	new IntersectionObserver((es) => {
+		const v = es[0].isIntersecting;
+		if (v && !on) { on = true; requestAnimationFrame(tick); }
+		if (!v) on = false;
+	}).observe(root);
+}
+
+// The end of the page: the night turns to dawn and the phone rises with the sun.
+function startFinale(): void {
+	const root = q('[data-fin]'), dawn = q('[data-fin-dawn]'), sun = q('[data-fin-sun]'), phone = q('[data-fin-phone]');
+	if (!root || !dawn || !sun || !phone) return;
+	let on = false, p = 0, last = -1;
+	const tick = () => {
+		if (!on) return;
+		requestAnimationFrame(tick);
+		const r = root.getBoundingClientRect();
+		const target = clamp((innerHeight - r.top) / Math.max(1, r.height * 0.94));
+		p += (target - p) * 0.14;
+		if (Math.abs(target - p) < 0.0005) p = target;
+		if (p === last) return;
+		last = p;
+		const e = ease(p);
+		dawn.style.opacity = String(ease(clamp((p - 0.08) / 0.72)));
+		sun.style.transform = `translate3d(0,${lerp(56, 0, e)}%,0)`;
+		phone.style.transform = `translate3d(0,${lerp(46, 0, e)}%,0)`;
+	};
+	dawn.style.opacity = '0';
+	sun.style.transform = 'translate3d(0,56%,0)';
+	phone.style.transform = 'translate3d(0,46%,0)';
+	new IntersectionObserver((es) => {
+		const v = es[0].isIntersecting;
+		if (v && !on) { on = true; requestAnimationFrame(tick); }
+		if (!v) on = false;
+	}).observe(root);
+}
+
 requestAnimationFrame(() => {
 	startFlower();
 	if (document.documentElement.classList.contains('story')) {
 		startStory();
 		startExpand();
+		startCompare();
+		startPro();
+		startFinale();
 	}
 	startTry();
 	startWall();

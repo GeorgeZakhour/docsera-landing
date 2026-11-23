@@ -1,0 +1,283 @@
+---
+// The end of the home page, one continuous scene: a cluttered desk → the scan of
+// light turns each paper into its tidy card → night → the clinic side → sunrise.
+// No images beyond what the page already loaded, except the small Pro icon.
+// Without JS or with reduced motion the same content is a plain column.
+import StoreBadges from '../StoreBadges.astro';
+import { WEB_APP_URL } from '../../config/links';
+
+const I = {
+	phone: '<path d="M10.7 13.3a13 13 0 0 1-2.2-3l1.4-1.4a1.5 1.5 0 0 0 .3-1.7L9 4.6a1.5 1.5 0 0 0-1.6-.8L5 4.4a2 2 0 0 0-1.5 2.1 17 17 0 0 0 14 14 2 2 0 0 0 2.1-1.5l.6-2.4a1.5 1.5 0 0 0-.8-1.6l-2.6-1.2a1.5 1.5 0 0 0-1.7.3l-1.4 1.4a13 13 0 0 1-3-2.2"/><path d="M16 3l5 5M21 3l-5 5"/>',
+	paper: '<path d="M7 3h7l4 4v14H7z"/><path d="M10 12h5M10 16h5"/>',
+	clock: '<circle cx="12" cy="12" r="9"/><path d="M12 7v5l3 2"/>',
+	folder: '<path d="M3 7a2 2 0 0 1 2-2h4l2 2h8a2 2 0 0 1 2 2v9a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2z"/><path d="M12 11v3M12 17h.01"/>',
+	cal: '<rect x="4" y="5" width="16" height="15" rx="3"/><path d="M4 10h16M9 3v4M15 3v4"/>',
+	shield: '<path d="M12 3l7 3v5c0 5-3 8-7 10-4-2-7-5-7-10V6z"/><path d="M9 12l2 2 4-4"/>',
+	bell: '<path d="M6 16V11a6 6 0 1 1 12 0v5l2 2H4z"/><path d="M10 21h4"/>',
+	family: '<circle cx="9" cy="8" r="3.5"/><path d="M3 20c.5-4 3-6 6-6s5.500 2 6 6"/><path d="M16 5a3.300 3.300 0 0 1 0 6.400M18 14.500c1.700.8 2.700 2.800 3 5.500"/>',
+	chat: '<path d="M4 6a2 2 0 0 1 2-2h12a2 2 0 0 1 2 2v9a2 2 0 0 1-2 2H9l-5 4z"/>',
+	check: '<path d="M5 12.500l4.500 4.500L19 7.500"/>',
+	doc: '<path d="M7 3h7l4 4v14H7z"/><path d="M10 13l2 2 3-4"/>',
+};
+
+// Each pain sits exactly where its answer will land.
+const PAIRS = [
+	{ old: 'خط مشغول واتصالات لا تنتهي', kind: 'sticky', oi: I.phone, t: 'احجز في أي وقت', s: 'اختر الوقت المناسب لك بضغطة زر', ni: I.cal },
+	{ old: 'وصفات طبية ورقية تضيع بسهولة', kind: 'rx', oi: I.paper, t: 'سجلك الطبي بأمان', s: 'كل تفاصيلك الصحية محمية ومشفرة', ni: I.shield },
+	{ old: 'ساعات انتظار طويلة في العيادة', kind: 'ticket', oi: I.clock, t: 'تحديثات فورية', s: 'تنبيهات بمواعيدك وتقاريرك ووثائقك', ni: I.bell },
+	{ old: 'تاريخ طبي مفقود وتشخيص ناقص', kind: 'folder', oi: I.folder, t: 'رعاية لكل العائلة', s: 'ملفات مستقلة لأطفالك وأحبائك', ni: I.family },
+	{ old: 'مواعيد غير دقيقة وعشوائية', kind: 'index', oi: I.cal, t: 'تواصل مباشر', s: 'راسل عيادتك لتنظيم مواعيدك ومتابعتها', ni: I.chat },
+];
+
+const AGENDA = [
+	{ time: '09:00', name: 'مازن الشامي', why: 'متابعة', state: 'في العيادة', on: true },
+	{ time: '09:30', name: 'ليلى نصّار', why: 'استشارة', state: 'مؤكد', on: false },
+	{ time: '10:15', name: 'يوسف حدّاد', why: 'فحص دوري', state: 'مؤكد', on: false },
+	{ time: '11:00', name: 'هبة العلي', why: 'مراجعة', state: 'مؤكد', on: false },
+];
+---
+<section class="cmp" data-cmp aria-label="الفرق بين الطريقة التقليدية وطريقة DocSera">
+	<div class="cmp-stage" data-cmp-stage>
+		<div class="cmp-desk" aria-hidden="true">
+			<i class="cmp-junk j1"></i><i class="cmp-junk j2"></i><i class="cmp-junk j3"></i><i class="cmp-junk j4"></i><i class="cmp-junk j5"></i>
+		</div>
+		<div class="cmp-head cmp-head-old">
+			<span class="cmp-tag">الطريقة التقليدية</span>
+			<p class="cmp-ttl">فوضى، انتظار،<br />وتفاصيل ضائعة.</p>
+		</div>
+		<div class="cmp-night" data-cmp-night>
+			<div class="cmp-night-in" data-cmp-night-in>
+				<i class="cmp-au"></i>
+				<div class="cmp-head cmp-head-new">
+					<span class="cmp-tag">طريقة DocSera</span>
+					<h2 class="cmp-ttl">تحكم كامل،<br />ورعاية ذكية.</h2>
+				</div>
+			</div>
+		</div>
+		<ul class="cmp-list">
+			{PAIRS.map((p) => (
+				<li class="cmp-pair" data-pair>
+					<div class="cmp-card" data-pair-in>
+						<div class={`cmp-face cmp-old k-${p.kind}`}>
+							<svg viewBox="0 0 24 24" aria-hidden="true" set:html={p.oi} />
+							<span>{p.old}</span>
+							{p.kind === 'ticket' && <em aria-hidden="true">47</em>}
+						</div>
+						<div class="cmp-face cmp-new">
+							<i><svg viewBox="0 0 24 24" aria-hidden="true" set:html={p.ni} /></i>
+							<span><b>{p.t}</b><small>{p.s}</small></span>
+						</div>
+					</div>
+				</li>
+			))}
+		</ul>
+		<div class="cmp-line" data-cmp-line>
+			<button class="cmp-grip" type="button" data-cmp-grip role="slider" aria-label="قارن بين الطريقتين" aria-orientation="vertical" aria-valuemin="0" aria-valuemax="100" aria-valuenow="0">
+				<img src="/images/DocSera-shape-main.svg" alt="" width="24" height="24" />
+			</button>
+			<span class="cmp-hint" data-cmp-hint aria-hidden="true">اسحب للأسفل</span>
+		</div>
+	</div>
+</section>
+
+<section class="pv" data-pro>
+	<div class="pv-in">
+		<div class="pv-copy">
+			<h2>هل أنت طبيب أو مختص؟</h2>
+			<p>انضم إلى <b>DocSera Pro</b>. المنصة المتكاملة لإدارة عيادتك، تنظيم مواعيدك، والتواصل مع مرضاك بكفاءة عالية وبأدوات احترافية صممت خصيصاً لك.</p>
+			<a class="pv-btn" href="/pro">
+				<span>اكتشف DocSera Pro</span>
+				<svg viewBox="0 0 24 24" aria-hidden="true"><path d="M15 6l-6 6 6 6" /></svg>
+			</a>
+		</div>
+		<div class="pv-view" aria-hidden="true">
+			<div class="pv-scene" data-pro-scene>
+				<div class="pv-board" data-depth="0">
+					<div class="pv-bar"><b>مواعيد اليوم</b><span><i></i><i></i><i></i></span></div>
+					{AGENDA.map((a) => (
+						<div class:list={['pv-row', { on: a.on }]}>
+							<time>{a.time}</time>
+							<span><b>{a.name}</b><small>{a.why}</small></span>
+							<em>{a.state}</em>
+						</div>
+					))}
+				</div>
+				<div class="pv-chip c1" data-depth="1.3"><i set:html={`<svg viewBox="0 0 24 24">${I.cal}</svg>`} /><span><small>موعد جديد</small><b>اليوم، 12:30</b></span></div>
+				<div class="pv-chip c2" data-depth="1"><i set:html={`<svg viewBox="0 0 24 24">${I.doc}</svg>`} /><span><b>تقرير الزيارة جاهز</b></span></div>
+				<div class="pv-chip c3" data-depth="1.6"><i set:html={`<svg viewBox="0 0 24 24">${I.check}</svg>`} /><span><b>تم تسجيل الدفعة</b></span></div>
+				<img class="pv-icon" data-depth="1.9" src="/images/docsera-pro-icon.webp" alt="" width="96" height="96" loading="lazy" decoding="async" />
+			</div>
+		</div>
+	</div>
+	<div class="pv-help">
+		<p><b>هل لديك استفسارات؟</b> لقد جمعنا لك إجابات مفصلة عن كل ما يخص DocSera في مكان واحد.</p>
+		<a href="/help">تصفح الأسئلة الشائعة</a>
+	</div>
+</section>
+
+<section class="fin" id="download" data-fin>
+	<div class="fin-dawn" data-fin-dawn aria-hidden="true"></div>
+	<div class="fin-sun" data-fin-sun aria-hidden="true"></div>
+	<div class="fin-copy">
+		<h2>ابدأ رحلتك الصحية اليوم</h2>
+		<p>مستقبل الطب الرقمي، يبدأ في سوريا</p>
+		<StoreBadges size="lg" adaptive />
+		<div class="fin-more">
+			<a href={WEB_APP_URL}>أو استخدمه من المتصفح دون تثبيت</a>
+			<a href="/download">كل طرق التحميل</a>
+		</div>
+	</div>
+	<div class="fin-rise" aria-hidden="true">
+		<div class="fin-phone" data-fin-phone>
+			<img src="/images/app110/home-480.webp" srcset="/images/app110/home-320.webp 320w, /images/app110/home-480.webp 480w, /images/app110/home-640.webp 640w" sizes="(max-width: 899px) 62vw, 300px" alt="" width="480" height="1040" loading="lazy" decoding="async" />
+		</div>
+	</div>
+	<svg class="fin-hill" viewBox="0 0 1440 200" preserveAspectRatio="none" aria-hidden="true"><path d="M0 130Q720 -70 1440 130V200H0z" /></svg>
+</section>
+
+<style>
+	/* ── the desk and the scan of light ── */
+	.cmp { position: relative; background: #062A30; color: #fff; }
+	.cmp-stage { position: relative; padding: 64px 20px; }
+	.cmp-desk, .cmp-line, .cmp-au { display: none; }
+	.cmp-head { margin-bottom: 18px; }
+	.cmp-head-old { opacity: .78; }
+	.cmp-tag { display: inline-block; padding: 5px 14px; border-radius: 999px; font-size: .84rem; font-weight: 700; background: rgba(255, 255, 255, .12); color: #BFF2EE; }
+	.cmp-ttl { margin: 10px 0 0; font-size: clamp(1.9rem, 4.2vw, 3.4rem); line-height: 1.22; font-weight: 800; color: inherit; }
+	.cmp-list { list-style: none; margin: 0 auto; padding: 0; max-width: 620px; }
+	.cmp-pair { margin-bottom: 10px; }
+	.cmp-face { display: flex; align-items: center; gap: 12px; }
+	.cmp-face svg { width: 22px; height: 22px; flex: none; fill: none; stroke: currentColor; stroke-width: 1.9; stroke-linecap: round; stroke-linejoin: round; }
+	.cmp-old { padding: 6px 2px; color: #A9C3C4; font-size: .9rem; text-decoration: line-through; }
+	.cmp-old em { display: none; }
+	.cmp-new { padding: 10px 12px; border-radius: 16px; background: rgba(255, 255, 255, .08); }
+	.cmp-new i { width: 40px; height: 40px; flex: none; display: grid; place-items: center; border-radius: 12px; background: rgba(127, 243, 230, .16); color: #7FF3E6; }
+	.cmp-new b { display: block; font-size: 1.08rem; font-weight: 800; line-height: 1.35; }
+	.cmp-new small { display: block; font-size: .88rem; line-height: 1.4; color: #BFD9D9; }
+
+	:global(html.story) .cmp { height: 250vh; height: 250svh; background: #fff; }
+	:global(html.story) .cmp-stage { position: sticky; top: 0; height: 100vh; height: 100svh; padding: 0; overflow: hidden; background: #CBD3D0; color: #1D2A2B; }
+	:global(html.story) .cmp-desk { display: block; position: absolute; inset: 0; background: repeating-linear-gradient(97deg, rgba(255, 255, 255, .09) 0 2px, transparent 2px 9px), radial-gradient(90% 70% at 60% 40%, #D9DFDC, #BAC4C1); }
+	.cmp-junk { position: absolute; display: block; background: #F6F5F0; box-shadow: 0 10px 22px -10px rgba(30, 40, 40, .55); background-image: repeating-linear-gradient(0deg, transparent 0 13px, rgba(60, 80, 90, .16) 13px 14px); }
+	.j1 { width: 230px; height: 300px; top: 8%; left: -40px; rotate: -14deg; }
+	.j2 { width: 210px; height: 280px; bottom: -40px; left: 16%; rotate: 11deg; }
+	.j3 { width: 180px; height: 240px; top: -30px; left: 38%; rotate: 8deg; }
+	.j4 { width: 240px; height: 320px; bottom: -70px; right: -30px; rotate: -9deg; background-color: #E9E3D6; }
+	.j5 { width: 150px; height: 190px; top: 18%; right: 34%; rotate: -21deg; background-color: #20292E; background-image: radial-gradient(45% 55% at 50% 45%, rgba(255, 255, 255, .55), transparent 75%); }
+
+	:global(html.story) .cmp-night { position: absolute; inset: 0; overflow: hidden; z-index: 1; will-change: transform; color: #fff; }
+	:global(html.story) .cmp-night-in { position: absolute; inset: 0; will-change: transform; background: radial-gradient(70% 55% at 22% 18%, #0E7C7E 0%, rgba(14, 124, 126, 0) 70%), radial-gradient(60% 50% at 88% 90%, #0B5D62 0%, rgba(11, 93, 98, 0) 72%), #062A30; }
+	:global(html.story) .cmp-au { display: block; position: absolute; width: 70vmax; height: 70vmax; top: -30vmax; right: -18vmax; border-radius: 50%; background: radial-gradient(closest-side, rgba(0, 196, 190, .2), rgba(0, 196, 190, 0)); }
+	:global(html.story) .cmp-head { position: absolute; z-index: 1; margin: 0; inset-inline-start: max(5vw, calc(50vw - 590px)); top: 50%; translate: 0 -50%; width: min(38vw, 470px); }
+	:global(html.story) .cmp-head-old { opacity: 1; }
+	:global(html.story) .cmp-head-old .cmp-tag { background: rgba(29, 42, 43, .12); color: #33413F; }
+	:global(html.story) .cmp-list { position: absolute; z-index: 2; margin: 0; max-width: none; inset-inline-end: max(5vw, calc(50vw - 590px)); top: 50%; translate: 0 -50%; width: min(47vw, 580px); }
+	:global(html.story) .cmp-pair { height: clamp(58px, 9.4vh, 84px); margin-bottom: clamp(7px, 1.3vh, 12px); }
+	:global(html.story) .cmp-pair:last-child { margin-bottom: 0; }
+	:global(html.story) .cmp-card { position: relative; width: 100%; height: 100%; transform-style: preserve-3d; -webkit-transform-style: preserve-3d; will-change: transform; }
+	:global(html.story) .cmp-face { position: absolute; inset: 0; padding: 0 16px; backface-visibility: hidden; -webkit-backface-visibility: hidden; }
+	:global(html.story) .cmp-old { color: #2A2C28; font-size: clamp(.9rem, 1.25vw, 1.06rem); font-weight: 700; text-decoration: none; box-shadow: 0 12px 20px -10px rgba(25, 35, 35, .6); }
+	:global(html.story) .cmp-old em { display: block; margin-inline-start: auto; font-style: normal; font-size: 1.5rem; font-weight: 800; color: #B5412F; }
+	:global(html.story) .k-sticky { background: linear-gradient(135deg, #F8E784 0 86%, #E4CF62 86.2%); }
+	:global(html.story) .k-rx { background: #FFFEFA; border-top: 5px solid #D55B50; }
+	:global(html.story) .k-ticket { background: #F6D9CF; border-inline-end: 2px dashed rgba(150, 60, 40, .45); }
+	:global(html.story) .k-folder { background: #D8BD91; border-radius: 3px 10px 3px 3px; }
+	:global(html.story) .k-index { background: #DDE9F3; background-image: repeating-linear-gradient(0deg, transparent 0 15px, rgba(70, 110, 150, .22) 15px 16px); }
+	:global(html.story) .cmp-new { transform: rotateX(180deg); padding: 0 14px; background: #0D4148; border: 1px solid rgba(127, 243, 230, .24); color: #fff; box-shadow: 0 14px 26px -16px rgba(0, 0, 0, .8); }
+
+	:global(html.story) .cmp-line { display: block; position: absolute; z-index: 4; inset-inline: 0; top: 0; height: 2px; will-change: transform;
+		background: linear-gradient(90deg, rgba(127, 243, 230, 0), #7FF3E6 14%, #fff 50%, #7FF3E6 86%, rgba(127, 243, 230, 0)); box-shadow: 0 0 26px 6px rgba(64, 224, 208, .6); }
+	.cmp-grip { position: absolute; inset-inline-end: max(14px, calc(50vw - 640px)); top: -23px; width: 46px; height: 46px; padding: 0; display: grid; place-items: center; border: 0; border-radius: 50%; background: #fff; cursor: grab; touch-action: none; box-shadow: 0 6px 20px rgba(0, 60, 62, .45), 0 0 0 5px rgba(127, 243, 230, .3); }
+	.cmp-grip:active { cursor: grabbing; }
+	.cmp-grip:focus-visible { outline: 3px solid #0F1A22; outline-offset: 3px; }
+	.cmp-grip img { display: block; width: 24px; height: 24px; }
+	.cmp-hint { position: absolute; inset-inline-end: calc(max(14px, calc(50vw - 640px)) + 56px); top: -13px; padding: 3px 11px; border-radius: 999px; font-size: .78rem; font-weight: 700; white-space: nowrap; background: #0F1A22; color: #fff; }
+
+	/* ── the clinic side ── */
+	.pv { position: relative; overflow: hidden; background: #062A30; color: #fff; padding: clamp(70px, 11vh, 120px) 20px 0; }
+	.pv::before { content: ''; position: absolute; width: 62vmax; height: 62vmax; top: -8vmax; left: -14vmax; border-radius: 50%; background: radial-gradient(closest-side, rgba(0, 196, 190, .17), rgba(0, 196, 190, 0)); pointer-events: none; }
+	.pv-in { position: relative; max-width: 1180px; margin: 0 auto; display: grid; grid-template-columns: minmax(0, 1fr) minmax(0, 1.12fr); align-items: center; gap: 40px; }
+	.pv-copy h2 { margin: 0; font-size: clamp(2rem, 4.3vw, 3.5rem); line-height: 1.2; font-weight: 800; color: #fff; }
+	.pv-copy p { margin: 18px 0 28px; max-width: 34em; font-size: clamp(1rem, 1.35vw, 1.14rem); line-height: 1.85; color: #C9E4E3; }
+	.pv-copy p b { color: #fff; font-weight: 800; }
+	.pv-btn { display: inline-flex; align-items: center; gap: 10px; padding: 15px 28px; border-radius: 16px; font-weight: 800; font-size: 1.04rem; color: #fff; background: #009092; text-decoration: none; box-shadow: 0 16px 34px -12px rgba(0, 196, 190, .75); transition: background .2s, transform .2s; }
+	.pv-btn:hover { background: #00A5A5; transform: translateY(-2px); }
+	.pv-btn:focus-visible, .pv-help a:focus-visible, .fin-more a:focus-visible { outline: 3px solid #BFF2EE; outline-offset: 3px; }
+	.pv-btn svg { width: 20px; height: 20px; fill: none; stroke: currentColor; stroke-width: 2.4; stroke-linecap: round; stroke-linejoin: round; }
+	.pv-view { perspective: 1100px; }
+	.pv-scene { position: relative; height: clamp(400px, 60vh, 540px); transform-style: preserve-3d; -webkit-transform-style: preserve-3d; transform: rotateY(9deg) rotateX(5deg); will-change: transform; }
+	.pv-board { position: absolute; top: 50%; left: 50%; width: min(440px, 88%); translate: -50% -50%; padding: 18px; border-radius: 24px; background: linear-gradient(160deg, #124C53, #0B3439); border: 1px solid rgba(255, 255, 255, .14); box-shadow: 0 40px 70px -28px rgba(0, 0, 0, .8); will-change: transform; }
+	.pv-bar { display: flex; align-items: center; justify-content: space-between; margin-bottom: 12px; font-size: 1rem; }
+	.pv-bar span { display: flex; gap: 5px; }
+	.pv-bar i { width: 7px; height: 7px; border-radius: 50%; background: rgba(255, 255, 255, .32); }
+	.pv-row { display: flex; align-items: center; gap: 12px; padding: 10px 12px; margin-top: 6px; border-radius: 13px; background: rgba(255, 255, 255, .055); }
+	.pv-row.on { background: #009092; }
+	.pv-row time { flex: none; font-size: .86rem; font-weight: 700; color: #BFF2EE; direction: ltr; }
+	.pv-row.on time { color: #fff; }
+	.pv-row span { flex: 1; min-width: 0; }
+	.pv-row b { display: block; font-size: .92rem; line-height: 1.3; }
+	.pv-row small { display: block; font-size: .74rem; line-height: 1.3; color: #B7D5D4; }
+	.pv-row.on small { color: #E2F7F5; }
+	.pv-row em { flex: none; font-style: normal; font-size: .72rem; font-weight: 700; padding: 3px 9px; border-radius: 999px; background: rgba(255, 255, 255, .12); }
+	.pv-row.on em { background: #fff; color: #00686A; }
+	.pv-chip { position: absolute; display: flex; align-items: center; gap: 8px; padding: 8px 13px 8px 15px; border-radius: 14px; white-space: nowrap; background: #fff; color: #0F1A22; box-shadow: 0 22px 36px -16px rgba(0, 0, 0, .75); will-change: transform; }
+	.pv-chip i { width: 32px; height: 32px; flex: none; display: grid; place-items: center; border-radius: 10px; background: #E0F2F2; color: #00686A; }
+	.pv-chip :global(svg) { width: 19px; height: 19px; fill: none; stroke: currentColor; stroke-width: 2; stroke-linecap: round; stroke-linejoin: round; }
+	.pv-chip small { display: block; font-size: .72rem; line-height: 1.3; font-weight: 700; color: #56636B; }
+	.pv-chip b { display: block; font-size: .88rem; line-height: 1.35; font-weight: 800; }
+	.c1 { top: 3%; right: 2%; }
+	.c2 { bottom: 1%; right: 12%; }
+	.c3 { bottom: 6%; left: 0; }
+	.pv-icon { position: absolute; top: 2%; left: 5%; width: 84px; height: 84px; border-radius: 22px; box-shadow: 0 0 0 1px rgba(191, 242, 238, .28), 0 22px 36px -14px rgba(0, 0, 0, .8); will-change: transform; }
+	.pv-help { position: relative; max-width: 1180px; margin: clamp(30px, 6vh, 60px) auto 0; padding: 22px 0 clamp(60px, 11vh, 110px); display: flex; align-items: center; justify-content: space-between; gap: 18px; border-top: 1px solid rgba(255, 255, 255, .13); }
+	.pv-help p { margin: 0; font-size: .96rem; line-height: 1.7; color: #BCD8D7; }
+	.pv-help b { color: #fff; font-weight: 800; }
+	.pv-help a { flex: none; font-weight: 700; color: #BFF2EE; text-underline-offset: 4px; }
+
+	/* ── sunrise ── */
+	.fin { box-sizing: border-box; position: relative; overflow: hidden; display: flex; flex-direction: column; min-height: 100vh; min-height: 100svh; background: #062A30; color: #fff; text-align: center; padding: clamp(92px, 13vh, 130px) 20px 0; }
+	.fin-dawn { position: absolute; inset: 0; background: linear-gradient(180deg, #062A30 0%, #075A60 26%, #007C7F 50%, #1F9E97 66%, #8FD8C4 78%, #FFDDBB 91%, #FFEBD6 100%); }
+	.fin-sun { position: absolute; left: 50%; bottom: calc(20% - min(58vw, 380px)); width: min(116vw, 760px); aspect-ratio: 1; margin-left: calc(min(116vw, 760px) / -2); border-radius: 50%; background: radial-gradient(closest-side, #FFF9EC 0 26%, #FFE6C6 40%, rgba(255, 208, 160, .5) 58%, rgba(255, 190, 150, 0) 78%); will-change: transform; }
+	.fin-copy { position: relative; z-index: 2; }
+	.fin-copy h2 { margin: 0; font-size: clamp(2.1rem, 5.2vw, 4.3rem); line-height: 1.2; font-weight: 800; color: #fff; }
+	.fin-copy > p { margin: 12px 0 24px; font-size: clamp(1.02rem, 1.5vw, 1.25rem); color: #E4F6F4; }
+	.fin-more { display: flex; flex-wrap: wrap; justify-content: center; gap: 8px 22px; margin-top: 16px; }
+	.fin-more a { color: #fff; font-size: .94rem; font-weight: 700; text-underline-offset: 4px; }
+	.fin-rise { position: relative; z-index: 1; flex: 1 1 210px; min-height: 210px; margin-top: 24px; }
+	.fin-phone { position: absolute; left: 50%; top: 0; width: min(62vw, 300px); margin-left: calc(min(62vw, 300px) / -2); padding: 7px; border-radius: 40px; background: #0F1A22; box-shadow: 0 0 90px 10px rgba(255, 233, 200, .55), 0 40px 70px -20px rgba(0, 40, 44, .7); will-change: transform; }
+	.fin-phone img { display: block; width: 100%; height: auto; border-radius: 33px; }
+	.fin-hill { position: absolute; z-index: 3; left: 0; bottom: -1px; display: block; width: 100%; height: clamp(70px, 13vh, 150px); }
+	.fin-hill path { fill: #F8F9FA; }
+
+	@media (max-width: 899px) {
+		:global(html.story) .cmp-head { inset-inline: 20px; top: 108px; translate: none; width: auto; }
+		:global(html.story) .cmp-ttl { font-size: clamp(1.55rem, 7vw, 2rem); margin-top: 6px; }
+		:global(html.story) .cmp-tag { font-size: .76rem; padding: 3px 11px; }
+		:global(html.story) .cmp-list { inset-inline: 16px; width: auto; top: 226px; translate: none; }
+		:global(html.story) .cmp-pair { height: clamp(54px, calc((100vh - 226px - 56px) / 5), 92px); height: clamp(54px, calc((100svh - 226px - 56px) / 5), 92px); margin-bottom: 8px; }
+		:global(html.story) .cmp-face { padding: 0 12px; gap: 10px; }
+		:global(html.story) .cmp-old { font-size: .93rem; }
+		.cmp-new i { width: 38px; height: 38px; }
+		.cmp-new b { font-size: .98rem; }
+		.cmp-new small { font-size: .8rem; }
+		.j1 { width: 150px; height: 200px; } .j2 { width: 150px; height: 190px; } .j3 { width: 130px; height: 170px; } .j4 { width: 170px; height: 220px; } .j5 { width: 100px; height: 130px; top: auto; bottom: 5%; right: -22px; }
+		.pv-in { grid-template-columns: 1fr; gap: 26px; text-align: center; }
+		.pv-copy p { margin-inline: auto; }
+		.pv-scene { height: 430px; transform: rotateY(0) rotateX(4deg); }
+		.pv-board { width: min(330px, 84%); padding: 14px; }
+		.pv-row { padding: 8px 10px; gap: 9px; }
+		.pv-chip { padding: 6px 10px 6px 11px; }
+		.pv-chip i { width: 27px; height: 27px; }
+		.pv-chip b { font-size: .78rem; }
+		.c1 { top: 1%; right: 0; }
+		.c2 { bottom: 1%; right: 0; }
+		.c3 { bottom: 8%; left: 0; }
+		.pv-icon { width: 62px; height: 62px; border-radius: 17px; top: 1%; left: 3%; }
+		.pv-help { flex-direction: column; text-align: center; }
+	}
+
+	@media (prefers-reduced-motion: reduce) {
+		.pv-btn { transition: none; }
+		.pv-btn:hover { transform: none; }
+	}
+</style>

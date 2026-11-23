@@ -6,7 +6,7 @@
 // the same content is a plain column.
 import Layout from '../layouts/Layout.astro';
 import Footer from '../components/Footer.astro';
-import ClassicSections from '../components/home/ClassicSections.astro';
+import Closing from '../components/home/Closing.astro';
 import StoreBadges from '../components/StoreBadges.astro';
 import { WEB_APP_URL } from '../config/links';
 import bootUrl from '../scripts/home/boot.ts?worker&url';
@@ -238,7 +238,7 @@ const MORE = [
 			</div>
 		</section>
 
-		<ClassicSections />
+		<Closing />
 	</main>
 	<script is:inline async src={bootUrl}></script>
 	<Footer />
