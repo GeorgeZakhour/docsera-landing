@@ -1,121 +1,208 @@
 ---
-// Medical-center landing page — rendered for every /center/<id> URL.
+// Medical-centre landing page, rendered for every /center/<id> URL: what a patient sees
+// after scanning the centre's QR. The card is the app's own centre header (cover band with
+// the «+» pattern, the logo riding on its edge, the team's faces) made into a physical
+// object on the home page's silk. The motion and the sections it shares with the doctor
+// page live in scripts/site/profile-card.ts.
 //
-// Mirrors src/pages/doctor.astro exactly. Same single-shell + client-side
-// fetch pattern, same instant CTA (EntityCta) that does not wait for the
-// profile request, same skeleton / offline-retry card.
-// Differences from the doctor page:
-//   - Fetches public_centers instead of public_doctors.
-//   - Centers are addressed by their UUID id (no public_token).
-//   - The pill badge shows the center type (مركز طبي, عيادة, …) instead
-//     of a doctor specialty.
-//   - The photo fallback is a building/hospital icon (no obvious
-//     "initials" analog for a clinic name like "مركز الشفا الطبي").
+// Routing: builds to dist/center/index.html. nginx serves this single file for any
+// /center/<anything> URL via try_files fallback (see nginx/default.conf).
 //
-// Routing: builds to dist/center/index.html. nginx serves this single
-// file for any /center/<anything> URL via try_files fallback (see
-// nginx/default.conf).
-
+// The CTA (install / open in app / web app) is wired from the URL alone and works at once;
+// it does not wait for the profile. Centres are addressed by their UUID (no public_token).
+//
+// A team member is deliberately NOT a link to /doctor/<token>: that page counts a QR scan
+// and carries referral attribution, and browsing must never do either.
 import Layout from '../layouts/Layout.astro';
-import Navbar from '../components/Navbar.astro';
 import Footer from '../components/Footer.astro';
 import EntityCta from '../components/EntityCta.astro';
+import SiteHeader from '../components/site/SiteHeader.astro';
+
+const silk = '/images/home/3d/silk-860.webp 860w, /images/home/3d/silk-1600.webp 1600w';
+const I = {
+	qr: '<rect x="4" y="4" width="6.5" height="6.5" rx="1.4"/><rect x="13.5" y="4" width="6.5" height="6.5" rx="1.4"/><rect x="4" y="13.5" width="6.5" height="6.5" rx="1.4"/><path d="M14 14h2.500v2.500M20 14v.01M14 20h.01M17.500 20H20v-3"/>',
+	clock: '<circle cx="12" cy="12" r="8.500"/><path d="M12 7.500V12l3 2"/>',
+	pin: '<path d="M12 21s7-5.600 7-11.200A7 7 0 0 0 5 9.800C5 15.400 12 21 12 21z"/><circle cx="12" cy="9.800" r="2.500"/>',
+	plus: '<rect x="4" y="7" width="16" height="13" rx="3"/><path d="M9 7V5.500A1.500 1.500 0 0 1 10.500 4h3A1.500 1.500 0 0 1 15 5.500V7M12 10.800v5.400M9.300 13.500h5.400"/>',
+	info: '<circle cx="12" cy="12" r="8.500"/><path d="M12 11v5M12 8v.01"/>',
+	team: '<circle cx="9" cy="8.500" r="3.200"/><path d="M3.500 19.500c.6-3.500 2.700-5.300 5.500-5.300s4.900 1.800 5.500 5.300M15.500 5.600a3.200 3.200 0 0 1 0 5.800M17 14.600c1.900.6 3.100 2.200 3.500 4.900"/>',
+	dept: '<rect x="4" y="4" width="6.500" height="6.500" rx="1.800"/><rect x="13.500" y="4" width="6.500" height="6.500" rx="1.800"/><rect x="4" y="13.500" width="6.500" height="6.500" rx="1.800"/><path d="M16.750 13.800v5.900M13.800 16.750h5.900"/>',
+	globe: '<circle cx="12" cy="12" r="8.500"/><path d="M3.500 12h17M12 3.500c2.400 2.400 3.600 5.200 3.600 8.500s-1.200 6.100-3.600 8.500c-2.400-2.400-3.600-5.200-3.600-8.500S9.600 5.900 12 3.500z"/>',
+	shield: '<path d="M12 3.500 5 6v5.500c0 4.400 2.900 7.500 7 9 4.100-1.500 7-4.600 7-9V6z"/><path d="m9 12 2.200 2.200L15.200 10"/>',
+	build: '<path d="M4 20.500h16M6 20.500V5.500A1.500 1.500 0 0 1 7.500 4h9A1.500 1.500 0 0 1 18 5.500v15M12 7.500v4M10 9.500h4M10 20.500v-4h4v4"/>',
+	go: '<path d="m4 11 16-7-7 16-2.200-6.800z"/>',
+	cal: '<rect x="4" y="5" width="16" height="15" rx="3"/><path d="M4 10h16M9 3v4M15 3v4"/>',
+};
 ---
 
 <Layout title="DocSera — ملف المركز" appBanner="entity" appBar={false}>
-	<Navbar />
+	<SiteHeader />
 
-	<main class="center-page">
-		<section class="center-section">
-			<div class="container">
+	<main class="dp">
+		<div class="state state-loading" data-state="loading">
+			<span class="dots" aria-hidden="true"><i></i><i></i><i></i></span>
+			<p>جارٍ تحميل بيانات المركز…</p>
+		</div>
 
-				<!-- Loading skeleton ------------------------------------ -->
-				<div class="state state-loading" data-state="loading">
-					<div class="spinner" aria-hidden="true"></div>
-					<p>جارٍ تحميل بيانات المركز…</p>
-				</div>
+		<div class="state" data-state="center" hidden>
+			<section class="st" data-stage>
+				<div class="st-bg" aria-hidden="true"><img class="silk" src="/images/home/3d/silk-860.webp" srcset={silk} sizes="max(100vw, 160vh)" alt="" width="1600" height="1000" fetchpriority="high" decoding="async" /></div>
+				<div class="st-in">
+					<div class="hx">
+						<h1><span data-hx-lead>تعرّف على</span><br /><b data-hx-name>المركز</b></h1>
+						<p data-hx-sub></p>
+						<div class="hx-cta">
+							<button type="button" class="btn" data-book-open><svg viewBox="0 0 24 24" aria-hidden="true" set:html={I.cal} /><span data-book-label>افتح في التطبيق</span></button>
+							<a class="hx-web" data-hx-web href="#" rel="noopener">أو افتحه من المتصفح</a>
+						</div>
+					</div>
 
-				<!-- Center preview + CTA -------------------------------- -->
-				<div class="state state-center" data-state="center" hidden>
-					<div class="center-card is-loading" data-center-card>
-						<div class="center-photo">
-							<!-- Building icon shown eagerly so the circle is
-							     never empty. The <img> stacks on top and only
-							     un-hides on successful load. -->
-							<div class="photo-fallback" data-center-fallback>
-								<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" aria-hidden="true">
-									<path d="M3 21h18"/>
-									<path d="M5 21V7l8-4v18"/>
-									<path d="M19 21V11l-6-4"/>
-									<path d="M9 9v.01"/>
-									<path d="M9 12v.01"/>
-									<path d="M9 15v.01"/>
-									<path d="M9 18v.01"/>
-								</svg>
+					<div class="cd-wrap" data-cd-wrap>
+						<div class="cd is-loading" data-cd data-center-card>
+							<i class="sl" style="--z:-7"></i><i class="sl" style="--z:-5"></i><i class="sl" style="--z:-3"></i><i class="sl" style="--z:-1"></i>
+							<div class="cd-front" data-cd-front>
+								<i class="cd-face" aria-hidden="true"></i>
+								<div class="cv" aria-hidden="true"><b></b></div>
+								<div class="cd-top">
+									<img src="/images/docsera_main.svg" alt="DocSera" width="101" height="16" />
+									<button type="button" data-cd-flip aria-label="رمز QR للمركز" title="رمز QR للمركز"><svg viewBox="0 0 24 24" aria-hidden="true" set:html={I.qr} /></button>
+								</div>
+								<div class="cd-pills" data-center-specs hidden></div>
+								<div class="cd-id">
+									<div class="cd-head">
+										<div class="cd-logo"><img data-center-image alt="" /></div>
+										<span class="cd-type" data-center-type></span>
+									</div>
+									<h2 class="cd-name" data-center-name></h2>
+									<p class="cd-place" data-center-card-place hidden><svg viewBox="0 0 24 24" aria-hidden="true" set:html={I.pin} /><span data-center-card-place-t></span></p>
+									<p class="cd-offline" data-center-offline hidden>
+										تعذّر تحميل بيانات المركز. تحقق من اتصالك بالإنترنت.
+										<button type="button" data-center-retry>إعادة المحاولة</button>
+									</p>
+								</div>
+								<div class="cd-team" data-center-faces hidden>
+									<span class="faces" data-faces></span>
+									<span class="ft"><b data-faces-title></b><small data-faces-sub></small></span>
+								</div>
+								<button type="button" class="cd-team cd-open" data-book-open data-center-open hidden>
+									<i class="cd-mark" aria-hidden="true"><img src="/images/DocSera-shape-main.svg" alt="" width="26" height="26" /></i>
+									<span class="ft"><b>ملف المركز على DocSera</b><small>افتحه في التطبيق</small></span>
+								</button>
+								<i class="cd-sheen" data-cd-sheen aria-hidden="true"></i>
 							</div>
-							<img data-center-image alt="" />
+							<div class="cd-back" data-cd-back>
+								<img class="cd-blogo" src="/images/docsera_main.svg" alt="" width="101" height="16" />
+								<div class="cd-qr" data-cd-qr></div>
+								<b data-cd-back-name></b>
+								<p>امسح الرمز لفتح الملف على DocSera</p>
+								<button type="button" data-cd-flip>العودة إلى البطاقة</button>
+							</div>
 						</div>
-						<div class="center-info">
-							<span class="pill-badge type-badge" data-center-type></span>
-							<h1 class="name" data-center-name></h1>
-							<p class="description" data-center-description hidden></p>
-							<p class="address" data-center-address hidden>
-								<svg class="pin" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" aria-hidden="true">
-									<path d="M21 10c0 7-9 13-9 13s-9-6-9-13a9 9 0 0 1 18 0z"/>
-									<circle cx="12" cy="10" r="3"/>
-								</svg>
-								<span data-center-address-text></span>
-							</p>
-							<p class="card-offline" data-center-offline hidden>
-								تعذّر تحميل بيانات المركز. تحقق من اتصالك بالإنترنت.
-								<button type="button" data-center-retry>إعادة المحاولة</button>
-							</p>
+						<div class="chips">
+							<div class="chip chip-a" data-chip="hours" hidden><i><svg viewBox="0 0 24 24" aria-hidden="true" set:html={I.clock} /></i><span><small data-chip-hours-k>اليوم</small><b data-chip-hours></b></span></div>
+							<div class="chip chip-c" data-chip="book" hidden><i><svg viewBox="0 0 24 24" aria-hidden="true" set:html={I.cal} /></i><span><small>الحجز</small><b>متاح عبر DocSera</b></span></div>
 						</div>
 					</div>
-
-					<EntityCta kind="center" />
 				</div>
+			</section>
 
-				<div class="state state-not-found" data-state="not-found" hidden>
-					<div class="error-card fade-up visible">
-						<div class="error-icon" aria-hidden="true">
-							<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
-								<circle cx="12" cy="12" r="10"/>
-								<line x1="12" y1="8" x2="12" y2="12"/>
-								<line x1="12" y1="16" x2="12.01" y2="16"/>
+			<section class="pf">
+				<article class="sc tm" data-sec="team" hidden>
+					<header><i><svg viewBox="0 0 24 24" aria-hidden="true" set:html={I.team} /></i><h2>الفريق الطبي</h2></header>
+					<div class="tm-row" data-team></div>
+				</article>
+				<div class="pf-grid" data-pf-grid>
+					<article class="sc" data-sec="bio" hidden>
+						<header><i><svg viewBox="0 0 24 24" aria-hidden="true" set:html={I.info} /></i><h2>نبذة عن المركز</h2></header>
+						<p class="bio" data-bio></p>
+						<button type="button" class="more" data-bio-more hidden>عرض المزيد</button>
+					</article>
+					<article class="sc" data-sec="specialties" hidden>
+						<header><i><svg viewBox="0 0 24 24" aria-hidden="true" set:html={I.dept} /></i><h2>التخصصات والأقسام</h2></header>
+						<ul class="list" data-list-specialties></ul>
+					</article>
+					<article class="sc" data-sec="services" hidden>
+						<header><i><svg viewBox="0 0 24 24" aria-hidden="true" set:html={I.plus} /></i><h2>الخدمات المقدمة</h2></header>
+						<ul class="svc" data-services></ul>
+						<button type="button" class="more" data-svc-more hidden>عرض الكل</button>
+					</article>
+					<article class="sc" data-sec="hours" hidden>
+						<header><i><svg viewBox="0 0 24 24" aria-hidden="true" set:html={I.clock} /></i><h2>ساعات العمل</h2><span class="now" data-now></span></header>
+						<p class="today"><span>اليوم</span><b data-today></b></p>
+						<details class="week">
+							<summary>كل أيام الأسبوع</summary>
+							<dl data-week></dl>
+						</details>
+					</article>
+					<article class="sc sc-map" data-sec="place" hidden>
+						<div class="map" aria-hidden="true">
+							<svg viewBox="0 0 640 210" preserveAspectRatio="xMidYMid slice">
+								<rect width="640" height="210" fill="#EEF3F2" />
+								<path d="M70 -10C98 44 62 96 112 140S210 178 196 230" fill="none" stroke="#BFE7E2" stroke-width="20" />
+								<path d="M-10 66 660 34M-10 150 660 118M250 -10 214 220M452 -10 482 220" fill="none" stroke="#fff" stroke-width="11" />
+								<path d="M-10 108 660 76M150 -10 122 220M352 -10 346 220M560 -10 592 220" fill="none" stroke="#fff" stroke-width="5" />
+								<path d="M320 118c-6-16-27-26-27-48a27 27 0 0 1 54 0c0 22-21 32-27 48z" fill="#007474" /><circle cx="320" cy="70" r="10" fill="#fff" />
 							</svg>
 						</div>
-						<h1>لم نعثر على هذا المركز</h1>
-						<p>قد يكون الرابط منتهي الصلاحية أو حذف المركز ملفه. تحقق من الرابط وحاول مرة أخرى.</p>
-						<a href="/" class="btn-main">العودة للرئيسية</a>
-					</div>
-				</div>
-
-				<div class="state state-invalid" data-state="invalid" hidden>
-					<div class="error-card fade-up visible">
-						<div class="error-icon" aria-hidden="true">
-							<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
-								<circle cx="12" cy="12" r="10"/>
-								<line x1="15" y1="9" x2="9" y2="15"/>
-								<line x1="9" y1="9" x2="15" y2="15"/>
-							</svg>
+						<div class="place">
+							<div><b data-place-name></b><span data-place-addr></span><small data-place-details hidden></small></div>
+							<a class="go" data-map-link href="#" target="_blank" rel="noopener" hidden><svg viewBox="0 0 24 24" aria-hidden="true" set:html={I.go} />خرائط</a>
 						</div>
-						<h1>رابط غير صحيح</h1>
-						<p>الرابط لا يحتوي على معرّف مركز صالح. الرجاء العودة للرئيسية.</p>
-						<a href="/" class="btn-main">العودة للرئيسية</a>
-					</div>
+					</article>
+					<article class="sc" data-sec="langs" hidden>
+						<header><i><svg viewBox="0 0 24 24" aria-hidden="true" set:html={I.globe} /></i><h2>اللغات المتحدث بها</h2></header>
+						<div class="langs" data-langs></div>
+					</article>
+					<article class="sc" data-sec="insurance" hidden>
+						<header><i><svg viewBox="0 0 24 24" aria-hidden="true" set:html={I.shield} /></i><h2>التأمينات المقبولة</h2></header>
+						<ul class="list" data-list-insurance></ul>
+					</article>
+					<article class="sc" data-sec="facilities" hidden>
+						<header><i><svg viewBox="0 0 24 24" aria-hidden="true" set:html={I.build} /></i><h2>المرافق والتجهيزات</h2></header>
+						<ul class="list" data-list-facilities></ul>
+					</article>
 				</div>
+			</section>
 
-			</div>
-		</section>
+			<section class="end">
+				<h2 data-end-title>تابع هذا المركز على DocSera</h2>
+				<button type="button" class="btn btn-w" data-book-open><svg viewBox="0 0 24 24" aria-hidden="true" set:html={I.cal} /><span data-book-label>افتح في التطبيق</span></button>
+			</section>
+
+			<aside class="bk" data-book-sheet>
+				<button type="button" class="bk-x" data-book-close aria-label="إغلاق" title="إغلاق">
+					<svg viewBox="0 0 24 24" aria-hidden="true"><path d="M6 6l12 12M18 6 6 18" /></svg>
+				</button>
+				<EntityCta kind="center" quiet />
+			</aside>
+			<div class="bk-scrim" data-book-scrim></div>
+			<div class="bk-bar"><button type="button" class="btn" data-book-open><svg viewBox="0 0 24 24" aria-hidden="true" set:html={I.cal} /><span data-book-label>افتح في التطبيق</span></button></div>
+		</div>
+
+		<div class="state state-msg" data-state="not-found" hidden>
+			<h1>لم نعثر على هذا المركز</h1>
+			<p>قد يكون الرابط منتهي الصلاحية أو حذف المركز ملفه. تحقق من الرابط وحاول مرة أخرى.</p>
+			<a href="/" class="btn">العودة للرئيسية</a>
+		</div>
+
+		<div class="state state-msg" data-state="invalid" hidden>
+			<h1>رابط غير صحيح</h1>
+			<p>الرابط لا يحتوي على معرّف مركز صالح. الرجاء العودة للرئيسية.</p>
+			<a href="/" class="btn">العودة للرئيسية</a>
+		</div>
 	</main>
 
-	<Footer />
+	<Footer seamless />
 </Layout>
 
 <script>
 	import { SUPABASE_URL, SUPABASE_ANON_KEY, attributionSource, fireBeacon } from '../scripts/reach';
 	import { initEntityCta } from '../scripts/entity-cta';
+	import { byData, hasHours, parsed, placeholderFor, renderBio, renderHours, renderLanguages, renderServices, revealCards, setMapLink, showChip, showSec, startCard, stringList, wireSheet } from '../scripts/site/profile-card';
+
+	// Local previews only: a fictional centre at /center/?preview=1. The flag exists only in
+	// the untracked .env.local, so a production build drops this path entirely.
+	const demo = import.meta.env.PUBLIC_DOCTOR_PREVIEW === '1' && new URLSearchParams(window.location.search).has('preview');
 
 	// Map raw type slugs from centers.type to human-readable Arabic labels.
 	// 'solo' and 'clinic' are the only values seen in real data today (most
@@ -137,26 +224,39 @@ import EntityCta from '../components/EntityCta.astro';
 		pharmacy: 'صيدلية',
 	};
 
+	const API_HEADERS = { apikey: SUPABASE_ANON_KEY, Authorization: 'Bearer ' + SUPABASE_ANON_KEY };
+	const ctaTitle = document.querySelector('[data-entity-cta] .cta-title');
+	const bookingTitle = ctaTitle?.textContent || '';
+	let shownName = 'هذا المركز';
+
 	// ----- Id extraction & validation -------------------------
 	const match = window.location.pathname.match(/^\/center\/([^/?#]+)/);
 	let centerId = '';
 	try {
 		centerId = match ? decodeURIComponent(match[1]) : '';
 	} catch { /* malformed %-escape → invalid */ }
+	if (import.meta.env.PUBLIC_DOCTOR_PREVIEW === '1' && demo) centerId = 'preview';
 
 	// Same broad bounds the patient app's isValidCenterId uses:
 	// [A-Za-z0-9_-], length 1..64. UUIDs always fit.
 	if (!/^[A-Za-z0-9_-]{1,64}$/.test(centerId)) {
 		showState('invalid');
 	} else {
-		fireBeacon('center_qr_scanned', 'reach', 'ds_beacon_center_' + centerId, {
-			center_id: centerId,
-			source: attributionSource(),
-			surface: 'landing',
-		});
+		if (!demo) {
+			fireBeacon('center_qr_scanned', 'reach', 'ds_beacon_center_' + centerId, {
+				center_id: centerId,
+				source: attributionSource(),
+				surface: 'landing',
+			});
+		}
 		// Buttons first, profile second — see doctor.astro.
 		initEntityCta('center', centerId);
 		showState('center');
+		const web = document.querySelector<HTMLAnchorElement>('[data-entity-cta] [data-webapp-link]');
+		if (web) (byData('hx-web') as HTMLAnchorElement).href = web.href;
+		applyBookable(false);
+		wireSheet();
+		startCard();
 		byData('center-retry').addEventListener('click', () => fetchCenter(centerId));
 		fetchCenter(centerId);
 	}
@@ -164,14 +264,19 @@ import EntityCta from '../components/EntityCta.astro';
 	function fetchCenter(id: string) {
 		setCardState('loading');
 
+		if (import.meta.env.PUBLIC_DOCTOR_PREVIEW === '1' && demo) {
+			import('../data/centerPreview').then((m) => window.setTimeout(() => {
+				const solo = new URLSearchParams(window.location.search).has('solo');
+				const c = solo ? m.CENTER_PREVIEW_SOLO : m.CENTER_PREVIEW;
+				renderCenter(c);
+				renderTeam(solo ? m.CENTER_PREVIEW_SOLO_TEAM : m.CENTER_PREVIEW_TEAM, c);
+			}, 420));
+			return;
+		}
+
 		const select = [
-			'id',
-			'name',
-			'type',
-			'description',
-			'address',
-			'center_image',
-			'logo_url',
+			'id', 'name', 'type', 'description', 'address', 'location', 'center_image', 'logo_url',
+			'opening_hours', 'specialties', 'offered_services', 'languages', 'insurance_accepted', 'facilities',
 		].join(',');
 
 		const url = SUPABASE_URL + '/rest/v1/public_centers' +
@@ -183,13 +288,7 @@ import EntityCta from '../components/EntityCta.astro';
 		const ctrl = new AbortController();
 		const timer = window.setTimeout(() => ctrl.abort(), 15000);
 
-		fetch(url, {
-			headers: {
-				apikey: SUPABASE_ANON_KEY,
-				Authorization: 'Bearer ' + SUPABASE_ANON_KEY,
-			},
-			signal: ctrl.signal,
-		})
+		fetch(url, { headers: API_HEADERS, signal: ctrl.signal })
 			.then((r) => {
 				if (!r.ok) throw new Error('HTTP ' + r.status);
 				return r.json();
@@ -201,6 +300,7 @@ import EntityCta from '../components/EntityCta.astro';
 					return;
 				}
 				renderCenter(rows[0]);
+				fetchTeam(id, rows[0]);
 			})
 			.catch((err) => {
 				// Network failure, timeout or a server error: keep the CTA
@@ -209,6 +309,34 @@ import EntityCta from '../components/EntityCta.astro';
 				setCardState('offline');
 			})
 			.finally(() => window.clearTimeout(timer));
+	}
+
+	// The team is an addition to a page that already works: when it cannot load, the
+	// card simply has no faces and the buttons stay as they are.
+	async function fetchTeam(id: string, c: any) {
+		const ctrl = new AbortController();
+		const timer = window.setTimeout(() => ctrl.abort(), 15000);
+		const get = async (path: string) => {
+			const r = await fetch(SUPABASE_URL + '/rest/v1/' + path, { headers: API_HEADERS, signal: ctrl.signal });
+			if (!r.ok) throw new Error('HTTP ' + r.status);
+			return r.json();
+		};
+		try {
+			const links: any[] = await get('public_center_doctors?select=doctor_id,kind,opening_hours&center_id=eq.' + encodeURIComponent(id));
+			const byId = new Map<string, any>();
+			links.forEach((l) => { if (/^[0-9a-f-]{36}$/i.test(String(l.doctor_id)) && !byId.has(l.doctor_id)) byId.set(l.doctor_id, l); });
+			const ids = [...byId.keys()].slice(0, 40);
+			if (!ids.length) { renderTeam([], c); return; }
+			// select=*: placeholder_style is never named in a select list.
+			const docs: any[] = await get(`public_doctors?select=*&is_active=eq.true&id=in.(${ids.join(',')})`);
+			const team = docs.map((d) => ({ ...d, center_kind: byId.get(d.id)?.kind, center_opening_hours: byId.get(d.id)?.opening_hours }));
+			team.sort((a, b) => ids.indexOf(a.id) - ids.indexOf(b.id));
+			renderTeam(team, c);
+		} catch {
+			renderTeam([], c);
+		} finally {
+			window.clearTimeout(timer);
+		}
 	}
 
 	function setCardState(state: 'loading' | 'ready' | 'offline') {
@@ -220,7 +348,12 @@ import EntityCta from '../components/EntityCta.astro';
 
 	function renderCenter(c: any) {
 		const name = (c.name || '').trim() || 'مركز طبي';
-		byData('center-name').textContent = name;
+		shownName = name;
+		const nameEl = byData('center-name');
+		nameEl.textContent = name;
+		nameEl.style.setProperty('--fs', String(name.length > 30 ? 20 : name.length > 22 ? 23 : 27));
+		byData('hx-name').textContent = name;
+		byData('cd-back-name').textContent = name;
 		document.title = name + ' — DocSera';
 
 		// Type label — map known slugs, fall back to the raw value if it
@@ -231,63 +364,139 @@ import EntityCta from '../components/EntityCta.astro';
 			(rawType && !/^[a-z_]+$/.test(rawType) ? rawType : 'عيادة');
 		byData('center-type').textContent = label;
 
-		// Description column is stored as a Quill Delta document, not plain
-		// text. Parse it; if parsing fails the value is already plain text
-		// (legacy rows). Trivially-empty content (just "…", whitespace, or
-		// empty after Delta extraction) → hide the line entirely so the
-		// layout doesn't carry an awkward placeholder.
-		const desc = extractDescription(c.description);
-		if (desc) {
-			byData('center-description').textContent = desc;
-			byData('center-description').hidden = false;
-		}
+		const specialties = stringList(c.specialties);
+		const specs = byData('center-specs');
+		specs.replaceChildren(...specialties.slice(0, 3).map((t) => {
+			const pill = document.createElement('span');
+			pill.textContent = t;
+			return pill;
+		}));
+		specs.hidden = specialties.length === 0;
 
-		const addrText = formatAddress(c.address);
-		if (addrText) {
-			byData('center-address-text').textContent = addrText;
-			byData('center-address').hidden = false;
-		}
+		const address = parsed(c.address);
+		const addr = formatAddress(address);
+		byData('center-card-place-t').textContent = addr;
+		byData('center-card-place').hidden = !addr;
+		const city = String(address?.city || '').trim();
+		byData('hx-sub').textContent = [label, city].filter(Boolean).join(' · ');
 
+		renderBio(c.description);
+		renderList('specialties', specialties);
+		renderServices(c.offered_services);
+		renderLanguages(c.languages);
+		renderList('insurance', stringList(c.insurance_accepted));
+		renderList('facilities', stringList(c.facilities));
+		renderHours(c.opening_hours);
+
+		byData('place-name').textContent = name;
+		byData('place-addr').textContent = addr;
+		const details = String(address?.details || '').trim();
+		const detailsEl = byData('place-details');
+		detailsEl.textContent = details;
+		detailsEl.hidden = !details || details.toLowerCase() === 'null';
+		showSec('place', !!addr);
+		setMapLink(c.location);
+
+		applyBookable(false);
 		renderImage(c, name);
 		setCardState('ready');
+		revealCards();
 	}
 
-	/// Pull plain text out of the description column. Centers store
-	/// descriptions as a Quill Delta document of the shape:
-	///   {"version":3,"parts":[{"title": ..., "delta": [{"insert": "..."}, ...]}, ...]}
-	/// Walk parts → delta → insert (string-typed only) and concatenate.
-	/// Falls back to the raw string if JSON parsing fails, then strips
-	/// trivial placeholder content (just an ellipsis or whitespace).
-	function extractDescription(raw: any): string {
-		if (!raw) return '';
-		const s = String(raw).trim();
-		if (!s) return '';
+	function renderList(name: string, items: string[]) {
+		showSec(name, items.length > 0);
+		byData('list-' + name).replaceChildren(...items.map((t) => {
+			const li = document.createElement('li');
+			li.textContent = t;
+			return li;
+		}));
+	}
 
-		let text = '';
-		if (s.startsWith('{') || s.startsWith('[')) {
-			try {
-				const doc = JSON.parse(s);
-				const parts = Array.isArray(doc?.parts) ? doc.parts : [];
-				const pieces: string[] = [];
-				for (const part of parts) {
-					if (typeof part?.title === 'string') pieces.push(part.title);
-					const delta = Array.isArray(part?.delta) ? part.delta : [];
-					for (const op of delta) {
-						if (typeof op?.insert === 'string') pieces.push(op.insert);
-					}
-				}
-				text = pieces.join(' ');
-			} catch {
-				text = s; // not valid JSON → treat as plain text
+	const fullName = (d: any) => [d.title, d.first_name, d.middle_name, d.last_name]
+		.map((s) => String(s ?? '').trim())
+		.filter((s) => s && s.toLowerCase() !== 'null')
+		.join(' ');
+
+	function faceImage(d: any): HTMLImageElement {
+		const img = document.createElement('img');
+		const fallback = placeholderFor(d);
+		const path = String(d.doctor_image || '').trim();
+		img.alt = '';
+		img.width = 66;
+		img.height = 66;
+		img.decoding = 'async';
+		if (!path) { img.src = fallback; return img; }
+		img.onerror = () => { img.onerror = null; img.src = fallback; };
+		img.src = path.startsWith('http')
+			? path
+			: SUPABASE_URL + '/storage/v1/object/public/doctor/' + path.split('/').map((seg) => encodeURIComponent(seg)).join('/');
+		return img;
+	}
+
+	function renderTeam(team: any[], c: any) {
+		const faces = byData('center-faces');
+		faces.hidden = team.length === 0;
+		byData('center-open').hidden = team.length > 0;
+		showSec('team', team.length > 0);
+
+		if (team.length) {
+			const shown: HTMLElement[] = team.slice(0, 4).map(faceImage);
+			if (team.length > 4) {
+				const more = document.createElement('em');
+				more.textContent = `+${team.length - 4}`;
+				shown.push(more);
 			}
-		} else {
-			text = s; // already plain text (legacy)
+			byData('faces').replaceChildren(...shown);
+			const specialties = [...new Set(team.map((d) => String(d.specialty || '').trim()).filter(Boolean))];
+			byData('faces-title').textContent = team.length === 1 ? fullName(team[0]) : 'الفريق الطبي';
+			byData('faces-sub').textContent = team.length === 1 ? (specialties[0] || '') : specialties.slice(0, 2).join('، ');
+
+			const row = byData('team');
+			row.classList.toggle('solo', team.length === 1);
+			row.replaceChildren(...team.map((d) => {
+				const tile = document.createElement('div'), b = document.createElement('b');
+				tile.className = 'tc';
+				b.textContent = fullName(d);
+				tile.append(faceImage(d), b);
+				const specialty = String(d.specialty || '').trim();
+				if (specialty) {
+					const s = document.createElement('span');
+					s.textContent = specialty;
+					tile.append(s);
+				}
+				if (d.is_bookable_subscription !== true) {
+					const off = document.createElement('small');
+					off.textContent = 'غير متاح حالياً';
+					tile.append(off);
+				}
+				return tile;
+			}));
+			// A small team sits among the other cards instead of a wide empty row.
+			if (team.length <= 2) byData('pf-grid').prepend(document.querySelector('[data-sec="team"]')!);
 		}
 
-		// Collapse whitespace, strip surrounding/standalone ellipsis chars.
-		text = text.replace(/\s+/g, ' ').trim();
-		if (!text || /^[…\.]+$/.test(text)) return '';
-		return text;
+		renderHours(hoursFor(c, team));
+		const bookable = team.some((d) => d.is_bookable_subscription === true);
+		applyBookable(bookable);
+		showChip('book', bookable);
+		revealCards();
+	}
+
+	// A centre's own hours; for a one-doctor practice, that doctor's hours at this place.
+	function hoursFor(c: any, team: any[]) {
+		if (hasHours(c.opening_hours)) return c.opening_hours;
+		if (team.length !== 1) return null;
+		if (hasHours(team[0].center_opening_hours)) return team[0].center_opening_hours;
+		return team[0].center_kind === 'visiting' ? null : team[0].opening_hours;
+	}
+
+	// A centre nobody can be booked at right now is still opened, never promised a booking.
+	function applyBookable(bookable: boolean) {
+		const label = bookable ? 'احجز موعداً' : 'افتح في التطبيق';
+		document.querySelectorAll('[data-book-label]').forEach((el) => { el.textContent = label; });
+		byData('hx-lead').textContent = bookable ? 'احجز موعدك في' : 'تعرّف على';
+		byData('end-title').textContent = bookable ? `احجز موعدك في ${shownName}` : `تابع ${shownName} على DocSera`;
+		if (ctaTitle) ctaTitle.textContent = bookable ? bookingTitle : 'افتح هذا المركز في تطبيق DocSera';
 	}
 
 	function formatAddress(addr: any): string {
@@ -305,44 +514,24 @@ import EntityCta from '../components/EntityCta.astro';
 		return parts.join('، ');
 	}
 
+	// The centre's picture or logo, else the app's approved centre illustration.
 	function renderImage(c: any, name: string) {
 		const img = byData('center-image') as HTMLImageElement;
-
-		// Prefer center_image (storage path under the center bucket).
-		// Fall back to logo_url which is sometimes an absolute URL set by
-		// admin tools. If both are empty, the building-icon fallback in
-		// the markup stays visible.
-		const path = (c.center_image || '').trim();
-		const logo = (c.logo_url || '').trim();
-
-		// Storage bucket for centers is "center-images" (plural, hyphenated)
-		// — the doctor convention is "doctor" (singular). Different bucket
-		// names per resource type; hardcode the right one here.
-		let url = '';
-		if (path) {
-			url = SUPABASE_URL + '/storage/v1/object/public/center-images/' +
-				path.split('/').map((seg: string) => encodeURIComponent(seg)).join('/');
-		} else if (logo) {
-			// logo_url can be either an absolute URL or a relative storage path.
-			url = logo.startsWith('http')
-				? logo
-				: SUPABASE_URL + '/storage/v1/object/public/center-images/' +
-					logo.split('/').map((seg: string) => encodeURIComponent(seg)).join('/');
-		}
-
-		if (!url) {
-			img.hidden = true;
-			return;
-		}
-
+		const fallback = '/images/placeholders/ph_center.svg';
 		img.alt = name;
 		img.onload = () => img.classList.add('is-loaded');
-		img.onerror = () => { img.hidden = true; };
-		img.src = url;
-	}
 
-	function byData(name: string): HTMLElement {
-		return document.querySelector('[data-' + name + ']') as HTMLElement;
+		// Storage bucket for centers is "center-images" (plural, hyphenated)
+		// — the doctor convention is "doctor" (singular).
+		const storage = (p: string) => SUPABASE_URL + '/storage/v1/object/public/center-images/' +
+			p.split('/').map((seg: string) => encodeURIComponent(seg)).join('/');
+		const path = (c.center_image || '').trim();
+		const logo = (c.logo_url || '').trim();
+		const url = path ? storage(path) : logo ? (logo.startsWith('http') ? logo : storage(logo)) : '';
+
+		if (!url) { img.onerror = null; img.src = fallback; return; }
+		img.onerror = () => { img.onerror = null; img.src = fallback; };
+		img.src = url;
 	}
 
 	function showState(state: string) {
@@ -353,212 +542,224 @@ import EntityCta from '../components/EntityCta.astro';
 </script>
 
 <style>
-	main { overflow-x: hidden; }
+	.dp { --main: #009092; --deep: #007474; --ink: #0E2B2C; --sub: #5B7071; --line: #E2EDED; --border: #E9F2F2; --tint: #E6F6F5; --page: #F4FAF9; --ok: #2E7D32; --okbg: #EAF5EA; min-height: 100vh; min-height: 100svh; color: var(--ink); background: #03191E; }
+	.state[hidden], [hidden] { display: none !important; }
 
-	.center-section {
-		padding: 140px 0 80px;
-		min-height: 80vh;
-		background: radial-gradient(circle at 10% 10%, #fff 0%, #FAFAFA 100%);
-	}
+	.state-loading { min-height: 100vh; min-height: 100svh; display: grid; place-content: center; justify-items: center; gap: 14px; color: #CFEDE9; }
+	.state-loading p { margin: 0; font-size: 1rem; }
+	.dots { display: inline-flex; gap: 7px; }
+	.dots i { width: 7px; height: 7px; background: #5FD6CB; border-radius: 50%; animation: dot 1.1s ease-in-out infinite; }
+	.dots i:nth-child(2) { animation-delay: .14s; }
+	.dots i:nth-child(3) { animation-delay: .28s; }
+	@keyframes dot { 0%, 100% { opacity: .25; } 50% { opacity: 1; } }
 
-	.state { text-align: center; }
-	.state[hidden] { display: none !important; }
+	.btn { display: inline-flex; align-items: center; justify-content: center; gap: 9px; padding: 14px 28px; font: 800 1.1rem Cairo, sans-serif; color: #fff; text-decoration: none; cursor: pointer; background: linear-gradient(150deg, #008485, #007172); border: 0; border-radius: 16px; box-shadow: 0 14px 28px -14px rgba(0, 116, 116, .85); transition: transform .2s ease, box-shadow .2s ease; }
+	.btn:hover { transform: translateY(-1px); box-shadow: 0 18px 32px -14px rgba(0, 116, 116, .95); }
+	.btn:focus-visible { outline: 3px solid #fff; outline-offset: 2px; }
+	.btn svg { width: 21px; height: 21px; fill: none; stroke: currentColor; stroke-width: 2; stroke-linecap: round; stroke-linejoin: round; }
+	.btn-w { color: var(--deep); background: #fff; box-shadow: 0 14px 30px -16px rgba(0, 0, 0, .6); }
 
-	.state-loading p { color: var(--c-text-muted); margin-top: 16px; }
-	.spinner {
-		width: 44px; height: 44px; margin: 0 auto;
-		border: 3px solid var(--c-main-light);
-		border-top-color: var(--c-main);
-		border-radius: 50%;
-		animation: spin 0.8s linear infinite;
-	}
-	@keyframes spin { to { transform: rotate(360deg); } }
+	/* ── the stage: the home page's silk ── */
+	.st { --px: 0; --py: 0; position: relative; display: flex; align-items: center; min-height: 100vh; min-height: 100svh; box-sizing: border-box; padding: 92px 24px 76px; overflow: hidden; color: #fff; }
+	.st-bg { position: absolute; inset: 0; background: radial-gradient(85% 72% at 30% 52%, #0A4A50 0%, rgba(10, 74, 80, 0) 70%), linear-gradient(200deg, #05282E 0%, #031B20 58%, #021418 100%); }
+	.silk { position: absolute; inset: 0; width: 100%; height: 100%; object-fit: cover; object-position: 34% 50%; }
+	.st-in { position: relative; display: grid; grid-template-columns: minmax(0, 1fr) auto; align-items: center; gap: clamp(40px, 7vw, 110px); width: min(1160px, 100%); margin: 0 auto; }
+	.hx { animation: rise .9s cubic-bezier(.2, .7, .2, 1) .1s both; }
+	.hx h1 { margin: 0 0 12px; font-size: clamp(2.2rem, 4.5vw, 3.9rem); font-weight: 800; line-height: 1.22; color: #fff; text-wrap: balance; }
+	.hx h1 span { font-weight: 400; color: #CFEDE9; font-size: .68em; }
+	.hx h1 b { font-weight: 800; }
+	.hx > p { margin: 0 0 26px; font-size: clamp(1.06rem, 1.6vw, 1.28rem); line-height: 1.7; color: #DDF3F1; }
+	.hx-cta { display: flex; flex-wrap: wrap; align-items: center; gap: 12px 22px; }
+	.hx-web { font-size: .98rem; font-weight: 700; color: #CFEFEB; text-underline-offset: 5px; }
+	.hx-web:hover { color: #fff; }
+	@keyframes rise { from { opacity: 0; transform: translateY(14px); } to { opacity: 1; transform: none; } }
 
-	.center-card {
-		display: grid;
-		grid-template-columns: auto 1fr;
-		gap: 32px;
-		align-items: center;
-		background: white;
-		padding: 36px;
-		border-radius: 28px;
-		box-shadow: 0 20px 60px rgba(0, 0, 0, 0.05);
-		margin: 0 auto 24px;
-		max-width: 720px;
-		text-align: right;
-	}
+	/* ── the card ── */
+	.cd-wrap { --cw: min(84vw, 384px, calc((100vh - 190px) * .7)); --u: calc(var(--cw) / 372); position: relative; width: var(--cw); aspect-ratio: 372 / 492; perspective: calc(var(--u) * 1500); touch-action: pan-y; animation: card-in 1.1s cubic-bezier(.16, .8, .24, 1) both; }
+	@supports (height: 100svh) { .cd-wrap { --cw: min(84vw, 384px, calc((100svh - 190px) * .7)); } }
+	@keyframes card-in { from { opacity: 0; transform: translateY(46px) scale(.94); } to { opacity: 1; transform: none; } }
+	.cd { position: absolute; inset: 0; transform-style: preserve-3d; will-change: transform; }
+	.sl, .cd-front, .cd-back, .cd-face { position: absolute; inset: 0; border-radius: calc(var(--u) * 34); }
+	.sl { background: linear-gradient(120deg, #63D2C8, #046A6D 34%, #03484C 66%, #3FB5AD); transform: translateZ(calc(var(--u) * var(--z))); }
+	.cd-front { display: flex; flex-direction: column; padding: calc(var(--u) * 18); box-sizing: border-box; transform-style: preserve-3d; box-shadow: 0 calc(var(--u) * 38) calc(var(--u) * 64) calc(var(--u) * -22) rgba(0, 8, 10, .85); }
+	.cd-top { position: relative; display: flex; align-items: center; justify-content: space-between; transform: translateZ(calc(var(--u) * 16)); }
+	.cd-top img { display: block; width: calc(var(--u) * 104); height: auto; filter: brightness(0) invert(1); }
+	.cd-top button { display: grid; place-items: center; width: calc(var(--u) * 42); height: calc(var(--u) * 42); padding: 0; color: #fff; cursor: pointer; background: rgba(255, 255, 255, .16); border: 1px solid rgba(255, 255, 255, .26); border-radius: calc(var(--u) * 13); }
+	.cd-top button:hover { background: rgba(255, 255, 255, .26); }
+	.cd-top button:focus-visible, .cd-back button:focus-visible { outline: 2px solid #fff; outline-offset: 2px; }
+	.cd-top svg { width: 58%; height: 58%; fill: none; stroke: currentColor; stroke-width: 2; stroke-linecap: round; stroke-linejoin: round; }
+	.cd-sheen { --sx: 30%; --sy: 18%; position: absolute; inset: 0; z-index: 3; overflow: hidden; pointer-events: none; background: radial-gradient(circle at var(--sx) var(--sy), rgba(255, 255, 255, .3), rgba(255, 255, 255, .07) 30%, transparent 56%); border-radius: calc(var(--u) * 34); transform: translateZ(calc(var(--u) * 50)); }
+	@keyframes pulse { from { opacity: 1; } to { opacity: .45; } }
 
-	.center-photo {
-		width: 128px; height: 128px;
-		border-radius: 24px;
-		overflow: hidden;
-		position: relative;
-		flex-shrink: 0;
-		background: var(--c-main-light);
-	}
-	.center-photo img {
-		position: absolute; inset: 0;
-		width: 100%; height: 100%;
-		object-fit: cover;
-		display: block;
-		z-index: 2;
-		opacity: 0;
-		transition: opacity 0.25s ease-out;
-	}
-	.center-photo img.is-loaded { opacity: 1; }
-	.photo-fallback {
-		position: absolute; inset: 0;
-		display: flex; align-items: center; justify-content: center;
-		color: var(--c-main);
-		background: var(--c-main-light);
-		z-index: 1;
-	}
-	.photo-fallback svg {
-		width: 56px;
-		height: 56px;
-	}
+	.cd-back { display: flex; flex-direction: column; align-items: center; justify-content: center; padding: calc(var(--u) * 24); box-sizing: border-box; text-align: center; color: var(--ink); visibility: hidden; background: #fff; box-shadow: inset 0 0 0 1px var(--border), 0 calc(var(--u) * 38) calc(var(--u) * 64) calc(var(--u) * -22) rgba(0, 8, 10, .85); transform: rotateY(180deg) translateZ(calc(var(--u) * 8)); }
+	.cd-blogo { width: calc(var(--u) * 112); height: auto; margin-bottom: calc(var(--u) * 20); }
+	.cd-qr { width: calc(var(--u) * 216); height: calc(var(--u) * 216); padding: calc(var(--u) * 12); background: #fff; border: 1px solid var(--line); border-radius: calc(var(--u) * 22); box-sizing: content-box; }
+	.cd-qr :global(svg) { display: block; width: 100%; height: 100%; }
+	.cd-qr :global(path) { fill: #005C5E; }
+	.cd-back b { margin-top: calc(var(--u) * 16); font-size: calc(var(--u) * 20); font-weight: 800; line-height: 1.4; }
+	.cd-back p { margin: calc(var(--u) * 2) 0 calc(var(--u) * 14); font-size: calc(var(--u) * 13.5); line-height: 1.6; color: var(--sub); }
+	.cd-back button { padding: calc(var(--u) * 7) calc(var(--u) * 16); font: 800 calc(var(--u) * 13.5) Cairo, sans-serif; color: var(--deep); cursor: pointer; background: var(--tint); border: 0; border-radius: calc(var(--u) * 12); }
 
-	.center-info .pill-badge {
-		display: inline-block;
-		background: rgba(0, 144, 146, 0.1);
-		color: var(--c-main);
-		padding: 6px 14px;
-		border-radius: 20px;
-		font-weight: 700;
-		font-size: 0.85rem;
-		margin-bottom: 10px;
-	}
-	.center-info .name {
-		font-size: clamp(1.5rem, 3.2vw, 2rem);
-		font-weight: 800;
-		line-height: 1.2;
-		margin: 0 0 8px;
-		color: var(--c-text);
-	}
-	.center-info .description {
-		color: var(--c-text-muted);
-		font-size: 0.95rem;
-		margin: 0 0 8px;
-		line-height: 1.5;
-		display: -webkit-box;
-		-webkit-line-clamp: 2;
-		line-clamp: 2;
-		-webkit-box-orient: vertical;
-		overflow: hidden;
-	}
-	.center-info .address {
-		color: var(--c-text-muted);
-		font-size: 0.92rem;
-		margin: 6px 0 0;
-		display: inline-flex;
-		align-items: center;
-		gap: 6px;
-		line-height: 1.4;
-	}
-	.center-info .address[hidden] { display: none; }
-	.center-info .address .pin {
-		width: 14px; height: 14px;
-		color: var(--c-main);
-		flex-shrink: 0;
-	}
 
-	/* Skeleton while the profile request is in flight (CTA is already live). */
-	.center-card.is-loading .pill-badge,
-	.center-card.is-loading .name {
-		display: block;
-		color: transparent;
-		background: #EEF4F4;
-		border-radius: 8px;
-		animation: card-pulse 1.1s ease-in-out infinite alternate;
-	}
-	.center-card.is-loading .pill-badge { width: 92px; height: 28px; }
-	.center-card.is-loading .name { width: min(260px, 70vw); height: 1.25em; }
-	@keyframes card-pulse { from { opacity: 1; } to { opacity: 0.45; } }
+	/* ── the centre's card: the app's cover band, its logo riding on the edge ── */
+	.cd-face { overflow: hidden; background: #fff; box-shadow: inset 0 0 0 1px var(--border); }
+	.cv { position: absolute; top: 0; inset-inline: 0; height: calc(var(--u) * 236); overflow: hidden; background: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='34' height='34'%3E%3Cpath d='M17 12v10M12 17h10' stroke='%23fff' stroke-opacity='.09' stroke-width='2.2' stroke-linecap='round'/%3E%3C/svg%3E") 0 0 / calc(var(--u) * 34) calc(var(--u) * 34), linear-gradient(150deg, #0AA3A5, #007677); border-radius: calc(var(--u) * 34) calc(var(--u) * 34) calc(var(--u) * 30) calc(var(--u) * 30); transform: translateZ(calc(var(--u) * 2)); }
+	.cv b { position: absolute; left: calc(var(--u) * -60); bottom: calc(var(--u) * -130); width: calc(var(--u) * 240); height: calc(var(--u) * 240); background: #fff; border-radius: 50%; opacity: .08; }
+	.cd-id { position: absolute; top: calc(var(--u) * 166); inset-inline: calc(var(--u) * 18); bottom: calc(var(--u) * 96); display: flex; flex-direction: column; align-items: flex-start; min-height: 0; transform-style: preserve-3d; }
+	.cd-pills { position: relative; display: flex; flex-wrap: wrap; gap: calc(var(--u) * 6); max-height: calc(var(--u) * 70); margin-top: calc(var(--u) * 14); overflow: hidden; transform: translateZ(calc(var(--u) * 22)); }
+	.cd-pills :global(span) { max-width: 100%; padding: calc(var(--u) * 3) calc(var(--u) * 12); box-sizing: border-box; overflow: hidden; font-size: calc(var(--u) * 13); font-weight: 800; line-height: 1.6; color: #fff; text-overflow: ellipsis; white-space: nowrap; background: rgba(255, 255, 255, .16); border: 1px solid rgba(255, 255, 255, .26); border-radius: calc(var(--u) * 10); }
+	.cd-head { display: flex; align-items: flex-end; justify-content: space-between; width: 100%; transform-style: preserve-3d; }
+	.cd-logo { width: calc(var(--u) * 118); height: calc(var(--u) * 118); padding: calc(var(--u) * 5); overflow: hidden; box-sizing: border-box; background: #fff; border-radius: calc(var(--u) * 34); box-shadow: 0 calc(var(--u) * 16) calc(var(--u) * 28) calc(var(--u) * -12) rgba(0, 46, 48, .62); transform: translateZ(calc(var(--u) * 44)); }
+	.cd-logo img { display: block; width: 100%; height: 100%; object-fit: cover; border-radius: calc(var(--u) * 29); opacity: 0; transition: opacity .45s ease; }
+	.cd-logo img.is-loaded { opacity: 1; }
+	.cd-type { margin-bottom: calc(var(--u) * 4); padding: calc(var(--u) * 3) calc(var(--u) * 13); font-size: calc(var(--u) * 13.5); font-weight: 800; line-height: 1.6; color: var(--deep); background: var(--tint); border-radius: 999px; transform: translateZ(calc(var(--u) * 20)); }
+	.cd-name { --fs: 27; margin: calc(var(--u) * 12) 0 0; font-size: calc(var(--u) * var(--fs)); font-weight: 800; line-height: 1.3; color: var(--ink); text-wrap: balance; transform: translateZ(calc(var(--u) * 28)); }
+	.cd-place { max-width: 100%; margin: calc(var(--u) * 4) 0 0; font-size: calc(var(--u) * 14); font-weight: 700; line-height: 1.55; color: var(--sub); overflow: hidden; text-overflow: ellipsis; white-space: nowrap; transform: translateZ(calc(var(--u) * 18)); }
+	.cd-place { display: flex; align-items: center; gap: calc(var(--u) * 5); }
+	.cd-place svg { flex: none; width: calc(var(--u) * 16); height: calc(var(--u) * 16); fill: none; stroke: var(--main); stroke-width: 2; stroke-linecap: round; stroke-linejoin: round; }
+	.cd-place span { min-width: 0; overflow: hidden; text-overflow: ellipsis; }
+	.cd-offline { margin: calc(var(--u) * 14) 0 0; font-size: calc(var(--u) * 15); line-height: 1.7; color: var(--sub); transform: translateZ(calc(var(--u) * 20)); }
+	.cd-offline button { display: block; margin-top: 6px; padding: 0; font: inherit; font-weight: 800; color: var(--deep); cursor: pointer; background: none; border: 0; text-decoration: underline; text-underline-offset: 4px; }
+	.cd-team { position: absolute; inset-inline: calc(var(--u) * 18); bottom: calc(var(--u) * 18); display: flex; align-items: center; gap: calc(var(--u) * 11); padding: calc(var(--u) * 10) calc(var(--u) * 12); background: #F2FAF9; border: 1px solid #E1F0EE; border-radius: calc(var(--u) * 20); box-shadow: 0 calc(var(--u) * 14) calc(var(--u) * 22) calc(var(--u) * -16) rgba(0, 46, 48, .5); transform: translateZ(calc(var(--u) * 34)); }
+	.cd-open { box-sizing: border-box; font: inherit; text-align: start; cursor: pointer; }
+	.cd-open:focus-visible { outline: 2px solid var(--deep); outline-offset: 2px; }
+	.cd-mark { flex: none; display: grid; place-items: center; width: calc(var(--u) * 46); height: calc(var(--u) * 46); background: var(--tint); border-radius: calc(var(--u) * 14); }
+	.cd-mark img { display: block; width: 58%; height: 58%; }
+	.faces { flex: none; display: flex; }
+	.faces :global(img), .faces :global(em) { display: block; width: calc(var(--u) * 46); height: calc(var(--u) * 46); box-sizing: border-box; object-fit: cover; background: #EAF8F6; border: calc(var(--u) * 3) solid #fff; border-radius: 50%; }
+	.faces :global(img + img), .faces :global(img + em) { margin-inline-start: calc(var(--u) * -15); }
+	.faces :global(em) { display: grid; place-items: center; font-size: calc(var(--u) * 13); font-style: normal; font-weight: 800; color: var(--deep); background: var(--tint); }
+	.ft { min-width: 0; display: grid; }
+	.ft b, .ft small { overflow: hidden; text-overflow: ellipsis; white-space: nowrap; }
+	.ft b { font-size: calc(var(--u) * 14.5); font-weight: 800; line-height: 1.45; color: var(--ink); }
+	.ft small { font-size: calc(var(--u) * 12.5); font-weight: 700; line-height: 1.45; color: var(--sub); }
+	.cd.is-loading .cd-name { color: transparent; background: #EDF4F4; border-radius: calc(var(--u) * 9); animation: pulse 1.2s ease-in-out infinite alternate; }
+	.cd.is-loading .cd-name { width: calc(var(--u) * 220); height: calc(var(--u) * 32); }
+	.cd.is-loading .cd-type { visibility: hidden; }
+	.cd.is-offline .cd-name, .cd.is-offline .cd-pills, .cd.is-offline .cd-place, .cd.is-offline .cd-type { display: none; }
 
-	/* Profile request failed (weak connection). Buttons below still work. */
-	.center-card.is-offline .pill-badge,
-	.center-card.is-offline .name { display: none; }
-	.card-offline {
-		margin: 0;
-		font-size: 1rem;
-		line-height: 1.7;
-		color: var(--c-text-muted);
-	}
-	.card-offline button {
-		display: block;
-		margin-top: 10px;
-		padding: 0;
-		background: none;
-		border: 0;
-		font: inherit;
-		font-weight: 700;
-		color: var(--c-main);
-		cursor: pointer;
-		text-decoration: underline;
-		text-underline-offset: 4px;
-	}
-	.card-offline button:focus-visible { outline: 3px solid var(--c-main); outline-offset: 3px; border-radius: 4px; }
+	/* the team, and the centre's lists */
+	.sc.tm { max-width: 1040px; box-sizing: border-box; margin-inline: auto; }
+	.pf-grid .sc.tm { max-width: none; margin-inline: 0; }
+	.tm-row { display: grid; grid-template-columns: repeat(auto-fit, minmax(148px, 1fr)); gap: 10px; }
+	.tm-row :global(.tc) { display: flex; flex-direction: column; align-items: center; min-width: 0; padding: 14px 10px 13px; text-align: center; background: linear-gradient(180deg, var(--tint), #fff 46px); border: 1px solid var(--border); border-radius: 18px; }
+	.tm-row :global(.tc img) { flex: none; width: 66px; height: 66px; object-fit: cover; background: #EAF8F6; border: 3px solid #fff; border-radius: 50%; box-shadow: 0 8px 16px -8px rgba(0, 60, 62, .55); box-sizing: border-box; }
+	.tm-row :global(.tc b) { margin-top: 8px; font-size: 1rem; font-weight: 800; line-height: 1.45; color: var(--ink); }
+	.tm-row :global(.tc span) { margin-top: 3px; padding: 1px 9px; font-size: .84rem; font-weight: 800; line-height: 1.6; color: var(--deep); background: var(--tint); border-radius: 8px; }
+	.tm-row :global(.tc small) { margin-top: 5px; font-size: .8rem; font-weight: 700; color: var(--sub); }
+	.tm-row:global(.solo) { grid-template-columns: minmax(0, 1fr); }
+	.tm-row:global(.solo) :global(.tc) { display: grid; grid-template-columns: auto minmax(0, 1fr); column-gap: 13px; align-items: center; justify-items: start; padding: 12px 14px; text-align: start; background: #F7FBFB; }
+	.tm-row:global(.solo) :global(.tc img) { grid-row: span 3; }
+	.tm-row:global(.solo) :global(.tc b) { margin-top: 0; }
+	.list { display: flex; flex-wrap: wrap; gap: 7px; margin: 0; padding: 0; list-style: none; }
+	.list :global(li) { padding: 5px 13px; font-size: .94rem; font-weight: 800; line-height: 1.5; color: var(--deep); background: var(--tint); border-radius: 999px; }
 
-	.btn-main {
-		background: var(--c-main);
-		color: white;
-		padding: 14px 32px;
-		border-radius: 12px;
-		font-weight: 700;
-		text-decoration: none;
-		display: inline-block;
-		font-size: 1rem;
-		transition: background 0.2s;
-	}
-	.btn-main:hover { background: var(--c-main-dark); }
+	/* the glass chips of the home page */
+	.chip { position: absolute; z-index: 4; display: flex; align-items: center; gap: 9px; max-width: 230px; padding: 8px 14px 8px 12px; color: var(--ink); background: rgba(255, 255, 255, .92); border: 1px solid rgba(255, 255, 255, .7); border-radius: 15px; box-shadow: 0 18px 34px -18px rgba(0, 12, 14, .85); -webkit-backdrop-filter: blur(10px); backdrop-filter: blur(10px); translate: calc(var(--px) * var(--m) * 1px) calc(var(--py) * var(--m) * 1px); transition: opacity .3s ease .3s, visibility 0s linear .3s; animation: chip-in .8s cubic-bezier(.2, .8, .2, 1) var(--at) backwards, chip-float 6s ease-in-out calc(var(--at) + .8s) infinite; }
+	.chips { display: contents; }
+	.cd-wrap:global(.is-flipped) .chip { opacity: 0; visibility: hidden; pointer-events: none; transition: opacity .18s ease, visibility 0s linear .18s; }
+	.chip i { flex: none; display: grid; place-items: center; width: 34px; height: 34px; color: var(--main); background: var(--tint); border-radius: 10px; }
+	.chip svg { width: 20px; height: 20px; fill: none; stroke: currentColor; stroke-width: 2; stroke-linecap: round; stroke-linejoin: round; }
+	.chip span { min-width: 0; }
+	.chip small, .chip b { display: block; overflow: hidden; text-overflow: ellipsis; white-space: nowrap; }
+	.chip small { font-size: .74rem; font-weight: 700; line-height: 1.35; color: var(--sub); }
+	.chip b { font-size: .9rem; font-weight: 800; line-height: 1.35; }
+	.chip-a { --m: 14; --at: .55s; top: 15%; left: calc(100% - 8px); }
+	.chip-c { --m: -11; --at: .72s; top: 62%; left: calc(100% - 8px); }
+	@media (min-width: 1500px) { .chip-a { --m: -16; left: auto; right: calc(100% - 10px); max-width: 170px; } }
+	@keyframes chip-in { from { opacity: 0; transform: translateY(14px) scale(.92); } to { opacity: 1; transform: none; } }
+	@keyframes chip-float { 0%, 100% { transform: translateY(0); } 50% { transform: translateY(-7px); } }
 
-	.error-card {
-		background: white;
-		padding: 60px 40px;
-		border-radius: 28px;
-		box-shadow: 0 20px 60px rgba(0, 0, 0, 0.04);
-		max-width: 540px;
-		margin: 0 auto;
-	}
-	.error-card h1 {
-		font-size: clamp(1.5rem, 3vw, 2rem);
-		margin: 0 0 14px;
-		color: var(--c-text);
-	}
-	.error-card p {
-		color: var(--c-text-muted);
-		margin: 0 0 28px;
-		font-size: 1rem;
-		line-height: 1.6;
-	}
-	.error-icon {
-		width: 64px;
-		height: 64px;
-		margin: 0 auto 22px;
-		color: var(--c-main);
-		opacity: 0.85;
-	}
-	.error-icon svg { width: 100%; height: 100%; }
+	/* ── the profile, in the app's own cards ── */
+	.pf { position: relative; z-index: 2; margin-top: -30px; padding: clamp(34px, 5vw, 60px) 20px clamp(44px, 6vw, 76px); background: var(--page); border-radius: 32px 32px 0 0; }
+	.pf-grid { columns: 2; column-gap: 16px; max-width: 1040px; margin: 0 auto; }
+	.sc { display: block; margin: 0 0 16px; padding: 20px; overflow: hidden; background: #fff; border: 1px solid var(--border); border-radius: 22px; box-shadow: 0 16px 30px -24px rgba(0, 70, 74, .5); break-inside: avoid; opacity: 0; transform: translateY(16px); transition: opacity .6s ease var(--d, 0ms), transform .6s cubic-bezier(.2, .7, .2, 1) var(--d, 0ms); }
+	.sc:global(.in) { opacity: 1; transform: none; }
+	.sc header { display: flex; align-items: center; gap: 10px; margin-bottom: 12px; }
+	.sc header i { flex: none; display: grid; place-items: center; width: 36px; height: 36px; color: var(--main); background: var(--tint); border-radius: 11px; }
+	.sc header svg { width: 21px; height: 21px; fill: none; stroke: currentColor; stroke-width: 2; stroke-linecap: round; stroke-linejoin: round; }
+	.sc h2 { flex: 1; margin: 0; font-size: 1.14rem; font-weight: 800; line-height: 1.4; color: var(--ink); }
+	.bio { margin: 0; font-size: 1.04rem; line-height: 1.85; color: #33484A; white-space: pre-line; }
+	.bio.short { display: -webkit-box; -webkit-box-orient: vertical; -webkit-line-clamp: 5; overflow: hidden; }
+	.more { display: inline-block; margin-top: 8px; padding: 0; font: 800 .96rem Cairo, sans-serif; color: var(--deep); cursor: pointer; background: none; border: 0; }
+	.more:focus-visible, .week summary:focus-visible, .go:focus-visible { outline: 2px solid var(--deep); outline-offset: 3px; border-radius: 4px; }
+	.now { flex: none; padding: 3px 11px; font-size: .84rem; font-weight: 800; color: var(--sub); background: #F1F5F5; border-radius: 999px; }
+	.now:global(.on) { color: var(--ok); background: var(--okbg); }
+	.today { display: flex; justify-content: space-between; gap: 14px; margin: 0; padding: 11px 14px; font-size: 1rem; line-height: 1.6; background: #F2FAF9; border-radius: 13px; }
+	.today span { font-weight: 800; color: var(--deep); }
+	.today b { font-weight: 700; text-align: end; }
+	.week { margin-top: 10px; }
+	.week summary { display: inline-block; font-size: .96rem; font-weight: 800; color: var(--deep); cursor: pointer; list-style: none; }
+	.week summary::-webkit-details-marker { display: none; }
+	.week dl { display: grid; gap: 3px; margin: 10px 0 0; }
+	.week dl :global(div) { display: flex; justify-content: space-between; gap: 16px; padding: 3px 2px; font-size: .98rem; line-height: 1.7; color: var(--sub); }
+	.week dl :global(div.is-today) { font-weight: 800; color: var(--ink); }
+	.week dl :global(dt), .week dl :global(dd) { margin: 0; }
+	.svc { display: flex; flex-wrap: wrap; gap: 7px; margin: 0; padding: 0; list-style: none; }
+	.svc :global(li) { display: inline-flex; align-items: center; gap: 6px; padding: 6px 12px; font-size: .94rem; font-weight: 700; line-height: 1.5; color: var(--ink); background: #fff; border: 1px solid var(--line); border-radius: 12px; }
+	.svc :global(svg) { flex: none; width: 15px; height: 15px; fill: none; stroke: var(--main); stroke-width: 2.6; stroke-linecap: round; stroke-linejoin: round; }
+	.sc-map { padding: 0; }
+	.map { height: 136px; overflow: hidden; }
+	.map svg { display: block; width: 100%; height: 100%; }
+	.place { display: flex; align-items: center; justify-content: space-between; gap: 12px; padding: 14px 20px 16px; }
+	.place > div { min-width: 0; display: grid; }
+	.place b { font-size: 1.08rem; font-weight: 800; line-height: 1.5; }
+	.place span { font-size: .96rem; line-height: 1.6; color: var(--sub); }
+	.place small { font-size: .88rem; line-height: 1.6; color: var(--sub); }
+	.go { flex: none; display: inline-flex; align-items: center; gap: 6px; padding: 8px 15px; font-size: .94rem; font-weight: 800; color: #fff; text-decoration: none; background: linear-gradient(150deg, #008485, #007172); border-radius: 12px; }
+	.go svg { width: 15px; height: 15px; fill: none; stroke: currentColor; stroke-width: 2.2; stroke-linejoin: round; }
+	.langs { display: flex; flex-wrap: wrap; gap: 7px; }
+	.langs :global(span) { padding: 5px 14px; font-size: .96rem; font-weight: 700; color: var(--deep); background: var(--tint); border-radius: 11px; }
 
-	@media (max-width: 700px) {
-		.center-section { padding: 100px 0 60px; }
-		.center-card {
-			grid-template-columns: 1fr;
-			text-align: center;
-			justify-items: center;
-			padding: 28px 22px;
-			gap: 20px;
-		}
-		.center-info { text-align: center; }
-		.center-info .address { display: inline-flex; justify-content: center; }
-		.center-photo { width: 108px; height: 108px; border-radius: 20px; }
-		.photo-fallback svg { width: 46px; height: 46px; }
-		.center-card.is-loading .pill-badge,
-		.center-card.is-loading .name { margin-inline: auto; }
-		.card-offline button { margin-inline: auto; }
+	.end { padding: clamp(50px, 7vw, 86px) 22px; text-align: center; color: #fff; background: radial-gradient(90% 90% at 50% 120%, rgba(66, 190, 178, .34), transparent 70%), linear-gradient(180deg, #06262B, #0A4148); }
+	.end h2 { margin: 0 0 20px; font-size: clamp(1.7rem, 3.6vw, 2.8rem); font-weight: 800; line-height: 1.3; color: #fff; text-wrap: balance; }
+
+	/* ── the booking steps ── */
+	.bk { position: fixed; z-index: 70; left: 50%; top: 50%; width: min(440px, calc(100vw - 32px)); max-height: 88vh; overflow-y: auto; box-sizing: border-box; padding: 28px 26px; background: #fff; border-radius: 26px; box-shadow: 0 40px 90px -24px rgba(0, 16, 18, .75); opacity: 0; visibility: hidden; transform: translate(-50%, -46%) scale(.97); transition: opacity .28s ease, transform .34s cubic-bezier(.2, .8, .2, 1), visibility 0s linear .34s; }
+	.bk:global(.open) { opacity: 1; visibility: visible; transform: translate(-50%, -50%); transition: opacity .28s ease, transform .34s cubic-bezier(.2, .8, .2, 1); }
+	.bk-x { position: absolute; z-index: 2; top: 14px; inset-inline-end: 14px; display: grid; place-items: center; width: 38px; height: 38px; color: var(--sub); cursor: pointer; background: #F1F4F2; border: 0; border-radius: 50%; }
+	.bk-x:focus-visible { outline: 2px solid var(--deep); outline-offset: 2px; }
+	.bk-x svg { width: 18px; height: 18px; fill: none; stroke: currentColor; stroke-width: 2.2; stroke-linecap: round; }
+	.bk-scrim { position: fixed; z-index: 65; inset: 0; background: rgba(3, 25, 30, .55); -webkit-backdrop-filter: blur(3px); backdrop-filter: blur(3px); opacity: 0; pointer-events: none; transition: opacity .3s ease; }
+	.bk-scrim:global(.open) { opacity: 1; pointer-events: auto; }
+	.bk-bar { display: none; }
+	:global(html.bk-lock), :global(html.bk-lock body) { overflow: hidden; }
+
+	.state-msg { position: relative; display: grid; place-content: center; justify-items: center; min-height: 100vh; min-height: 100svh; box-sizing: border-box; padding: 100px 24px; text-align: center; color: #fff; background: radial-gradient(85% 72% at 50% 46%, #0A4A50 0%, rgba(10, 74, 80, 0) 70%), linear-gradient(200deg, #05282E, #021418); }
+	.state-msg h1 { margin: 0 0 10px; font-size: clamp(2rem, 4.4vw, 3.3rem); font-weight: 800; line-height: 1.3; color: #fff; }
+	.state-msg p { max-width: 32em; margin: 0 0 24px; font-size: 1.1rem; line-height: 1.8; color: #DDF3F1; }
+
+	@media (min-width: 900px) and (max-width: 1180px) { .chip { max-width: 158px; } }
+	@media (max-width: 899px) {
+		.st { align-items: center; padding: 76px 16px 84px; }
+		.st-in { grid-template-columns: minmax(0, 1fr); justify-items: center; gap: 0; }
+		.hx { position: absolute; width: 1px; height: 1px; overflow: hidden; clip-path: inset(50%); animation: none; }
+		.cd-wrap { --cw: min(88vw, 384px, calc((100vh - 182px) * .7)); }
+		.chips { display: none; }
+		.chip { position: relative; inset: auto; flex: 1 1 0; min-width: 0; max-width: none; box-sizing: border-box; padding: 6px 10px 6px 8px; gap: 7px; border-radius: 13px; translate: none; }
+		.chip i { width: 28px; height: 28px; border-radius: 9px; }
+		.chip svg { width: 17px; height: 17px; }
+		.chip small { font-size: .7rem; }
+		.chip b { font-size: .82rem; }
+		.pf-grid { columns: 1; }
+		.bk { inset: auto 0 0; top: auto; left: 0; width: auto; max-height: 88vh; max-height: 88svh; padding: 26px 24px calc(24px + env(safe-area-inset-bottom)); border-radius: 26px 26px 0 0; opacity: 1; transform: translateY(104%); transition: transform .42s cubic-bezier(.2, .8, .2, 1), visibility 0s linear .42s; }
+		.bk:global(.open) { transform: none; transition: transform .42s cubic-bezier(.2, .8, .2, 1); }
+		.bk-bar { position: fixed; z-index: 60; inset: auto 0 0; display: block; padding: 11px 16px calc(11px + env(safe-area-inset-bottom)); background: rgba(255, 255, 255, .86); -webkit-backdrop-filter: blur(14px); backdrop-filter: blur(14px); border-top: 1px solid rgba(14, 43, 44, .08); }
+		.bk-bar .btn { display: flex; width: 100%; max-width: 520px; margin: 0 auto; padding: 13px; }
+		.bk-bar .btn:focus-visible { outline-color: var(--deep); }
+		.end { padding-bottom: 104px; }
+	}
+	@media (max-width: 899px) and (min-height: 720px) {
+		.cd-wrap { --cw: min(88vw, 384px, calc((100vh - 270px) * .7)); margin-bottom: 66px; }
+		.chips { position: absolute; top: calc(100% + 14px); inset-inline: 0; display: flex; gap: 10px; }
+	}
+	@supports (height: 100svh) {
+		@media (max-width: 899px) { .cd-wrap { --cw: min(88vw, 384px, calc((100svh - 182px) * .7)); } }
+		@media (max-width: 899px) and (min-height: 720px) { .cd-wrap { --cw: min(88vw, 384px, calc((100svh - 270px) * .7)); } }
 	}
 	@media (prefers-reduced-motion: reduce) {
-		.center-card.is-loading .pill-badge,
-		.center-card.is-loading .name { animation: none; }
+		.dots i, .hx, .cd-wrap, .chip, .cd.is-loading .cd-name { animation: none; }
+		.sc, .bk, .btn { transition: none; }
+		.sc { opacity: 1; transform: none; }
 	}
 </style>

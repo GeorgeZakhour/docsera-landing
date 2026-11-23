@@ -104,20 +104,20 @@ const I = {
 				<div class="pf-grid">
 					<article class="sc" data-sec="bio" hidden>
 						<header><i><svg viewBox="0 0 24 24" aria-hidden="true" set:html={I.user} /></i><h2>الملف الشخصي</h2></header>
-						<p class="bio" data-doctor-bio></p>
+						<p class="bio" data-bio></p>
 						<button type="button" class="more" data-bio-more hidden>عرض المزيد</button>
 					</article>
 					<article class="sc" data-sec="hours" hidden>
-						<header><i><svg viewBox="0 0 24 24" aria-hidden="true" set:html={I.clock} /></i><h2>ساعات العمل</h2><span class="now" data-doctor-now></span></header>
-						<p class="today"><span>اليوم</span><b data-doctor-today></b></p>
+						<header><i><svg viewBox="0 0 24 24" aria-hidden="true" set:html={I.clock} /></i><h2>ساعات العمل</h2><span class="now" data-now></span></header>
+						<p class="today"><span>اليوم</span><b data-today></b></p>
 						<details class="week">
 							<summary>كل أيام الأسبوع</summary>
-							<dl data-doctor-week></dl>
+							<dl data-week></dl>
 						</details>
 					</article>
 					<article class="sc" data-sec="services" hidden>
 						<header><i><svg viewBox="0 0 24 24" aria-hidden="true" set:html={I.plus} /></i><h2>الخدمات المقدمة</h2></header>
-						<ul class="svc" data-doctor-services></ul>
+						<ul class="svc" data-services></ul>
 						<button type="button" class="more" data-svc-more hidden>عرض الكل</button>
 					</article>
 					<article class="sc sc-map" data-sec="place" hidden>
@@ -132,12 +132,12 @@ const I = {
 						</div>
 						<div class="place">
 							<div><b data-doctor-clinic></b><span data-doctor-address-text></span></div>
-							<a class="go" data-doctor-map href="#" target="_blank" rel="noopener" hidden><svg viewBox="0 0 24 24" aria-hidden="true" set:html={I.go} />خرائط</a>
+							<a class="go" data-map-link href="#" target="_blank" rel="noopener" hidden><svg viewBox="0 0 24 24" aria-hidden="true" set:html={I.go} />خرائط</a>
 						</div>
 					</article>
 					<article class="sc" data-sec="langs" hidden>
 						<header><i><svg viewBox="0 0 24 24" aria-hidden="true" set:html={I.globe} /></i><h2>اللغات المتحدث بها</h2></header>
-						<div class="langs" data-doctor-langs></div>
+						<div class="langs" data-langs></div>
 					</article>
 				</div>
 			</section>
@@ -174,9 +174,9 @@ const I = {
 </Layout>
 
 <script>
-	import qrcode from 'qrcode-generator';
 	import { SUPABASE_URL, SUPABASE_ANON_KEY, attributionSource, fireBeacon } from '../scripts/reach';
 	import { initEntityCta } from '../scripts/entity-cta';
+	import { byData, isPhysician, placeholderFor, renderBio, renderHours, renderLanguages, renderServices, revealCards, setMapLink, showSec, startCard, wireSheet } from '../scripts/site/profile-card';
 
 	// Local previews only: a fictional doctor at /doctor/?preview=1. The flag exists only in
 	// the untracked .env.local, so a production build drops this path entirely.
@@ -274,8 +274,6 @@ const I = {
 		byData('doctor-offline').hidden = state !== 'offline';
 	}
 
-	const isPhysician = (d: any) => ['د.', '.د', 'dr.', 'د', 'doctor'].includes(String(d.title || '').toLowerCase().trim());
-
 	function renderDoctor(d: any) {
 		const titlePart = (d.title || '').trim();
 		const namePart = [d.first_name, d.middle_name, d.last_name]
@@ -349,39 +347,6 @@ const I = {
 		}));
 	}
 
-	function showSec(name: string, on: boolean) {
-		const el = document.querySelector<HTMLElement>(`[data-sec="${name}"]`);
-		if (el) el.hidden = !on;
-	}
-	function showChip(name: string, on: boolean) {
-		const el = document.querySelector<HTMLElement>(`[data-chip="${name}"]`);
-		if (el) el.hidden = !on;
-	}
-
-	// ----- Sections: each one stays hidden when the doctor left it empty ----------
-	function bioText(value: any): string {
-		let d = value;
-		if (typeof d === 'string') {
-			try { d = JSON.parse(d); } catch { return d.trim(); }
-		}
-		const ops = (x: any) => (Array.isArray(x) ? x : (x?.ops || []))
-			.map((o: any) => (typeof o?.insert === 'string' ? o.insert : ''))
-			.join('');
-		if (Array.isArray(d?.parts)) return d.parts.map((p: any) => ops(p?.delta).trim()).filter(Boolean).join('\n\n');
-		return ops(d).trim();
-	}
-
-	function renderBio(value: any) {
-		const text = bioText(value);
-		showSec('bio', !!text);
-		if (!text) return;
-		const el = byData('doctor-bio'), more = byData('bio-more');
-		el.textContent = text;
-		more.hidden = text.length < 230;
-		el.classList.toggle('short', text.length >= 230);
-		more.onclick = () => { el.classList.remove('short'); more.hidden = true; };
-	}
-
 	function renderPlace(d: any) {
 		const clinic = (d.clinic || '').trim(), addr = formatAddress(d.address);
 		byData('doctor-clinic').textContent = clinic || addr;
@@ -392,10 +357,7 @@ const I = {
 		const where = (clinic && city && !clinic.includes(city) ? `${clinic}، ${city}` : clinic || city) || addr;
 		byData('doctor-card-place-t').textContent = where;
 		byData('doctor-card-place').hidden = !where;
-		const lat = Number(d.location?.lat), lng = Number(d.location?.lng), map = byData('doctor-map') as HTMLAnchorElement;
-		const has = Number.isFinite(lat) && Number.isFinite(lng) && !(lat === 0 && lng === 0) && d.location?.lat != null && d.location?.lng != null;
-		map.hidden = !has;
-		if (has) map.href = `https://www.google.com/maps/search/?api=1&query=${lat},${lng}`;
+		setMapLink(d.location);
 	}
 
 	function formatAddress(addr: any): string {
@@ -417,90 +379,6 @@ const I = {
 		return parts.join('، ');
 	}
 
-	const DAYS: [string, string][] = [['sat', 'السبت'], ['sun', 'الأحد'], ['mon', 'الاثنين'], ['tue', 'الثلاثاء'], ['wed', 'الأربعاء'], ['thu', 'الخميس'], ['fri', 'الجمعة']];
-	function clock(t: string): string {
-		const [h, m] = String(t).split(':').map(Number);
-		if (!Number.isFinite(h)) return '';
-		const pm = h >= 12 && h < 24;
-		return `${h % 12 || 12}:${String(m || 0).padStart(2, '0')} ${pm ? 'م' : 'ص'}`;
-	}
-	function ranges(list: any): string {
-		if (!Array.isArray(list)) return '';
-		return list.map((x: any) => (x?.from && x?.to ? `${clock(x.from)} – ${clock(x.to)}` : '')).filter(Boolean).join('،  ');
-	}
-	const minutes = (t: string) => { const [h, m] = String(t).split(':').map(Number); return h * 60 + (m || 0); };
-	function renderHours(hours: any) {
-		const any = !!hours && typeof hours === 'object' && DAYS.some(([k]) => ranges(hours[k]));
-		showSec('hours', any);
-		showChip('hours', any);
-		if (!any) return;
-		const parts = new Intl.DateTimeFormat('en-US', { timeZone: 'Asia/Damascus', weekday: 'short', hour: '2-digit', minute: '2-digit', hourCycle: 'h23' }).formatToParts(new Date());
-		const get = (k: string) => parts.find((p) => p.type === k)?.value || '';
-		const today = get('weekday').toLowerCase(), nowM = Number(get('hour')) * 60 + Number(get('minute'));
-		const list: any[] = Array.isArray(hours[today]) ? hours[today].filter((x: any) => x?.from && x?.to) : [];
-		const open = list.find((x) => nowM >= minutes(x.from) && nowM < minutes(x.to));
-		const next = list.find((x) => nowM < minutes(x.from));
-		const status = open ? `مفتوح حتى ${clock(open.to)}` : next ? `يفتح اليوم ${clock(next.from)}` : 'مغلق الآن';
-		const pill = byData('doctor-now');
-		pill.textContent = status;
-		pill.classList.toggle('on', !!open);
-		byData('doctor-today').textContent = ranges(list) || 'مغلق';
-		byData('chip-hours-k').textContent = open ? 'مفتوح الآن' : 'اليوم';
-		byData('chip-hours').textContent = open ? `حتى ${clock(open.to)}` : next ? `يفتح ${clock(next.from)}` : (list.length ? 'انتهى الدوام' : 'مغلق');
-		const week = byData('doctor-week');
-		week.replaceChildren();
-		DAYS.forEach(([key, label]) => {
-			const line = document.createElement('div'), dt = document.createElement('dt'), dd = document.createElement('dd');
-			if (key === today) line.className = 'is-today';
-			dt.textContent = label;
-			dd.textContent = ranges(hours[key]) || 'مغلق';
-			line.append(dt, dd);
-			week.append(line);
-		});
-	}
-
-	function serviceTitles(v: any): string[] {
-		let d = v;
-		if (typeof d === 'string') {
-			try { d = JSON.parse(d); } catch { return []; }
-		}
-		if (Array.isArray(d)) return d.map((x: any) => (typeof x === 'string' ? x : x?.title || '')).map((s: string) => s.trim()).filter(Boolean);
-		if (d && typeof d === 'object') return Object.keys(d).map((s) => s.trim()).filter(Boolean);
-		return [];
-	}
-	function renderServices(v: any) {
-		const items = serviceTitles(v);
-		showSec('services', items.length > 0);
-		showChip('svc', items.length > 0);
-		if (!items.length) return;
-		byData('chip-svc').textContent = items[0];
-		const ul = byData('doctor-services'), more = byData('svc-more');
-		const draw = (list: string[]) => ul.replaceChildren(...list.map((t) => {
-			const li = document.createElement('li');
-			li.innerHTML = '<svg viewBox="0 0 24 24" aria-hidden="true"><path d="m5 12.500 4.600 4.600L19 7.600"/></svg>';
-			li.append(document.createTextNode(t));
-			return li;
-		}));
-		draw(items.slice(0, 6));
-		more.hidden = items.length <= 6;
-		more.onclick = () => { draw(items); more.hidden = true; };
-	}
-
-	const LANGS: Record<string, string> = { ar: 'العربية', en: 'الإنجليزية', fr: 'الفرنسية', de: 'الألمانية', ru: 'الروسية', tr: 'التركية', es: 'الإسبانية', it: 'الإيطالية', fa: 'الفارسية', ku: 'الكردية', hy: 'الأرمنية' };
-	function renderLanguages(v: any) {
-		const list = (Array.isArray(v) ? v : []).map((x: any) => String(x).trim()).filter(Boolean).map((x: string) => LANGS[x.toLowerCase()] || x);
-		showSec('langs', list.length > 0);
-		byData('doctor-langs').replaceChildren(...list.map((l) => { const s = document.createElement('span'); s.textContent = l; return s; }));
-	}
-
-	// The photo, or the app's approved illustration: never initials.
-	function placeholderFor(d: any): string {
-		const g = String(d.gender || '').toLowerCase().trim();
-		const male = g === 'ذكر' || g === 'male';
-		const hijab = !male && String(d.placeholder_style || '').toLowerCase().trim() === 'hijab';
-		const who = isPhysician(d) ? 'doctor' : 'specialist';
-		return `/images/placeholders/ph_${who}_${male ? 'male' : hijab ? 'female_hijab' : 'female'}.svg`;
-	}
 	function renderImage(d: any, fullName: string) {
 		const img = byData('doctor-image') as HTMLImageElement;
 		const fallback = placeholderFor(d);
@@ -513,116 +391,6 @@ const I = {
 		img.onerror = () => { img.onerror = null; img.src = fallback; };
 		img.src = SUPABASE_URL + '/storage/v1/object/public/doctor/' +
 			path.split('/').map((seg: string) => encodeURIComponent(seg)).join('/');
-	}
-
-	// ----- The card: tilt, depth, sheen, and a turn to its QR ------
-	function startCard() {
-		const stage = byData('stage'), wrap = byData('cd-wrap'), card = byData('cd');
-		const front = byData('cd-front'), back = byData('cd-back'), sheen = byData('cd-sheen');
-		const still = matchMedia('(prefers-reduced-motion: reduce)').matches;
-		let rx = still ? 0 : 15, ry = still ? 0 : -26, tx = 0, ty = 0, flip = 0, flipTo = 0, sx = 30, sy = 18, tsx = 30, tsy = 18;
-		let lastInput = 0, inView = true, running = false, showing = true, qrDone = false;
-		const drawQr = () => {
-			if (qrDone) return;
-			qrDone = true;
-			const qr = qrcode(0, 'M');
-			qr.addData(window.location.href);
-			qr.make();
-			byData('cd-qr').innerHTML = qr.createSvgTag({ scalable: true, margin: 0 });
-		};
-		const apply = () => {
-			const a = ry + flip;
-			card.style.transform = `rotateX(${rx.toFixed(2)}deg) rotateY(${a.toFixed(2)}deg)`;
-			const faceFront = Math.cos((a * Math.PI) / 180) >= 0;
-			if (faceFront !== showing) {
-				showing = faceFront;
-				front.style.visibility = faceFront ? 'visible' : 'hidden';
-				back.style.visibility = faceFront ? 'hidden' : 'visible';
-			}
-			sheen.style.setProperty('--sx', `${sx.toFixed(1)}%`);
-			sheen.style.setProperty('--sy', `${sy.toFixed(1)}%`);
-		};
-		const tick = (t: number) => {
-			if (!inView) { running = false; return; }
-			if (performance.now() - lastInput > 1600 && !still) {
-				tx = Math.cos(t / 3100) * 3.4;
-				ty = Math.sin(t / 2300) * 8;
-				tsx = 50 + ty * 3.4;
-				tsy = 26 - tx * 4;
-			}
-			rx += (tx - rx) * 0.075;
-			ry += (ty - ry) * 0.075;
-			flip += (flipTo - flip) * 0.1;
-			sx += (tsx - sx) * 0.1;
-			sy += (tsy - sy) * 0.1;
-			apply();
-			requestAnimationFrame(tick);
-		};
-		const run = () => { if (!running && inView && !still) { running = true; requestAnimationFrame(tick); } };
-		const aim = (x: number, y: number) => {
-			const r = wrap.getBoundingClientRect();
-			const nx = Math.max(-1, Math.min(1, (x - r.left - r.width / 2) / (r.width * 0.75)));
-			const ny = Math.max(-1, Math.min(1, (y - r.top - r.height / 2) / (r.height * 0.75)));
-			ty = nx * 17; tx = -ny * 12;
-			tsx = 50 + nx * 46; tsy = 40 + ny * 46;
-			stage.style.setProperty('--px', nx.toFixed(3));
-			stage.style.setProperty('--py', ny.toFixed(3));
-			lastInput = performance.now();
-		};
-		if (!still) {
-			stage.addEventListener('pointermove', (e) => { if (e.pointerType === 'mouse') aim(e.clientX, e.clientY); });
-			wrap.addEventListener('pointerdown', (e) => { if (e.pointerType !== 'mouse') aim(e.clientX, e.clientY); });
-			wrap.addEventListener('pointermove', (e) => { if (e.pointerType !== 'mouse') aim(e.clientX, e.clientY); });
-			new IntersectionObserver(([e]) => { inView = e.isIntersecting; run(); }).observe(stage);
-		}
-		document.querySelectorAll<HTMLElement>('[data-cd-flip]').forEach((b) => b.addEventListener('click', () => {
-			drawQr();
-			flipTo = flipTo === 0 ? 180 : 0;
-			wrap.classList.toggle('is-flipped', flipTo !== 0);
-			if (still) { flip = flipTo; apply(); }
-		}));
-		apply();
-		run();
-	}
-
-	function revealCards() {
-		const cards = Array.from(document.querySelectorAll<HTMLElement>('.sc:not([hidden])'));
-		if (matchMedia('(prefers-reduced-motion: reduce)').matches) { cards.forEach((c) => c.classList.add('in')); return; }
-		const io = new IntersectionObserver((es) => es.forEach((e) => {
-			if (e.isIntersecting) { e.target.classList.add('in'); io.unobserve(e.target); }
-		}), { rootMargin: '0px 0px -6% 0px' });
-		cards.forEach((c, i) => { c.style.setProperty('--d', `${(i % 2) * 90}ms`); io.observe(c); });
-	}
-
-	// ----- The booking steps rise as a sheet (a dialog on wide screens) -----
-	function wireSheet() {
-		const sheet = document.querySelector<HTMLElement>('[data-book-sheet]')!;
-		const scrim = document.querySelector<HTMLElement>('[data-book-scrim]')!;
-		const closeBtn = document.querySelector<HTMLElement>('[data-book-close]')!;
-		let opener: HTMLElement | null = null;
-		const setOpen = (on: boolean, focus = true) => {
-			sheet.classList.toggle('open', on);
-			scrim.classList.toggle('open', on);
-			document.documentElement.classList.toggle('bk-lock', on);
-			if (on) { sheet.setAttribute('role', 'dialog'); sheet.setAttribute('aria-modal', 'true'); sheet.setAttribute('aria-label', 'احجز موعداً'); }
-			else { sheet.removeAttribute('role'); sheet.removeAttribute('aria-modal'); sheet.removeAttribute('aria-label'); }
-			if (focus) (on ? closeBtn : opener)?.focus();
-		};
-		document.querySelectorAll<HTMLElement>('[data-book-open]').forEach((b) => b.addEventListener('click', () => { opener = b; setOpen(true); }));
-		closeBtn.addEventListener('click', () => setOpen(false));
-		scrim.addEventListener('click', () => setOpen(false));
-		document.addEventListener('keydown', (e) => { if (e.key === 'Escape' && sheet.classList.contains('open')) setOpen(false); });
-		// Back from the store, step 2 is the thing to press: bring it back.
-		const back = () => {
-			if (document.visibilityState === 'visible' && sheet.querySelector('[data-step-open].is-ready')) setOpen(true, false);
-		};
-		document.addEventListener('visibilitychange', back);
-		back();
-	}
-
-	// ----- Tiny DOM helpers -----------------------------------
-	function byData(name: string): HTMLElement {
-		return document.querySelector('[data-' + name + ']') as HTMLElement;
 	}
 
 	function showState(state: string) {
