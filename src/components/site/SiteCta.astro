@@ -1,0 +1,24 @@
+---
+// The closing call to action of the website's inner pages: a calm teal dawn.
+import StoreBadges from '../StoreBadges.astro';
+import { WEB_APP_URL } from '../../config/links';
+
+const { title = 'ابدأ رحلتك الصحية اليوم' } = Astro.props as { title?: string };
+---
+<section class="cta">
+	<h2>{title}</h2>
+	<StoreBadges size="lg" adaptive />
+	<div class="cta-more">
+		<a href={WEB_APP_URL}>أو استخدمه من المتصفح دون تثبيت</a>
+		<a href="/download">كل طرق التحميل</a>
+	</div>
+</section>
+
+<style>
+	.cta { position: relative; padding: clamp(70px, 11vw, 130px) 22px clamp(64px, 9vw, 110px); text-align: center; color: #fff; overflow: hidden;
+		background: radial-gradient(90% 80% at 50% 118%, rgba(255, 214, 170, .34), rgba(66, 190, 178, .3) 42%, transparent 72%), linear-gradient(180deg, #06262B, #0A4148 72%, #0E5C60); }
+	.cta h2 { position: relative; margin: 0 0 26px; font-size: clamp(2rem, 4.8vw, 3.8rem); font-weight: 800; line-height: 1.2; color: #fff; text-wrap: balance; }
+	.cta-more { position: relative; display: flex; flex-wrap: wrap; justify-content: center; gap: 8px 22px; margin-top: 18px; }
+	.cta-more a { color: #DDF5F2; font-weight: 700; font-size: .98rem; text-underline-offset: 4px; }
+	.cta-more a:hover { color: #fff; }
+</style>

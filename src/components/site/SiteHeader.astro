@@ -1,0 +1,68 @@
+---
+// The website's header: a floating glass bar. On phones the links live in a small menu
+// (a <details>, so it works without JavaScript).
+import { WEB_APP_URL } from '../../config/links';
+
+const { current = '' } = Astro.props as { current?: string };
+const LINKS = [
+	['features', '/features', 'عن التطبيق'],
+	['about', '/about', 'من نحن'],
+	['help', '/help', 'المساعدة'],
+	['pro', '/pro', 'للأطباء'],
+];
+---
+<header class="h">
+	<a href="/" class="h-logo" aria-label="DocSera"><img src="/images/docsera_main.svg" alt="DocSera" width="101" height="16" /></a>
+	<nav class="h-nav" aria-label="الأقسام">
+		{LINKS.map(([key, href, label]) => <a href={href} aria-current={key === current ? 'page' : undefined}>{label}</a>)}
+	</nav>
+	<div class="h-end">
+		<a href="/download" class="h-cta">حمّل التطبيق</a>
+		<details class="h-menu" data-h-menu>
+			<summary aria-label="القائمة" title="القائمة"><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M4 7h16M4 12h16M4 17h16" /></svg></summary>
+			<nav class="h-drop" aria-label="القائمة">
+				<a href="/">الرئيسية</a>
+				{LINKS.map(([key, href, label]) => <a href={href} aria-current={key === current ? 'page' : undefined}>{label}</a>)}
+				<a href={WEB_APP_URL} class="h-web">افتحه من المتصفح</a>
+			</nav>
+		</details>
+	</div>
+</header>
+
+<script is:inline>
+	(function () {
+		var m = document.querySelector('[data-h-menu]');
+		if (!m) return;
+		document.addEventListener('click', function (e) { if (m.open && !m.contains(e.target)) m.open = false; });
+		document.addEventListener('keydown', function (e) { if (e.key === 'Escape' && m.open) { m.open = false; m.querySelector('summary').focus(); } });
+	})();
+</script>
+
+<style>
+	.h { position: fixed; z-index: 50; top: 10px; left: 50%; translate: -50% 0; width: min(1180px, calc(100% - 20px)); height: 56px;
+		display: flex; align-items: center; justify-content: space-between; gap: 16px; padding-inline: 18px 8px;
+		background: rgba(255, 255, 255, .86); backdrop-filter: blur(14px); -webkit-backdrop-filter: blur(14px);
+		border: 1px solid rgba(0, 144, 146, .12); border-radius: 18px; box-shadow: 0 12px 30px -20px rgba(0, 60, 62, .5); }
+	.h-logo img { display: block; height: 16px; width: auto; }
+	.h-nav { display: flex; gap: 26px; }
+	.h-nav a { color: #2D3436; font-weight: 700; font-size: .96rem; text-decoration: none; }
+	.h-nav a:hover, .h-nav a[aria-current] { color: var(--c-main-dark); }
+	.h-end { display: flex; align-items: center; gap: 6px; }
+	.h-cta { background: var(--c-main-dark); color: #fff; font-weight: 700; font-size: .92rem; padding: 9px 16px; border-radius: 12px; text-decoration: none; white-space: nowrap; }
+	.h-menu { display: none; position: static; }
+	.h-menu summary { display: grid; place-items: center; width: 40px; height: 40px; border-radius: 12px; color: #0F1A22; cursor: pointer; list-style: none; }
+	.h-menu summary::-webkit-details-marker { display: none; }
+	.h-menu summary:focus-visible { outline: 2px solid var(--c-main-dark); outline-offset: 1px; }
+	.h-menu[open] summary { background: #E0F2F2; color: var(--c-main-dark); }
+	.h-menu svg { width: 22px; height: 22px; fill: none; stroke: currentColor; stroke-width: 2.2; stroke-linecap: round; }
+	.h-drop { position: absolute; top: calc(100% + 8px); inset-inline: 0; display: grid; padding: 8px; background: #fff; border: 1px solid rgba(0, 144, 146, .12); border-radius: 18px; box-shadow: 0 22px 44px -18px rgba(0, 40, 44, .55); }
+	.h-drop a { padding: 12px 14px; border-radius: 12px; color: #2D3436; font-weight: 700; font-size: 1.04rem; text-decoration: none; }
+	.h-drop a:hover, .h-drop a[aria-current] { background: #EEF7F7; color: var(--c-main-dark); }
+	.h-drop .h-web { margin-top: 4px; border-top: 1px solid #EDF1F2; border-radius: 0 0 12px 12px; color: var(--c-main-dark); }
+
+	@media (max-width: 899px) {
+		.h-nav { display: none; }
+		.h-menu { display: block; }
+		.h-cta { padding: 9px 13px; font-size: .88rem; }
+	}
+</style>

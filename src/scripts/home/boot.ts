@@ -1,6 +1,7 @@
 // The home page story «أربع بتلات»: one scroll drives everything on the stage.
 // Loaded async and alone (like flower-boot on /download). Without it, or with
 // reduced motion, the page is a plain readable column.
+import { mountAppPhone } from '../site/app-phone';
 import { mountDial, type DialPose } from './dial';
 
 const clamp = (v: number, a = 0, b = 1) => Math.min(b, Math.max(a, v));
@@ -294,90 +295,30 @@ function startStory(): void {
 
 function startTry(): void {
 	const root = q('[data-try]');
-	if (!root) return;
-	const tabs = qa<HTMLButtonElement>('[data-tab]', root), pages = qa<HTMLElement>('[data-try-shot]', root);
-	const phone = root.querySelector<HTMLElement>('[data-try-phone]'), hint = root.querySelector<HTMLElement>('[data-try-hint]');
-	const status = root.querySelector<HTMLImageElement>('img[data-status]');
-	if (!phone || !hint || !pages.length) return;
-	const scrollers = pages.map((p) => p.querySelector<HTMLElement>('[data-pg-scroll]')!);
-	const n = pages.length;
-	// The first screen of a page comes with the tab; its full length only once the visitor takes the phone.
-	const load = (i: number) => pages[(i + n) % n].querySelectorAll<HTMLImageElement>('img[data-src]').forEach((img) => {
-		img.src = img.dataset.src || '';
-		img.removeAttribute('data-src');
-	});
-	const loadFull = (i: number) => {
-		const img = pages[i].querySelector<HTMLImageElement>('img[data-full]');
-		if (!img) return;
-		img.addEventListener('load', () => img.classList.add('in'), { once: true });
-		img.src = img.dataset.full || '';
-		img.removeAttribute('data-full');
-	};
-	let cur = 0, timer = 0, auto = true, engaged = false, hinted = false, inView = false, canScroll = false;
-	const refreshHint = () => hint.classList.toggle('show', inView && !hinted && pages[cur].dataset.long === '1');
-	const engage = () => {
-		if (!engaged && status?.dataset.status) { status.src = status.dataset.status; status.removeAttribute('data-status'); }
-		engaged = true;
-		auto = false;
-		clearInterval(timer);
-		loadFull(cur);
-	};
+	const el = root && q('[data-try-phone]', root);
+	if (!root || !el) return;
+	const tabs = qa<HTMLButtonElement>('[data-tab]', root);
+	let timer = 0, auto = true;
+	const phone = mountAppPhone(el, () => { auto = false; clearInterval(timer); });
 	const show = (i: number, scroll = false) => {
-		cur = i;
-		load(i); load(i + 1);
-		if (engaged) loadFull(i);
-		scrollers[i].scrollTop = 0;
-		phone.classList.remove('scrolled');
-		pages.forEach((p, k) => p.classList.toggle('on', k === i));
-		scrollers.forEach((s, k) => { s.tabIndex = k === i ? 0 : -1; });
+		phone.show(i, (i + 1) % phone.size);
 		tabs.forEach((t, k) => {
 			t.classList.toggle('on', k === i);
 			t.setAttribute('aria-pressed', String(k === i));
 		});
-		refreshHint();
 		if (scroll) {
 			const bar = tabs[i].parentElement!;
 			bar.scrollTo({ left: tabs[i].offsetLeft - bar.clientWidth / 2 + tabs[i].offsetWidth / 2, behavior: 'smooth' });
 		}
 	};
-	tabs.forEach((t, i) => t.addEventListener('click', () => { engage(); show(i, true); }));
-	scrollers.forEach((s, i) => {
-		s.addEventListener('scroll', () => {
-			if (i !== cur) return;
-			phone.classList.toggle('scrolled', s.scrollTop > 26);
-			if (s.scrollTop > 8 && !hinted) { hinted = true; refreshHint(); }
-		}, { passive: true });
-		s.addEventListener('focus', engage);
-	});
-	// The phone scrolls only once it is on screen, so a thumb passing over it keeps moving the page.
-	new IntersectionObserver(([e]) => {
-		canScroll = e.intersectionRect.height >= Math.min(e.boundingClientRect.height, innerHeight) * 0.85;
-		phone.classList.toggle('can-scroll', canScroll);
-	}, { threshold: [0, 0.25, 0.5, 0.7, 0.85, 0.95, 1] }).observe(phone);
-	['touchstart', 'wheel'].forEach((ev) => phone.addEventListener(ev, () => { if (canScroll) engage(); }, { passive: true }));
-	// With a mouse: drag the page like a finger would.
-	let drag: { y: number; top: number } | null = null;
-	phone.addEventListener('pointerdown', (e) => {
-		if (e.pointerType !== 'mouse' || e.button !== 0 || !canScroll) return;
-		engage();
-		drag = { y: e.clientY, top: scrollers[cur].scrollTop };
-		phone.setPointerCapture(e.pointerId);
-		phone.classList.add('drag');
-	});
-	phone.addEventListener('pointermove', (e) => { if (drag) scrollers[cur].scrollTop = drag.top - (e.clientY - drag.y); });
-	const endDrag = () => { drag = null; phone.classList.remove('drag'); };
-	phone.addEventListener('pointerup', endDrag);
-	phone.addEventListener('pointercancel', endDrag);
+	tabs.forEach((t, i) => t.addEventListener('click', () => { phone.engage(false); show(i, true); }));
 	const reduce = matchMedia('(prefers-reduced-motion: reduce)').matches;
 	new IntersectionObserver((es) => {
 		clearInterval(timer);
-		inView = es[0].isIntersecting;
-		refreshHint();
-		if (!inView) return;
-		load(cur);
-		pages[cur].classList.add('on');
-		scrollers[cur].tabIndex = 0;
-		if (auto && !reduce) timer = window.setInterval(() => show((cur + 1) % n, true), 2600);
+		phone.setInView(es[0].isIntersecting);
+		if (!es[0].isIntersecting) return;
+		phone.activate();
+		if (auto && !reduce) timer = window.setInterval(() => show((phone.current + 1) % phone.size, true), 2600);
 	}, { rootMargin: '200px 0px' }).observe(root);
 }
 

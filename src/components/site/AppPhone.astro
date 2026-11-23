@@ -1,0 +1,52 @@
+---
+// A phone that really scrolls the app's pages; driven by scripts/site/app-phone.ts.
+// Size comes from the parent through --phone-w / --phone-h / --phone-m.
+// `eager`: the first page is part of the first view, so it loads with the document.
+import { APP_PAGES } from '../../data/appPages';
+
+const { eager = false } = Astro.props as { eager?: boolean };
+const base = '/images/home/try';
+---
+<div class="try-phone" data-try-phone><div class="ph-in">
+	{APP_PAGES.map(({ label, id, h, foot, long }, i) => {
+		const now = eager && i === 0;
+		return (
+			<div class:list={['pg', { on: now }]} data-try-shot data-long={long ? '1' : undefined}>
+				<div class="pg-scroll" data-pg-scroll role="region" aria-label={`شاشة ${label}`} tabindex="-1">
+					<div class="pg-long" style={`aspect-ratio:640/${h}`}>
+						<img class="pg-first" src={now ? `${base}/${id}.webp` : undefined} data-src={now ? undefined : `${base}/${id}.webp`} fetchpriority={now ? 'high' : undefined} alt="" width="640" height="1387" decoding="async" draggable="false" />
+						{long && <img class="pg-full" data-full={`${base}/${id}-full.webp`} alt="" width="640" height={h} decoding="async" draggable="false" />}
+					</div>
+				</div>
+				{foot > 0 && <img class="pg-foot" src={now ? `${base}/${id}-foot.webp` : undefined} data-src={now ? undefined : `${base}/${id}-foot.webp`} alt="" width="640" height={foot} decoding="async" draggable="false" />}
+			</div>
+		);
+	})}
+	<img class="pg-status" data-status={`${base}/status.webp`} alt="" width="640" height="88" decoding="async" />
+	<div class="try-hint" data-try-hint aria-hidden="true">مرّر الشاشة<svg viewBox="0 0 24 24"><path d="M12 5v13M6.5 12.5 12 18l5.5-5.5" /></svg></div>
+</div></div>
+
+<style>
+	.try-phone { grid-area: phone; width: var(--phone-w, min(66vw, 290px)); height: var(--phone-h, auto); aspect-ratio: 1290 / 2796; margin: var(--phone-m, 28px auto 22px); padding: 8px; background: #000; border-radius: 40px; box-shadow: 0 0 0 1px rgba(255, 255, 255, .14), 0 34px 70px -24px rgba(0, 200, 200, .35); }
+	.ph-in { position: relative; width: 100%; height: 100%; overflow: hidden; border-radius: 33px; background: #E9F5F5; }
+	.pg { position: absolute; inset: 0; opacity: 0; visibility: hidden; transition: opacity .35s ease, visibility 0s linear .35s; }
+	.pg:global(.on) { opacity: 1; visibility: visible; transition: opacity .35s ease; }
+	.pg-scroll { position: absolute; inset: 0; overflow: hidden; background: #F6FBFB; scrollbar-width: none; outline: none; }
+	.pg-scroll::-webkit-scrollbar { display: none; }
+	.try-phone:global(.can-scroll) .pg-scroll { overflow-y: auto; touch-action: pan-y; }
+	.try-phone:global(.can-scroll) { cursor: grab; }
+	.try-phone:global(.drag) { cursor: grabbing; user-select: none; }
+	.pg-long { position: relative; width: 100%; }
+	.pg img { position: absolute; left: 0; width: 100%; height: auto; -webkit-user-drag: none; user-select: none; }
+	.pg-first { top: 0; }
+	.pg-full { top: 0; opacity: 0; }
+	.pg-full:global(.in) { opacity: 1; }
+	.pg-foot { bottom: 0; pointer-events: none; -webkit-mask-image: linear-gradient(to top, #000 calc(100% - 16px), transparent); mask-image: linear-gradient(to top, #000 calc(100% - 16px), transparent); }
+	.pg-status { position: absolute; top: 0; left: 0; z-index: 2; width: 100%; height: auto; pointer-events: none; opacity: 0; transition: opacity .2s ease; -webkit-mask-image: linear-gradient(to bottom, #000 74%, transparent); mask-image: linear-gradient(to bottom, #000 74%, transparent); }
+	.try-phone:global(.scrolled) .pg-status { opacity: 1; }
+	.try-hint { position: absolute; z-index: 3; left: 50%; bottom: 15%; display: inline-flex; align-items: center; gap: 5px; padding: 6px 13px; font: 700 .78rem Cairo, sans-serif; white-space: nowrap; color: #fff; background: rgba(6, 42, 48, .88); border-radius: 999px; box-shadow: 0 8px 22px -8px rgba(0, 0, 0, .55); pointer-events: none; opacity: 0; transform: translate(-50%, 6px); transition: opacity .25s ease, transform .25s ease; }
+	.try-hint:global(.show) { opacity: 1; transform: translate(-50%, 0); }
+	.try-hint svg { width: 14px; height: 14px; fill: none; stroke: currentColor; stroke-width: 2.6; stroke-linecap: round; stroke-linejoin: round; }
+	@media (prefers-reduced-motion: no-preference) { .try-hint:global(.show) svg { animation: try-nudge 1.3s ease-in-out infinite; } }
+	@keyframes try-nudge { 0%, 100% { transform: translateY(-1.5px); } 50% { transform: translateY(2.5px); } }
+</style>
