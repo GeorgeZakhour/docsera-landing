@@ -102,7 +102,7 @@ const MORE = [
 	<main class="m">
 		<section class="st" data-story>
 			<div class="stick" data-stick>
-				<div class="bg bg-hero" data-bg-hero aria-hidden="true"><img class="silk" data-late="/images/home/3d/silk-860.webp 860w, /images/home/3d/silk-1600.webp 1600w" sizes="max(100vw, 160vh)" alt="" width="1600" height="1000" decoding="async" /></div>
+				<div class="bg bg-hero" data-bg-hero aria-hidden="true"><img class="shot" data-hero-shot alt="" width="1600" height="1000" decoding="async" /></div>
 				<div class="bg bg-dusk" data-dusk aria-hidden="true"></div>
 				<div class="bg bg-twi" data-twi aria-hidden="true"></div>
 				<div class="bg bg-night" data-night aria-hidden="true"></div>
@@ -126,13 +126,6 @@ const MORE = [
 					<img data-vault-src="/images/home/3d/vault-base-420.webp 420w, /images/home/3d/vault-base-760.webp 760w" sizes="(max-width: 899px) 180px, 340px" alt="" width="760" height="760" decoding="async" />
 					<img class="v-dial" data-vault-dial data-vault-src="/images/home/3d/vault-dial-420.webp 420w, /images/home/3d/vault-dial-760.webp 760w" sizes="(max-width: 899px) 180px, 340px" alt="" width="760" height="760" decoding="async" />
 					<i class="v-glow"></i>
-				</div>
-				<div class="rig fx" data-rig-box aria-hidden="true">
-					<div class="a-hero" data-a-hero></div>
-					<div class="r3" style="left:21.63%;top:0;width:74.61%" data-rig="0"><img data-late="/images/home/3d/laptop-sm.webp 567w, /images/home/3d/laptop-lg.webp 1045w" sizes="(max-width: 899px) 72vw, 590px" alt="" width="1045" height="761" decoding="async" /></div>
-					<div class="r3" style="left:0;top:34.3%;width:43.37%" data-rig="-1"><img data-late="/images/home/3d/tablet-sm.webp 330w, /images/home/3d/tablet-lg.webp 607w" sizes="(max-width: 899px) 40vw, 340px" alt="" width="607" height="539" decoding="async" /></div>
-					<div class="r3" style="left:74.77%;top:29.43%;width:25.23%" data-rig="1"><img data-late="/images/home/3d/phone-sm.webp 192w, /images/home/3d/phone-lg.webp 353w" sizes="(max-width: 899px) 24vw, 200px" alt="" width="353" height="620" decoding="async" /></div>
-					<div class="a-fan" data-a-fan></div>
 				</div>
 
 
@@ -194,9 +187,6 @@ const MORE = [
 					</div>
 				</div>
 
-				<div class="hchip fx" data-float aria-hidden="true"><i><svg viewBox="0 0 24 24"><rect x="4" y="5" width="16" height="15" rx="3" /><path d="M4 10h16M9 3v4M15 3v4" /></svg></i><span><small>موعدك القادم</small><b>غداً · 10:30 ص</b></span></div>
-				<div class="hchip fx" data-float aria-hidden="true"><i><svg viewBox="0 0 24 24"><path d="M5 12.5l4.5 4.5L19 7.5" /></svg></i><span><small>حان موعد دوائك</small><b>أخذته ✓</b></span></div>
-				<div class="hchip fx" data-float aria-hidden="true"><i><svg viewBox="0 0 24 24"><path d="M7 3h7l4 4v14H7z" /><path d="M10 12h5M10 16h5" /></svg></i><span><b>تقرير زيارة جديد</b></span></div>
 
 				<div class="cl fx" data-clinic aria-hidden="true">
 					<div class="cl-bar"><i></i><i></i><i></i></div>
@@ -294,7 +284,7 @@ const MORE = [
 	/* ── the story: plain column by default ───── */
 	.st { position: relative; }
 	.stick { position: relative; padding: 96px 22px 30px; }
-	.fx, .a-hero, .a-dial, .bg { display: none; }
+	.fx, .a-dial, .bg { display: none; }
 	.fl { width: 220px; height: 220px; margin: 0 auto 20px; position: relative; }
 	.fl canvas, .fl img { position: absolute; inset: 0; width: 100%; height: 100%; opacity: 0; transition: opacity .3s ease; }
 	.fl canvas:global(.on), .fl img:global(.on) { opacity: 1; }
@@ -314,11 +304,14 @@ const MORE = [
 	@supports (height: 100lvh) { :global(html.story) .stick { --bar: calc(100lvh - 100svh); } }
 	:global(html.story) .stick { --bar: 0px; position: sticky; top: 0; height: 100vh; height: 100lvh; overflow: hidden; padding: 0; isolation: isolate;
 		background: radial-gradient(90% 70% at 70% 10%, #DFF3F3 0%, #F7FBFB 60%); }
-	:global(html.story) .fx, :global(html.story) .a-hero, :global(html.story) .a-dial, :global(html.story) .bg { display: block; }
+	:global(html.story) .fx, :global(html.story) .a-dial, :global(html.story) .bg { display: block; }
 	:global(html.story) .ch-shot { display: none; }
 	.bg { position: absolute; inset: 0; z-index: -2; opacity: 0; }
 	.bg-hero { opacity: 1; overflow: hidden; background: radial-gradient(85% 72% at 30% 52%, #0A4A50 0%, rgba(10, 74, 80, 0) 70%), linear-gradient(200deg, #05282E 0%, #031B20 58%, #021418 100%); }
 	.bg-silk { opacity: 0; overflow: hidden; background: #04232A; }
+	.shot { position: absolute; inset: 0; width: 100%; height: 100%; object-fit: cover; object-position: 0% 56%; opacity: 0; transition: opacity .8s; transform-origin: 30% 62%; will-change: transform; }
+	.shot:global(.in) { opacity: 1; }
+	@media (min-width: 900px) and (max-aspect-ratio: 3/2) { .shot { object-position: 62% 50%; } }
 	.silk { position: absolute; inset: 0; width: 100%; height: 100%; object-fit: cover; object-position: 34% 50%; opacity: 0; transition: opacity .5s; }
 	.silk:global(.in) { opacity: 1; }
 	.bg-dusk { background: linear-gradient(180deg, #FFC49B 0%, #FFE0C8 42%, #D5EFEB 100%); }
@@ -343,12 +336,6 @@ const MORE = [
 	.pin-d { fill: #06343A; }
 
 	:global(html.story) .hero { position: absolute; z-index: 6; text-align: start; inset-inline-start: max(6vw, calc(50vw - 560px)); top: 50%; width: min(45vw, 560px); margin-top: -170px; }
-	.rig { position: absolute; z-index: 2; left: max(1.5vw, calc(50vw - 680px)); top: 52%; translate: 0 -50%; width: min(56vw, 790px, 128vh); aspect-ratio: 1.5937; pointer-events: none; }
-	.r3 { position: absolute; opacity: 0; will-change: transform, opacity; }
-	.r3 img { display: block; width: 100%; height: auto; opacity: 0; transition: opacity .5s; }
-	.r3 img:global(.in) { opacity: 1; }
-	.a-hero { position: absolute; left: 60%; top: 2%; width: 22%; aspect-ratio: 1; }
-	.a-fan { position: absolute; left: 79.5%; top: 35.2%; width: 16.3%; aspect-ratio: 1290 / 2796; }
 	.cue { position: absolute; z-index: 7; left: 50%; bottom: calc(var(--bar, 0px) + clamp(12px, 2.8svh, 28px)); translate: -50% 0; align-items: center; gap: 7px; padding: 8px 17px 8px 12px; border: 1px solid rgba(191, 242, 238, .38); border-radius: 999px; background: rgba(5, 38, 44, .78); color: #fff; font: inherit; font-size: .92rem; font-weight: 700; cursor: pointer; opacity: 0; }
 	:global(html.story) .cue { display: flex; }
 	.cue:focus-visible { outline: 3px solid #BFF2EE; outline-offset: 3px; }
@@ -356,18 +343,10 @@ const MORE = [
 	.cue svg { position: absolute; left: 0; top: 2px; width: 18px; height: 18px; fill: none; stroke: #BFF2EE; stroke-width: 2.8; stroke-linecap: round; stroke-linejoin: round; animation: cue 1.5s ease-in-out infinite; }
 	.cue svg + svg { animation-delay: .24s; }
 	@keyframes cue { 0% { transform: translateY(-9px); opacity: 0; } 40% { opacity: 1; } 100% { transform: translateY(9px); opacity: 0; } }
-	:global(html:not(.story)) .a-fan { display: none; }
-	:global(html.story) .a-fan { display: block; }
 	:global(html.story) .hero h1 { color: #fff; }
 	:global(html.story) .hero p { color: #D8EEEE; }
 	:global(html.story) .hero-web { color: #BFF2EE; }
-	:global(html.story) .hchip { display: flex; }
-	.hchip { position: absolute; left: 0; top: 0; z-index: 5; display: flex; align-items: center; gap: 8px; padding: 8px 12px 8px 14px; border-radius: 14px; white-space: nowrap; opacity: 0; will-change: transform;
 		background: rgba(255, 255, 255, .95); box-shadow: 0 16px 30px -14px rgba(0, 0, 0, .6); }
-	.hchip i { width: 30px; height: 30px; flex: none; display: grid; place-items: center; border-radius: 9px; background: #E0F2F2; color: var(--c-main-dark); }
-	.hchip svg { width: 18px; height: 18px; fill: none; stroke: currentColor; stroke-width: 2; stroke-linecap: round; stroke-linejoin: round; }
-	.hchip small { display: block; font-size: .7rem; line-height: 1.3; color: #56636B; font-weight: 700; }
-	.hchip b { display: block; font-size: .84rem; line-height: 1.35; color: #0F1A22; font-weight: 800; }
 	.a-vault { display: none; position: absolute; aspect-ratio: 1; inset-inline-start: calc(max(6vw, 50vw - 560px) + 120px); top: calc(50% + 156px); width: min(124px, 15.500vh); }
 	:global(html.story) .a-vault { display: block; }
 	.vault { position: absolute; z-index: 0; aspect-ratio: 1; translate: -50% -50%; opacity: 0; will-change: transform, opacity; }
@@ -509,11 +488,7 @@ const MORE = [
 		.hero-web { margin-top: 6px; font-size: .9rem; }
 		.hero h1 { font-size: clamp(2rem, 9vw, 3rem); }
 		.hero p { margin-bottom: 0; font-size: 1.04rem; }
-		.rig { left: 50%; top: calc(318px + max(0px, (100svh - 318px - 76px - 67vw) / 2)); translate: -50% 0; width: min(106vw, 540px); }
-		.hchip { padding: 6px 9px 6px 10px; gap: 6px; border-radius: 12px; }
-		.hchip i { width: 26px; height: 26px; }
-		.hchip small { font-size: .64rem; }
-		.hchip b { font-size: .76rem; }
+		.shot { object-position: 50% 100%; transform-origin: 50% 72%; }
 		.a-dial { inset-inline-start: auto; inset-inline-end: 6px; top: 72px; width: 104px; }
 		.a-vault { inset-inline-start: auto; inset-inline-end: 26px; top: 96px; width: 62px; }
 		:global(html.story) .chs { inset-inline-start: 20px; top: 84px; width: calc(100% - 128px); }
@@ -546,6 +521,10 @@ const MORE = [
 		.wall-body { padding-top: 366px; }
 		.chips li { font-size: .92rem; padding: 6px 14px; }
 	}
+	@media (max-width: 899px) and (max-height: 720px) {
+		.shot { top: 14%; -webkit-mask-image: linear-gradient(180deg, transparent, #000 16%); mask-image: linear-gradient(180deg, transparent, #000 16%); }
+	}
+
 	@media (prefers-reduced-motion: reduce) {
 		.track, .strip-track, .cue svg { animation: none; }
 		.wall-toggle { display: none; }
