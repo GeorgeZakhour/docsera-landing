@@ -29,11 +29,29 @@ const PAIRS = [
 	{ old: 'مواعيد غير دقيقة وعشوائية', kind: 'index', oi: I.cal, t: 'تواصل مباشر', s: 'راسل عيادتك لتنظيم مواعيدك ومتابعتها', ni: I.chat },
 ];
 
-const AGENDA = [
-	{ time: '09:00', name: 'مازن الشامي', why: 'متابعة', state: 'في العيادة', on: true },
-	{ time: '09:30', name: 'ليلى نصّار', why: 'استشارة', state: 'مؤكد', on: false },
-	{ time: '10:15', name: 'يوسف حدّاد', why: 'فحص دوري', state: 'مؤكد', on: false },
-	{ time: '11:00', name: 'هبة العلي', why: 'مراجعة', state: 'مؤكد', on: false },
+// DocSera Pro is the whole clinic: each card is one world, around one app.
+// x / y = the ring on wide screens, mx / my = two columns on a phone.
+const T = 'fill="#7FF3E6"', W = 'fill="#fff"';
+const tooth = (x: number, on: boolean) => `<path transform="translate(${x} 10)" d="M1 3c2-3 4-2 5-1.500C7-.5 9-.5 11 3c1 3-.5 5-1 8-.4 2-.8 6-2 6s-1-4-2-4-.8 4-2 4-1.600-4-2-6c-.5-3-2-5-1-8z" ${on ? T : 'fill="#fff" fill-opacity=".3"'}/>`;
+const ART: Record<string, string> = {
+	files: `<circle cx="116" cy="17" r="13" ${T}/><circle cx="116" cy="13.500" r="4.200" fill="#0D4148"/><path d="M108 26a8 7 0 0 1 16 0z" fill="#0D4148"/><rect x="38" y="8" width="62" height="6" rx="3" ${W}/><rect x="60" y="20" width="40" height="5" rx="2.500" ${W} fill-opacity=".4"/><rect x="70" y="35" width="30" height="8" rx="4" ${T} fill-opacity=".3"/><rect x="36" y="35" width="30" height="8" rx="4" ${W} fill-opacity=".16"/><rect x="2" y="35" width="30" height="8" rx="4" ${W} fill-opacity=".16"/>`,
+	reports: `<rect x="86" y="2" width="36" height="42" rx="5" ${W}/><rect x="92" y="10" width="24" height="3.500" rx="1.700" fill="#0D4148"/><rect x="92" y="18" width="24" height="3" rx="1.500" fill="#0D4148" fill-opacity=".35"/><rect x="92" y="25" width="17" height="3" rx="1.500" fill="#0D4148" fill-opacity=".35"/><circle cx="116" cy="38" r="8" ${T}/><path d="M112.500 38l2.500 2.500 4.500-5" fill="none" stroke="#0D4148" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/><rect x="8" y="10" width="66" height="5" rx="2.500" ${W} fill-opacity=".5"/><rect x="24" y="22" width="50" height="5" rx="2.500" ${W} fill-opacity=".28"/><rect x="36" y="34" width="38" height="5" rx="2.500" ${W} fill-opacity=".28"/>`,
+	dental: [2, 18, 34, 50, 66, 82, 98, 114].map((x, i) => tooth(x, i === 2 || i === 5)).join(''),
+	billing: `<rect x="4" y="27" width="14" height="17" rx="3" ${W} fill-opacity=".25"/><rect x="24" y="17" width="14" height="27" rx="3" ${W} fill-opacity=".25"/><rect x="44" y="22" width="14" height="22" rx="3" ${W} fill-opacity=".25"/><rect x="64" y="7" width="14" height="37" rx="3" ${T}/><rect x="92" y="10" width="34" height="8" rx="4" ${W}/><rect x="100" y="24" width="26" height="5" rx="2.500" ${W} fill-opacity=".4"/><rect x="92" y="35" width="34" height="8" rx="4" ${T} fill-opacity=".35"/>`,
+	chat: `<path d="M50 3h68a7 7 0 0 1 7 7v9a7 7 0 0 1-7 7H62l-9 7v-7h-3a7 7 0 0 1-7-7v-9a7 7 0 0 1 7-7z" ${T}/><rect x="56" y="11" width="56" height="4" rx="2" fill="#0D4148"/><path d="M10 22h52a6 6 0 0 1 6 6v9a6 6 0 0 1-6 6H18l-8 5v-5a6 6 0 0 1-6-6v-9a6 6 0 0 1 6-6z" ${W}/><rect x="14" y="30" width="44" height="4" rx="2" fill="#0D4148" fill-opacity=".5"/>`,
+	team: [[104, T], [80, W], [56, T], [32, W]].map(([x, c]) => `<circle cx="${x}" cy="23" r="17" fill="#0D4148"/><circle cx="${x}" cy="23" r="15" ${c} ${c === W ? 'fill-opacity=".92"' : ''}/><circle cx="${x}" cy="18.500" r="5" fill="#0D4148"/><path d="M${Number(x) - 9} 33a9 8 0 0 1 18 0z" fill="#0D4148"/>`).join(''),
+	cal: `<rect x="2" y="4" width="124" height="11" rx="5.500" ${W} fill-opacity=".2"/>${[0, 1, 2, 3, 4, 5, 6].map((d) => `<rect x="${2 + d * 18}" y="20" width="16" height="10" rx="3" ${d === 4 ? T : 'fill="#fff" fill-opacity=".14"'}/><rect x="${2 + d * 18}" y="33" width="16" height="10" rx="3" ${d === 1 ? W : 'fill="#fff" fill-opacity=".14"'}/>`).join('')}`,
+	overview: `<path d="M2 36c14-2 20-14 34-13s18 12 32 8 18-22 32-23 16 6 26 2v34H2z" ${T} fill-opacity=".2"/><path d="M2 36c14-2 20-14 34-13s18 12 32 8 18-22 32-23 16 6 26 2" fill="none" stroke="#7FF3E6" stroke-width="2.600" stroke-linecap="round"/><circle cx="100" cy="8" r="4.500" ${W}/>`,
+};
+const WORLDS = [
+	{ key: 'files', t: 'ملفات المرضى', x: 67, y: 14, mx: 76, my: 9, d: 1.2 },
+	{ key: 'reports', t: 'تقارير الزيارات', x: 33, y: 14, mx: 24, my: 9, d: 0.9 },
+	{ key: 'dental', t: 'مخطط الأسنان', x: 85, y: 36, mx: 76, my: 30, d: 1.5 },
+	{ key: 'billing', t: 'المحاسبة والفوترة', x: 15, y: 36, mx: 24, my: 30, d: 1.3 },
+	{ key: 'chat', t: 'مراسلة المرضى', x: 85, y: 64, mx: 76, my: 70, d: 1 },
+	{ key: 'team', t: 'فريق العيادة', x: 15, y: 64, mx: 24, my: 70, d: 1.6 },
+	{ key: 'cal', t: 'المواعيد والحجز', x: 67, y: 86, mx: 76, my: 91, d: 1.3 },
+	{ key: 'overview', t: 'نظرة على عيادتك', x: 33, y: 86, mx: 24, my: 91, d: 1 },
 ];
 ---
 <section class="cmp" data-cmp aria-label="الفرق بين الطريقة التقليدية وطريقة DocSera">
@@ -90,22 +108,24 @@ const AGENDA = [
 				<svg viewBox="0 0 24 24" aria-hidden="true"><path d="M15 6l-6 6 6 6" /></svg>
 			</a>
 		</div>
-		<div class="pv-view" aria-hidden="true">
+		<div class="pv-view">
 			<div class="pv-scene" data-pro-scene>
-				<div class="pv-board" data-depth="0">
-					<div class="pv-bar"><b>مواعيد اليوم</b><span><i></i><i></i><i></i></span></div>
-					{AGENDA.map((a) => (
-						<div class:list={['pv-row', { on: a.on }]}>
-							<time>{a.time}</time>
-							<span><b>{a.name}</b><small>{a.why}</small></span>
-							<em>{a.state}</em>
-						</div>
+				<svg class="pv-links" data-pro-links viewBox="0 0 100 100" preserveAspectRatio="none" aria-hidden="true">
+					{WORLDS.map((w) => <line class="pv-ld" x1="50" y1="50" x2={w.x} y2={w.y} vector-effect="non-scaling-stroke" />)}
+					{WORLDS.map((w) => <line class="pv-lm" x1="50" y1="50" x2={w.mx} y2={w.my} vector-effect="non-scaling-stroke" />)}
+				</svg>
+				<ul class="pv-worlds">
+					{WORLDS.map((w) => (
+						<li class="pv-w" style={`--x:${w.x}%;--y:${w.y}%;--mx:${w.mx}%;--my:${w.my}%`} data-world data-depth={w.d}>
+							<b>{w.t}</b>
+							<svg viewBox="0 0 128 48" aria-hidden="true" set:html={ART[w.key]} />
+						</li>
 					))}
-				</div>
-				<div class="pv-chip c1" data-depth="1.3"><i set:html={`<svg viewBox="0 0 24 24">${I.cal}</svg>`} /><span><small>موعد جديد</small><b>اليوم، 12:30</b></span></div>
-				<div class="pv-chip c2" data-depth="1"><i set:html={`<svg viewBox="0 0 24 24">${I.doc}</svg>`} /><span><b>تقرير الزيارة جاهز</b></span></div>
-				<div class="pv-chip c3" data-depth="1.6"><i set:html={`<svg viewBox="0 0 24 24">${I.check}</svg>`} /><span><b>تم تسجيل الدفعة</b></span></div>
-				<img class="pv-icon" data-depth="1.9" src="/images/docsera-pro-icon.webp" alt="" width="96" height="96" loading="lazy" decoding="async" />
+					<li class="pv-hub" data-pro-hub>
+						<img src="/images/docsera-pro-icon.webp" alt="" width="96" height="96" loading="lazy" decoding="async" />
+						<span>وأكثر</span>
+					</li>
+				</ul>
 			</div>
 		</div>
 	</div>
@@ -129,7 +149,7 @@ const AGENDA = [
 	</div>
 	<div class="fin-rise" aria-hidden="true">
 		<div class="fin-phone" data-fin-phone>
-			<img src="/images/app110/home-480.webp" srcset="/images/app110/home-320.webp 320w, /images/app110/home-480.webp 480w, /images/app110/home-640.webp 640w" sizes="(max-width: 899px) 62vw, 300px" alt="" width="480" height="1040" loading="lazy" decoding="async" />
+			<div class="fin-screen"><img src="/images/app110/guest-head-480.webp" srcset="/images/app110/guest-head-480.webp 480w, /images/app110/guest-head-640.webp 640w" sizes="(max-width: 899px) 62vw, 300px" alt="" width="640" height="422" loading="lazy" decoding="async" /></div>
 		</div>
 	</div>
 	<svg class="fin-hill" viewBox="0 0 1440 200" preserveAspectRatio="none" aria-hidden="true"><path d="M0 130Q720 -70 1440 130V200H0z" /></svg>
@@ -205,48 +225,36 @@ const AGENDA = [
 	.pv-btn:focus-visible, .pv-help a:focus-visible, .fin-more a:focus-visible { outline: 3px solid #BFF2EE; outline-offset: 3px; }
 	.pv-btn svg { width: 20px; height: 20px; fill: none; stroke: currentColor; stroke-width: 2.4; stroke-linecap: round; stroke-linejoin: round; }
 	.pv-view { perspective: 1100px; }
-	.pv-scene { position: relative; height: clamp(400px, 60vh, 540px); transform-style: preserve-3d; -webkit-transform-style: preserve-3d; transform: rotateY(9deg) rotateX(5deg); will-change: transform; }
-	.pv-board { position: absolute; top: 50%; left: 50%; width: min(440px, 88%); translate: -50% -50%; padding: 18px; border-radius: 24px; background: linear-gradient(160deg, #124C53, #0B3439); border: 1px solid rgba(255, 255, 255, .14); box-shadow: 0 40px 70px -28px rgba(0, 0, 0, .8); will-change: transform; }
-	.pv-bar { display: flex; align-items: center; justify-content: space-between; margin-bottom: 12px; font-size: 1rem; }
-	.pv-bar span { display: flex; gap: 5px; }
-	.pv-bar i { width: 7px; height: 7px; border-radius: 50%; background: rgba(255, 255, 255, .32); }
-	.pv-row { display: flex; align-items: center; gap: 12px; padding: 10px 12px; margin-top: 6px; border-radius: 13px; background: rgba(255, 255, 255, .055); }
-	.pv-row.on { background: #009092; }
-	.pv-row time { flex: none; font-size: .86rem; font-weight: 700; color: #BFF2EE; direction: ltr; }
-	.pv-row.on time { color: #fff; }
-	.pv-row span { flex: 1; min-width: 0; }
-	.pv-row b { display: block; font-size: .92rem; line-height: 1.3; }
-	.pv-row small { display: block; font-size: .74rem; line-height: 1.3; color: #B7D5D4; }
-	.pv-row.on small { color: #E2F7F5; }
-	.pv-row em { flex: none; font-style: normal; font-size: .72rem; font-weight: 700; padding: 3px 9px; border-radius: 999px; background: rgba(255, 255, 255, .12); }
-	.pv-row.on em { background: #fff; color: #00686A; }
-	.pv-chip { position: absolute; display: flex; align-items: center; gap: 8px; padding: 8px 13px 8px 15px; border-radius: 14px; white-space: nowrap; background: #fff; color: #0F1A22; box-shadow: 0 22px 36px -16px rgba(0, 0, 0, .75); will-change: transform; }
-	.pv-chip i { width: 32px; height: 32px; flex: none; display: grid; place-items: center; border-radius: 10px; background: #E0F2F2; color: #00686A; }
-	.pv-chip :global(svg) { width: 19px; height: 19px; fill: none; stroke: currentColor; stroke-width: 2; stroke-linecap: round; stroke-linejoin: round; }
-	.pv-chip small { display: block; font-size: .72rem; line-height: 1.3; font-weight: 700; color: #56636B; }
-	.pv-chip b { display: block; font-size: .88rem; line-height: 1.35; font-weight: 800; }
-	.c1 { top: 3%; right: 2%; }
-	.c2 { bottom: 1%; right: 12%; }
-	.c3 { bottom: 6%; left: 0; }
-	.pv-icon { position: absolute; top: 2%; left: 5%; width: 84px; height: 84px; border-radius: 22px; box-shadow: 0 0 0 1px rgba(191, 242, 238, .28), 0 22px 36px -14px rgba(0, 0, 0, .8); will-change: transform; }
+	.pv-scene { position: relative; height: clamp(480px, 68vh, 590px); transform-style: preserve-3d; -webkit-transform-style: preserve-3d; transform: rotateY(6deg) rotateX(3deg); will-change: transform; }
+	.pv-links { position: absolute; inset: 0; width: 100%; height: 100%; overflow: visible; }
+	.pv-links line { stroke: #7FF3E6; stroke-opacity: .26; stroke-width: 1.2; }
+	.pv-lm { display: none; }
+	.pv-worlds { list-style: none; margin: 0; padding: 0; position: absolute; inset: 0; transform-style: preserve-3d; -webkit-transform-style: preserve-3d; }
+	.pv-w { position: absolute; left: var(--x); top: var(--y); translate: -50% -50%; box-sizing: border-box; width: 176px; padding: 11px 13px 10px; border-radius: 18px; background: linear-gradient(160deg, #15565E, #0C3D44); border: 1px solid rgba(127, 243, 230, .22); box-shadow: 0 22px 38px -18px rgba(0, 0, 0, .85); will-change: transform; }
+	.pv-w b { display: block; margin-bottom: 8px; font-size: .92rem; line-height: 1.3; font-weight: 800; color: #fff; white-space: nowrap; }
+	.pv-w svg { display: block; width: 100%; height: auto; }
+	.pv-hub { position: absolute; left: 50%; top: 50%; translate: -50% -50%; display: flex; flex-direction: column; align-items: center; gap: 8px; will-change: transform; }
+	.pv-hub img { display: block; width: 92px; height: 92px; border-radius: 24px; box-shadow: 0 0 0 1px rgba(191, 242, 238, .3), 0 0 0 9px rgba(127, 243, 230, .08), 0 0 60px 8px rgba(0, 214, 200, .38); }
+	.pv-hub span { padding: 3px 13px; border-radius: 999px; font-size: .84rem; font-weight: 800; color: #06343A; background: #BFF2EE; }
 	.pv-help { position: relative; max-width: 1180px; margin: clamp(30px, 6vh, 60px) auto 0; padding: 22px 0 clamp(60px, 11vh, 110px); display: flex; align-items: center; justify-content: space-between; gap: 18px; border-top: 1px solid rgba(255, 255, 255, .13); }
 	.pv-help p { margin: 0; font-size: .96rem; line-height: 1.7; color: #BCD8D7; }
 	.pv-help b { color: #fff; font-weight: 800; }
 	.pv-help a { flex: none; font-weight: 700; color: #BFF2EE; text-underline-offset: 4px; }
 
 	/* ── sunrise ── */
-	.fin { box-sizing: border-box; position: relative; overflow: hidden; display: flex; flex-direction: column; min-height: 100vh; min-height: 100svh; background: #062A30; color: #fff; text-align: center; padding: clamp(92px, 13vh, 130px) 20px 0; }
-	.fin-dawn { position: absolute; inset: 0; background: linear-gradient(180deg, #062A30 0%, #075A60 26%, #007C7F 50%, #1F9E97 66%, #8FD8C4 78%, #FFDDBB 91%, #FFEBD6 100%); }
-	.fin-sun { position: absolute; left: 50%; bottom: calc(20% - min(58vw, 380px)); width: min(116vw, 760px); aspect-ratio: 1; margin-left: calc(min(116vw, 760px) / -2); border-radius: 50%; background: radial-gradient(closest-side, #FFF9EC 0 26%, #FFE6C6 40%, rgba(255, 208, 160, .5) 58%, rgba(255, 190, 150, 0) 78%); will-change: transform; }
-	.fin-copy { position: relative; z-index: 2; }
+	.fin { box-sizing: border-box; position: relative; overflow: hidden; display: flex; flex-direction: column; min-height: 100vh; min-height: 100svh; background: #062A30; color: #fff; text-align: center; padding: clamp(92px, 13vh, 130px) 20px 0; --pw: min(62vw, 300px); --hh: clamp(70px, 13vh, 150px); }
+	.fin-dawn { position: absolute; inset: 0; background: linear-gradient(180deg, #062A30 0%, #075A60 26%, #007C7F 50%, #1F9E97 66%, #93D9C8 79%, #E9E6CF 91%, #F8F1E4 100%); }
+	.fin-sun { position: absolute; left: 50%; bottom: calc(20% - min(58vw, 380px)); width: min(116vw, 760px); aspect-ratio: 1; margin-left: calc(min(116vw, 760px) / -2); border-radius: 50%; background: radial-gradient(closest-side, #FFFBF3 0 26%, #FFF1DE 40%, rgba(255, 228, 200, .42) 58%, rgba(255, 216, 184, 0) 78%); will-change: transform; }
+	.fin-copy { position: relative; z-index: 2; margin-block: auto; }
 	.fin-copy h2 { margin: 0; font-size: clamp(2.1rem, 5.2vw, 4.3rem); line-height: 1.2; font-weight: 800; color: #fff; }
 	.fin-copy > p { margin: 12px 0 24px; font-size: clamp(1.02rem, 1.5vw, 1.25rem); color: #E4F6F4; }
 	.fin-more { display: flex; flex-wrap: wrap; justify-content: center; gap: 8px 22px; margin-top: 16px; }
 	.fin-more a { color: #fff; font-size: .94rem; font-weight: 700; text-underline-offset: 4px; }
-	.fin-rise { position: relative; z-index: 1; flex: 1 1 210px; min-height: 210px; margin-top: 24px; }
-	.fin-phone { position: absolute; left: 50%; top: 0; width: min(62vw, 300px); margin-left: calc(min(62vw, 300px) / -2); padding: 7px; border-radius: 40px; background: #0F1A22; box-shadow: 0 0 90px 10px rgba(255, 233, 200, .55), 0 40px 70px -20px rgba(0, 40, 44, .7); will-change: transform; }
-	.fin-phone img { display: block; width: 100%; height: auto; border-radius: 33px; }
-	.fin-hill { position: absolute; z-index: 3; left: 0; bottom: -1px; display: block; width: 100%; height: clamp(70px, 13vh, 150px); }
+	.fin-rise { position: relative; z-index: 1; flex: none; height: calc(var(--hh) * .76 + var(--pw) * .66 + 10px); margin-top: 22px; }
+	.fin-phone { box-sizing: border-box; position: absolute; left: 50%; width: var(--pw); height: calc(var(--pw) * 1.25); margin-left: calc(var(--pw) / -2); bottom: calc(var(--hh) * .76 + var(--pw) * .66 - var(--pw) * 1.25); padding: 7px; border-radius: 40px; background: #0F1A22; box-shadow: 0 0 80px 8px rgba(255, 240, 220, .42), 0 40px 70px -20px rgba(0, 40, 44, .7); will-change: transform; }
+	.fin-screen { height: 100%; overflow: hidden; border-radius: 33px; background: #F6FBFB; }
+	.fin-phone img { display: block; width: 100%; height: auto; }
+	.fin-hill { position: absolute; z-index: 3; left: 0; bottom: -1px; display: block; width: 100%; height: var(--hh); }
 	.fin-hill path { fill: #F8F9FA; }
 
 	@media (max-width: 899px) {
@@ -263,16 +271,12 @@ const AGENDA = [
 		.j1 { width: 150px; height: 200px; } .j2 { width: 150px; height: 190px; } .j3 { width: 130px; height: 170px; } .j4 { width: 170px; height: 220px; } .j5 { width: 100px; height: 130px; top: auto; bottom: 5%; right: -22px; }
 		.pv-in { grid-template-columns: 1fr; gap: 26px; text-align: center; }
 		.pv-copy p { margin-inline: auto; }
-		.pv-scene { height: 430px; transform: rotateY(0) rotateX(4deg); }
-		.pv-board { width: min(330px, 84%); padding: 14px; }
-		.pv-row { padding: 8px 10px; gap: 9px; }
-		.pv-chip { padding: 6px 10px 6px 11px; }
-		.pv-chip i { width: 27px; height: 27px; }
-		.pv-chip b { font-size: .78rem; }
-		.c1 { top: 1%; right: 0; }
-		.c2 { bottom: 1%; right: 0; }
-		.c3 { bottom: 8%; left: 0; }
-		.pv-icon { width: 62px; height: 62px; border-radius: 17px; top: 1%; left: 3%; }
+		.pv-scene { height: 620px; transform: rotateX(2deg); }
+		.pv-ld { display: none; }
+		.pv-lm { display: inline; }
+		.pv-w { left: var(--mx); top: var(--my); width: min(164px, 43.500vw); padding: 9px 10px 8px; border-radius: 15px; }
+		.pv-w b { margin-bottom: 6px; font-size: .82rem; }
+		.pv-hub img { width: 76px; height: 76px; border-radius: 20px; }
 		.pv-help { flex-direction: column; text-align: center; }
 	}
 

@@ -21,8 +21,8 @@ const NOTES: [number, number][] = [[0.372, 0.43], [0.432, 0.49], [0.492, 0.548]]
 const PAPERS: [number, number, number][] = [
 	[-0.8, -0.3, -12], [0.72, -0.36, 9], [-0.88, 0.05, 7], [0.76, 0.1, -8], [-0.74, 0.37, 5], [0.68, 0.4, -6],
 ];
-// The small cards floating around the three phones of the opening.
-const FLOATS: [number, number][] = [[-0.92, -0.2], [0.9, -0.04], [-0.88, 0.26], [0.86, 0.36]];
+// The small cards floating around the laptop, iPad and phone: x / y in the rig's size.
+const FLOATS: [number, number][] = [[0.13, 0.12], [0.93, 0.27], [0.15, 0.93]];
 
 const pose: DialPose = { tilt: 0.22, turn: 0.3, roll: 0, petals: [0, 0, 0, 0] };
 
@@ -56,8 +56,11 @@ function startStory(): void {
 	if (!root || !stick) return;
 	const fl = q('[data-fl]')!, aHero = q('[data-a-hero]')!, aDial = q('[data-a-dial]')!;
 	const hero = q('[data-hero]')!, phone = q('[data-phone]')!, aFan = q('[data-a-fan]')!, bgHero = q('[data-bg-hero]')!;
-	const sides = qa('[data-side]'), floats = qa('[data-float]');
+	const rigBox = q('[data-rig-box]')!, rigs = qa('[data-rig]'), floats = qa('[data-float]'), cue = q<HTMLButtonElement>('[data-cue]')!;
 	const t0 = performance.now();
+	// «There is more below»: until the first scroll the devices lift now and then.
+	let nudge = 0, nudgeAt = t0 + 2400, nudges = 0, touched = false;
+	let mx = 0, my = 0, px = 0, py = 0;
 	const chapters = qa('[data-ch]'), papers = qa('[data-paper]'), notes = qa('[data-note]');
 	const shots = qa<HTMLImageElement>('[data-shot]');
 	const night = q('[data-night]')!, twi = q('[data-twi]')!, dusk = q('[data-dusk]')!, sun = q('[data-sun]')!;
@@ -67,7 +70,7 @@ function startStory(): void {
 
 	let A = { x: 0, y: 0, s: 1 }, B = { x: 0, y: 0, s: 1 };
 	let from = { x: 0, y: 0 }, to = { x: 0, y: 0 };
-	let F = { x: 0, y: 0, w: 1, h: 1 }, P = { x: 0, y: 0, w: 1, h: 1 };
+	let F = { x: 0, y: 0, w: 1, h: 1 }, P = { x: 0, y: 0, w: 1, h: 1 }, R = { x: 0, y: 0, w: 1, h: 1 };
 	const layout = () => {
 		const sr = stick.getBoundingClientRect();
 		const c = (e: HTMLElement) => { const r = e.getBoundingClientRect(); return { x: r.left - sr.left + r.width / 2, y: r.top - sr.top + r.height / 2, s: r.width }; };
@@ -78,7 +81,8 @@ function startStory(): void {
 		const fr = aFan.getBoundingClientRect();
 		F = { x: fr.left - sr.left + fr.width / 2, y: fr.top - sr.top + fr.height / 2, w: fr.width, h: fr.height };
 		P = { x: ph.x, y: ph.y, w: phone.offsetWidth, h: phone.offsetHeight };
-		sides.forEach((e) => { e.style.width = F.w + 'px'; });
+		const rr = rigBox.getBoundingClientRect();
+		R = { x: rr.left - sr.left, y: rr.top - sr.top, w: rr.width, h: rr.height };
 		from = { x: ph.x, y: ph.y - phone.offsetHeight * 0.14 };
 		to = off(clinic);
 		last = -1;
@@ -97,24 +101,32 @@ function startStory(): void {
 		const enter = ease(clamp((now - t0) / 950));
 		const h = sm(0.05, 0.15), off = sm(0.972, 0.998);
 
-		// The opening: three phones and a few live cards; the middle phone carries on.
+		// The opening: a laptop, an iPad and the phone; the phone carries on into the story.
 		bgHero.style.opacity = String(1 - h);
-		sides.forEach((e) => {
-			const d = Number(e.dataset.side), o = 1 - sm(0.035, 0.11);
-			e.style.opacity = String(enter * o);
-			e.style.visibility = o < 0.01 ? 'hidden' : 'visible';
-			e.style.transform = `translate3d(${F.x + d * F.w * (0.66 + h * 0.5) - F.w / 2}px,${F.y + F.h * 0.07 - e.offsetHeight / 2 + (1 - enter) * 110}px,0) perspective(900px) rotateY(${d * -24}deg) rotateZ(${d * 4}deg) scale(0.88)`;
-		});
-		const W = stick.clientWidth;
-		floats.forEach((e, i) => {
-			const [fx, fy] = FLOATS[i];
-			const a = ease(clamp((now - t0 - 350 - i * 130) / 600)), o = 1 - sm(0.02, 0.07);
-			const w = e.offsetWidth, hh = e.offsetHeight;
-			const x = clamp(F.x + fx * F.w, w / 2 + 8, W - w / 2 - 8);
+		const out = sm(0.025, 0.11), W = stick.clientWidth;
+		rigs.forEach((e, i) => {
+			const d = Number(e.dataset.rig) || 0;
+			const a = ease(clamp((now - t0 - i * 130) / 850)), o = 1 - sm(0.035, 0.105);
+			const bob = Math.sin(now / 1900 + i * 2.1) * (narrow ? 2.5 : 4) * (1 - out);
 			e.style.opacity = String(a * o);
 			e.style.visibility = o < 0.01 ? 'hidden' : 'visible';
-			e.style.transform = `translate3d(${x - w / 2}px,${F.y + fy * F.h - hh / 2 + Math.sin(now / 1300 + i * 2) * 5 + (1 - a) * 16}px,0) scale(${lerp(0.9, 1, a)})`;
+			e.style.transform = `translate3d(${d * out * W * 0.16 + px * (i + 1) * 5}px,${(1 - a) * 70 - out * 46 + bob - nudge * (16 + i * 8) + py * (i + 1) * 3}px,0)`;
 		});
+		floats.forEach((e, i) => {
+			const [fx, fy0] = FLOATS[i];
+			// On a phone the medicine card sits just above the phone, not on its screen.
+			const fy = narrow && i === 1 ? 0.14 : fy0;
+			const a = ease(clamp((now - t0 - 450 - i * 140) / 600)), o = 1 - sm(0.02, 0.07);
+			const w = e.offsetWidth, hh = e.offsetHeight;
+			const x = clamp(R.x + fx * R.w, w / 2 + 8, W - w / 2 - 8);
+			e.style.opacity = String(a * o);
+			e.style.visibility = o < 0.01 ? 'hidden' : 'visible';
+			e.style.transform = `translate3d(${x - w / 2 + px * 16}px,${R.y + fy * R.h - hh / 2 + Math.sin(now / 1300 + i * 2) * 5 + (1 - a) * 16 - nudge * 22 + py * 8}px,0) scale(${lerp(0.9, 1, a)})`;
+		});
+		const cueIn = ease(clamp((now - t0 - 1000) / 500)), cueOut = 1 - sm(0.003, 0.028);
+		cue.style.opacity = String(cueIn * cueOut);
+		cue.style.visibility = cueOut < 0.01 ? 'hidden' : 'visible';
+		cue.style.transform = `translate3d(0,${-nudge * 7}px,0)`;
 
 		// World 1: the loose papers appear around the phone and fly into it.
 		papers.forEach((el, i) => {
@@ -128,6 +140,8 @@ function startStory(): void {
 
 		const k = sm(0.085, 0.17);
 		const bump = Math.sin(Math.PI * seg(0.255, 0.315)) * 0.1;
+		// On a phone only a sliver of the mark would show behind the laptop: it arrives with world 1.
+		fl.style.opacity = narrow ? String(sm(0.07, 0.13)) : '';
 		fl.style.transform = `translate3d(${lerp(A.x, B.x, k) - A.s / 2}px,${lerp(A.y, B.y, k) - A.s / 2}px,0) scale(${lerp(1, B.s / A.s, k) * (1 + bump)})`;
 
 		// Every world turns the dial a quarter: the next petal comes to the top.
@@ -152,7 +166,7 @@ function startStory(): void {
 		});
 
 		phone.style.opacity = String(enter * (1 - off));
-		phone.style.transform = `translate3d(${(F.x - P.x) * (1 - h)}px,${(F.y - P.y) * (1 - h) + (1 - enter) * 70 - off * 30}px,0) scale(${lerp(F.w / P.w, 1, h) * (1 - 0.06 * off)})`;
+		phone.style.transform = `translate3d(${(F.x - P.x) * (1 - h) + px * 11 * (1 - h)}px,${(F.y - P.y) * (1 - h) + (1 - enter) * 70 - off * 30 + (py * 6 - nudge * 34) * (1 - h)}px,0) scale(${lerp(F.w / P.w, 1, h) * (1 - 0.06 * off)})`;
 		shots.forEach((img, i) => {
 			const [a, b, fetchAt] = SHOTS[i];
 			if (img.dataset.src && p >= fetchAt) { img.src = img.dataset.src; img.removeAttribute('data-src'); }
@@ -208,6 +222,11 @@ function startStory(): void {
 		read();
 		p += (target - p) * 0.14;
 		if (Math.abs(target - p) < 0.0002) p = target;
+		px += (mx - px) * 0.07; py += (my - py) * 0.07;
+		if (!touched && target < 0.001 && nudges < 3) {
+			const u = (now - nudgeAt) / 1300;
+			if (u >= 1) { nudge = 0; nudges++; nudgeAt = now + 3400; } else if (u > 0) nudge = Math.sin(Math.PI * u) ** 2;
+		} else nudge = 0;
 		// The opening and the papers keep moving at rest.
 		if (p !== last || p < 0.31) { apply(now); last = p; }
 	};
@@ -225,6 +244,26 @@ function startStory(): void {
 	addEventListener('resize', () => { layout(); }, { passive: true });
 	addEventListener('load', layout, { once: true });
 	document.fonts?.ready.then(layout);
+
+	const touch = () => { touched = true; };
+	(['wheel', 'touchstart', 'keydown'] as const).forEach((ev) => addEventListener(ev, touch, { passive: true, once: true }));
+	addEventListener('pointermove', (e) => {
+		if (e.pointerType === 'touch') return;
+		mx = (e.clientX / innerWidth - 0.5) * 2;
+		my = (e.clientY / innerHeight - 0.5) * 2;
+	}, { passive: true });
+	cue.addEventListener('click', () => {
+		touched = true;
+		const r = root.getBoundingClientRect();
+		scrollTo({ top: scrollY + r.top + (r.height - innerHeight) * 0.2, behavior: 'smooth' });
+	});
+	// The laptop and iPad screens wait until the page itself has loaded.
+	const late = () => qa<HTMLImageElement>('img[data-late]', rigBox).forEach((img) => {
+		img.addEventListener('load', () => img.classList.add('in'), { once: true });
+		img.srcset = img.dataset.late || '';
+	});
+	if (document.readyState === 'complete') setTimeout(late, 80);
+	else addEventListener('load', () => setTimeout(late, 80), { once: true });
 }
 
 function startTry(): void {
@@ -395,13 +434,16 @@ function startCompare(): void {
 	}, { rootMargin: '120px 0px' }).observe(root);
 }
 
-// The clinic scene: the cards hang at different depths and answer scroll and pointer.
+// The clinic: every world opens out of the one app, then hangs at its own depth.
 function startPro(): void {
-	const root = q('[data-pro]'), scene = q('[data-pro-scene]');
-	if (!root || !scene) return;
-	const parts = qa('[data-depth]', scene).map((el) => ({ el, d: Number(el.dataset.depth) || 0, base: el.classList.contains('pv-board') ? 'translate(-50%,-50%) ' : '' }));
-	parts.forEach((x) => { if (x.base) x.el.style.translate = 'none'; });
-	let on = false, mx = 0, my = 0, cx = 0, cy = 0;
+	const root = q('[data-pro]'), scene = q('[data-pro-scene]'), links = q('[data-pro-links]'), hub = q('[data-pro-hub]');
+	if (!root || !scene || !links || !hub) return;
+	const worlds = qa('[data-world]', scene).map((el) => ({ el, d: Number(el.dataset.depth) || 1, dx: 0, dy: 0 }));
+	const measure = () => {
+		const W = scene.offsetWidth, H = scene.offsetHeight;
+		worlds.forEach((w) => { w.dx = W / 2 - w.el.offsetLeft; w.dy = H / 2 - w.el.offsetTop; });
+	};
+	let on = false, mx = 0, my = 0, cx = 0, cy = 0, open = 0;
 	addEventListener('pointermove', (e) => {
 		if (!on || e.pointerType === 'touch') return;
 		mx = (e.clientX / innerWidth - 0.5) * 2;
@@ -411,20 +453,27 @@ function startPro(): void {
 		if (!on) return;
 		requestAnimationFrame(tick);
 		cx += (mx - cx) * 0.07; cy += (my - cy) * 0.07;
-		const r = root.getBoundingClientRect();
-		const t = clamp((innerHeight - r.top) / (innerHeight + r.height));
+		const top = root.querySelector('.pv-view')!.getBoundingClientRect().top;
+		const target = ease(clamp((innerHeight * 0.96 - top) / (innerHeight * 0.62)));
+		open += (target - open) * 0.12;
+		if (Math.abs(target - open) < 0.001) open = target;
 		const wide = innerWidth >= 900;
-		scene.style.transform = `rotateY(${(wide ? 9 : 0) + cx * 5}deg) rotateX(${(wide ? 5 : 4) - cy * 4}deg)`;
-		parts.forEach((x, i) => {
-			const bob = x.d ? Math.sin(now / 1500 + i * 1.9) * 5 : 0;
-			x.el.style.transform = `${x.base}translate3d(${cx * x.d * 9}px,${(0.5 - t) * x.d * 90 + bob}px,${x.d * 46}px)`;
+		scene.style.transform = `rotateY(${(wide ? 6 : 0) + cx * 4}deg) rotateX(${(wide ? 3 : 2) - cy * 3}deg)`;
+		links.style.opacity = String(clamp((open - 0.35) / 0.6));
+		worlds.forEach((w, i) => {
+			const k = 1 - open, bob = Math.sin(now / 1600 + i * 1.9) * 4 * open;
+			w.el.style.opacity = String(clamp(open * 1.7));
+			w.el.style.transform = `translate3d(${w.dx * k + cx * w.d * 8}px,${w.dy * k + bob}px,${w.d * 30}px) scale(${lerp(0.5, 1, open)})`;
 		});
+		hub.style.transform = `translate3d(${cx * 5}px,${Math.sin(now / 1900) * 3}px,70px) scale(${lerp(0.82, 1, open)})`;
 	};
+	new ResizeObserver(measure).observe(scene);
+	measure();
 	new IntersectionObserver((es) => {
 		const v = es[0].isIntersecting;
-		if (v && !on) { on = true; requestAnimationFrame(tick); }
+		if (v && !on) { measure(); on = true; requestAnimationFrame(tick); }
 		if (!v) on = false;
-	}).observe(root);
+	}, { rootMargin: '80px 0px' }).observe(root);
 }
 
 // The end of the page: the night turns to dawn and the phone rises with the sun.

@@ -11,6 +11,14 @@ import StoreBadges from '../components/StoreBadges.astro';
 import { WEB_APP_URL } from '../config/links';
 import bootUrl from '../scripts/home/boot.ts?worker&url';
 
+// The opening's background: the outline of the DocSera mark, repeated outwards.
+const PETAL = 'M' + Array.from({ length: 96 }, (_, i) => {
+	const t = (i / 96) * Math.PI * 2;
+	const r = 50 * (0.62 + 0.38 * Math.pow(Math.abs(Math.cos(2 * t)), 1.6));
+	return `${(r * Math.cos(t)).toFixed(1)} ${(r * Math.sin(t)).toFixed(1)}`;
+}).join('L') + 'Z';
+const RINGS: [number, number][] = [[1.3, 0.5], [2.2, 0.42], [3.2, 0.36], [4.3, 0.3], [5.5, 0.24], [6.8, 0.19], [8.2, 0.14], [9.8, 0.1], [11.5, 0.07]];
+
 const PAPERS = [
 	{ label: 'تحليل دم شامل', kind: 'lines' },
 	{ label: 'صورة أشعة الصدر', kind: 'xray' },
@@ -82,7 +90,10 @@ const MORE = [
 	<main class="m">
 		<section class="st" data-story>
 			<div class="stick" data-stick>
-				<div class="bg bg-hero" data-bg-hero aria-hidden="true"><i class="au au1"></i><i class="au au2"></i></div>
+				<div class="bg bg-hero" data-bg-hero aria-hidden="true">
+					<i class="au au1"></i><i class="au au2"></i><i class="hr-glow"></i>
+					<svg class="hr-rings" viewBox="-600 -600 1200 1200"><defs><path id="hr-p" d={PETAL} fill="none" vector-effect="non-scaling-stroke" /></defs>{RINGS.map(([k, o]) => <use href="#hr-p" transform={`scale(${k})`} stroke="#7FF3E6" stroke-opacity={o} />)}</svg>
+				</div>
 				<div class="bg bg-dusk" data-dusk aria-hidden="true"></div>
 				<div class="bg bg-twi" data-twi aria-hidden="true"></div>
 				<div class="bg bg-night" data-night aria-hidden="true"></div>
@@ -95,12 +106,20 @@ const MORE = [
 					))}
 				</svg>
 
-				<div class="a-hero" data-a-hero aria-hidden="true"></div>
 				<div class="a-dial" data-a-dial aria-hidden="true"></div>
-				<div class="a-fan" data-a-fan aria-hidden="true"></div>
+				<div class="rig fx" data-rig-box aria-hidden="true">
+					<div class="a-hero" data-a-hero></div>
+					<div class="hd-lap" data-rig="0">
+						<div class="lap-lid">
+							<div class="lap-bar"><i></i><i></i><i></i><span>my.docsera.app</span></div>
+							<div class="lap-scr"><img data-late="/images/home/laptop-560.webp 560w, /images/home/laptop-1000.webp 1000w" sizes="(max-width: 899px) 86vw, 620px" alt="" width="1000" height="625" decoding="async" /></div>
+						</div>
+						<div class="lap-base"></div>
+					</div>
+					<div class="hd-pad" data-rig="-1"><img data-late="/images/home/ipad-400.webp 400w, /images/home/ipad-640.webp 640w" sizes="(max-width: 899px) 46vw, 300px" alt="" width="640" height="480" decoding="async" /></div>
+					<div class="a-fan" data-a-fan></div>
+				</div>
 
-				<div class="side fx" data-side="1" aria-hidden="true"><div class="ph-in"><img src="/images/app110/health-320.webp" alt="" width="320" height="694" decoding="async" /></div></div>
-				<div class="side fx" data-side="-1" aria-hidden="true"><div class="ph-in"><img src="/images/app110/routine-320.webp" alt="" width="320" height="694" decoding="async" /></div></div>
 
 				<div class="papers fx" aria-hidden="true">
 					{PAPERS.map((x) => (
@@ -113,6 +132,7 @@ const MORE = [
 					<img data-fl-still data-src="/images/app110/gem.webp" alt="" width="480" height="480" decoding="async" />
 				</div>
 
+				<button class="cue fx" type="button" data-cue aria-label="مرّر للأسفل لتكتشف التطبيق"><span>مرّر للأسفل</span><i aria-hidden="true"><svg viewBox="0 0 24 24"><path d="M6 9l6 6 6-6" /></svg><svg viewBox="0 0 24 24"><path d="M6 9l6 6 6-6" /></svg></i></button>
 				<div class="hero" data-hero>
 					<div class="hero-tx">
 						<h1>كل صحتك، في تطبيق واحد</h1>
@@ -164,7 +184,6 @@ const MORE = [
 				<div class="hchip fx" data-float aria-hidden="true"><i><svg viewBox="0 0 24 24"><rect x="4" y="5" width="16" height="15" rx="3" /><path d="M4 10h16M9 3v4M15 3v4" /></svg></i><span><small>موعدك القادم</small><b>غداً · 10:30 ص</b></span></div>
 				<div class="hchip fx" data-float aria-hidden="true"><i><svg viewBox="0 0 24 24"><path d="M5 12.5l4.5 4.5L19 7.5" /></svg></i><span><small>حان موعد دوائك</small><b>أخذته ✓</b></span></div>
 				<div class="hchip fx" data-float aria-hidden="true"><i><svg viewBox="0 0 24 24"><path d="M7 3h7l4 4v14H7z" /><path d="M10 12h5M10 16h5" /></svg></i><span><b>تقرير زيارة جديد</b></span></div>
-				<div class="hchip fx" data-float aria-hidden="true"><i><svg viewBox="0 0 24 24"><path d="M12 3l7 3v5c0 5-3 8-7 10-4-2-7-5-7-10V6z" /><path d="M9 12l2 2 4-4" /></svg></i><span><b>طبيب موثّق</b></span></div>
 
 				<div class="cl fx" data-clinic aria-hidden="true">
 					<div class="cl-bar"><i></i><i></i><i></i></div>
@@ -241,7 +260,7 @@ const MORE = [
 		<Closing />
 	</main>
 	<script is:inline async src={bootUrl}></script>
-	<Footer />
+	<Footer seamless />
 </Layout>
 
 <style>
@@ -284,7 +303,10 @@ const MORE = [
 	:global(html.story) .fx, :global(html.story) .a-hero, :global(html.story) .a-dial, :global(html.story) .bg { display: block; }
 	:global(html.story) .ch-shot { display: none; }
 	.bg { position: absolute; inset: 0; z-index: -2; opacity: 0; }
-	.bg-hero { opacity: 1; overflow: hidden; background: radial-gradient(70% 55% at 74% 16%, #0E7C7E 0%, rgba(14, 124, 126, 0) 70%), radial-gradient(60% 50% at 14% 88%, #0B5D62 0%, rgba(11, 93, 98, 0) 72%), #062A30; }
+	.bg-hero { opacity: 1; overflow: hidden; background: radial-gradient(85% 72% at 30% 52%, #0B5F65 0%, rgba(11, 95, 101, 0) 70%), linear-gradient(200deg, #07363D 0%, #04252C 58%, #031C22 100%); }
+	.hr-glow { position: absolute; left: 30%; top: 52%; width: 66vmin; height: 66vmin; translate: -50% -50%; border-radius: 50%; background: radial-gradient(closest-side, rgba(0, 214, 200, .34), rgba(0, 214, 200, 0)); }
+	.hr-rings { position: absolute; left: 30%; top: 52%; width: max(135vmin, 1000px); height: max(135vmin, 1000px); translate: -50% -50%; -webkit-mask-image: radial-gradient(closest-side, #000 42%, transparent 100%); mask-image: radial-gradient(closest-side, #000 42%, transparent 100%); animation: hr 140s linear infinite; }
+	@keyframes hr { to { transform: rotate(360deg); } }
 	.au { position: absolute; width: 80vmax; height: 80vmax; border-radius: 50%; will-change: transform; }
 	.au1 { top: -46vmax; left: -22vmax; background: radial-gradient(closest-side, rgba(0, 196, 190, .26), rgba(0, 196, 190, 0)); animation: au1 16s ease-in-out infinite alternate; }
 	.au2 { bottom: -50vmax; right: -24vmax; background: radial-gradient(closest-side, rgba(255, 180, 148, .13), rgba(255, 180, 148, 0)); animation: au2 19s ease-in-out infinite alternate; }
@@ -306,16 +328,34 @@ const MORE = [
 	.pin-dot { fill: #8BF3EC; }
 
 	:global(html.story) .hero { position: absolute; z-index: 6; text-align: start; inset-inline-start: max(6vw, calc(50vw - 560px)); top: 50%; width: min(45vw, 560px); margin-top: -170px; }
-	.a-hero { position: absolute; left: calc(29vw - min(76vh, 640px) * .2307 - 135px); top: calc(50% - min(76vh, 640px) / 2 - 22px); width: min(22vw, 280px); aspect-ratio: 1; }
-	.a-fan { position: absolute; left: calc(29vw - min(76vh, 640px) * .2307); top: calc(50% - min(76vh, 640px) / 2 + 26px); height: min(76vh, 640px); aspect-ratio: 1290 / 2796; }
+	.rig { position: absolute; z-index: 2; left: max(2.5vw, calc(50vw - 650px)); top: 52%; translate: 0 -50%; width: min(54vw, 740px, 102vh); aspect-ratio: 1.34; pointer-events: none; }
+	.a-hero { position: absolute; left: 60%; top: -17%; width: 28%; aspect-ratio: 1; }
+	.a-fan { position: absolute; right: 5%; bottom: 0; width: 23%; aspect-ratio: 1290 / 2796; }
+	.hd-lap { position: absolute; left: 7%; top: 4%; width: 84%; opacity: 0; will-change: transform; }
+	.lap-lid { padding: 7px 7px 0; background: #131D25; border-radius: 15px 15px 0 0; box-shadow: 0 0 0 1px rgba(255, 255, 255, .1); }
+	.lap-bar { display: flex; align-items: center; gap: 4px; height: clamp(14px, 1.7vw, 23px); padding: 0 9px; direction: ltr; background: #E9F1F1; border-radius: 8px 8px 0 0; }
+	.lap-bar i { width: 6px; height: 6px; flex: none; border-radius: 50%; background: #BFCDCD; }
+	.lap-bar span { flex: 1; text-align: center; font-size: clamp(.5rem, .8vw, .7rem); font-weight: 700; color: #4C5A60; padding-inline-end: 26px; }
+	.lap-scr { aspect-ratio: 16 / 10; overflow: hidden; background: linear-gradient(135deg, #0A8C8E 0 26%, #EAF6F5 26.2%); }
+	.lap-scr img { display: block; width: 100%; height: 100%; object-fit: cover; }
+	.lap-base { position: relative; height: clamp(9px, 1.25vw, 16px); margin: 0 -6%; background: linear-gradient(180deg, #E3EAEB, #93A5A8); border-radius: 0 0 16px 16px; box-shadow: 0 30px 44px -14px rgba(0, 0, 0, .8); }
+	.lap-base::before { content: ''; position: absolute; left: 50%; top: 0; width: 15%; height: 42%; translate: -50% 0; background: #819598; border-radius: 0 0 7px 7px; }
+	.hd-pad { box-sizing: border-box; position: absolute; left: 0; bottom: 2%; width: 41%; aspect-ratio: 4 / 3; padding: 6px; background: #0F1A22; border-radius: 17px; rotate: -3deg; opacity: 0; will-change: transform; box-shadow: 0 0 0 1px rgba(255, 255, 255, .1), 0 28px 44px -16px rgba(0, 0, 0, .85); }
+	.hd-pad img { display: block; width: 100%; height: 100%; object-fit: cover; border-radius: 11px; background: #EAF6F5; }
+	.rig img { opacity: 0; transition: opacity .45s; }
+	.rig img.in { opacity: 1; }
+	.cue { position: absolute; z-index: 7; left: 50%; bottom: clamp(12px, 2.8vh, 28px); translate: -50% 0; align-items: center; gap: 7px; padding: 8px 17px 8px 12px; border: 1px solid rgba(191, 242, 238, .38); border-radius: 999px; background: rgba(5, 38, 44, .78); color: #fff; font: inherit; font-size: .92rem; font-weight: 700; cursor: pointer; opacity: 0; }
+	:global(html.story) .cue { display: flex; }
+	.cue:focus-visible { outline: 3px solid #BFF2EE; outline-offset: 3px; }
+	.cue i { position: relative; display: block; width: 18px; height: 22px; overflow: hidden; }
+	.cue svg { position: absolute; left: 0; top: 2px; width: 18px; height: 18px; fill: none; stroke: #BFF2EE; stroke-width: 2.8; stroke-linecap: round; stroke-linejoin: round; animation: cue 1.5s ease-in-out infinite; }
+	.cue svg + svg { animation-delay: .24s; }
+	@keyframes cue { 0% { transform: translateY(-9px); opacity: 0; } 40% { opacity: 1; } 100% { transform: translateY(9px); opacity: 0; } }
 	:global(html:not(.story)) .a-fan { display: none; }
 	:global(html.story) .a-fan { display: block; }
 	:global(html.story) .hero h1 { color: #fff; }
 	:global(html.story) .hero p { color: #D8EEEE; }
 	:global(html.story) .hero-web { color: #BFF2EE; }
-	.side { position: absolute; left: 0; top: 0; z-index: 2; aspect-ratio: 1290 / 2796; padding: 6px; background: #0F1A22; border-radius: 34px; opacity: 0; will-change: transform; box-shadow: 0 30px 60px -22px rgba(0, 0, 0, .7); }
-	.side .ph-in { border-radius: 28px; }
-	.side .ph-in img { opacity: 1; }
 	:global(html.story) .hchip { display: flex; }
 	.hchip { position: absolute; left: 0; top: 0; z-index: 5; display: flex; align-items: center; gap: 8px; padding: 8px 12px 8px 14px; border-radius: 14px; white-space: nowrap; opacity: 0; will-change: transform;
 		background: rgba(255, 255, 255, .95); box-shadow: 0 16px 30px -14px rgba(0, 0, 0, .6); }
@@ -457,10 +497,18 @@ const MORE = [
 		.hero-web { margin-top: 6px; font-size: .9rem; }
 		.hero h1 { font-size: clamp(2rem, 9vw, 3rem); }
 		.hero p { margin-bottom: 0; font-size: 1.04rem; }
-		.a-fan { left: calc(50% - min(56vw, 240px) / 2); top: clamp(342px, 42vh, 396px); width: min(56vw, 240px); height: auto; }
-		.a-hero { left: -3vw; top: calc(clamp(342px, 42vh, 396px) - 44px); width: 40vw; }
-		.side { padding: 5px; border-radius: 28px; }
-		.side .ph-in { border-radius: 23px; }
+		.rig { left: 50%; top: clamp(326px, 39vh, 372px); translate: -50% 0; width: min(96vw, 470px); aspect-ratio: 1.14; }
+		.a-fan { right: 4%; bottom: 0; width: 31%; }
+		.hd-lap { left: 6%; top: 0; width: 88%; }
+		.lap-lid { padding: 4px 4px 0; border-radius: 10px 10px 0 0; }
+		.lap-bar { padding: 0 6px; border-radius: 6px 6px 0 0; }
+		.lap-bar i { width: 4px; height: 4px; }
+		.lap-base { border-radius: 0 0 10px 10px; }
+		.hd-pad { left: 1%; bottom: 9%; width: 47%; padding: 4px; border-radius: 11px; }
+		.hd-pad img { border-radius: 7px; }
+		.hr-glow { left: 50%; top: 66%; width: 112vw; height: 112vw; }
+		.hr-rings { left: 50%; top: 66%; width: 190vw; height: 190vw; animation: none; }
+		.a-hero { left: 72%; top: -9%; width: 24%; }
 		.hchip { padding: 6px 9px 6px 10px; gap: 6px; border-radius: 12px; }
 		.hchip i { width: 26px; height: 26px; }
 		.hchip small { font-size: .64rem; }
@@ -497,7 +545,7 @@ const MORE = [
 		.chips li { font-size: .92rem; padding: 6px 14px; }
 	}
 	@media (prefers-reduced-motion: reduce) {
-		.track, .strip-track, .au { animation: none; }
+		.track, .strip-track, .au, .hr-rings, .cue svg { animation: none; }
 		.wall-toggle { display: none; }
 		.strip { -webkit-mask-image: none; mask-image: none; direction: rtl; }
 		.strip-track { width: auto; }
