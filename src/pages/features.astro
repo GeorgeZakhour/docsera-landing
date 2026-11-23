@@ -1,196 +1,201 @@
 ---
-// «عن التطبيق»: the app explored by what the visitor needs, on its real screens
-// (full-length renders with fake data). Without JS the first screen and every need
-// stay readable.
+// «عن التطبيق»: the guided tour of the whole app. One 3D phone stays with the visitor,
+// and every step lifts one real feature out of the real screen (fake data). Without JS
+// or with reduced motion the same chapters are a plain readable column.
 import Layout from '../layouts/Layout.astro';
 import Footer from '../components/Footer.astro';
 import SiteHeader from '../components/site/SiteHeader.astro';
 import SiteCta from '../components/site/SiteCta.astro';
-import AppPhone from '../components/site/AppPhone.astro';
-import { APP_PAGES, pageIndex } from '../data/appPages';
+import pages from '../data/tourPages.json';
+import { CHAPTERS, type Box } from '../data/tour';
 
-const NEEDS = [
-	{ title: 'أحجز موعداً', text: 'ابحث باسم الطبيب أو الاختصاص، واختر الوقت المناسب، وتابع موعدك.', pages: ['home', 'search', 'doctor', 'booking', 'appointments'],
-		icon: '<rect x="4" y="5" width="16" height="15" rx="3"/><path d="M4 10h16M9 3v4M15 3v4"/>' },
-	{ title: 'أتذكّر أدويتي', text: 'تذكير بكل جرعة في وقتها، حتى دون إنترنت.', pages: ['routine', 'medications'],
-		icon: '<path d="M10.5 20.5a5 5 0 0 1-7-7l10-10a5 5 0 0 1 7 7z"/><path d="m8.5 8.5 7 7"/>' },
-	{ title: 'أحفظ ملفي الطبي', text: 'تقاريرك وقياساتك في مكان واحد، ولا يطّلع طبيب على ملفك إلا برمز تعطيه له.', pages: ['health', 'reports', 'vitals'],
-		icon: '<path d="M7 3h7l4 4v14H7z"/><path d="M10 12h5M10 16h5"/>' },
-	{ title: 'أهتم بعائلتي', text: 'أضف أطفالك ووالديك، واحجز لهم، وتابع ملف كل واحد منهم من حسابك.', pages: ['family', 'routine'],
-		icon: '<circle cx="9" cy="8" r="3.2"/><path d="M3.5 20c.6-3.6 2.7-5.5 5.5-5.5s4.9 1.9 5.5 5.5"/><path d="M16 5.2a3 3 0 0 1 0 5.6M17.5 14.8c1.7.7 2.7 2.4 3 5.2"/>' },
-	{ title: 'أراسل عيادتي', text: 'راسل عيادتك لتنظيم مواعيدك ومتابعتها، وأرسل الصور والملفات.', pages: ['chat'],
-		icon: '<path d="M20 12a8 8 0 0 1-11.8 7L4 20l1-4.2A8 8 0 1 1 20 12z"/>' },
-];
-
-// Never a closed list: it ends in «وأكثر».
-const MORE = ['الوصفات', 'التحاليل', 'صور الأشعة', 'اللقاحات', 'الحساسيات', 'العمليات', 'الأمراض المزمنة', 'التاريخ العائلي', 'نمط الحياة', 'تذكير الفحوصات', 'أداة الشاشة الرئيسية', 'الأطباء المفضلون', 'تأجيل المواعيد', 'إضافة إلى التقويم', 'العروض والقسائم', 'النقاط والمكافآت', 'الدخول بالبصمة', 'الآيباد والويب', 'العربية والإنجليزية'];
-const silk = '/images/home/3d/silk-860.webp 860w, /images/home/3d/silk-1600.webp 1600w';
+type PageId = keyof typeof pages;
+const boxOf = (id: string, b: Box) => {
+	if (b === null) return null;
+	return typeof b === 'number' ? pages[id as PageId].cards[b] : b;
+};
+const steps = CHAPTERS.flatMap((ch, c) => ch.steps.map(([, p, b], k) => ({ c, k, p, r: boxOf(p, b) })));
+const used = [...new Set(steps.map((s) => s.p))];
+const json = JSON.stringify({
+	pages: Object.fromEntries(used.map((id) => [id, { h: pages[id as PageId].h, foot: pages[id as PageId].foot }])),
+	steps,
+	spins: CHAPTERS.map((c) => !!c.spin),
+});
+let n = -1;
+const SLICES = [-1, -0.6, -0.2, 0.2, 0.6, 1];
 ---
 
 <Layout
 	title="عن التطبيق — DocSera"
-	description="تعرّف على ما يقدّمه دوكسيرا: حجز المواعيد، وتذكير الأدوية، والملف الطبي لك ولعائلتك، والتواصل مع عيادتك، على شاشات التطبيق الحقيقية."
+	description="جولة كاملة في دوكسيرا: البحث وحجز المواعيد، وتذكير الأدوية، والملف الطبي لك ولعائلتك، والتقارير والوثائق، والتواصل مع عيادتك."
 	path="/features"
 	appBar={false}
 >
+	<script is:inline>
+		if (!matchMedia('(prefers-reduced-motion: reduce)').matches) document.documentElement.classList.add('tour');
+	</script>
 	<SiteHeader current="features" />
-	<main>
-		<section class="ex" data-ex>
-			<img class="silk" src="/images/home/3d/silk-860.webp" srcset={silk} sizes="max(100vw, 160vh)" alt="" width="1600" height="1000" decoding="async" />
-			<div class="ex-in">
-				<div class="ex-copy">
-					<h1>ماذا تحتاج اليوم؟</h1>
-					<p class="ex-sub">اختر ما يهمّك، وشاهده على شاشات التطبيق الحقيقية.</p>
-					<div class="needs" role="group" aria-label="ما تحتاجه">
-						{NEEDS.map((n, i) => (
-							<button type="button" class:list={['need', { on: i === 0 }]} data-need={i} aria-pressed={i === 0 ? 'true' : 'false'}>
-								<i><svg viewBox="0 0 24 24" aria-hidden="true" set:html={n.icon} /></i>
-								<span class="need-t"><b>{n.title}</b><span class="need-d"><small>{n.text}</small></span></span>
-							</button>
-						))}
-					</div>
+	<main class="tr" data-tour>
+		<script type="application/json" data-tour-json set:html={json} />
+		<nav class="tr-nav" data-nav aria-label="أقسام الجولة">
+			{CHAPTERS.map((c) => <button type="button" data-go>{c.nav}</button>)}
+		</nav>
+		<section class="tr-scroll" data-scroll style={`--n:${steps.length}`}>
+			<div class="tr-stick" data-stick>
+				<i class="aura a0 on" data-aura></i><i class="aura a1" data-aura></i><i class="aura a2" data-aura></i>
+				<div class="tr-hero" data-hero>
+					<h1>تطبيق متكامل<br />بين يديك</h1>
+					<p>كل ما تحتاجه لرعاية صحية أفضل</p>
+					<span class="tr-cue" aria-hidden="true"><svg viewBox="0 0 24 24"><path d="M12 5v13M6.5 12.5 12 18l5.5-5.5" /></svg></span>
 				</div>
-				<div class="ex-stage">
-					<p class="ex-cap" data-cap aria-live="polite">{NEEDS[0].text}</p>
-					<AppPhone eager />
-					<div class="steps-wrap">
-						{NEEDS.map((n, i) => (
-							<div class="steps" data-steps hidden={i !== 0} role="group" aria-label={`شاشات ${n.title}`}>
-								{n.pages.length > 1 && n.pages.map((id, k) => (
-									<button type="button" class:list={[{ on: k === 0 }]} data-step={pageIndex(id)} aria-pressed={k === 0 ? 'true' : 'false'}>{APP_PAGES[pageIndex(id)].label}</button>
-								))}
+				<div class="rig" data-rig aria-hidden="true">
+					<div class="pivot" data-pivot>
+						{SLICES.map((z) => <i class="sl" style={`--z:${z}`}></i>)}
+						<div class="bk"><span class="cam"><b></b><b></b><b></b></span><img src="/images/DocSera-shape-main.svg" alt="" width="60" height="60" loading="lazy" /></div>
+						<div class="fr">
+							<div class="box" data-box>
+								<i class="dim" data-dim></i>
+								<img class="stat" data-status src="/images/home/try/status.webp" alt="" width="640" height="88" decoding="async" />
 							</div>
-						))}
+							<i class="isl"></i>
+							<div class="lift-box"><i class="lift" data-lift></i></div>
+						</div>
 					</div>
 				</div>
-			</div>
-			<script type="application/json" data-need-pages set:html={JSON.stringify(NEEDS.map((n) => ({ text: n.text, first: pageIndex(n.pages[0]) })))} />
-		</section>
-
-		<section class="more">
-			<h2>وهذا جزء مما فيه</h2>
-			<ul class="more-list">
-				{MORE.map((m) => <li>{m}</li>)}
-				<li class="more-last">وأكثر</li>
-			</ul>
-		</section>
-
-		<section class="safe">
-			<img class="silk" src="/images/home/3d/silk-860.webp" srcset={silk} sizes="max(100vw, 160vh)" alt="" width="1600" height="1000" loading="lazy" decoding="async" />
-			<div class="safe-in">
-				<div class="safe-v" aria-hidden="true">
-					<img src="/images/home/3d/vault-base-420.webp" srcset="/images/home/3d/vault-base-420.webp 420w, /images/home/3d/vault-base-760.webp 760w" sizes="(max-width: 899px) 190px, 300px" alt="" width="760" height="760" loading="lazy" decoding="async" />
-					<img src="/images/home/3d/vault-dial-420.webp" srcset="/images/home/3d/vault-dial-420.webp 420w, /images/home/3d/vault-dial-760.webp 760w" sizes="(max-width: 899px) 190px, 300px" alt="" width="760" height="760" loading="lazy" decoding="async" />
-				</div>
-				<div>
-					<h2>ملفك بإذنك</h2>
-					<p>بياناتك الطبية محفوظة على خوادمنا داخل سوريا، ومشفّرة.</p>
-					<p>لا يطّلع طبيب على ملفك إلا برمز تعطيه له، وتسحبه متى شئت.</p>
+				<div class="chs">
+					{CHAPTERS.map((ch, c) => (
+						<article class:list={['ch', c % 2 === 0 ? 'to-r' : 'to-l']} data-ch>
+							<span class="ch-n" aria-hidden="true">{String(c + 1).padStart(2, '0')}</span>
+							<h2>{ch.title}</h2>
+							<p>{ch.text}</p>
+							<ol class="ch-st">
+								{ch.steps.map(([label]) => { n += 1; return <li><button type="button" data-step={n}>{label}</button></li>; })}
+							</ol>
+							<img class="ch-shot" src={`/images/tour/${ch.steps[0][1]}.webp`} alt={ch.title} width="640" height={pages[ch.steps[0][1] as PageId].h} loading="lazy" decoding="async" />
+						</article>
+					))}
 				</div>
 			</div>
 		</section>
 
+		<section class="all">
+			<img src="/images/home/3d/trio-sm.webp" srcset="/images/home/3d/trio-sm.webp 900w, /images/home/3d/trio-md.webp 1200w, /images/home/3d/trio-lg.webp 1640w" sizes="(max-width: 899px) 118vw, 820px" alt="DocSera على الهاتف والآيباد والحاسوب" width="1640" height="903" loading="lazy" decoding="async" />
+			<h2>وهذا ليس كل شيء</h2>
+			<p>DocSera معك على الهاتف والآيباد والويب، بحساب واحد.</p>
+		</section>
 		<SiteCta />
 	</main>
 	<Footer seamless />
 </Layout>
 
 <script>
-	import { mountAppPhone } from '../scripts/site/app-phone';
-
-	const root = document.querySelector<HTMLElement>('[data-ex]');
-	const el = root?.querySelector<HTMLElement>('[data-try-phone]');
-	if (root && el) {
-		const phone = mountAppPhone(el);
-		phone.activate();
-		new IntersectionObserver(([e]) => phone.setInView(e.isIntersecting)).observe(el);
-		const info: { text: string; first: number }[] = JSON.parse(root.querySelector('[data-need-pages]')?.textContent || '[]');
-		const needs = Array.from(root.querySelectorAll<HTMLButtonElement>('[data-need]'));
-		const groups = Array.from(root.querySelectorAll<HTMLElement>('[data-steps]'));
-		const cap = root.querySelector<HTMLElement>('[data-cap]');
-		const press = (b: HTMLButtonElement, on: boolean) => {
-			b.classList.toggle('on', on);
-			b.setAttribute('aria-pressed', String(on));
-		};
-		needs.forEach((b, i) => b.addEventListener('click', () => {
-			needs.forEach((x) => press(x, x === b));
-			groups.forEach((g, k) => {
-				g.hidden = k !== i;
-				g.querySelectorAll<HTMLButtonElement>('[data-step]').forEach((s, n) => press(s, n === 0));
-			});
-			if (cap) cap.textContent = info[i].text;
-			b.scrollIntoView({ inline: 'center', block: 'nearest', behavior: 'smooth' });
-			phone.engage(false);
-			phone.show(info[i].first);
-		}));
-		groups.forEach((g) => g.querySelectorAll<HTMLButtonElement>('[data-step]').forEach((s) => s.addEventListener('click', () => {
-			g.querySelectorAll<HTMLButtonElement>('[data-step]').forEach((x) => press(x, x === s));
-			phone.engage(false);
-			phone.show(Number(s.dataset.step));
-		})));
-	}
+	import { startTour } from '../scripts/site/tour';
+	const root = document.querySelector<HTMLElement>('[data-tour]');
+	if (root && document.documentElement.classList.contains('tour')) startTour(root);
 </script>
 
 <style>
-	.silk { position: absolute; inset: 0; width: 100%; height: 100%; object-fit: cover; }
-	.ex { position: relative; display: flex; align-items: center; min-height: 100svh; padding: 88px 0 28px; box-sizing: border-box; overflow: hidden; color: #fff; background: #06262B; }
-	.ex-in { position: relative; display: grid; grid-template-columns: minmax(0, 1fr) auto; align-items: center; gap: clamp(40px, 7vw, 96px); width: min(1120px, 100%); margin: 0 auto; padding: 0 28px; box-sizing: border-box;
-		--phone-w: auto; --phone-h: min(calc(100svh - 196px), 650px); --phone-m: 0 auto; }
-	.ex h1 { margin: 0 0 8px; font-size: clamp(2.5rem, 5vw, 4.2rem); font-weight: 800; line-height: 1.15; color: #fff; }
-	.ex-sub { margin: 0 0 24px; font-size: clamp(1.04rem, 1.6vw, 1.24rem); color: #DDF3F1; }
-	.needs { display: grid; gap: 8px; max-width: 520px; }
-	.need { display: flex; align-items: flex-start; gap: 12px; width: 100%; padding: 11px 13px; font: inherit; text-align: start; color: #fff; cursor: pointer; background: rgba(255, 255, 255, .07); border: 1px solid rgba(255, 255, 255, .16); border-radius: 16px; transition: background .2s ease, color .2s ease, border-color .2s ease; }
-	.need:hover { background: rgba(255, 255, 255, .13); }
-	.need:focus-visible, .steps button:focus-visible { outline: 3px solid #fff; outline-offset: 2px; }
-	.need i { flex: none; display: grid; place-items: center; width: 38px; height: 38px; border-radius: 11px; background: rgba(255, 255, 255, .13); }
-	.need svg { width: 21px; height: 21px; fill: none; stroke: currentColor; stroke-width: 2; stroke-linecap: round; stroke-linejoin: round; }
-	.need-t { flex: 1; min-width: 0; }
-	.need b { display: block; font-size: 1.1rem; font-weight: 800; line-height: 38px; }
-	.need-d { display: grid; grid-template-rows: 0fr; transition: grid-template-rows .25s ease; }
-	.need-d small { overflow: hidden; font-size: .94rem; font-weight: 600; line-height: 1.65; color: #46565D; }
-	.need:global(.on) { color: #0F1A22; background: #fff; border-color: #fff; }
-	.need:global(.on) i { color: var(--c-main-dark); background: #E0F2F2; }
-	.need:global(.on) .need-d { grid-template-rows: 1fr; }
-	.ex-cap { display: none; }
-	.steps-wrap { display: flex; justify-content: center; min-height: 38px; margin-top: 14px; }
-	.steps { display: flex; justify-content: center; gap: 6px; max-width: 100%; }
-	.steps[hidden] { display: none; }
-	.steps button { flex: none; padding: 5px 13px; font: 700 .88rem Cairo, sans-serif; color: #DDF3F3; cursor: pointer; background: rgba(255, 255, 255, .09); border: 1px solid rgba(255, 255, 255, .2); border-radius: 999px; }
-	.steps button:global(.on) { color: var(--c-main-dark); background: #fff; border-color: #fff; }
+	.tr { background: #F4FAFA; color: #0F1A22; }
+	.tr-nav, .rig, .aura, .tr-cue { display: none; }
+	.tr-stick { padding: 96px 20px 40px; }
+	.tr-hero { text-align: center; margin-bottom: 26px; }
+	.tr-hero h1 { margin: 0 0 10px; font-size: clamp(2.5rem, 6.4vw, 5rem); font-weight: 800; line-height: 1.2; color: var(--c-main-dark); }
+	.tr-hero p { margin: 0; font-size: clamp(1.06rem, 1.8vw, 1.34rem); color: #46565D; }
+	.chs { display: grid; gap: 22px; max-width: 620px; margin: 0 auto; }
+	.ch { position: relative; padding: 24px 22px; background: #fff; border: 1px solid #E1EEEE; border-radius: 24px; box-shadow: 0 26px 50px -32px rgba(0, 70, 74, .42); }
+	.ch-n { position: absolute; top: 8px; inset-inline-end: 18px; font: 800 3.5rem/1 Montserrat, Cairo, sans-serif; color: #DDF0EF; }
+	.ch h2 { position: relative; margin: 0 0 6px; font-size: clamp(1.55rem, 2.5vw, 2.1rem); font-weight: 800; line-height: 1.25; color: #0B5F62; }
+	.ch > p { position: relative; margin: 0 0 12px; font-size: 1.04rem; line-height: 1.65; color: #46565D; }
+	.ch-st { display: grid; gap: 2px; margin: 0; padding: 0; list-style: none; }
+	.ch-st button { position: relative; display: block; width: 100%; padding: 6px 16px 6px 8px; padding-inline: 16px 8px; font: 700 .98rem/1.5 Cairo, sans-serif; text-align: start; color: #56656C; background: none; border: 0; border-radius: 10px; cursor: pointer; transition: color .2s ease, background .2s ease; }
+	.ch-st button::before { content: ''; position: absolute; inset-inline-start: 4px; top: 50%; width: 5px; height: 5px; margin-top: -2.5px; background: #B7D3D3; border-radius: 50%; transition: all .2s ease; }
+	.ch-st button:hover { color: #0B5F62; }
+	.ch-st button:focus-visible, .tr-nav button:focus-visible { outline: 2px solid var(--c-main-dark); outline-offset: 1px; }
+	.ch-st button:global(.on) { color: #06565A; background: #E4F4F3; }
+	.ch-st button:global(.on)::before { background: var(--c-main-dark); transform: scale(1.5); }
+	.ch-shot { display: block; width: min(250px, 72%); height: auto; margin: 16px auto 0; border: 6px solid #0B1114; border-radius: 28px; }
 
-	.more { padding: clamp(60px, 9vw, 104px) 22px; text-align: center; background: #F6FBFB; }
-	.more h2 { margin: 0 0 26px; font-size: clamp(1.8rem, 3.8vw, 3rem); font-weight: 800; color: #0F1A22; }
-	.more-list { display: flex; flex-wrap: wrap; justify-content: center; gap: 9px; max-width: 900px; margin: 0 auto; padding: 0; list-style: none; }
-	.more-list li { padding: 7px 15px; font-size: .98rem; font-weight: 700; color: #1F4A4E; background: #fff; border: 1px solid #D9EBEB; border-radius: 999px; }
-	.more-list .more-last { color: #fff; background: var(--c-main-dark); border-color: var(--c-main-dark); }
+	.all { padding: clamp(50px, 7vw, 86px) 20px clamp(54px, 8vw, 96px); text-align: center; overflow: hidden; color: #fff; background: linear-gradient(180deg, #F4FAFA 0, #CDE8E6 15%, #0E5C60 40%, #06262B 100%); }
+	.all img { display: block; width: min(820px, 118vw); max-width: none; height: auto; margin: 0 auto 18px; position: relative; left: 50%; translate: -50% 0; }
+	.all h2 { margin: 0 0 8px; font-size: clamp(2rem, 4.6vw, 3.6rem); font-weight: 800; color: #fff; }
+	.all p { margin: 0; font-size: clamp(1.04rem, 1.7vw, 1.28rem); color: #DDF3F1; }
 
-	.safe { position: relative; overflow: hidden; color: #fff; background: #06262B; }
-	.safe-in { position: relative; display: flex; align-items: center; justify-content: center; gap: clamp(30px, 6vw, 80px); max-width: 1000px; margin: 0 auto; padding: clamp(60px, 8vw, 96px) 28px; }
-	.safe-v { position: relative; flex: none; width: 300px; height: 300px; }
-	.safe-v img { position: absolute; inset: 0; width: 100%; height: 100%; }
-	.safe h2 { margin: 0 0 12px; font-size: clamp(2rem, 4.4vw, 3.4rem); font-weight: 800; color: #fff; }
-	.safe p { margin: 0 0 6px; font-size: clamp(1.04rem, 1.6vw, 1.24rem); color: #E4F6F4; }
+	/* ── the tour ─────────────────────────────── */
+	:global(html.tour) .tr-scroll { --step: 46; height: calc((var(--n) * var(--step) + 190) * 1vh); }
+	:global(html.tour) .tr-stick { position: sticky; top: 0; height: 100vh; height: 100lvh; padding: 0; overflow: hidden; background: #F4FAFA; --ph: min(calc(100vh - 150px), 730px); --d: 8px; }
+	:global(html.tour) .aura { display: block; position: absolute; inset: -10%; opacity: 0; transition: opacity .9s ease; }
+	:global(html.tour) .aura:global(.on) { opacity: 1; }
+	.a0 { background: radial-gradient(44% 56% at 50% 54%, rgba(0, 170, 168, .24), rgba(0, 170, 168, .06) 58%, transparent 74%); }
+	.a1 { background: radial-gradient(44% 56% at 50% 54%, rgba(70, 150, 225, .2), rgba(70, 150, 225, .05) 58%, transparent 74%); }
+	.a2 { background: radial-gradient(44% 56% at 50% 54%, rgba(70, 210, 160, .24), rgba(70, 210, 160, .06) 58%, transparent 74%); }
+	:global(html.tour) .tr-hero { position: absolute; z-index: 3; inset: 86px 20px auto; margin: 0; will-change: transform, opacity; }
+	:global(html.tour) .tr-cue { display: inline-grid; place-items: center; width: 38px; height: 38px; margin-top: 12px; color: var(--c-main-dark); background: #fff; border: 1px solid #D7EAEA; border-radius: 50%; }
+	.tr-cue svg { width: 19px; height: 19px; fill: none; stroke: currentColor; stroke-width: 2.4; stroke-linecap: round; stroke-linejoin: round; animation: cue 1.5s ease-in-out infinite; }
+	@keyframes cue { 0%, 100% { transform: translateY(-2px); } 50% { transform: translateY(3px); } }
+
+	:global(html.tour) .tr-nav { position: fixed; z-index: 40; top: 74px; left: 50%; translate: -50% -8px; display: flex; gap: 2px; width: max-content; max-width: min(1180px, calc(100% - 20px)); padding: 4px; overflow-x: auto; scrollbar-width: none; background: rgba(255, 255, 255, .84); -webkit-backdrop-filter: blur(12px); backdrop-filter: blur(12px); border: 1px solid rgba(0, 144, 146, .12); border-radius: 13px; box-shadow: 0 10px 24px -18px rgba(0, 60, 62, .5); opacity: 0; pointer-events: none; transition: opacity .3s ease, translate .3s ease; box-sizing: border-box; }
+	.tr-nav::-webkit-scrollbar { display: none; }
+	:global(.tr.past) .tr-nav { opacity: 0 !important; pointer-events: none !important; }
+	:global(.tr.going) .tr-nav { opacity: 1; translate: -50% 0; pointer-events: auto; }
+	.tr-nav button { flex: none; padding: 4px 10px; font: 700 .84rem/1.5 Cairo, sans-serif; color: #4A5A61; background: none; border: 0; border-radius: 9px; cursor: pointer; transition: color .2s ease, background .2s ease; }
+	.tr-nav button:hover { color: var(--c-main-dark); }
+	.tr-nav button:global(.on) { color: #fff; background: var(--c-main-dark); }
+
+	/* the phone */
+	:global(html.tour) .rig { --u: .45px; display: block; position: absolute; z-index: 2; left: 50%; top: calc(50% + 42px); width: calc(var(--ph) * .4665); height: var(--ph); translate: -50% -50%; perspective: 1800px; pointer-events: none; will-change: transform; }
+	.pivot { position: absolute; inset: 0; transform-style: preserve-3d; will-change: transform; }
+	.sl, .fr, .bk { position: absolute; inset: 0; border-radius: 15% / 7%; }
+	.sl { background: linear-gradient(100deg, #EDF2F3, #8A989D 24%, #48555B 58%, #C9D2D5); transform: translateZ(calc(var(--d) * var(--z))); }
+	.bk { display: grid; place-items: center; background: linear-gradient(135deg, #1B3A3F, #0D2226 60%, #17343A); transform: rotateY(180deg) translateZ(var(--d)); box-shadow: inset 0 0 0 2px #7F8E93; backface-visibility: hidden; }
+	.bk img { width: 22%; height: auto; filter: brightness(0) invert(1); opacity: .92; }
+	.cam { position: absolute; top: 3%; left: 6%; display: grid; grid-template-columns: 1fr 1fr; gap: 8%; width: 40%; aspect-ratio: 1; padding: 6%; box-sizing: border-box; background: rgba(255, 255, 255, .09); border-radius: 24%; }
+	.cam b { display: block; aspect-ratio: 1; border-radius: 50%; background: radial-gradient(circle at 38% 34%, #6F8C96, #0C1518 44%, #000 70%); box-shadow: 0 0 0 2px #2A3B40; }
+	.fr { background: #05090B; transform: translateZ(var(--d)); transform-style: preserve-3d; box-shadow: inset 0 0 0 2px #AEBABE, inset 0 0 0 3px #1B2327; }
+	.box, .lift-box { position: absolute; inset: 1.15% 2.5%; border-radius: 13.4% / 6.2%; }
+	.box { overflow: hidden; background: #F6FBFB; }
+	.lift-box { transform-style: preserve-3d; pointer-events: none; }
+	.isl { position: absolute; z-index: 3; left: 50%; top: 2.1%; width: 29%; height: 2.9%; background: #000; border-radius: 99px; translate: -50% 0; transform: translateZ(1px); }
+	.box :global(.lay) { position: absolute; inset: 0; opacity: 0; transition: opacity .34s ease; background: #F6FBFB; }
+	.box :global(.lay.on) { opacity: 1; }
+	.box :global(.lay > img:first-child) { display: block; width: 100%; height: auto; transition: transform .62s cubic-bezier(.3, .7, .2, 1); will-change: transform; }
+	.box :global(.lay > .foot) { position: absolute; left: 0; bottom: 0; width: 100%; height: auto; -webkit-mask-image: linear-gradient(to top, #000 calc(100% - 14px), transparent); mask-image: linear-gradient(to top, #000 calc(100% - 14px), transparent); }
+	.dim { position: absolute; z-index: 2; inset: 0; background: rgba(10, 70, 74, .09); opacity: 0; transition: opacity .3s ease; }
+	.dim:global(.on) { opacity: 1; }
+	.stat { position: absolute; z-index: 3; top: 0; left: 0; width: 100%; height: auto; opacity: 0; transition: opacity .2s ease; -webkit-mask-image: linear-gradient(to bottom, #000 74%, transparent); mask-image: linear-gradient(to bottom, #000 74%, transparent); }
+	.stat:global(.on) { opacity: 1; }
+	.lift { position: absolute; left: calc(var(--u) * var(--x, 0)); top: calc(var(--u) * var(--top, 0)); width: calc(var(--u) * var(--w, 0)); height: calc(var(--u) * var(--h, 0)); background-repeat: no-repeat; background-size: calc(var(--u) * 640) auto; background-position: calc(var(--u) * var(--x, 0) * -1) calc(var(--u) * var(--y, 0) * -1); border-radius: calc(var(--u) * 30); opacity: 0; transform: translateZ(0) scale(1); transition: opacity .16s ease, transform .5s cubic-bezier(.2, 1.3, .4, 1), box-shadow .4s ease; }
+	.lift:global(.on) { opacity: 1; transform: translateZ(64px) scale(1.07); box-shadow: 0 30px 46px -14px rgba(0, 44, 48, .62), 0 0 0 1.5px rgba(255, 255, 255, .85); }
+
+	/* the chapter cards */
+	:global(html.tour) .chs { display: block; max-width: none; margin: 0; }
+	:global(html.tour) .ch { position: absolute; z-index: 4; top: calc(50% + 42px); width: min(390px, 29vw); box-sizing: border-box; padding: 26px 24px 20px; background: rgba(255, 255, 255, .92); -webkit-backdrop-filter: blur(14px); backdrop-filter: blur(14px); opacity: 0; visibility: hidden; transform: translateY(-46%); transition: opacity .32s ease, transform .42s ease, visibility 0s linear .32s; }
+	:global(html.tour) .ch.to-r { right: max(3vw, calc(50vw - 610px)); }
+	:global(html.tour) .ch.to-l { left: max(3vw, calc(50vw - 610px)); }
+	:global(.tr.going) .ch:global(.on) { opacity: 1; visibility: visible; transform: translateY(-50%); transition: opacity .34s ease .06s, transform .42s ease .06s; }
+	:global(html.tour) .ch-shot { display: none; }
 
 	@media (max-width: 899px) {
-		.ex { align-items: flex-start; padding: 84px 0 22px; text-align: center; }
-		.ex-in { grid-template-columns: minmax(0, 1fr); gap: 10px; padding: 0 20px; --phone-w: clamp(196px, calc((100svh - 372px) * .4614), 270px); --phone-h: auto; }
-		.ex h1 { font-size: clamp(2.1rem, 9vw, 3rem); }
-		.ex-sub { margin-bottom: 14px; font-size: 1.02rem; }
-		.needs { display: flex; gap: 7px; max-width: none; margin-inline: -20px; padding: 2px 20px; overflow-x: auto; scrollbar-width: none; }
-		.needs::-webkit-scrollbar { display: none; }
-		.need { flex: none; width: auto; align-items: center; gap: 7px; padding: 6px 12px 6px 8px; border-radius: 13px; }
-		.need i { width: 30px; height: 30px; border-radius: 9px; }
-		.need svg { width: 18px; height: 18px; }
-		.need b { font-size: .98rem; line-height: 1.4; white-space: nowrap; }
-		.need-d { display: none; }
-		.ex-cap { display: block; min-height: 3.2em; margin: 2px auto 10px; max-width: 34em; font-size: .98rem; line-height: 1.6; color: #E4F6F4; }
-		.steps-wrap { margin-top: 12px; margin-inline: -20px; }
-		.steps { justify-content: safe center; padding: 2px 20px; overflow-x: auto; scrollbar-width: none; }
-		.steps::-webkit-scrollbar { display: none; }
-		.safe-in { flex-direction: column; text-align: center; }
-		.safe-v { width: 190px; height: 190px; }
+		:global(html.tour) .tr-scroll { --step: 40; }
+		:global(html.tour) .tr-stick { --ph: clamp(290px, calc(100svh - 292px), 600px); --d: 4px; }
+		:global(html.tour) .sl:nth-child(2), :global(html.tour) .sl:nth-child(3), :global(html.tour) .sl:nth-child(5) { display: none; }
+		:global(html.tour) .tr-nav { top: 72px; width: calc(100% - 20px); }
+		.tr-nav button { padding: 4px 9px; font-size: .86rem; }
+		:global(html.tour) .rig { top: 118px; translate: -50% 0; transform-origin: 50% 0; perspective: 1200px; }
+		:global(html.tour) .tr-hero { inset: 84px 16px auto; }
+		.lift:global(.on) { transform: translateZ(26px) scale(1.04); }
+		:global(html.tour) .ch { top: calc(118px + var(--ph) + 10px); inset-inline: 10px !important; left: 10px !important; right: 10px !important; width: auto; padding: 12px 14px 10px; transform: translateY(10px); }
+		:global(.tr.going) .ch:global(.on) { transform: translateY(0); }
+		:global(html.tour) .ch-n { top: 8px; font-size: 1.9rem; inset-inline-end: 12px; }
+		:global(html.tour) .ch h2 { font-size: 1.32rem; margin-bottom: 2px; padding-inline-end: 44px; }
+		:global(html.tour) .ch > p { margin-bottom: 7px; font-size: .94rem; line-height: 1.5; display: -webkit-box; -webkit-box-orient: vertical; -webkit-line-clamp: 2; overflow: hidden; }
+		:global(html.tour) .ch-st { display: flex; gap: 5px; margin-inline: -14px; padding: 1px 14px; overflow-x: auto; scrollbar-width: none; }
+		.ch-st::-webkit-scrollbar { display: none; }
+		:global(html.tour) .ch-st li { flex: none; }
+		:global(html.tour) .ch-st button { width: auto; padding: 4px 11px; font-size: .86rem; white-space: nowrap; background: #F0F6F6; border-radius: 999px; }
+		:global(html.tour) .ch-st button::before { display: none; }
+		:global(html.tour) .ch-st button:global(.on) { color: #fff; background: var(--c-main-dark); }
 	}
 	@media (prefers-reduced-motion: reduce) {
-		.need, .need-d { transition: none; }
+		.tr-cue svg { animation: none; }
 	}
 </style>
