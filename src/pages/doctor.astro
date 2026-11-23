@@ -1,121 +1,128 @@
 ---
-// Doctor landing page — rendered for every /doctor/<token> URL.
+// Doctor landing page, rendered for every /doctor/<token> URL: what a patient sees after
+// scanning the clinic's QR. A quiet profile card with one action.
 //
-// Routing: this file builds to dist/doctor/index.html. The companion
-// nginx rule (see nginx/default.conf) maps any /doctor/<anything> URL
-// to this file via try_files fallback, so a single static page handles
-// every doctor's token without rebuilds when new doctors are added.
+// Routing: this file builds to dist/doctor/index.html. The companion nginx rule (see
+// nginx/default.conf) maps any /doctor/<anything> URL to this file via try_files, so a
+// single static page handles every doctor's token without rebuilds.
 //
-// The page renders a loading shell on the server, then a small inline
-// script reads the token from window.location.pathname, queries the
-// public_doctors view via Supabase REST (anon read access, RLS-gated),
-// and populates the DOM with the appropriate state:
+// The page renders a loading shell, then the script reads the token from the path, queries
+// the public_doctors view (anon read, RLS-gated) and shows one of these states:
 //
 //   - loading    placeholder until the script runs
-//   - doctor     valid token → profile card (skeleton first) + EntityCta
+//   - doctor     valid token → profile (skeleton first) + EntityCta
 //   - not-found  token didn't match an active doctor
-//   - invalid    URL path didn't contain a token, or token failed
-//                the safety regex (alnum + - + _, max 64 chars)
+//   - invalid    no token in the path, or it failed the safety regex (alnum + - + _, max 64)
 //
-// The CTA (install / open in app / web app) is wired from the URL alone and
-// shown at once — it does not wait for the profile request. A patient who
-// scans a clinic QR on a weak connection can still install and open the
-// doctor even when the profile data never arrives; in that case the card
-// says so and offers a retry instead of a dead-end "not found".
-
+// The CTA (install / open in app / web app) is wired from the URL alone and works at once;
+// it does not wait for the profile. A patient on a weak connection can still install and
+// open the doctor even when the profile never arrives: the card says so and offers a retry.
 import Layout from '../layouts/Layout.astro';
-import Navbar from '../components/Navbar.astro';
 import Footer from '../components/Footer.astro';
 import EntityCta from '../components/EntityCta.astro';
+import SiteHeader from '../components/site/SiteHeader.astro';
 ---
 
 <Layout title="DocSera — ملف الطبيب" appBanner="entity" appBar={false}>
-	<Navbar />
+	<SiteHeader />
 
-	<main class="doctor-page">
-		<section class="doctor-section">
-			<div class="container">
+	<main class="dp">
+		<div class="state state-loading" data-state="loading">
+			<span class="dots" aria-hidden="true"><i></i><i></i><i></i></span>
+			<p>جارٍ تحميل بيانات الطبيب…</p>
+		</div>
 
-				<!-- Loading skeleton ------------------------------------ -->
-				<div class="state state-loading" data-state="loading">
-					<div class="spinner" aria-hidden="true"></div>
-					<p>جارٍ تحميل بيانات الطبيب…</p>
-				</div>
-
-				<!-- Doctor preview + CTA -------------------------------- -->
-				<div class="state state-doctor" data-state="doctor" hidden>
-					<div class="doctor-card is-loading" data-doctor-card>
-						<div class="doctor-photo">
-							<!-- Initials fallback shown eagerly; the <img> is
-							     stacked on top and only un-hides on successful
-							     load. Avoids the "empty circle" intermediate
-							     state if the image fetch is slow or fails. -->
+		<div class="state state-doctor" data-state="doctor" hidden>
+			<div class="dp-grid">
+				<article class="dp-main is-loading" data-doctor-card>
+					<header class="dp-id">
+						<div class="photo">
 							<div class="photo-fallback" data-doctor-fallback></div>
 							<img data-doctor-image alt="" />
 						</div>
-						<div class="doctor-info">
-							<span class="pill-badge specialty-badge" data-doctor-specialty></span>
-							<h1 class="name" data-doctor-name></h1>
-							<p class="clinic" data-doctor-clinic></p>
-							<p class="address" data-doctor-address hidden>
-								<svg class="pin" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" aria-hidden="true">
-									<path d="M21 10c0 7-9 13-9 13s-9-6-9-13a9 9 0 0 1 18 0z"/>
-									<circle cx="12" cy="10" r="3"/>
-								</svg>
-								<span data-doctor-address-text></span>
-							</p>
-							<p class="card-offline" data-doctor-offline hidden>
-								تعذّر تحميل بيانات الطبيب. تحقق من اتصالك بالإنترنت.
-								<button type="button" data-doctor-retry>إعادة المحاولة</button>
-							</p>
+						<h1 class="name" data-doctor-name></h1>
+						<p class="spec" data-doctor-specialty></p>
+						<p class="ok" data-doctor-verified hidden>
+							<svg viewBox="0 0 24 24" aria-hidden="true"><path d="m5 12.5 4.6 4.6L19 7.6" /></svg>
+							طبيب موثّق
+						</p>
+						<p class="card-offline" data-doctor-offline hidden>
+							تعذّر تحميل بيانات الطبيب. تحقق من اتصالك بالإنترنت.
+							<button type="button" data-doctor-retry>إعادة المحاولة</button>
+						</p>
+					</header>
+
+					<section class="row" data-row="bio" hidden>
+						<h2>نبذة</h2>
+						<div>
+							<p class="bio" data-doctor-bio></p>
+							<button type="button" class="more" data-bio-more hidden>اقرأ المزيد</button>
 						</div>
-					</div>
-
-					<EntityCta kind="doctor" />
-				</div>
-
-				<!-- Doctor not found ----------------------------------- -->
-				<div class="state state-not-found" data-state="not-found" hidden>
-					<div class="error-card fade-up visible">
-						<div class="error-icon" aria-hidden="true">
-							<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
-								<circle cx="12" cy="12" r="10"/>
-								<line x1="12" y1="8" x2="12" y2="12"/>
-								<line x1="12" y1="16" x2="12.01" y2="16"/>
-							</svg>
+					</section>
+					<section class="row" data-row="place" hidden>
+						<h2>المكان</h2>
+						<div class="place">
+							<b data-doctor-clinic></b>
+							<span data-doctor-address-text></span>
 						</div>
-						<h1>لم نعثر على هذا الطبيب</h1>
-						<p>قد يكون الرابط منتهي الصلاحية أو حذف الطبيب ملفه. تحقق من الرابط وحاول مرة أخرى.</p>
-						<a href="/" class="btn-main">العودة للرئيسية</a>
-					</div>
-				</div>
-
-				<!-- Invalid token format ------------------------------- -->
-				<div class="state state-invalid" data-state="invalid" hidden>
-					<div class="error-card fade-up visible">
-						<div class="error-icon" aria-hidden="true">
-							<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
-								<circle cx="12" cy="12" r="10"/>
-								<line x1="15" y1="9" x2="9" y2="15"/>
-								<line x1="9" y1="9" x2="15" y2="15"/>
-							</svg>
+					</section>
+					<section class="row" data-row="hours" hidden>
+						<h2>ساعات العمل</h2>
+						<div>
+							<p class="today"><span>اليوم</span> <b data-doctor-today></b></p>
+							<details class="week">
+								<summary>كل أيام الأسبوع</summary>
+								<dl data-doctor-week></dl>
+							</details>
 						</div>
-						<h1>رابط غير صحيح</h1>
-						<p>الرابط لا يحتوي على معرّف طبيب صالح. الرجاء العودة للرئيسية.</p>
-						<a href="/" class="btn-main">العودة للرئيسية</a>
-					</div>
-				</div>
+					</section>
+					<section class="row" data-row="services" hidden>
+						<h2>الخدمات</h2>
+						<div>
+							<ul class="svc" data-doctor-services></ul>
+							<button type="button" class="more" data-svc-more hidden>عرض الكل</button>
+						</div>
+					</section>
+					<section class="row" data-row="langs" hidden>
+						<h2>اللغات</h2>
+						<p class="plain" data-doctor-langs></p>
+					</section>
+				</article>
 
+				<aside class="bk" data-book-sheet>
+					<button type="button" class="bk-x" data-book-close aria-label="إغلاق" title="إغلاق">
+						<svg viewBox="0 0 24 24" aria-hidden="true"><path d="M6 6l12 12M18 6 6 18" /></svg>
+					</button>
+					<EntityCta kind="doctor" quiet />
+				</aside>
 			</div>
-		</section>
+			<div class="bk-scrim" data-book-scrim></div>
+			<div class="bk-bar"><button type="button" data-book-open>احجز موعداً</button></div>
+		</div>
+
+		<div class="state state-msg" data-state="not-found" hidden>
+			<h1>لم نعثر على هذا الطبيب</h1>
+			<p>قد يكون الرابط منتهي الصلاحية أو حذف الطبيب ملفه. تحقق من الرابط وحاول مرة أخرى.</p>
+			<a href="/" class="btn-main">العودة للرئيسية</a>
+		</div>
+
+		<div class="state state-msg" data-state="invalid" hidden>
+			<h1>رابط غير صحيح</h1>
+			<p>الرابط لا يحتوي على معرّف طبيب صالح. الرجاء العودة للرئيسية.</p>
+			<a href="/" class="btn-main">العودة للرئيسية</a>
+		</div>
 	</main>
 
-	<Footer />
+	<Footer seamless />
 </Layout>
 
 <script>
 	import { SUPABASE_URL, SUPABASE_ANON_KEY, attributionSource, fireBeacon } from '../scripts/reach';
 	import { initEntityCta } from '../scripts/entity-cta';
+
+	// Local previews only: a fictional doctor at /doctor/?preview=1. The flag exists only in
+	// the untracked .env.local, so a production build drops this path entirely.
+	const demo = import.meta.env.PUBLIC_DOCTOR_PREVIEW === '1' && new URLSearchParams(window.location.search).has('preview');
 
 	// ----- Token extraction & validation ----------------------
 	const match = window.location.pathname.match(/^\/doctor\/([^/?#]+)/);
@@ -123,6 +130,7 @@ import EntityCta from '../components/EntityCta.astro';
 	try {
 		token = match ? decodeURIComponent(match[1]) : '';
 	} catch { /* malformed %-escape → invalid */ }
+	if (import.meta.env.PUBLIC_DOCTOR_PREVIEW === '1' && demo) token = 'preview';
 
 	// Same constraint the deep-link handler in the patient app uses
 	// (services/navigation/deep_link_service.dart): alnum + - + _,
@@ -130,16 +138,19 @@ import EntityCta from '../components/EntityCta.astro';
 	if (!/^[A-Za-z0-9_-]{1,64}$/.test(token)) {
 		showState('invalid');
 	} else {
-		// Anonymous scan counter — counts landing opens even when the
+		// Anonymous scan counter: counts landing opens even when the
 		// visitor never installs the app.
-		fireBeacon('doctor_qr_scanned', 'reach', 'ds_beacon_doctor_' + token, {
-			token: token,
-			source: attributionSource(),
-			surface: 'landing',
-		});
+		if (!demo) {
+			fireBeacon('doctor_qr_scanned', 'reach', 'ds_beacon_doctor_' + token, {
+				token: token,
+				source: attributionSource(),
+				surface: 'landing',
+			});
+		}
 		// Buttons first, profile second.
 		initEntityCta('doctor', token);
 		showState('doctor');
+		wireSheet();
 		byData('doctor-retry').addEventListener('click', () => fetchDoctor(token));
 		fetchDoctor(token);
 	}
@@ -147,7 +158,12 @@ import EntityCta from '../components/EntityCta.astro';
 	function fetchDoctor(token: string) {
 		setCardState('loading');
 
-		// Only the columns we actually render — avoids pulling internal
+		if (import.meta.env.PUBLIC_DOCTOR_PREVIEW === '1' && demo) {
+			import('../data/doctorPreview').then((m) => window.setTimeout(() => renderDoctor(m.DOCTOR_PREVIEW), 420));
+			return;
+		}
+
+		// Only the columns we actually render: avoids pulling internal
 		// fields from the view even though RLS already gates them.
 		const select = [
 			'id',
@@ -162,6 +178,11 @@ import EntityCta from '../components/EntityCta.astro';
 			'doctor_image',
 			'clinic',
 			'address',
+			'profile_description',
+			'opening_hours',
+			'offered_services',
+			'languages',
+			'verification_status',
 		].join(',');
 
 		const url = SUPABASE_URL + '/rest/v1/public_doctors' +
@@ -207,6 +228,7 @@ import EntityCta from '../components/EntityCta.astro';
 		const card = byData('doctor-card');
 		card.classList.toggle('is-loading', state === 'loading');
 		card.classList.toggle('is-offline', state === 'offline');
+		card.classList.toggle('is-ready', state === 'ready');
 		byData('doctor-offline').hidden = state !== 'offline';
 	}
 
@@ -226,19 +248,53 @@ import EntityCta from '../components/EntityCta.astro';
 				? d.specialties[0]
 				: '');
 		byData('doctor-specialty').textContent = spec || 'طبيب';
+		byData('doctor-verified').hidden = d.verification_status !== 'verified';
 
-		byData('doctor-clinic').textContent = d.clinic || '';
-
-		// Address — formatted from the jsonb column, falls back gracefully
-		// when fields are missing. Hidden entirely if no address at all.
-		const addrText = formatAddress(d.address);
-		if (addrText) {
-			byData('doctor-address-text').textContent = addrText;
-			byData('doctor-address').hidden = false;
-		}
-
+		renderBio(d.profile_description);
+		renderPlace(d);
+		renderHours(d.opening_hours);
+		renderServices(d.offered_services);
+		renderLanguages(d.languages);
 		renderImage(d, fullName);
 		setCardState('ready');
+		revealRows();
+	}
+
+	function showRow(name: string, on: boolean) {
+		const row = document.querySelector<HTMLElement>(`[data-row="${name}"]`);
+		if (row) row.hidden = !on;
+	}
+
+	// ----- Sections: each one stays hidden when the doctor left it empty ----------
+	function bioText(value: any): string {
+		let d = value;
+		if (typeof d === 'string') {
+			try { d = JSON.parse(d); } catch { return d.trim(); }
+		}
+		const ops = (x: any) => (Array.isArray(x) ? x : (x?.ops || []))
+			.map((o: any) => (typeof o?.insert === 'string' ? o.insert : ''))
+			.join('');
+		if (Array.isArray(d?.parts)) return d.parts.map((p: any) => ops(p?.delta).trim()).filter(Boolean).join('\n\n');
+		return ops(d).trim();
+	}
+
+	function renderBio(value: any) {
+		const text = bioText(value);
+		showRow('bio', !!text);
+		if (!text) return;
+		const el = byData('doctor-bio'), more = byData('bio-more');
+		el.textContent = text;
+		more.hidden = text.length < 230;
+		el.classList.toggle('short', text.length >= 230);
+		more.onclick = () => { el.classList.remove('short'); more.hidden = true; };
+	}
+
+	function renderPlace(d: any) {
+		const clinic = (d.clinic || '').trim(), addr = formatAddress(d.address);
+		byData('doctor-clinic').textContent = clinic;
+		byData('doctor-clinic').hidden = !clinic;
+		byData('doctor-address-text').textContent = addr;
+		showRow('place', !!(clinic || addr));
 	}
 
 	function formatAddress(addr: any): string {
@@ -260,6 +316,62 @@ import EntityCta from '../components/EntityCta.astro';
 		return parts.join('، ');
 	}
 
+	const DAYS: [string, string][] = [['sat', 'السبت'], ['sun', 'الأحد'], ['mon', 'الاثنين'], ['tue', 'الثلاثاء'], ['wed', 'الأربعاء'], ['thu', 'الخميس'], ['fri', 'الجمعة']];
+	function clock(t: string): string {
+		const [h, m] = String(t).split(':').map(Number);
+		if (!Number.isFinite(h)) return '';
+		const pm = h >= 12 && h < 24;
+		return `${h % 12 || 12}:${String(m || 0).padStart(2, '0')} ${pm ? 'م' : 'ص'}`;
+	}
+	function ranges(list: any): string {
+		if (!Array.isArray(list)) return '';
+		return list.map((x: any) => (x?.from && x?.to ? `${clock(x.from)} – ${clock(x.to)}` : '')).filter(Boolean).join('،  ');
+	}
+	function renderHours(hours: any) {
+		const any = !!hours && typeof hours === 'object' && DAYS.some(([k]) => ranges(hours[k]));
+		showRow('hours', any);
+		if (!any) return;
+		const now = new Intl.DateTimeFormat('en-US', { timeZone: 'Asia/Damascus', weekday: 'short' }).format(new Date()).toLowerCase();
+		byData('doctor-today').textContent = ranges(hours[now]) || 'مغلق';
+		const week = byData('doctor-week');
+		week.replaceChildren();
+		DAYS.forEach(([key, label]) => {
+			const line = document.createElement('div'), dt = document.createElement('dt'), dd = document.createElement('dd');
+			if (key === now) line.className = 'is-today';
+			dt.textContent = label;
+			dd.textContent = ranges(hours[key]) || 'مغلق';
+			line.append(dt, dd);
+			week.append(line);
+		});
+	}
+
+	function serviceTitles(v: any): string[] {
+		let d = v;
+		if (typeof d === 'string') {
+			try { d = JSON.parse(d); } catch { return []; }
+		}
+		if (Array.isArray(d)) return d.map((x: any) => (typeof x === 'string' ? x : x?.title || '')).map((s: string) => s.trim()).filter(Boolean);
+		if (d && typeof d === 'object') return Object.keys(d).map((s) => s.trim()).filter(Boolean);
+		return [];
+	}
+	function renderServices(v: any) {
+		const items = serviceTitles(v);
+		showRow('services', items.length > 0);
+		if (!items.length) return;
+		const ul = byData('doctor-services'), more = byData('svc-more');
+		const draw = (list: string[]) => ul.replaceChildren(...list.map((t) => { const li = document.createElement('li'); li.textContent = t; return li; }));
+		draw(items.slice(0, 5));
+		more.hidden = items.length <= 5;
+		more.onclick = () => { draw(items); more.hidden = true; };
+	}
+
+	const LANGS: Record<string, string> = { ar: 'العربية', en: 'الإنجليزية', fr: 'الفرنسية', de: 'الألمانية', ru: 'الروسية', tr: 'التركية', es: 'الإسبانية', it: 'الإيطالية', fa: 'الفارسية', ku: 'الكردية', hy: 'الأرمنية' };
+	function renderLanguages(v: any) {
+		const list = (Array.isArray(v) ? v : []).map((x: any) => String(x).trim()).filter(Boolean).map((x: string) => LANGS[x.toLowerCase()] || x);
+		showRow('langs', list.length > 0);
+		byData('doctor-langs').textContent = list.join('، ');
+	}
+
 	function renderImage(d: any, fullName: string) {
 		const img = byData('doctor-image') as HTMLImageElement;
 		const fb = byData('doctor-fallback');
@@ -276,13 +388,12 @@ import EntityCta from '../components/EntityCta.astro';
 
 		// Preserve slashes in the path (it's typically uuid/profile/file.ext)
 		// while still escaping any unsafe characters within each segment.
-		const url = SUPABASE_URL + '/storage/v1/object/public/doctor/' +
+		const url = path.startsWith('/images/') && demo ? path : SUPABASE_URL + '/storage/v1/object/public/doctor/' +
 			path.split('/').map((seg: string) => encodeURIComponent(seg)).join('/');
 
 		img.alt = fullName;
 		img.onload = () => {
-			// Reveal the image — it now sits on top of the initials fallback
-			// (z-index in CSS), so the fallback is hidden visually.
+			// Reveal the image: it now sits on top of the initials fallback.
 			img.classList.add('is-loaded');
 		};
 		img.onerror = () => {
@@ -298,6 +409,44 @@ import EntityCta from '../components/EntityCta.astro';
 		return (a + b).toUpperCase() || '?';
 	}
 
+	// ----- The sections arrive quietly, each with its hairline ----
+	function revealRows() {
+		const rows = Array.from(document.querySelectorAll<HTMLElement>('.row:not([hidden])'));
+		if (matchMedia('(prefers-reduced-motion: reduce)').matches) { rows.forEach((r) => r.classList.add('in')); return; }
+		const io = new IntersectionObserver((es) => es.forEach((e) => {
+			if (e.isIntersecting) { e.target.classList.add('in'); io.unobserve(e.target); }
+		}), { rootMargin: '0px 0px -6% 0px' });
+		rows.forEach((r, i) => { r.style.setProperty('--d', `${Math.min(i, 3) * 70}ms`); io.observe(r); });
+	}
+
+	// ----- On a phone the booking steps rise as a sheet ------------
+	function wireSheet() {
+		const sheet = document.querySelector<HTMLElement>('[data-book-sheet]')!;
+		const scrim = document.querySelector<HTMLElement>('[data-book-scrim]')!;
+		const openBtn = document.querySelector<HTMLElement>('[data-book-open]')!;
+		const closeBtn = document.querySelector<HTMLElement>('[data-book-close]')!;
+		const narrow = matchMedia('(max-width: 899px)');
+		const setOpen = (on: boolean, focus = true) => {
+			sheet.classList.toggle('open', on);
+			scrim.classList.toggle('open', on);
+			document.documentElement.classList.toggle('bk-lock', on);
+			if (on) { sheet.setAttribute('role', 'dialog'); sheet.setAttribute('aria-modal', 'true'); sheet.setAttribute('aria-label', 'احجز موعداً'); }
+			else { sheet.removeAttribute('role'); sheet.removeAttribute('aria-modal'); sheet.removeAttribute('aria-label'); }
+			if (focus) (on ? closeBtn : openBtn).focus();
+		};
+		openBtn.addEventListener('click', () => setOpen(true));
+		closeBtn.addEventListener('click', () => setOpen(false));
+		scrim.addEventListener('click', () => setOpen(false));
+		document.addEventListener('keydown', (e) => { if (e.key === 'Escape' && sheet.classList.contains('open')) setOpen(false); });
+		narrow.addEventListener('change', () => { if (!narrow.matches && sheet.classList.contains('open')) setOpen(false, false); });
+		// Back from the store, step 2 is the thing to press: bring it back.
+		const back = () => {
+			if (narrow.matches && document.visibilityState === 'visible' && sheet.querySelector('[data-step-open].is-ready')) setOpen(true, false);
+		};
+		document.addEventListener('visibilitychange', back);
+		back();
+	}
+
 	// ----- Tiny DOM helpers -----------------------------------
 	function byData(name: string): HTMLElement {
 		return document.querySelector('[data-' + name + ']') as HTMLElement;
@@ -311,218 +460,99 @@ import EntityCta from '../components/EntityCta.astro';
 </script>
 
 <style>
-	main { overflow-x: hidden; }
+	.dp { --paper: #F8F9F6; --ink: #12282C; --soft: #5E6E71; --hair: rgba(18, 40, 44, .14); min-height: 100vh; min-height: 100svh; box-sizing: border-box; padding: clamp(104px, 13vh, 136px) 24px 88px; color: var(--ink); background: var(--paper); }
+	.state[hidden], [hidden] { display: none !important; }
 
-	.doctor-section {
-		padding: 140px 0 80px;
-		min-height: 80vh;
-		background: radial-gradient(circle at 10% 10%, #fff 0%, #FAFAFA 100%);
-	}
+	.state-loading { padding-top: 22vh; text-align: center; color: var(--soft); }
+	.state-loading p { margin: 16px 0 0; font-size: 1rem; }
+	.dots { display: inline-flex; gap: 7px; }
+	.dots i { width: 6px; height: 6px; background: var(--c-main-dark); border-radius: 50%; animation: dot 1.1s ease-in-out infinite; }
+	.dots i:nth-child(2) { animation-delay: .14s; }
+	.dots i:nth-child(3) { animation-delay: .28s; }
+	@keyframes dot { 0%, 100% { opacity: .2; } 50% { opacity: 1; } }
 
-	/* ----- States ----- */
-	.state { text-align: center; }
-	.state[hidden] { display: none !important; }
+	.dp-grid { display: grid; grid-template-columns: minmax(0, 1fr) 372px; align-items: start; gap: clamp(48px, 7vw, 108px); max-width: 1120px; margin: 0 auto; }
 
-	/* Loading */
-	.state-loading p { color: var(--c-text-muted); margin-top: 16px; }
-	.spinner {
-		width: 44px; height: 44px; margin: 0 auto;
-		border: 3px solid var(--c-main-light);
-		border-top-color: var(--c-main);
-		border-radius: 50%;
-		animation: spin 0.8s linear infinite;
-	}
-	@keyframes spin { to { transform: rotate(360deg); } }
+	/* who */
+	.dp-id { padding-bottom: clamp(30px, 4vw, 44px); }
+	.photo { position: relative; width: 132px; height: 132px; margin-bottom: 26px; overflow: hidden; background: #E6F1EF; border-radius: 50%; box-shadow: 0 0 0 1px var(--hair), 0 0 0 7px var(--paper), 0 0 0 8px rgba(0, 116, 116, .22); }
+	.photo img { position: absolute; z-index: 2; inset: 0; display: block; width: 100%; height: 100%; object-fit: cover; object-position: 50% 8%; opacity: 0; transition: opacity .5s ease; }
+	.photo img.is-loaded { opacity: 1; }
+	.photo-fallback { position: absolute; z-index: 1; inset: 0; display: grid; place-items: center; font-size: 2.3rem; font-weight: 400; color: var(--c-main-dark); }
+	.name { margin: 0; font-size: clamp(2.1rem, 4.5vw, 3.6rem); font-weight: 400; line-height: 1.35; color: var(--ink); text-wrap: balance; }
+	.spec { margin: 4px 0 0; font-size: clamp(1.14rem, 1.7vw, 1.34rem); font-weight: 600; line-height: 1.6; color: var(--c-main-dark); }
+	.ok { display: inline-flex; align-items: center; gap: 6px; margin: 10px 0 0; font-size: .98rem; line-height: 1.6; color: var(--soft); }
+	.ok svg { width: 16px; height: 16px; fill: none; stroke: var(--c-main-dark); stroke-width: 2.2; stroke-linecap: round; stroke-linejoin: round; }
 
-	/* Doctor card */
-	.doctor-card {
-		display: grid;
-		grid-template-columns: auto 1fr;
-		gap: 32px;
-		align-items: center;
-		background: white;
-		padding: 36px;
-		border-radius: 28px;
-		box-shadow: 0 20px 60px rgba(0, 0, 0, 0.05);
-		margin: 0 auto 24px;
-		max-width: 720px;
-		text-align: right;
-	}
+	.dp-main.is-loading .name, .dp-main.is-loading .spec { width: min(300px, 74%); color: transparent; background: #ECEFEB; border-radius: 8px; animation: pulse 1.2s ease-in-out infinite alternate; }
+	.dp-main.is-loading .name { height: 1.2em; }
+	.dp-main.is-loading .spec { width: min(160px, 44%); height: 1.1em; margin-top: 14px; }
+	@keyframes pulse { from { opacity: 1; } to { opacity: .5; } }
+	.dp-main.is-offline .name, .dp-main.is-offline .spec { display: none; }
+	.dp-main.is-ready .dp-id > * { animation: rise .8s cubic-bezier(.2, .7, .2, 1) both; }
+	.dp-main.is-ready .name { animation-delay: .06s; }
+	.dp-main.is-ready .spec { animation-delay: .13s; }
+	.dp-main.is-ready .ok { animation-delay: .2s; }
+	@keyframes rise { from { opacity: 0; transform: translateY(10px); } to { opacity: 1; transform: none; } }
+	.card-offline { margin: 0; font-size: 1rem; line-height: 1.7; color: var(--soft); }
+	.card-offline button, .more { display: block; margin-top: 8px; padding: 0; font: inherit; font-size: .98rem; font-weight: 600; color: var(--c-main-dark); cursor: pointer; background: none; border: 0; text-decoration: underline; text-decoration-thickness: 1px; text-underline-offset: 5px; }
+	.more:focus-visible, .card-offline button:focus-visible, .week summary:focus-visible { outline: 2px solid var(--c-main-dark); outline-offset: 3px; border-radius: 3px; }
 
-	/* Photo with initials-first fallback strategy.
-	   Stack: fallback initials at z-index 1, <img> at z-index 2.
-	   The img is invisible by default (opacity 0) so the fallback shows
-	   through; on successful load .is-loaded sets opacity 1, covering it. */
-	.doctor-photo {
-		width: 128px; height: 128px;
-		border-radius: 50%;
-		overflow: hidden;
-		position: relative;
-		flex-shrink: 0;
-		background: var(--c-main-light);
-	}
-	.doctor-photo img {
-		position: absolute; inset: 0;
-		width: 100%; height: 100%;
-		object-fit: cover;
-		display: block;
-		z-index: 2;
-		opacity: 0;
-		transition: opacity 0.25s ease-out;
-	}
-	.doctor-photo img.is-loaded { opacity: 1; }
-	.photo-fallback {
-		position: absolute; inset: 0;
-		display: flex; align-items: center; justify-content: center;
-		font-family: var(--font-en);
-		font-size: 2.2rem;
-		font-weight: 700;
-		color: var(--c-main);
-		background: var(--c-main-light);
-		z-index: 1;
-	}
-	.doctor-info .pill-badge {
-		display: inline-block;
-		background: rgba(0, 144, 146, 0.1);
-		color: var(--c-main);
-		padding: 6px 14px;
-		border-radius: 20px;
-		font-weight: 700;
-		font-size: 0.85rem;
-		margin-bottom: 10px;
-	}
-	.doctor-info .name {
-		font-size: clamp(1.5rem, 3.2vw, 2rem);
-		font-weight: 800;
-		line-height: 1.2;
-		margin: 0 0 8px;
-		color: var(--c-text);
-	}
-	.doctor-info .clinic {
-		color: var(--c-text-muted);
-		font-size: 1rem;
-		margin: 0 0 6px;
-	}
-	.doctor-info .address {
-		color: var(--c-text-muted);
-		font-size: 0.92rem;
-		margin: 6px 0 0;
-		display: inline-flex;
-		align-items: center;
-		gap: 6px;
-		line-height: 1.4;
-	}
-	.doctor-info .address[hidden] { display: none; }
-	.doctor-info .address .pin {
-		width: 14px; height: 14px;
-		color: var(--c-main);
-		flex-shrink: 0;
-	}
+	/* details: lines, no cards */
+	.row { position: relative; display: grid; grid-template-columns: 132px minmax(0, 1fr); gap: 20px; padding: 24px 0; opacity: 0; transform: translateY(8px); transition: opacity .6s ease var(--d, 0ms), transform .6s ease var(--d, 0ms); }
+	.row::before { content: ''; position: absolute; inset: 0 0 auto; height: 1px; background: var(--hair); transform: scaleX(0); transform-origin: 100% 50%; transition: transform .9s cubic-bezier(.3, .7, .2, 1) var(--d, 0ms); }
+	.row:global(.in) { opacity: 1; transform: none; }
+	.row:global(.in)::before { transform: none; }
+	.row h2 { margin: 0; font-size: 1rem; font-weight: 600; line-height: 1.75; color: var(--soft); }
+	.bio, .plain { margin: 0; font-size: 1.1rem; line-height: 1.9; color: var(--ink); white-space: pre-line; }
+	.bio.short { display: -webkit-box; -webkit-box-orient: vertical; -webkit-line-clamp: 4; overflow: hidden; }
+	.place { display: grid; gap: 2px; font-size: 1.1rem; line-height: 1.75; }
+	.place b { font-weight: 600; }
+	.place span { color: var(--soft); }
+	.today { margin: 0; font-size: 1.1rem; line-height: 1.75; }
+	.today span { color: var(--soft); }
+	.today b { font-weight: 600; }
+	.week { margin-top: 6px; }
+	.week summary { display: inline-block; font-size: .98rem; font-weight: 600; color: var(--c-main-dark); cursor: pointer; list-style: none; text-decoration: underline; text-decoration-thickness: 1px; text-underline-offset: 5px; }
+	.week summary::-webkit-details-marker { display: none; }
+	.week dl { display: grid; gap: 4px; max-width: 420px; margin: 12px 0 0; }
+	.week dl :global(div) { display: flex; justify-content: space-between; gap: 18px; font-size: 1rem; line-height: 1.75; color: var(--soft); }
+	.week dl :global(div.is-today) { font-weight: 600; color: var(--ink); }
+	.week dl :global(dt), .week dl :global(dd) { margin: 0; }
+	.svc { display: grid; gap: 3px; margin: 0; padding: 0; font-size: 1.1rem; line-height: 1.75; list-style: none; }
 
-	/* Skeleton while the profile request is in flight. The CTA below is
-	   already live, so this is only the card's own text. */
-	.doctor-card.is-loading .pill-badge,
-	.doctor-card.is-loading .name,
-	.doctor-card.is-loading .clinic {
-		display: block;
-		color: transparent;
-		background: #EEF4F4;
-		border-radius: 8px;
-		animation: card-pulse 1.1s ease-in-out infinite alternate;
-	}
-	.doctor-card.is-loading .pill-badge { width: 92px; height: 28px; }
-	.doctor-card.is-loading .name { width: min(260px, 70vw); height: 1.25em; }
-	.doctor-card.is-loading .clinic { width: min(170px, 48vw); height: 1em; }
-	@keyframes card-pulse { from { opacity: 1; } to { opacity: 0.45; } }
+	/* the one action */
+	.bk { position: sticky; top: 96px; padding: 28px 26px; background: #fff; border: 1px solid rgba(18, 40, 44, .09); border-radius: 22px; }
+	.bk-x, .bk-scrim, .bk-bar { display: none; }
 
-	/* Profile request failed (weak connection). Buttons below still work. */
-	.doctor-card.is-offline .pill-badge,
-	.doctor-card.is-offline .name,
-	.doctor-card.is-offline .clinic { display: none; }
-	.card-offline {
-		margin: 0;
-		font-size: 1rem;
-		line-height: 1.7;
-		color: var(--c-text-muted);
-	}
-	.card-offline button {
-		display: block;
-		margin-top: 10px;
-		padding: 0;
-		background: none;
-		border: 0;
-		font: inherit;
-		font-weight: 700;
-		color: var(--c-main);
-		cursor: pointer;
-		text-decoration: underline;
-		text-underline-offset: 4px;
-	}
-	.card-offline button:focus-visible { outline: 3px solid var(--c-main); outline-offset: 3px; border-radius: 4px; }
+	.state-msg { max-width: 560px; margin: 0 auto; padding-top: 18vh; text-align: center; }
+	.state-msg h1 { margin: 0 0 10px; font-size: clamp(1.9rem, 3.9vw, 3rem); font-weight: 400; line-height: 1.5; color: var(--ink); }
+	.state-msg p { margin: 0 0 26px; font-size: 1.1rem; line-height: 1.8; color: var(--soft); }
+	.btn-main { display: inline-block; padding: 12px 26px; font-weight: 600; color: #fff; text-decoration: none; background: var(--c-main-dark); border-radius: 13px; }
 
-	.btn-main {
-		background: var(--c-main);
-		color: white;
-		padding: 14px 32px;
-		border-radius: 12px;
-		font-weight: 700;
-		text-decoration: none;
-		display: inline-block;
-		font-size: 1rem;
-		transition: background 0.2s;
-	}
-	.btn-main:hover { background: var(--c-main-dark); }
-
-	/* Error states */
-	.error-card {
-		background: white;
-		padding: 60px 40px;
-		border-radius: 28px;
-		box-shadow: 0 20px 60px rgba(0, 0, 0, 0.04);
-		max-width: 540px;
-		margin: 0 auto;
-	}
-	.error-card h1 {
-		font-size: clamp(1.5rem, 3vw, 2rem);
-		margin: 0 0 14px;
-		color: var(--c-text);
-	}
-	.error-card p {
-		color: var(--c-text-muted);
-		margin: 0 0 28px;
-		font-size: 1rem;
-		line-height: 1.6;
-	}
-	.error-icon {
-		width: 64px;
-		height: 64px;
-		margin: 0 auto 22px;
-		color: var(--c-main);
-		opacity: 0.85;
-	}
-	.error-icon svg { width: 100%; height: 100%; }
-
-	@media (max-width: 700px) {
-		.doctor-section { padding: 100px 0 60px; }
-		.doctor-card {
-			grid-template-columns: 1fr;
-			text-align: center;
-			justify-items: center;
-			padding: 28px 22px;
-			gap: 20px;
-		}
-		.doctor-info { text-align: center; }
-		.doctor-info .address { display: inline-flex; justify-content: center; }
-		.doctor-photo { width: 108px; height: 108px; }
-		.photo-fallback { font-size: 1.8rem; }
-		.doctor-card.is-loading .pill-badge,
-		.doctor-card.is-loading .name,
-		.doctor-card.is-loading .clinic { margin-inline: auto; }
+	@media (max-width: 899px) {
+		.dp { padding: 100px 24px 112px; }
+		.dp-grid { grid-template-columns: minmax(0, 1fr); gap: 0; }
+		.dp-id { display: flex; flex-direction: column; align-items: center; text-align: center; }
+		.photo { width: 118px; height: 118px; margin-bottom: 22px; }
+		.row { grid-template-columns: minmax(0, 1fr); gap: 4px; padding: 20px 0; }
+		.dp-main.is-loading .name, .dp-main.is-loading .spec { margin-inline: auto; }
 		.card-offline button { margin-inline: auto; }
+		.bk { position: fixed; z-index: 70; inset: auto 0 0; top: auto; max-height: 88vh; max-height: 88svh; overflow-y: auto; box-sizing: border-box; padding: 26px 24px calc(24px + env(safe-area-inset-bottom)); border: 0; border-radius: 26px 26px 0 0; box-shadow: 0 -24px 60px -24px rgba(6, 42, 47, .45); visibility: hidden; transform: translateY(104%); transition: transform .42s cubic-bezier(.2, .8, .2, 1), visibility 0s linear .42s; }
+		.bk:global(.open) { visibility: visible; transform: none; transition: transform .42s cubic-bezier(.2, .8, .2, 1); }
+		.bk-x { position: absolute; top: 14px; inset-inline-end: 14px; display: grid; place-items: center; width: 38px; height: 38px; color: var(--soft); cursor: pointer; background: #F1F4F2; border: 0; border-radius: 50%; }
+		.bk-x svg { width: 18px; height: 18px; fill: none; stroke: currentColor; stroke-width: 2.2; stroke-linecap: round; }
+		.bk-scrim { position: fixed; z-index: 65; inset: 0; display: block; background: rgba(9, 34, 38, .36); opacity: 0; pointer-events: none; transition: opacity .3s ease; }
+		.bk-scrim:global(.open) { opacity: 1; pointer-events: auto; }
+		.bk-bar { position: fixed; z-index: 60; inset: auto 0 0; display: block; padding: 12px 20px calc(12px + env(safe-area-inset-bottom)); background: rgba(248, 249, 246, .9); -webkit-backdrop-filter: blur(12px); backdrop-filter: blur(12px); border-top: 1px solid rgba(18, 40, 44, .08); }
+		.bk-bar button { display: block; width: 100%; max-width: 520px; margin: 0 auto; padding: 14px; font: 700 1.12rem Cairo, sans-serif; color: #fff; cursor: pointer; background: var(--c-main-dark); border: 0; border-radius: 15px; }
+		.bk-bar button:focus-visible, .bk-x:focus-visible { outline: 2px solid var(--c-main-dark); outline-offset: 2px; }
+		:global(html.bk-lock), :global(html.bk-lock body) { overflow: hidden; }
 	}
 	@media (prefers-reduced-motion: reduce) {
-		.doctor-card.is-loading .pill-badge,
-		.doctor-card.is-loading .name,
-		.doctor-card.is-loading .clinic { animation: none; }
+		.dots i, .dp-main.is-loading .name, .dp-main.is-loading .spec, .dp-main.is-ready .dp-id > * { animation: none; }
+		.row, .row::before, .bk { transition: none; }
+		.row { opacity: 1; transform: none; }
+		.row::before { transform: none; }
 	}
 </style>

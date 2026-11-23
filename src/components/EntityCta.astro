@@ -14,16 +14,18 @@ import StoreBadges from './StoreBadges.astro';
 
 interface Props {
 	kind: 'doctor' | 'center';
+	// The quiet style of the redesigned profile pages; the behaviour is identical.
+	quiet?: boolean;
 }
 
-const { kind } = Astro.props;
+const { kind, quiet = false } = Astro.props;
 const noun = kind === 'doctor' ? 'الطبيب' : 'المركز';
 const title = kind === 'doctor'
 	? 'احجز موعدك عبر تطبيق DocSera'
 	: 'احجز موعدك في هذا المركز عبر تطبيق DocSera';
 ---
 
-<div class="cta-block" data-entity-cta>
+<div class:list={['cta-block', { 'is-quiet': quiet }]} data-entity-cta>
 	<h2 class="cta-title">{title}</h2>
 
 	<div class="cta-mobile" data-cta-mobile>
@@ -224,6 +226,27 @@ const title = kind === 'doctor'
 	@media (max-width: 700px) {
 		.cta-block { padding: 32px 22px; }
 	}
+
+	/* ----- The quiet style ----- */
+	.cta-block.is-quiet { max-width: none; padding: 0; text-align: start; background: none; border-radius: 0; box-shadow: none; }
+	.is-quiet .cta-title { margin: 0 0 24px; padding-inline-end: 44px; font-size: 1.3rem; font-weight: 600; line-height: 1.6; color: #12282C; }
+	.is-quiet .cta-steps { max-width: none; gap: 24px; }
+	.is-quiet .cta-step { grid-template-columns: 30px 1fr; gap: 14px; }
+	.is-quiet .cta-step:first-child::after { inset-inline-start: 14.5px; top: 36px; bottom: -18px; width: 1px; background: rgba(0, 116, 116, .32); }
+	.is-quiet .cta-step-n { width: 30px; height: 30px; font-size: .92rem; font-weight: 600; color: var(--c-main-dark); background: #fff; box-shadow: inset 0 0 0 1px rgba(0, 116, 116, .5); }
+	.is-quiet .cta-step-label { margin: 2px 0 12px; font-size: 1.04rem; font-weight: 600; color: #12282C; }
+	.is-quiet .cta-step.is-done .cta-step-n, .is-quiet .cta-step.is-ready .cta-step-n { color: #fff; background: var(--c-main-dark); box-shadow: none; }
+	.is-quiet .cta-open { padding: 11px 24px; font-size: 1rem; font-weight: 600; color: var(--c-main-dark); background: #fff; border: 1px solid var(--c-main-dark); border-radius: 13px; }
+	.is-quiet .cta-open:hover, .is-quiet .cta-step.is-ready .cta-open { color: #fff; background: var(--c-main-dark); }
+	.is-quiet .cta-step-hint { border-radius: 10px; }
+	.is-quiet .cta-weblink { margin-top: 24px; font-size: .96rem; color: #5E6E71; text-decoration-thickness: 1px; }
+	.is-quiet .cta-desk-instr { margin-bottom: 16px; font-size: 1rem; font-weight: 400; line-height: 1.75; color: #5E6E71; }
+	.is-quiet .cta-desktop { text-align: center; }
+	.is-quiet .qr-frame { padding: 12px; border: 1px solid rgba(18, 40, 44, .1); border-radius: 14px; box-shadow: none; }
+	.is-quiet .qr-canvas { width: 176px; height: 176px; }
+	.is-quiet .cta-desk-actions { margin-top: 18px; }
+	.is-quiet .cta-desk-web { padding: 11px 24px; font-weight: 600; background: var(--c-main-dark); border-radius: 13px; }
+	.is-quiet .cta-desk-get { margin: 22px 0 12px; padding-top: 20px; border-top-color: rgba(18, 40, 44, .1); color: #5E6E71; }
 	@media (prefers-reduced-motion: reduce) {
 		.cta-step.is-ready .cta-open { animation: none; }
 	}
