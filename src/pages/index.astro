@@ -62,12 +62,20 @@ const PARKS = [[[245, 320], [445, 320], [445, 500], [245, 500]], [[880, 760], [1
 	.map((q) => 'M' + q.map(([x, y]) => warp(x, y).map((n) => n.toFixed(0)).join(' ')).join('L') + 'Z');
 const PINS = [[340, 300], [110, 520], [225, 740], [470, 195], [600, 630], [860, 300], [730, 845], [995, 520], [860, 740], [1130, 195]].map(([x, y]) => warp(x, y));
 
-const TRY = [
-	['الرئيسية', '/images/app110/home-640.webp'], ['البحث', '/images/home/search.webp'], ['الطبيب', '/images/home/doctor.webp'],
-	['الحجز', '/images/app110/booking-640.webp'], ['مواعيدي', '/images/home/appointments.webp'], ['ملفي', '/images/app110/health-640.webp'],
-	['التقارير', '/images/app110/wall/reports-390.webp'], ['الأدوية', '/images/app110/wall/medications-390.webp'],
-	['القياسات', '/images/app110/wall/vitals-390.webp'], ['روتيني', '/images/app110/routine-640.webp'],
-	['الرسائل', '/images/home/chat.webp'], ['العائلة', '/images/home/relatives.webp'],
+const TRY: [string, string, number, number, boolean][] = [
+	// label, image id, page height at 640 wide, fixed bottom strip height, longer than one screen
+	['الرئيسية', 'home', 3465, 176, true],
+	['البحث', 'search', 3513, 0, true],
+	['الطبيب', 'doctor', 3209, 176, true],
+	['الحجز', 'booking', 1387, 0, false],
+	['مواعيدي', 'appointments', 1387, 350, false],
+	['ملفي', 'health', 2259, 176, true],
+	['التقارير', 'reports', 1820, 0, true],
+	['الأدوية', 'medications', 4486, 146, true],
+	['القياسات', 'vitals', 1613, 0, true],
+	['روتيني', 'routine', 4486, 146, true],
+	['الرسائل', 'chat', 1896, 134, true],
+	['العائلة', 'family', 1387, 146, false],
 ];
 
 const WALL = [
@@ -219,10 +227,22 @@ const MORE = [
 			<div class="try-in">
 				<div class="sec-h">
 					<h2>جرّبه بنفسك</h2>
-					<p>اضغط واكتشف الشاشات الحقيقية للتطبيق.</p>
+					<p>اضغط ومرّر داخل الشاشات الحقيقية للتطبيق.</p>
 				</div>
-				<div class="try-phone"><div class="ph-in">
-					{TRY.map(([, s]) => <img data-try-shot data-src={s} alt="" width="640" height="1387" decoding="async" />)}
+				<div class="try-phone" data-try-phone><div class="ph-in">
+					{TRY.map(([label, id, h, foot, long]) => (
+						<div class="pg" data-try-shot data-long={long ? '1' : undefined}>
+							<div class="pg-scroll" data-pg-scroll role="region" aria-label={`شاشة ${label}`} tabindex="-1">
+								<div class="pg-long" style={`aspect-ratio:640/${h}`}>
+									<img class="pg-first" data-src={`/images/home/try/${id}.webp`} alt="" width="640" height="1387" decoding="async" draggable="false" />
+									{long && <img class="pg-full" data-full={`/images/home/try/${id}-full.webp`} alt="" width="640" height={h} decoding="async" draggable="false" />}
+								</div>
+							</div>
+							{foot > 0 && <img class="pg-foot" data-src={`/images/home/try/${id}-foot.webp`} alt="" width="640" height={foot} decoding="async" draggable="false" />}
+						</div>
+					))}
+					<img class="pg-status" data-status="/images/home/try/status.webp" alt="" width="640" height="88" decoding="async" />
+					<div class="try-hint" data-try-hint aria-hidden="true">مرّر الشاشة<svg viewBox="0 0 24 24"><path d="M12 5v13M6.5 12.5 12 18l5.5-5.5" /></svg></div>
 				</div></div>
 				<div class="tabs" role="group" aria-label="شاشات التطبيق">
 					{TRY.map(([l], i) => <button type="button" data-tab class={i === 0 ? 'on' : ''} aria-pressed={i === 0 ? 'true' : 'false'}>{l}</button>)}
@@ -451,8 +471,26 @@ const MORE = [
 	.sec-h p { font-size: clamp(1rem, 1.8vw, 1.24rem); line-height: 1.7; margin: 0; opacity: .86; }
 	.try-phone { width: min(66vw, 290px); aspect-ratio: 1290 / 2796; margin: 28px auto 22px; padding: 8px; background: #000; border-radius: 40px; box-shadow: 0 0 0 1px rgba(255, 255, 255, .14), 0 34px 70px -24px rgba(0, 200, 200, .35); }
 	.try-phone .ph-in { border-radius: 33px; }
-	.try-phone img { transition: opacity .35s ease; }
-	.try-phone img:global(.on) { opacity: 1; }
+	.pg { position: absolute; inset: 0; opacity: 0; visibility: hidden; transition: opacity .35s ease, visibility 0s linear .35s; }
+	.pg:global(.on) { opacity: 1; visibility: visible; transition: opacity .35s ease; }
+	.pg-scroll { position: absolute; inset: 0; overflow: hidden; background: #F6FBFB; scrollbar-width: none; outline: none; }
+	.pg-scroll::-webkit-scrollbar { display: none; }
+	.try-phone:global(.can-scroll) .pg-scroll { overflow-y: auto; touch-action: pan-y; }
+	.try-phone:global(.can-scroll) { cursor: grab; }
+	.try-phone:global(.drag) { cursor: grabbing; user-select: none; }
+	.pg-long { position: relative; width: 100%; }
+	.try-phone .pg img { inset: auto; left: 0; width: 100%; height: auto; object-fit: fill; opacity: 1; -webkit-user-drag: none; user-select: none; }
+	.try-phone .pg img.pg-first { top: 0; }
+	.try-phone .pg img.pg-full { top: 0; opacity: 0; }
+	.try-phone .pg img.pg-full:global(.in) { opacity: 1; }
+	.try-phone .pg img.pg-foot { bottom: 0; pointer-events: none; -webkit-mask-image: linear-gradient(to top, #000 calc(100% - 16px), transparent); mask-image: linear-gradient(to top, #000 calc(100% - 16px), transparent); }
+	.try-phone .ph-in img.pg-status { inset: auto; top: 0; left: 0; z-index: 2; width: 100%; height: auto; pointer-events: none; opacity: 0; transition: opacity .2s ease; -webkit-mask-image: linear-gradient(to bottom, #000 74%, transparent); mask-image: linear-gradient(to bottom, #000 74%, transparent); }
+	.try-phone:global(.scrolled) .ph-in img.pg-status { opacity: 1; }
+	.try-hint { position: absolute; z-index: 3; left: 50%; bottom: 15%; display: inline-flex; align-items: center; gap: 5px; padding: 6px 13px; font: 700 .78rem Cairo, sans-serif; white-space: nowrap; color: #fff; background: rgba(6, 42, 48, .88); border-radius: 999px; box-shadow: 0 8px 22px -8px rgba(0, 0, 0, .55); pointer-events: none; opacity: 0; transform: translate(-50%, 6px); transition: opacity .25s ease, transform .25s ease; }
+	.try-hint:global(.show) { opacity: 1; transform: translate(-50%, 0); }
+	.try-hint svg { width: 14px; height: 14px; fill: none; stroke: currentColor; stroke-width: 2.6; stroke-linecap: round; stroke-linejoin: round; }
+	@media (prefers-reduced-motion: no-preference) { .try-hint:global(.show) svg { animation: try-nudge 1.3s ease-in-out infinite; } }
+	@keyframes try-nudge { 0%, 100% { transform: translateY(-1.5px); } 50% { transform: translateY(2.5px); } }
 	.tabs { display: flex; gap: 8px; overflow-x: auto; padding: 4px 22px 8px; scrollbar-width: none; justify-content: safe center; flex-wrap: wrap; }
 	@media (min-width: 900px) {
 		:global(html.story) .hero p { max-width: 400px; }
