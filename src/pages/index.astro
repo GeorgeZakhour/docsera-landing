@@ -86,6 +86,7 @@ const MORE = [
 	description="دوكسيرا: ملفك الطبي، وتذكير أدويتك، وحجز مواعيدك، والتواصل مع طبيبك في تطبيق واحد."
 	path="/"
 	appBar={false}
+	homeFonts
 >
 	<script is:inline>
 		if (!matchMedia('(prefers-reduced-motion: reduce)').matches) document.documentElement.classList.add('story');
@@ -129,7 +130,7 @@ const MORE = [
 				</div>
 				<div class="rig fx" data-rig-box aria-hidden="true">
 					<div class="a-hero" data-a-hero></div>
-					<div class="r3" style="left:0;top:0;width:100%" data-rig="0"><img data-late="/images/home/3d/trio-sm.webp 900w, /images/home/3d/trio-lg.webp 1720w" sizes="(max-width: 899px) 112vw, 880px" alt="" width="1720" height="947" decoding="async" /></div>
+					<div class="r3" style="left:0;top:0;width:100%" data-rig="0"><img data-late="/images/home/3d/trio-sm.webp 900w, /images/home/3d/trio-md.webp 1200w, /images/home/3d/trio-lg.webp 1640w" sizes="(max-width: 899px) 100vw, 880px" alt="" width="1640" height="903" decoding="async" /></div>
 					<div class="a-fan" data-a-fan></div>
 				</div>
 
@@ -173,19 +174,19 @@ const MORE = [
 					<i class="ph-side" data-ph-side></i><i class="ph-face"></i>
 					<div class="ph-in">
 						{SHOTS.map((s, i) => i === 0
-							? <img data-shot src={s} srcset="/images/app110/home-320.webp 320w, /images/app110/home-480.webp 480w, /images/app110/home-640.webp 640w" sizes="(max-width: 899px) 270px, 340px" alt="" width="640" height="1387" decoding="async" fetchpriority="high" />
+							? <img data-shot src={s} srcset="/images/app110/home-320.webp 320w, /images/app110/home-480.webp 480w, /images/app110/home-640.webp 640w" sizes="(max-width: 599px) 27vw, 180px" data-full-sizes="(max-width: 899px) 270px, 340px" alt="" width="640" height="1387" decoding="async" fetchpriority="high" />
 							: <img data-shot data-src={s} alt="" width="640" height="1387" decoding="async" />)}
 					</div>
 					<div class="notes">
 						<div class="note" data-note>
 							<div class="note-h"><img src="/favicon-48.png" alt="" width="18" height="18" /><b>DocSera</b><i>8:00 ص</i></div>
 							<p>حان موعد <bdi>Metformin</bdi></p>
-							<div class="note-a"><span class="main">أخذته ✓</span><span>بعد 10 دقائق</span></div>
+							<div class="note-a"><span class="main">أخذته <em class="tick">✓</em></span><span>بعد 10 دقائق</span></div>
 						</div>
 						<div class="note" data-note>
 							<div class="note-h"><img src="/favicon-48.png" alt="" width="18" height="18" /><b>DocSera</b><i>2:00 م</i></div>
 							<p>حان موعد دواء سميرة</p>
-							<div class="note-a"><span class="main">أخذها ✓</span><span>بعد 10 دقائق</span></div>
+							<div class="note-a"><span class="main">أخذها <em class="tick">✓</em></span><span>بعد 10 دقائق</span></div>
 						</div>
 						<div class="note" data-note>
 							<div class="note-h"><img src="/favicon-48.png" alt="" width="18" height="18" /><b>DocSera</b><i>9:00 م</i></div>
@@ -196,7 +197,7 @@ const MORE = [
 				</div>
 
 				<div class="hchip fx" data-float aria-hidden="true"><i><svg viewBox="0 0 24 24"><rect x="4" y="5" width="16" height="15" rx="3" /><path d="M4 10h16M9 3v4M15 3v4" /></svg></i><span><small>موعدك القادم</small><b>غداً · 10:30 ص</b></span></div>
-				<div class="hchip fx" data-float aria-hidden="true"><i><svg viewBox="0 0 24 24"><path d="M5 12.5l4.5 4.5L19 7.5" /></svg></i><span><small>حان موعد دوائك</small><b>أخذته ✓</b></span></div>
+				<div class="hchip fx" data-float aria-hidden="true"><i><svg viewBox="0 0 24 24"><path d="M5 12.5l4.5 4.5L19 7.5" /></svg></i><span><small>حان موعد دوائك</small><b>أخذته <em class="tick">✓</em></b></span></div>
 				<div class="hchip fx" data-float aria-hidden="true"><i><svg viewBox="0 0 24 24"><path d="M7 3h7l4 4v14H7z" /><path d="M10 12h5M10 16h5" /></svg></i><span><b>تقرير زيارة جديد</b></span></div>
 
 				<div class="cl fx" data-clinic aria-hidden="true">
@@ -276,6 +277,13 @@ const MORE = [
 	<script is:inline async src={bootUrl}></script>
 	<Footer seamless />
 </Layout>
+
+<style is:global>
+	/* Same Cairo, without the Latin-extended glyphs this page never prints. Any other character still comes from the full file. */
+	@font-face { font-family: 'Cairo'; font-style: normal; font-weight: 400; font-display: swap; src: url('/fonts/home/Cairo-400.woff2') format('woff2'); unicode-range: U+0020-007E, U+00A0, U+00A9, U+00AB, U+00B0, U+00B7, U+00BB, U+00D7, U+0600-06FF, U+200C-200F, U+2013, U+2014, U+2018-201D, U+2026, U+FB50-FDFF, U+FE70-FEFF; }
+	@font-face { font-family: 'Cairo'; font-style: normal; font-weight: 700; font-display: swap; src: url('/fonts/home/Cairo-700.woff2') format('woff2'); unicode-range: U+0020-007E, U+00A0, U+00A9, U+00AB, U+00B0, U+00B7, U+00BB, U+00D7, U+0600-06FF, U+200C-200F, U+2013, U+2014, U+2018-201D, U+2026, U+FB50-FDFF, U+FE70-FEFF; }
+	@font-face { font-family: 'Cairo'; font-style: normal; font-weight: 800; font-display: swap; src: url('/fonts/home/Cairo-800.woff2') format('woff2'); unicode-range: U+0020-007E, U+00A0, U+00A9, U+00AB, U+00B0, U+00B7, U+00BB, U+00D7, U+0600-06FF, U+200C-200F, U+2013, U+2014, U+2018-201D, U+2026, U+FB50-FDFF, U+FE70-FEFF; }
+</style>
 
 <style>
 	:global(body) { background: #F7FBFB; }
@@ -410,6 +418,8 @@ const MORE = [
 	.note-h b { color: #0F1A22; font: 700 .76rem Cairo, sans-serif; }
 	.note-h i { margin-inline-start: auto; font: 700 .78rem Cairo, sans-serif; color: #0F1A22; }
 	.note p { margin: 6px 0 0; font-weight: 800; font-size: .98rem; color: #0F1A22; }
+	/* Cairo has no check mark: go straight to the fallback instead of fetching a font to find that out. */
+	.tick { font-family: sans-serif; font-style: normal; }
 	.note-a { display: flex; gap: 8px; margin-top: 10px; }
 	.note-a span { flex: 1; text-align: center; font-size: .84rem; font-weight: 700; padding: 6px 4px; border-radius: 12px; background: #EEF3F4; color: #2D3436; }
 	.note-a .main { background: #E0F2F2; color: var(--c-main-dark); transition: background .25s, color .25s, transform .25s; }

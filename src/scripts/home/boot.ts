@@ -489,8 +489,25 @@ function startFinale(): void {
 	}).observe(root);
 }
 
+// The opening shows the phone small, so it starts on a small screenshot.
+// The full one is fetched at the first sign the visitor is moving on.
+function startFirstShot(story: boolean): void {
+	const img = document.querySelector<HTMLImageElement>('img[data-full-sizes]');
+	if (!img) return;
+	const events = ['scroll', 'wheel', 'touchstart', 'pointerdown', 'keydown'];
+	const sharpen = (e?: Event) => {
+		if (e?.type === 'scroll' && scrollY < 2) return;
+		img.sizes = img.dataset.fullSizes || img.sizes;
+		img.setAttribute('srcset', img.getAttribute('srcset') || ''); // makes every browser pick again
+		events.forEach((e) => removeEventListener(e, sharpen));
+	};
+	if (!story || scrollY > 0) return sharpen();
+	events.forEach((e) => addEventListener(e, sharpen, { passive: true }));
+}
+
 requestAnimationFrame(() => {
 	startFlower();
+	startFirstShot(document.documentElement.classList.contains('story'));
 	if (document.documentElement.classList.contains('story')) {
 		startStory();
 		startExpand();

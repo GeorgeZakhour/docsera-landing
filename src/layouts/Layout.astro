@@ -15,6 +15,8 @@ interface Props {
 	// (Android, and in-app browsers on iPhone). Pages that are themselves a
 	// download surface turn it off.
 	appBar?: boolean;
+	// The home page's lighter Cairo files (Arabic + basic Latin only).
+	homeFonts?: boolean;
 }
 
 const {
@@ -24,11 +26,13 @@ const {
 	path = '',
 	appBanner = 'site',
 	appBar = true,
+	homeFonts = false,
 } = Astro.props;
 
 const SITE = 'https://docsera.app';
 const canonical = SITE + path;
 const ogImage = image.startsWith('http') ? image : SITE + image;
+const cairoDir = homeFonts ? '/fonts/home' : '/fonts';
 ---
 
 <!doctype html>
@@ -117,8 +121,8 @@ const ogImage = image.startsWith('http') ? image : SITE + image;
 		<!-- Self-hosted fonts (no Google Fonts dependency — fast & reliable in Syria).
 		     Preload the two most-used Cairo weights for first paint; the rest load
 		     on demand via the @font-face rules in the global stylesheet below. -->
-		<link rel="preload" href="/fonts/Cairo-400.woff2" as="font" type="font/woff2" crossorigin />
-		<link rel="preload" href="/fonts/Cairo-700.woff2" as="font" type="font/woff2" crossorigin />
+		<link rel="preload" href={`${cairoDir}/Cairo-400.woff2`} as="font" type="font/woff2" crossorigin />
+		<link rel="preload" href={`${cairoDir}/Cairo-700.woff2`} as="font" type="font/woff2" crossorigin />
 		<meta name="generator" content={Astro.generator} />
 		<title>{title}</title>
 	</head>
