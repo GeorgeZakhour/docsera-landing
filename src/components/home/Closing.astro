@@ -16,8 +16,6 @@ const I = {
 	bell: '<path d="M6 16V11a6 6 0 1 1 12 0v5l2 2H4z"/><path d="M10 21h4"/>',
 	family: '<circle cx="9" cy="8" r="3.5"/><path d="M3 20c.5-4 3-6 6-6s5.500 2 6 6"/><path d="M16 5a3.300 3.300 0 0 1 0 6.400M18 14.500c1.700.8 2.700 2.800 3 5.500"/>',
 	chat: '<path d="M4 6a2 2 0 0 1 2-2h12a2 2 0 0 1 2 2v9a2 2 0 0 1-2 2H9l-5 4z"/>',
-	check: '<path d="M5 12.500l4.500 4.500L19 7.500"/>',
-	doc: '<path d="M7 3h7l4 4v14H7z"/><path d="M10 13l2 2 3-4"/>',
 };
 
 // Each pain sits exactly where its answer will land.
@@ -27,31 +25,6 @@ const PAIRS = [
 	{ old: 'ساعات انتظار طويلة في العيادة', kind: 'ticket', oi: I.clock, t: 'تحديثات فورية', s: 'تنبيهات بمواعيدك وتقاريرك ووثائقك', ni: I.bell },
 	{ old: 'تاريخ طبي مفقود وتشخيص ناقص', kind: 'folder', oi: I.folder, t: 'رعاية لكل العائلة', s: 'ملفات مستقلة لأطفالك وأحبائك', ni: I.family },
 	{ old: 'مواعيد غير دقيقة وعشوائية', kind: 'index', oi: I.cal, t: 'تواصل مباشر', s: 'راسل عيادتك لتنظيم مواعيدك ومتابعتها', ni: I.chat },
-];
-
-// DocSera Pro is the whole clinic: each card is one world, around one app.
-// x / y = the ring on wide screens, mx / my = two columns on a phone.
-const T = 'fill="#7FF3E6"', W = 'fill="#fff"';
-const tooth = (x: number, on: boolean) => `<path transform="translate(${x} 10)" d="M1 3c2-3 4-2 5-1.500C7-.5 9-.5 11 3c1 3-.5 5-1 8-.4 2-.8 6-2 6s-1-4-2-4-.8 4-2 4-1.600-4-2-6c-.5-3-2-5-1-8z" ${on ? T : 'fill="#fff" fill-opacity=".3"'}/>`;
-const ART: Record<string, string> = {
-	files: `<circle cx="116" cy="17" r="13" ${T}/><circle cx="116" cy="13.500" r="4.200" fill="#0D4148"/><path d="M108 26a8 7 0 0 1 16 0z" fill="#0D4148"/><rect x="38" y="8" width="62" height="6" rx="3" ${W}/><rect x="60" y="20" width="40" height="5" rx="2.500" ${W} fill-opacity=".4"/><rect x="70" y="35" width="30" height="8" rx="4" ${T} fill-opacity=".3"/><rect x="36" y="35" width="30" height="8" rx="4" ${W} fill-opacity=".16"/><rect x="2" y="35" width="30" height="8" rx="4" ${W} fill-opacity=".16"/>`,
-	reports: `<rect x="86" y="2" width="36" height="42" rx="5" ${W}/><rect x="92" y="10" width="24" height="3.500" rx="1.700" fill="#0D4148"/><rect x="92" y="18" width="24" height="3" rx="1.500" fill="#0D4148" fill-opacity=".35"/><rect x="92" y="25" width="17" height="3" rx="1.500" fill="#0D4148" fill-opacity=".35"/><circle cx="116" cy="38" r="8" ${T}/><path d="M112.500 38l2.500 2.500 4.500-5" fill="none" stroke="#0D4148" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/><rect x="8" y="10" width="66" height="5" rx="2.500" ${W} fill-opacity=".5"/><rect x="24" y="22" width="50" height="5" rx="2.500" ${W} fill-opacity=".28"/><rect x="36" y="34" width="38" height="5" rx="2.500" ${W} fill-opacity=".28"/>`,
-	dental: [2, 18, 34, 50, 66, 82, 98, 114].map((x, i) => tooth(x, i === 2 || i === 5)).join(''),
-	billing: `<rect x="4" y="27" width="14" height="17" rx="3" ${W} fill-opacity=".25"/><rect x="24" y="17" width="14" height="27" rx="3" ${W} fill-opacity=".25"/><rect x="44" y="22" width="14" height="22" rx="3" ${W} fill-opacity=".25"/><rect x="64" y="7" width="14" height="37" rx="3" ${T}/><rect x="92" y="10" width="34" height="8" rx="4" ${W}/><rect x="100" y="24" width="26" height="5" rx="2.500" ${W} fill-opacity=".4"/><rect x="92" y="35" width="34" height="8" rx="4" ${T} fill-opacity=".35"/>`,
-	chat: `<path d="M50 3h68a7 7 0 0 1 7 7v9a7 7 0 0 1-7 7H62l-9 7v-7h-3a7 7 0 0 1-7-7v-9a7 7 0 0 1 7-7z" ${T}/><rect x="56" y="11" width="56" height="4" rx="2" fill="#0D4148"/><path d="M10 22h52a6 6 0 0 1 6 6v9a6 6 0 0 1-6 6H18l-8 5v-5a6 6 0 0 1-6-6v-9a6 6 0 0 1 6-6z" ${W}/><rect x="14" y="30" width="44" height="4" rx="2" fill="#0D4148" fill-opacity=".5"/>`,
-	team: [[104, T], [80, W], [56, T], [32, W]].map(([x, c]) => `<circle cx="${x}" cy="23" r="17" fill="#0D4148"/><circle cx="${x}" cy="23" r="15" ${c} ${c === W ? 'fill-opacity=".92"' : ''}/><circle cx="${x}" cy="18.500" r="5" fill="#0D4148"/><path d="M${Number(x) - 9} 33a9 8 0 0 1 18 0z" fill="#0D4148"/>`).join(''),
-	cal: `<rect x="2" y="4" width="124" height="11" rx="5.500" ${W} fill-opacity=".2"/>${[0, 1, 2, 3, 4, 5, 6].map((d) => `<rect x="${2 + d * 18}" y="20" width="16" height="10" rx="3" ${d === 4 ? T : 'fill="#fff" fill-opacity=".14"'}/><rect x="${2 + d * 18}" y="33" width="16" height="10" rx="3" ${d === 1 ? W : 'fill="#fff" fill-opacity=".14"'}/>`).join('')}`,
-	overview: `<path d="M2 36c14-2 20-14 34-13s18 12 32 8 18-22 32-23 16 6 26 2v34H2z" ${T} fill-opacity=".2"/><path d="M2 36c14-2 20-14 34-13s18 12 32 8 18-22 32-23 16 6 26 2" fill="none" stroke="#7FF3E6" stroke-width="2.600" stroke-linecap="round"/><circle cx="100" cy="8" r="4.500" ${W}/>`,
-};
-const WORLDS = [
-	{ key: 'files', t: 'ملفات المرضى', x: 67, y: 14, mx: 76, my: 9, d: 1.2 },
-	{ key: 'reports', t: 'تقارير الزيارات', x: 33, y: 14, mx: 24, my: 9, d: 0.9 },
-	{ key: 'dental', t: 'مخطط الأسنان', x: 85, y: 36, mx: 76, my: 30, d: 1.5 },
-	{ key: 'billing', t: 'المحاسبة والفوترة', x: 15, y: 36, mx: 24, my: 30, d: 1.3 },
-	{ key: 'chat', t: 'مراسلة المرضى', x: 85, y: 64, mx: 76, my: 70, d: 1 },
-	{ key: 'team', t: 'فريق العيادة', x: 15, y: 64, mx: 24, my: 70, d: 1.6 },
-	{ key: 'cal', t: 'المواعيد والحجز', x: 67, y: 86, mx: 76, my: 91, d: 1.3 },
-	{ key: 'overview', t: 'نظرة على عيادتك', x: 33, y: 86, mx: 24, my: 91, d: 1 },
 ];
 ---
 <section class="cmp" data-cmp aria-label="الفرق بين الطريقة التقليدية وطريقة DocSera">
@@ -99,35 +72,52 @@ const WORLDS = [
 </section>
 
 <section class="pv" data-pro>
-	<div class="pv-in">
-		<div class="pv-copy">
-			<h2>هل أنت طبيب أو مختص؟</h2>
-			<p>انضم إلى <b>DocSera Pro</b>. المنصة المتكاملة لإدارة عيادتك، تنظيم مواعيدك، والتواصل مع مرضاك بكفاءة عالية وبأدوات احترافية صممت خصيصاً لك.</p>
-			<a class="pv-btn" href="/pro">
-				<span>اكتشف DocSera Pro</span>
-				<svg viewBox="0 0 24 24" aria-hidden="true"><path d="M15 6l-6 6 6 6" /></svg>
-			</a>
-		</div>
-		<div class="pv-view">
-			<div class="pv-scene" data-pro-scene>
-				<svg class="pv-links" data-pro-links viewBox="0 0 100 100" preserveAspectRatio="none" aria-hidden="true">
-					{WORLDS.map((w) => <line class="pv-ld" x1="50" y1="50" x2={w.x} y2={w.y} vector-effect="non-scaling-stroke" />)}
-					{WORLDS.map((w) => <line class="pv-lm" x1="50" y1="50" x2={w.mx} y2={w.my} vector-effect="non-scaling-stroke" />)}
-				</svg>
-				<ul class="pv-worlds">
-					{WORLDS.map((w) => (
-						<li class="pv-w" style={`--x:${w.x}%;--y:${w.y}%;--mx:${w.mx}%;--my:${w.my}%`} data-world data-depth={w.d}>
-							<b>{w.t}</b>
-							<svg viewBox="0 0 128 48" aria-hidden="true" set:html={ART[w.key]} />
-						</li>
-					))}
-					<li class="pv-hub" data-pro-hub>
-						<img src="/images/docsera-pro-icon.webp" alt="" width="96" height="96" loading="lazy" decoding="async" />
-						<span>وأكثر</span>
-					</li>
-				</ul>
-			</div>
-		</div>
+	<div class="pv-wrap">
+                <div class="pro-glass-card">
+                    <div class="pro-content">
+                        <div class="pro-badge">للأطباء والمختصين والمراكز الطبية</div>
+                        <h2 class="pro-title">هل أنت طبيب، مختص، أو صاحب مركز طبي؟</h2>
+                        <p class="pro-desc">انضم إلى <strong>DocSera Pro</strong>. المنصة المتكاملة لإدارة عيادتك أو مركزك، تنظيم مواعيدك، والتواصل مع مرضاك بكفاءة عالية وبأدوات احترافية صممت خصيصاً لك.</p>
+                    </div>
+                    
+                    <div class="pro-action">
+                        <a href="/pro" class="btn-pro">
+                            <span>اكتشف DocSera Pro</span>
+                            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M18 13v6a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2V8a2 2 0 0 1 2-2h6"/><polyline points="15 3 21 3 21 9"/><line x1="10" y1="14" x2="21" y2="3"/></svg>
+                        </a>
+                    </div>
+                    
+                    <div class="pro-visual">
+                         <!-- Abstract Pro UI Elements -->
+                         <div class="pro-ui-card card-1">
+                            <div class="ui-header">
+                                <div class="ui-dot red"></div><div class="ui-dot yellow"></div><div class="ui-dot green"></div>
+                            </div>
+                            <div class="ui-body">
+                                <div class="ui-line w-70"></div>
+                                <div class="ui-line w-50"></div>
+                                <div class="ui-row">
+                                    <div class="ui-box"></div>
+                                    <div class="ui-box"></div>
+                                </div>
+                            </div>
+                         </div>
+                         <div class="pro-ui-card card-2">
+                            <div class="ui-icon-circle">
+                                 <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M16 21v-2a4 4 0 0 0-4-4H5a4 4 0 0 0-4 4v2"/><circle cx="8.5" cy="7" r="4"/><line x1="20" y1="8" x2="20" y2="14"/><line x1="23" y1="11" x2="17" y2="11"/></svg>
+                            </div>
+                            <div class="ui-line w-100"></div>
+                         </div>
+                         
+                         <!-- App Icon -->
+                         <div class="pro-app-icon">
+                             <img src="/images/docsera-pro-icon.webp" alt="DocSera Pro" loading="lazy" decoding="async" />
+                         </div>
+
+                         <!-- Glow Effect -->
+                         <div class="pro-glow"></div>
+                    </div>
+                </div>
 	</div>
 	<div class="pv-help">
 		<p><b>هل لديك استفسارات؟</b> لقد جمعنا لك إجابات مفصلة عن كل ما يخص DocSera في مكان واحد.</p>
@@ -176,7 +166,7 @@ const WORLDS = [
 	.cmp-new small { display: block; font-size: .88rem; line-height: 1.4; color: #BFD9D9; }
 
 	:global(html.story) .cmp { height: 250vh; height: 250svh; background: #fff; }
-	:global(html.story) .cmp-stage { position: sticky; top: 0; height: 100vh; height: 100svh; padding: 0; overflow: hidden; background: #CBD3D0; color: #1D2A2B; }
+	:global(html.story) .cmp-stage { position: sticky; top: 0; height: 100vh; height: 100lvh; padding: 0; overflow: hidden; background: #CBD3D0; color: #1D2A2B; }
 	:global(html.story) .cmp-desk { display: block; position: absolute; inset: 0; background: repeating-linear-gradient(97deg, rgba(255, 255, 255, .09) 0 2px, transparent 2px 9px), radial-gradient(90% 70% at 60% 40%, #D9DFDC, #BAC4C1); }
 	.cmp-junk { position: absolute; display: block; background: #F6F5F0; box-shadow: 0 10px 22px -10px rgba(30, 40, 40, .55); background-image: repeating-linear-gradient(0deg, transparent 0 13px, rgba(60, 80, 90, .16) 13px 14px); }
 	.j1 { width: 230px; height: 300px; top: 8%; left: -40px; rotate: -14deg; }
@@ -216,26 +206,229 @@ const WORLDS = [
 	/* ── the clinic side ── */
 	.pv { position: relative; overflow: hidden; background: #062A30; color: #fff; padding: clamp(70px, 11vh, 120px) 20px 0; }
 	.pv::before { content: ''; position: absolute; width: 62vmax; height: 62vmax; top: -8vmax; left: -14vmax; border-radius: 50%; background: radial-gradient(closest-side, rgba(0, 196, 190, .17), rgba(0, 196, 190, 0)); pointer-events: none; }
-	.pv-in { position: relative; max-width: 1180px; margin: 0 auto; display: grid; grid-template-columns: minmax(0, 1fr) minmax(0, 1.12fr); align-items: center; gap: 40px; }
-	.pv-copy h2 { margin: 0; font-size: clamp(2rem, 4.3vw, 3.5rem); line-height: 1.2; font-weight: 800; color: #fff; }
-	.pv-copy p { margin: 18px 0 28px; max-width: 34em; font-size: clamp(1rem, 1.35vw, 1.14rem); line-height: 1.85; color: #C9E4E3; }
-	.pv-copy p b { color: #fff; font-weight: 800; }
-	.pv-btn { display: inline-flex; align-items: center; gap: 10px; padding: 15px 28px; border-radius: 16px; font-weight: 800; font-size: 1.04rem; color: #fff; background: #009092; text-decoration: none; box-shadow: 0 16px 34px -12px rgba(0, 196, 190, .75); transition: background .2s, transform .2s; }
-	.pv-btn:hover { background: #00A5A5; transform: translateY(-2px); }
-	.pv-btn:focus-visible, .pv-help a:focus-visible, .fin-more a:focus-visible { outline: 3px solid #BFF2EE; outline-offset: 3px; }
-	.pv-btn svg { width: 20px; height: 20px; fill: none; stroke: currentColor; stroke-width: 2.4; stroke-linecap: round; stroke-linejoin: round; }
-	.pv-view { perspective: 1100px; }
-	.pv-scene { position: relative; height: clamp(480px, 68vh, 590px); transform-style: preserve-3d; -webkit-transform-style: preserve-3d; transform: rotateY(6deg) rotateX(3deg); will-change: transform; }
-	.pv-links { position: absolute; inset: 0; width: 100%; height: 100%; overflow: visible; }
-	.pv-links line { stroke: #7FF3E6; stroke-opacity: .26; stroke-width: 1.2; }
-	.pv-lm { display: none; }
-	.pv-worlds { list-style: none; margin: 0; padding: 0; position: absolute; inset: 0; transform-style: preserve-3d; -webkit-transform-style: preserve-3d; }
-	.pv-w { position: absolute; left: var(--x); top: var(--y); translate: -50% -50%; box-sizing: border-box; width: 176px; padding: 11px 13px 10px; border-radius: 18px; background: linear-gradient(160deg, #15565E, #0C3D44); border: 1px solid rgba(127, 243, 230, .22); box-shadow: 0 22px 38px -18px rgba(0, 0, 0, .85); will-change: transform; }
-	.pv-w b { display: block; margin-bottom: 8px; font-size: .92rem; line-height: 1.3; font-weight: 800; color: #fff; white-space: nowrap; }
-	.pv-w svg { display: block; width: 100%; height: auto; }
-	.pv-hub { position: absolute; left: 50%; top: 50%; translate: -50% -50%; display: flex; flex-direction: column; align-items: center; gap: 8px; will-change: transform; }
-	.pv-hub img { display: block; width: 92px; height: 92px; border-radius: 24px; box-shadow: 0 0 0 1px rgba(191, 242, 238, .3), 0 0 0 9px rgba(127, 243, 230, .08), 0 0 60px 8px rgba(0, 214, 200, .38); }
-	.pv-hub span { padding: 3px 13px; border-radius: 999px; font-size: .84rem; font-weight: 800; color: #06343A; background: #BFF2EE; }
+	.pv-wrap { position: relative; max-width: 1180px; margin: 0 auto; }
+    .pro-glass-card {
+        background: #0f1515; /* Very Dark Teal/Black */
+        background-image: radial-gradient(circle at top right, #1a2a2a, #0f1515);
+        border-radius: 30px;
+        padding: 60px;
+        position: relative;
+        overflow: hidden;
+        color: white;
+        box-shadow: 0 20px 40px -10px rgba(0,0,0,0.4);
+        border: 1px solid rgba(255,255,255,0.1);
+        
+        /* Desktop Grid Layout */
+        display: grid;
+        grid-template-columns: 1fr 1fr;
+        grid-template-areas: 
+            "content visual"
+            "action visual";
+        gap: 40px;
+        align-items: center;
+    }
+    
+    /* Grid Areas */
+    .pro-content { grid-area: content; z-index: 2; position: relative; }
+    .pro-action { grid-area: action; z-index: 2; position: relative; align-self: start; }
+    .pro-visual { 
+        grid-area: visual; 
+        height: 100%; 
+        min-height: 300px; 
+        position: relative; 
+        display: flex; 
+        align-items: center; 
+        justify-content: center;
+    }
+    
+    .pro-badge {
+        display: inline-block;
+        background: rgba(0, 144, 146, 0.2);
+        color: #00E0E3;
+        padding: 6px 14px;
+        border-radius: 20px;
+        font-size: 0.85rem;
+        font-weight: 700;
+        margin-bottom: 20px;
+        border: 1px solid rgba(0, 144, 146, 0.3);
+    }
+    
+    .pro-title {
+        font-size: 2.5rem;
+        font-weight: 800;
+        margin-bottom: 20px;
+        line-height: 1.2;
+        background: linear-gradient(to right, #fff, #bcecec);
+        -webkit-background-clip: text;
+        -webkit-text-fill-color: transparent;
+    }
+    
+    .pro-desc {
+        font-size: 1.1rem;
+        color: rgba(255,255,255,0.7);
+        margin: 0;
+        line-height: 1.7;
+        max-width: 500px;
+    }
+    .pro-desc strong { color: white; }
+    
+    .btn-pro {
+        display: inline-flex;
+        align-items: center;
+        gap: 10px;
+        background: rgba(0, 144, 146, 0.8); /* Glassy Main Color */
+        backdrop-filter: blur(12px);
+        -webkit-backdrop-filter: blur(12px);
+        border: 1px solid rgba(255, 255, 255, 0.2);
+        color: white;
+        padding: 16px 32px;
+        border-radius: 14px;
+        font-weight: 700;
+        text-decoration: none;
+        transition: all 0.3s ease;
+        box-shadow: 0 10px 30px -5px rgba(0, 144, 146, 0.4);
+    }
+    .btn-pro:hover {
+        background: rgba(0, 144, 146, 0.95);
+        border-color: rgba(255, 255, 255, 0.4);
+        box-shadow: 0 0 30px rgba(0, 224, 227, 0.4);
+        transform: translateY(-2px);
+    }
+    .btn-pro svg { width: 20px; height: 20px; }
+    
+    /* Visual Cards (Abstract) */
+    .pro-ui-card {
+        background: rgba(255,255,255,0.05);
+        backdrop-filter: blur(10px);
+        border: 1px solid rgba(255,255,255,0.1);
+        border-radius: 16px;
+        position: absolute;
+        box-shadow: 0 10px 30px rgba(0,0,0,0.3);
+    }
+    .card-1 {
+        width: 260px; height: 180px;
+        z-index: 2;
+        padding: 15px;
+        top: 40px; right: 40px;
+        transform: rotate(-5deg);
+        animation: floatPro 6s ease-in-out infinite;
+    }
+    .card-2 {
+        width: 180px; height: 120px;
+        z-index: 3;
+        bottom: 30px; left: 40px;
+        background: rgba(30,30,30,0.6);
+        padding: 15px;
+        transform: rotate(5deg);
+        animation: floatPro 6s ease-in-out infinite 1s; /* delay */
+    }
+    
+    /* UI Internal Deco */
+    .ui-header { display: flex; gap: 6px; margin-bottom: 15px; }
+    .ui-dot { width: 8px; height: 8px; border-radius: 50%; opacity: 0.5; }
+    .ui-dot.red { background: #ff5f56; }
+    .ui-dot.yellow { background: #ffbd2e; }
+    .ui-dot.green { background: #27c93f; }
+    .ui-body { display: flex; flex-direction: column; gap: 10px; }
+    .ui-line { height: 8px; background: rgba(255,255,255,0.1); border-radius: 4px; }
+    .w-70 { width: 70%; } .w-50 { width: 50%; } .w-100 { width: 100%; }
+    .ui-row { display: flex; gap: 10px; margin-top: 10px; }
+    .ui-box { width: 40px; height: 40px; background: rgba(255,255,255,0.05); border-radius: 8px; }
+    .ui-icon-circle { 
+        width: 40px; height: 40px; 
+        background: rgba(0, 144, 146, 0.2); 
+        border-radius: 50%; 
+        display: flex; align-items: center; justify-content: center;
+        color: #00E0E3;
+        margin-bottom: 15px;
+    }
+    .ui-icon-circle svg { width: 20px; height: 20px; }
+
+    .pro-app-icon {
+        position: absolute;
+        width: 70px; height: 70px;
+        z-index: 10;
+        bottom: 40px; right: 40px; /* Moved to Bottom Right to balance Card 2 (BL) and Card 1 (TR) */
+        border-radius: 20px;
+        box-shadow: 0 15px 35px rgba(0,0,0,0.5);
+        animation: floatIcon 6s ease-in-out infinite;
+        border: 1px solid rgba(255,255,255,0.1);
+        overflow: hidden;
+    }
+    .pro-app-icon img { width: 100%; height: 100%; object-fit: cover; }
+
+    .pro-glow {
+        position: absolute;
+        width: 300px; height: 300px;
+        background: #009092;
+        border-radius: 50%;
+        filter: blur(120px);
+        opacity: 0.15;
+        top: 50%; left: 50%;
+        transform: translate(-50%, -50%);
+        z-index: 1;
+    }
+    
+    @keyframes floatPro {
+        0%, 100% { transform: translateY(0) rotate(-5deg); }
+        50% { transform: translateY(-10px) rotate(-4deg); }
+    }
+    @keyframes floatIcon {
+        0%, 100% { transform: translateY(0); }
+        50% { transform: translateY(-10px); }
+    }
+    
+    @media (max-width: 900px) {
+        .pro-glass-card { 
+            display: flex;
+            flex-direction: column; 
+            text-align: center; 
+            padding: 50px 24px 40px; 
+            gap: 30px; /* Space between flex items */
+        }
+        
+        .pro-content { order: 1; }
+        .pro-desc { margin: 0 auto; }
+        
+        /* Visual in middle, make it tall */
+        .pro-visual { 
+            order: 2; 
+            width: 100%; 
+            height: 320px; /* Taller container */
+            margin: 0;
+        }
+        
+        .pro-action { 
+            order: 3; 
+            width: 100%;
+            display: flex;
+            justify-content: center;
+        }
+        
+        /* Adjust cards to fit in the 320px visual box */
+        .card-1 { 
+            top: 20px; 
+            right: 50%; 
+            margin-right: -100px; 
+            transform: rotate(-5deg) scale(0.8);
+            animation: none; /* Disable complex float on mobile for safety? Or keep distinct */
+        } 
+        .card-2 { 
+            bottom: 10px;
+            left: 50%;
+            margin-left: -100px; 
+            transform: rotate(5deg) scale(0.8);
+        }
+        
+        .pro-app-icon {
+            width: 60px; height: 60px; 
+            bottom: 170px; 
+            right: auto;
+            left: 50%;
+            margin-left: 90px;
+        }
+    }
+    
 	.pv-help { position: relative; max-width: 1180px; margin: clamp(30px, 6vh, 60px) auto 0; padding: 22px 0 clamp(60px, 11vh, 110px); display: flex; align-items: center; justify-content: space-between; gap: 18px; border-top: 1px solid rgba(255, 255, 255, .13); }
 	.pv-help p { margin: 0; font-size: .96rem; line-height: 1.7; color: #BCD8D7; }
 	.pv-help b { color: #fff; font-weight: 800; }
@@ -269,19 +462,10 @@ const WORLDS = [
 		.cmp-new b { font-size: .98rem; }
 		.cmp-new small { font-size: .8rem; }
 		.j1 { width: 150px; height: 200px; } .j2 { width: 150px; height: 190px; } .j3 { width: 130px; height: 170px; } .j4 { width: 170px; height: 220px; } .j5 { width: 100px; height: 130px; top: auto; bottom: 5%; right: -22px; }
-		.pv-in { grid-template-columns: 1fr; gap: 26px; text-align: center; }
-		.pv-copy p { margin-inline: auto; }
-		.pv-scene { height: 620px; transform: rotateX(2deg); }
-		.pv-ld { display: none; }
-		.pv-lm { display: inline; }
-		.pv-w { left: var(--mx); top: var(--my); width: min(164px, 43.500vw); padding: 9px 10px 8px; border-radius: 15px; }
-		.pv-w b { margin-bottom: 6px; font-size: .82rem; }
-		.pv-hub img { width: 76px; height: 76px; border-radius: 20px; }
+			.pro-title { font-size: 1.85rem; }
 		.pv-help { flex-direction: column; text-align: center; }
 	}
 
 	@media (prefers-reduced-motion: reduce) {
-		.pv-btn { transition: none; }
-		.pv-btn:hover { transform: none; }
-	}
+			}
 </style>

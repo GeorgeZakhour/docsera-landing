@@ -13,7 +13,7 @@ const qa = <T extends Element = HTMLElement>(s: string, r: ParentNode = document
 const CH: [number, number][] = [[0.15, 0.35], [0.35, 0.56], [0.56, 0.76], [0.76, 0.985]];
 // Each phone screen: visible from..to, and when to start fetching it.
 const SHOTS: [number, number, number][] = [
-	[-1, 0.275, 0], [0.265, 0.345, 0.12], [0.335, 0.555, 0.24], [0.545, 0.625, 0.45],
+	[-1, 0.275, 0.002], [0.265, 0.345, 0.12], [0.335, 0.555, 0.24], [0.545, 0.625, 0.45],
 	[0.615, 0.69, 0.53], [0.68, 0.765, 0.6], [0.755, 2, 0.68],
 ];
 const NOTES: [number, number][] = [[0.372, 0.43], [0.432, 0.49], [0.492, 0.548]];
@@ -22,7 +22,7 @@ const PAPERS: [number, number, number][] = [
 	[-0.8, -0.3, -12], [0.72, -0.36, 9], [-0.88, 0.05, 7], [0.76, 0.1, -8], [-0.74, 0.37, 5], [0.68, 0.4, -6],
 ];
 // The small cards floating around the laptop, iPad and phone: x / y in the rig's size.
-const FLOATS: [number, number][] = [[0.13, 0.12], [0.93, 0.27], [0.15, 0.93]];
+const FLOATS: [number, number][] = [[0.15, 0.2], [0.88, 0.2], [0.58, 0.97]];
 
 const pose: DialPose = { tilt: 0.22, turn: 0.3, roll: 0, petals: [0, 0, 0, 0] };
 
@@ -56,6 +56,8 @@ function startStory(): void {
 	if (!root || !stick) return;
 	const fl = q('[data-fl]')!, aHero = q('[data-a-hero]')!, aDial = q('[data-a-dial]')!;
 	const hero = q('[data-hero]')!, phone = q('[data-phone]')!, aFan = q('[data-a-fan]')!, bgHero = q('[data-bg-hero]')!;
+	const silk = q('[data-silk]')!, vault = q('[data-vault]')!, vaultDial = q('[data-vault-dial]')!, aVault = q('[data-a-vault]')!;
+	let safeLoaded = false, V = { x: 0, y: 0, s: 1 };
 	const rigBox = q('[data-rig-box]')!, rigs = qa('[data-rig]'), floats = qa('[data-float]'), cue = q<HTMLButtonElement>('[data-cue]')!;
 	const t0 = performance.now();
 	// «There is more below»: until the first scroll the devices lift now and then.
@@ -74,7 +76,10 @@ function startStory(): void {
 	const layout = () => {
 		const sr = stick.getBoundingClientRect();
 		const c = (e: HTMLElement) => { const r = e.getBoundingClientRect(); return { x: r.left - sr.left + r.width / 2, y: r.top - sr.top + r.height / 2, s: r.width }; };
-		A = c(aHero); B = c(aDial);
+		A = c(aHero); B = c(aDial); V = c(aVault);
+		vault.style.left = V.x + 'px';
+		vault.style.top = V.y + 'px';
+		vault.style.width = V.s * 2.58 + 'px';
 		fl.style.width = fl.style.height = A.s + 'px';
 		const off = (e: HTMLElement) => ({ x: e.offsetLeft + e.offsetWidth / 2, y: e.offsetTop + e.offsetHeight / 2 });
 		const ph = off(phone);
@@ -91,7 +96,8 @@ function startStory(): void {
 	let target = 0, p = 0, last = -1, running = false;
 	const read = () => {
 		const r = root.getBoundingClientRect();
-		target = clamp(-r.top / Math.max(1, r.height - window.innerHeight));
+		// The stage is as tall as the phone with its browser bar hidden: measure the stage, not the window.
+		target = clamp(-r.top / Math.max(1, r.height - stick.offsetHeight));
 	};
 
 	const apply = (now: number) => {
@@ -106,7 +112,7 @@ function startStory(): void {
 		const out = sm(0.025, 0.11), W = stick.clientWidth;
 		rigs.forEach((e, i) => {
 			const d = Number(e.dataset.rig) || 0;
-			const a = ease(clamp((now - t0 - i * 130) / 850)), o = 1 - sm(0.035, 0.105);
+			const a = ease(clamp((now - t0 - i * 130) / 850)), o = 1 - sm(0.035, 0.085);
 			const bob = Math.sin(now / 1900 + i * 2.1) * (narrow ? 2.5 : 4) * (1 - out);
 			e.style.opacity = String(a * o);
 			e.style.visibility = o < 0.01 ? 'hidden' : 'visible';
@@ -114,8 +120,7 @@ function startStory(): void {
 		});
 		floats.forEach((e, i) => {
 			const [fx, fy0] = FLOATS[i];
-			// On a phone the medicine card sits just above the phone, not on its screen.
-			const fy = narrow && i === 1 ? 0.14 : fy0;
+			const fy = fy0;
 			const a = ease(clamp((now - t0 - 450 - i * 140) / 600)), o = 1 - sm(0.02, 0.07);
 			const w = e.offsetWidth, hh = e.offsetHeight;
 			const x = clamp(R.x + fx * R.w, w / 2 + 8, W - w / 2 - 8);
@@ -140,13 +145,16 @@ function startStory(): void {
 
 		const k = sm(0.085, 0.17);
 		const bump = Math.sin(Math.PI * seg(0.255, 0.315)) * 0.1;
-		// On a phone only a sliver of the mark would show behind the laptop: it arrives with world 1.
-		fl.style.opacity = narrow ? String(sm(0.07, 0.13)) : '';
-		fl.style.transform = `translate3d(${lerp(A.x, B.x, k) - A.s / 2}px,${lerp(A.y, B.y, k) - A.s / 2}px,0) scale(${lerp(1, B.s / A.s, k) * (1 + bump)})`;
+		// The mark is not part of the opening: it arrives with world 1.
+		fl.style.opacity = String(sm(0.07, 0.13));
+		// In the last world the mark moves into the safe and becomes its handle.
+		const inSafe = sm(0.775, 0.815);
+		fl.style.transform = `translate3d(${lerp(lerp(A.x, B.x, k), V.x, inSafe) - A.s / 2}px,${lerp(lerp(A.y, B.y, k), V.y, inSafe) - A.s / 2}px,0) scale(${lerp(lerp(1, B.s / A.s, k), V.s / A.s, inSafe) * (1 + bump)})`;
 
 		// Every world turns the dial a quarter: the next petal comes to the top.
 		const steps = sm(0.335, 0.365) + sm(0.545, 0.575) + sm(0.745, 0.775);
-		pose.roll = -(1 - sm(0.03, 0.16)) * Math.PI + steps * Math.PI / 2;
+		const unlock = sm(0.83, 0.92);
+		pose.roll = -(1 - sm(0.03, 0.16)) * Math.PI + steps * Math.PI / 2 + unlock * Math.PI;
 		pose.turn = 0.3 + 0.34 * Math.sin(p * Math.PI * 6);
 		pose.tilt = 0.2;
 		const open = CH.map(([s, e]) => sm(s + 0.012, s + 0.04) * (1 - sm(e - 0.03, e - 0.005)));
@@ -165,7 +173,7 @@ function startStory(): void {
 			c.style.visibility = o > 0.01 ? 'visible' : 'hidden';
 		});
 
-		phone.style.opacity = String(enter * (1 - off));
+		phone.style.opacity = String(sm(0.03, 0.07) * (1 - off));
 		phone.style.transform = `translate3d(${(F.x - P.x) * (1 - h) + px * 11 * (1 - h)}px,${(F.y - P.y) * (1 - h) + (1 - enter) * 70 - off * 30 + (py * 6 - nudge * 34) * (1 - h)}px,0) scale(${lerp(F.w / P.w, 1, h) * (1 - 0.06 * off)})`;
 		shots.forEach((img, i) => {
 			const [a, b, fetchAt] = SHOTS[i];
@@ -205,7 +213,22 @@ function startStory(): void {
 			g.style.transform = `scale(${t})`;
 		});
 
-		// Your doctor: the code goes from the phone to the clinic.
+		// Your doctor: the code goes to the clinic, and the safe opens.
+		if (p > 0.68 && !safeLoaded) {
+			safeLoaded = true;
+			qa<HTMLImageElement>('img[data-vault-src]', stick).forEach((img) => {
+				img.addEventListener('load', () => img.classList.add('in'), { once: true });
+				img.srcset = img.dataset.vaultSrc || '';
+				img.removeAttribute('data-vault-src');
+			});
+		}
+		silk.style.opacity = String(sm(0.76, 0.8) * (1 - sm(0.975, 0.995)));
+		const safe = sm(0.775, 0.81) * (1 - sm(0.972, 0.995));
+		vault.style.opacity = String(safe);
+		vault.style.visibility = safe < 0.01 ? 'hidden' : 'visible';
+		vault.style.transform = `scale(${lerp(0.84, 1, sm(0.775, 0.81))})`;
+		vaultDial.style.transform = `rotate(${-unlock * 210}deg)`;
+		vault.classList.toggle('open', p > 0.92);
 		const cl = sm(0.775, 0.805) * (1 - sm(0.972, 0.995));
 		clinic.style.opacity = String(cl);
 		clinic.style.transform = `translateY(${(1 - cl) * 20}px)`;
@@ -255,15 +278,16 @@ function startStory(): void {
 	cue.addEventListener('click', () => {
 		touched = true;
 		const r = root.getBoundingClientRect();
-		scrollTo({ top: scrollY + r.top + (r.height - innerHeight) * 0.2, behavior: 'smooth' });
+		scrollTo({ top: scrollY + r.top + (r.height - stick.offsetHeight) * 0.2, behavior: 'smooth' });
 	});
-	// The laptop and iPad screens wait until the page itself has loaded.
-	const late = () => qa<HTMLImageElement>('img[data-late]', rigBox).forEach((img) => {
+	// The 3D devices and their backdrop.
+	const late = () => qa<HTMLImageElement>('img[data-late]', stick).forEach((img) => {
 		img.addEventListener('load', () => img.classList.add('in'), { once: true });
 		img.srcset = img.dataset.late || '';
 	});
-	if (document.readyState === 'complete') setTimeout(late, 80);
-	else addEventListener('load', () => setTimeout(late, 80), { once: true });
+	late();
+	// The flat first screen takes over from the 3D phone on the first scroll; fetch it once idle.
+	setTimeout(() => { const f = shots[0]; if (f?.dataset.src) { f.src = f.dataset.src; f.removeAttribute('data-src'); } }, 2600);
 }
 
 function startTry(): void {
@@ -335,7 +359,7 @@ function startExpand(): void {
 		if (!on) return;
 		requestAnimationFrame(tick);
 		const r = root.getBoundingClientRect();
-		const t = clamp(-r.top / Math.max(1, r.height - innerHeight));
+		const t = clamp(-r.top / Math.max(1, r.height - (dev.parentElement as HTMLElement).offsetHeight));
 		const grow = ease(clamp((t - 0.12) / 0.5));
 		const maxW = Math.min(innerWidth * 0.9, 940), maxH = Math.min(maxW * 0.75, innerHeight * 0.66);
 		const fullW = maxH / 0.75;
@@ -434,48 +458,6 @@ function startCompare(): void {
 	}, { rootMargin: '120px 0px' }).observe(root);
 }
 
-// The clinic: every world opens out of the one app, then hangs at its own depth.
-function startPro(): void {
-	const root = q('[data-pro]'), scene = q('[data-pro-scene]'), links = q('[data-pro-links]'), hub = q('[data-pro-hub]');
-	if (!root || !scene || !links || !hub) return;
-	const worlds = qa('[data-world]', scene).map((el) => ({ el, d: Number(el.dataset.depth) || 1, dx: 0, dy: 0 }));
-	const measure = () => {
-		const W = scene.offsetWidth, H = scene.offsetHeight;
-		worlds.forEach((w) => { w.dx = W / 2 - w.el.offsetLeft; w.dy = H / 2 - w.el.offsetTop; });
-	};
-	let on = false, mx = 0, my = 0, cx = 0, cy = 0, open = 0;
-	addEventListener('pointermove', (e) => {
-		if (!on || e.pointerType === 'touch') return;
-		mx = (e.clientX / innerWidth - 0.5) * 2;
-		my = (e.clientY / innerHeight - 0.5) * 2;
-	}, { passive: true });
-	const tick = (now: number) => {
-		if (!on) return;
-		requestAnimationFrame(tick);
-		cx += (mx - cx) * 0.07; cy += (my - cy) * 0.07;
-		const top = root.querySelector('.pv-view')!.getBoundingClientRect().top;
-		const target = ease(clamp((innerHeight * 0.96 - top) / (innerHeight * 0.62)));
-		open += (target - open) * 0.12;
-		if (Math.abs(target - open) < 0.001) open = target;
-		const wide = innerWidth >= 900;
-		scene.style.transform = `rotateY(${(wide ? 6 : 0) + cx * 4}deg) rotateX(${(wide ? 3 : 2) - cy * 3}deg)`;
-		links.style.opacity = String(clamp((open - 0.35) / 0.6));
-		worlds.forEach((w, i) => {
-			const k = 1 - open, bob = Math.sin(now / 1600 + i * 1.9) * 4 * open;
-			w.el.style.opacity = String(clamp(open * 1.7));
-			w.el.style.transform = `translate3d(${w.dx * k + cx * w.d * 8}px,${w.dy * k + bob}px,${w.d * 30}px) scale(${lerp(0.5, 1, open)})`;
-		});
-		hub.style.transform = `translate3d(${cx * 5}px,${Math.sin(now / 1900) * 3}px,70px) scale(${lerp(0.82, 1, open)})`;
-	};
-	new ResizeObserver(measure).observe(scene);
-	measure();
-	new IntersectionObserver((es) => {
-		const v = es[0].isIntersecting;
-		if (v && !on) { measure(); on = true; requestAnimationFrame(tick); }
-		if (!v) on = false;
-	}, { rootMargin: '80px 0px' }).observe(root);
-}
-
 // The end of the page: the night turns to dawn and the phone rises with the sun.
 function startFinale(): void {
 	const root = q('[data-fin]'), dawn = q('[data-fin-dawn]'), sun = q('[data-fin-sun]'), phone = q('[data-fin-phone]');
@@ -511,7 +493,6 @@ requestAnimationFrame(() => {
 		startStory();
 		startExpand();
 		startCompare();
-		startPro();
 		startFinale();
 	}
 	startTry();

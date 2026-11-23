@@ -11,14 +11,6 @@ import StoreBadges from '../components/StoreBadges.astro';
 import { WEB_APP_URL } from '../config/links';
 import bootUrl from '../scripts/home/boot.ts?worker&url';
 
-// The opening's background: the outline of the DocSera mark, repeated outwards.
-const PETAL = 'M' + Array.from({ length: 96 }, (_, i) => {
-	const t = (i / 96) * Math.PI * 2;
-	const r = 50 * (0.62 + 0.38 * Math.pow(Math.abs(Math.cos(2 * t)), 1.6));
-	return `${(r * Math.cos(t)).toFixed(1)} ${(r * Math.sin(t)).toFixed(1)}`;
-}).join('L') + 'Z';
-const RINGS: [number, number][] = [[1.3, 0.5], [2.2, 0.42], [3.2, 0.36], [4.3, 0.3], [5.5, 0.24], [6.8, 0.19], [8.2, 0.14], [9.8, 0.1], [11.5, 0.07]];
-
 const PAPERS = [
 	{ label: 'تحليل دم شامل', kind: 'lines' },
 	{ label: 'صورة أشعة الصدر', kind: 'xray' },
@@ -40,15 +32,35 @@ const SHOTS = [
 	'/images/app110/booking-640.webp', '/images/home/confirmed.webp', '/images/app110/share-390.webp',
 ];
 
-const ROADS = [
-	'M-20 210C180 190 300 260 470 240S820 150 1020 190', 'M-20 520C160 480 330 560 520 520S840 430 1020 470',
-	'M-20 820C200 790 360 850 560 800S860 730 1020 770', 'M160 -20C190 180 130 360 190 540S210 860 170 1020',
-	'M430 -20C400 170 480 330 450 520S520 830 470 1020', 'M760 -20C720 200 800 340 760 520S830 820 790 1020',
-	'M-20 360C240 420 420 340 640 400S900 360 1020 330', 'M-20 680C220 640 460 720 680 660S900 640 1020 620',
-	'M60 -20C260 240 420 420 620 620S900 900 1020 980', 'M980 -20C760 200 610 340 420 560S130 880 40 1020',
-	'M600 -20C620 140 570 300 620 450S640 800 610 1020', 'M300 -20C280 160 340 340 310 560S360 860 320 1020',
+// The booking map: one city on a 1600×1000 canvas, so it keeps the same scale on a
+// phone and on a wide screen. Streets bend together; every pin stands on a crossing.
+const warp = (x: number, y: number): [number, number] => [
+	x + 26 * Math.sin(y / 190 + 0.6) + y * 0.09 - 40,
+	y + 20 * Math.sin(x / 240 + 1.4) - x * 0.06 + 46,
 ];
-const PINS = [[190, 240], [470, 240], [760, 330], [320, 500], [620, 450], [860, 520], [170, 690], [470, 660], [770, 720], [610, 830]];
+const curve = (raw: [number, number][]) => {
+	const p = raw.map(([x, y]) => warp(x, y));
+	let d = `M${p[0][0].toFixed(0)} ${p[0][1].toFixed(0)}`;
+	for (let i = 0; i < p.length - 1; i++) {
+		const a = p[Math.max(0, i - 1)], b = p[i], c = p[i + 1], e = p[Math.min(p.length - 1, i + 2)];
+		d += `C${(b[0] + (c[0] - a[0]) / 6).toFixed(0)} ${(b[1] + (c[1] - a[1]) / 6).toFixed(0)} ${(c[0] - (e[0] - b[0]) / 6).toFixed(0)} ${(c[1] - (e[1] - b[1]) / 6).toFixed(0)} ${c[0].toFixed(0)} ${c[1].toFixed(0)}`;
+	}
+	return d;
+};
+const down = (x: number) => curve([0, 1, 2, 3, 4, 5].map((k) => [x, -120 + k * 260] as [number, number]));
+const across = (y: number) => curve([0, 1, 2, 3, 4, 5, 6, 7].map((k) => [-140 + k * 280, y] as [number, number]));
+const AVENUES = [110, 340, 600, 860, 1130, 1400], CROSS = [90, 300, 520, 740, 940];
+const LANES_X = [225, 470, 730, 995, 1265, 1520], LANES_Y = [195, 410, 630, 845];
+const ROADS = [...AVENUES.map(down), ...CROSS.map(across), curve([[-120, 960], [300, 800], [700, 610], [1100, 380], [1720, 80]])];
+const STREETS = [...LANES_X.map(down), ...LANES_Y.map(across)];
+const ALLEYS = LANES_X.flatMap((x, i) => LANES_Y.map((y, j) => {
+	const [a, b] = warp(x + ((i + j) % 2 ? 58 : -58), y), [c, e] = warp(x + ((i + j) % 2 ? 58 : -58), y + 104);
+	return `M${a.toFixed(0)} ${b.toFixed(0)}L${c.toFixed(0)} ${e.toFixed(0)}`;
+})).join('');
+const RIVER = curve([[-160, 650], [240, 700], [620, 560], [1000, 470], [1360, 300], [1760, 250]]);
+const PARKS = [[[245, 320], [445, 320], [445, 500], [245, 500]], [[880, 760], [1100, 760], [1100, 920], [880, 920]], [[620, 110], [840, 110], [840, 280], [620, 280]]]
+	.map((q) => 'M' + q.map(([x, y]) => warp(x, y).map((n) => n.toFixed(0)).join(' ')).join('L') + 'Z');
+const PINS = [[340, 300], [110, 520], [225, 740], [470, 195], [600, 630], [860, 300], [730, 845], [995, 520], [860, 740], [1130, 195]].map(([x, y]) => warp(x, y));
 
 const TRY = [
 	['الرئيسية', '/images/app110/home-640.webp'], ['البحث', '/images/home/search.webp'], ['الطبيب', '/images/home/doctor.webp'],
@@ -90,33 +102,36 @@ const MORE = [
 	<main class="m">
 		<section class="st" data-story>
 			<div class="stick" data-stick>
-				<div class="bg bg-hero" data-bg-hero aria-hidden="true">
-					<i class="au au1"></i><i class="au au2"></i><i class="hr-glow"></i>
-					<svg class="hr-rings" viewBox="-600 -600 1200 1200"><defs><path id="hr-p" d={PETAL} fill="none" vector-effect="non-scaling-stroke" /></defs>{RINGS.map(([k, o]) => <use href="#hr-p" transform={`scale(${k})`} stroke="#7FF3E6" stroke-opacity={o} />)}</svg>
-				</div>
+				<div class="bg bg-hero" data-bg-hero aria-hidden="true"><img class="silk" data-late="/images/home/3d/silk-860.webp 860w, /images/home/3d/silk-1600.webp 1600w" sizes="max(100vw, 160vh)" alt="" width="1600" height="1000" decoding="async" /></div>
 				<div class="bg bg-dusk" data-dusk aria-hidden="true"></div>
 				<div class="bg bg-twi" data-twi aria-hidden="true"></div>
 				<div class="bg bg-night" data-night aria-hidden="true"></div>
+				<div class="bg bg-silk" data-silk aria-hidden="true"><img class="silk" data-vault-src="/images/home/3d/silk-860.webp 860w, /images/home/3d/silk-1600.webp 1600w" sizes="max(100vw, 160vh)" alt="" width="1600" height="1000" decoding="async" /></div>
 				<div class="sun fx" data-sun aria-hidden="true"><i class="disc" data-sun-disc></i><i class="moon" data-moon-disc></i></div>
 
-				<svg class="map fx" data-map viewBox="0 0 1000 1000" preserveAspectRatio="xMidYMid slice" aria-hidden="true">
-					{ROADS.map((d) => <path data-road d={d} pathLength="1" />)}
+				<svg class="map fx" data-map viewBox="0 0 1600 1000" preserveAspectRatio="xMidYMid slice" aria-hidden="true">
+					<path class="map-river" d={RIVER} />
+					{PARKS.map((d) => <path class="map-park" d={d} />)}
+					<path class="map-alley" d={ALLEYS} />
+					{STREETS.map((d) => <path class="map-street" data-road d={d} pathLength="1" />)}
+					{ROADS.map((d) => <path class="map-road" data-road d={d} pathLength="1" />)}
 					{PINS.map(([x, y]) => (
-						<g transform={`translate(${x} ${y})`}><g class="pin" data-pin><circle r="26" class="pin-glow" /><circle r="9" class="pin-dot" /></g></g>
+						<g transform={`translate(${x.toFixed(0)} ${y.toFixed(0)})`}><g class="pin" data-pin><ellipse class="pin-sh" cy="1" rx="10" ry="3.6" /><path class="pin-b" d="M0 0C-3-8-16-14-16-27a16 16 0 1 1 32 0C16-14 3-8 0 0z" /><circle class="pin-d" cy="-27" r="6" /></g></g>
 					))}
 				</svg>
 
 				<div class="a-dial" data-a-dial aria-hidden="true"></div>
+				<div class="a-vault" data-a-vault aria-hidden="true"></div>
+				<div class="vault fx" data-vault aria-hidden="true">
+					<img data-vault-src="/images/home/3d/vault-base-420.webp 420w, /images/home/3d/vault-base-760.webp 760w" sizes="(max-width: 899px) 180px, 340px" alt="" width="760" height="760" decoding="async" />
+					<img class="v-dial" data-vault-dial data-vault-src="/images/home/3d/vault-dial-420.webp 420w, /images/home/3d/vault-dial-760.webp 760w" sizes="(max-width: 899px) 180px, 340px" alt="" width="760" height="760" decoding="async" />
+					<i class="v-glow"></i>
+				</div>
 				<div class="rig fx" data-rig-box aria-hidden="true">
 					<div class="a-hero" data-a-hero></div>
-					<div class="hd-lap" data-rig="0">
-						<div class="lap-lid">
-							<div class="lap-bar"><i></i><i></i><i></i><span>my.docsera.app</span></div>
-							<div class="lap-scr"><img data-late="/images/home/laptop-560.webp 560w, /images/home/laptop-1000.webp 1000w" sizes="(max-width: 899px) 86vw, 620px" alt="" width="1000" height="625" decoding="async" /></div>
-						</div>
-						<div class="lap-base"></div>
-					</div>
-					<div class="hd-pad" data-rig="-1"><img data-late="/images/home/ipad-400.webp 400w, /images/home/ipad-640.webp 640w" sizes="(max-width: 899px) 46vw, 300px" alt="" width="640" height="480" decoding="async" /></div>
+					<div class="r3" style="left:21.63%;top:0;width:74.61%" data-rig="0"><img data-late="/images/home/3d/laptop-sm.webp 567w, /images/home/3d/laptop-lg.webp 1045w" sizes="(max-width: 899px) 72vw, 590px" alt="" width="1045" height="761" decoding="async" /></div>
+					<div class="r3" style="left:0;top:34.3%;width:43.37%" data-rig="-1"><img data-late="/images/home/3d/tablet-sm.webp 330w, /images/home/3d/tablet-lg.webp 607w" sizes="(max-width: 899px) 40vw, 340px" alt="" width="607" height="539" decoding="async" /></div>
+					<div class="r3" style="left:74.77%;top:29.43%;width:25.23%" data-rig="1"><img data-late="/images/home/3d/phone-sm.webp 192w, /images/home/3d/phone-lg.webp 353w" sizes="(max-width: 899px) 24vw, 200px" alt="" width="353" height="620" decoding="async" /></div>
 					<div class="a-fan" data-a-fan></div>
 				</div>
 
@@ -158,9 +173,7 @@ const MORE = [
 
 				<div class="ph fx" data-phone aria-hidden="true">
 					<div class="ph-in">
-						{SHOTS.map((s, i) => i === 0
-							? <img data-shot src={s} srcset="/images/app110/home-320.webp 320w, /images/app110/home-480.webp 480w, /images/app110/home-640.webp 640w" sizes="(max-width: 899px) 240px, 300px" alt="" width="640" height="1387" decoding="async" fetchpriority="high" />
-							: <img data-shot data-src={s} alt="" width="640" height="1387" decoding="async" />)}
+						{SHOTS.map((s) => <img data-shot data-src={s} alt="" width="640" height="1387" decoding="async" />)}
 					</div>
 					<div class="notes">
 						<div class="note" data-note>
@@ -298,20 +311,16 @@ const MORE = [
 
 	/* ── the story: on stage ──────────────────── */
 	:global(html.story) .st { height: 640vh; height: 640svh; }
-	:global(html.story) .stick { position: sticky; top: 0; height: 100vh; height: 100svh; overflow: hidden; padding: 0; isolation: isolate;
+	@supports (height: 100lvh) { :global(html.story) .stick { --bar: calc(100lvh - 100svh); } }
+	:global(html.story) .stick { --bar: 0px; position: sticky; top: 0; height: 100vh; height: 100lvh; overflow: hidden; padding: 0; isolation: isolate;
 		background: radial-gradient(90% 70% at 70% 10%, #DFF3F3 0%, #F7FBFB 60%); }
 	:global(html.story) .fx, :global(html.story) .a-hero, :global(html.story) .a-dial, :global(html.story) .bg { display: block; }
 	:global(html.story) .ch-shot { display: none; }
 	.bg { position: absolute; inset: 0; z-index: -2; opacity: 0; }
-	.bg-hero { opacity: 1; overflow: hidden; background: radial-gradient(85% 72% at 30% 52%, #0B5F65 0%, rgba(11, 95, 101, 0) 70%), linear-gradient(200deg, #07363D 0%, #04252C 58%, #031C22 100%); }
-	.hr-glow { position: absolute; left: 30%; top: 52%; width: 66vmin; height: 66vmin; translate: -50% -50%; border-radius: 50%; background: radial-gradient(closest-side, rgba(0, 214, 200, .34), rgba(0, 214, 200, 0)); }
-	.hr-rings { position: absolute; left: 30%; top: 52%; width: max(135vmin, 1000px); height: max(135vmin, 1000px); translate: -50% -50%; -webkit-mask-image: radial-gradient(closest-side, #000 42%, transparent 100%); mask-image: radial-gradient(closest-side, #000 42%, transparent 100%); animation: hr 140s linear infinite; }
-	@keyframes hr { to { transform: rotate(360deg); } }
-	.au { position: absolute; width: 80vmax; height: 80vmax; border-radius: 50%; will-change: transform; }
-	.au1 { top: -46vmax; left: -22vmax; background: radial-gradient(closest-side, rgba(0, 196, 190, .26), rgba(0, 196, 190, 0)); animation: au1 16s ease-in-out infinite alternate; }
-	.au2 { bottom: -50vmax; right: -24vmax; background: radial-gradient(closest-side, rgba(255, 180, 148, .13), rgba(255, 180, 148, 0)); animation: au2 19s ease-in-out infinite alternate; }
-	@keyframes au1 { to { transform: translate3d(16vmax, 9vmax, 0) scale(1.12); } }
-	@keyframes au2 { to { transform: translate3d(-14vmax, -8vmax, 0) scale(1.1); } }
+	.bg-hero { opacity: 1; overflow: hidden; background: radial-gradient(85% 72% at 30% 52%, #0A4A50 0%, rgba(10, 74, 80, 0) 70%), linear-gradient(200deg, #05282E 0%, #031B20 58%, #021418 100%); }
+	.bg-silk { opacity: 0; overflow: hidden; background: #04232A; }
+	.silk { position: absolute; inset: 0; width: 100%; height: 100%; object-fit: cover; object-position: 34% 50%; opacity: 0; transition: opacity .5s; }
+	.silk:global(.in) { opacity: 1; }
 	.bg-dusk { background: linear-gradient(180deg, #FFC49B 0%, #FFE0C8 42%, #D5EFEB 100%); }
 	.bg-twi { background: linear-gradient(180deg, #0E4A54 0%, #1F6C75 52%, #E8AE8C 100%); }
 	.bg-night { background: radial-gradient(90% 60% at 60% 8%, #10555B 0%, #0A343B 48%, #08282E 100%); }
@@ -322,29 +331,25 @@ const MORE = [
 
 	.map { position: absolute; inset: 0; width: 100%; height: 100%; z-index: -1; opacity: 0;
 		-webkit-mask-image: linear-gradient(90deg, #000 42%, transparent 62%); mask-image: linear-gradient(90deg, #000 42%, transparent 62%); }
-	.map path { fill: none; stroke: #2FB7B5; stroke-width: 2.2; stroke-opacity: .55; stroke-dasharray: 1; stroke-dashoffset: 1; vector-effect: non-scaling-stroke; }
-	.pin { transform-box: fill-box; transform-origin: center; opacity: 0; }
-	.pin-glow { fill: rgba(102, 232, 226, .2); }
-	.pin-dot { fill: #8BF3EC; }
+	.map path { fill: none; stroke: #2FB7B5; stroke-dasharray: 1; stroke-dashoffset: 1; vector-effect: non-scaling-stroke; stroke-linecap: round; }
+	.map path.map-road { stroke-width: 2.8; stroke-opacity: .62; }
+	.map path.map-street { stroke-width: 1.5; stroke-opacity: .34; }
+	.map path.map-alley { stroke-width: 1; stroke-opacity: .17; stroke-dasharray: none; stroke-dashoffset: 0; }
+	.map path.map-river { stroke: #0F6670; stroke-width: 34; stroke-opacity: .5; stroke-dasharray: none; stroke-dashoffset: 0; }
+	.map path.map-park { fill: #12807A; fill-opacity: .13; stroke: none; stroke-dasharray: none; stroke-dashoffset: 0; }
+	.pin { transform-box: fill-box; transform-origin: 50% 100%; opacity: 0; }
+	.pin-sh { fill: rgba(0, 0, 0, .42); }
+	.map path.pin-b { fill: #4BE3D8; stroke: #E9FFFC; stroke-width: 1.6; stroke-dasharray: none; stroke-dashoffset: 0; }
+	.pin-d { fill: #06343A; }
 
 	:global(html.story) .hero { position: absolute; z-index: 6; text-align: start; inset-inline-start: max(6vw, calc(50vw - 560px)); top: 50%; width: min(45vw, 560px); margin-top: -170px; }
-	.rig { position: absolute; z-index: 2; left: max(2.5vw, calc(50vw - 650px)); top: 52%; translate: 0 -50%; width: min(54vw, 740px, 102vh); aspect-ratio: 1.34; pointer-events: none; }
-	.a-hero { position: absolute; left: 60%; top: -17%; width: 28%; aspect-ratio: 1; }
-	.a-fan { position: absolute; right: 5%; bottom: 0; width: 23%; aspect-ratio: 1290 / 2796; }
-	.hd-lap { position: absolute; left: 7%; top: 4%; width: 84%; opacity: 0; will-change: transform; }
-	.lap-lid { padding: 7px 7px 0; background: #131D25; border-radius: 15px 15px 0 0; box-shadow: 0 0 0 1px rgba(255, 255, 255, .1); }
-	.lap-bar { display: flex; align-items: center; gap: 4px; height: clamp(14px, 1.7vw, 23px); padding: 0 9px; direction: ltr; background: #E9F1F1; border-radius: 8px 8px 0 0; }
-	.lap-bar i { width: 6px; height: 6px; flex: none; border-radius: 50%; background: #BFCDCD; }
-	.lap-bar span { flex: 1; text-align: center; font-size: clamp(.5rem, .8vw, .7rem); font-weight: 700; color: #4C5A60; padding-inline-end: 26px; }
-	.lap-scr { aspect-ratio: 16 / 10; overflow: hidden; background: linear-gradient(135deg, #0A8C8E 0 26%, #EAF6F5 26.2%); }
-	.lap-scr img { display: block; width: 100%; height: 100%; object-fit: cover; }
-	.lap-base { position: relative; height: clamp(9px, 1.25vw, 16px); margin: 0 -6%; background: linear-gradient(180deg, #E3EAEB, #93A5A8); border-radius: 0 0 16px 16px; box-shadow: 0 30px 44px -14px rgba(0, 0, 0, .8); }
-	.lap-base::before { content: ''; position: absolute; left: 50%; top: 0; width: 15%; height: 42%; translate: -50% 0; background: #819598; border-radius: 0 0 7px 7px; }
-	.hd-pad { box-sizing: border-box; position: absolute; left: 0; bottom: 2%; width: 41%; aspect-ratio: 4 / 3; padding: 6px; background: #0F1A22; border-radius: 17px; rotate: -3deg; opacity: 0; will-change: transform; box-shadow: 0 0 0 1px rgba(255, 255, 255, .1), 0 28px 44px -16px rgba(0, 0, 0, .85); }
-	.hd-pad img { display: block; width: 100%; height: 100%; object-fit: cover; border-radius: 11px; background: #EAF6F5; }
-	.rig img { opacity: 0; transition: opacity .45s; }
-	.rig img.in { opacity: 1; }
-	.cue { position: absolute; z-index: 7; left: 50%; bottom: clamp(12px, 2.8vh, 28px); translate: -50% 0; align-items: center; gap: 7px; padding: 8px 17px 8px 12px; border: 1px solid rgba(191, 242, 238, .38); border-radius: 999px; background: rgba(5, 38, 44, .78); color: #fff; font: inherit; font-size: .92rem; font-weight: 700; cursor: pointer; opacity: 0; }
+	.rig { position: absolute; z-index: 2; left: max(1.5vw, calc(50vw - 680px)); top: 52%; translate: 0 -50%; width: min(56vw, 790px, 128vh); aspect-ratio: 1.5937; pointer-events: none; }
+	.r3 { position: absolute; opacity: 0; will-change: transform, opacity; }
+	.r3 img { display: block; width: 100%; height: auto; opacity: 0; transition: opacity .5s; }
+	.r3 img:global(.in) { opacity: 1; }
+	.a-hero { position: absolute; left: 60%; top: 2%; width: 22%; aspect-ratio: 1; }
+	.a-fan { position: absolute; left: 79.5%; top: 35.2%; width: 16.3%; aspect-ratio: 1290 / 2796; }
+	.cue { position: absolute; z-index: 7; left: 50%; bottom: calc(var(--bar, 0px) + clamp(12px, 2.8svh, 28px)); translate: -50% 0; align-items: center; gap: 7px; padding: 8px 17px 8px 12px; border: 1px solid rgba(191, 242, 238, .38); border-radius: 999px; background: rgba(5, 38, 44, .78); color: #fff; font: inherit; font-size: .92rem; font-weight: 700; cursor: pointer; opacity: 0; }
 	:global(html.story) .cue { display: flex; }
 	.cue:focus-visible { outline: 3px solid #BFF2EE; outline-offset: 3px; }
 	.cue i { position: relative; display: block; width: 18px; height: 22px; overflow: hidden; }
@@ -363,6 +368,13 @@ const MORE = [
 	.hchip svg { width: 18px; height: 18px; fill: none; stroke: currentColor; stroke-width: 2; stroke-linecap: round; stroke-linejoin: round; }
 	.hchip small { display: block; font-size: .7rem; line-height: 1.3; color: #56636B; font-weight: 700; }
 	.hchip b { display: block; font-size: .84rem; line-height: 1.35; color: #0F1A22; font-weight: 800; }
+	.a-vault { display: none; position: absolute; aspect-ratio: 1; inset-inline-start: calc(max(6vw, 50vw - 560px) + 120px); top: calc(50% + 156px); width: min(124px, 15.500vh); }
+	:global(html.story) .a-vault { display: block; }
+	.vault { position: absolute; z-index: 0; aspect-ratio: 1; translate: -50% -50%; opacity: 0; will-change: transform, opacity; }
+	.vault img { position: absolute; inset: 0; width: 100%; height: 100%; }
+	.v-dial { will-change: transform; }
+	.v-glow { position: absolute; inset: 1.500%; border-radius: 50%; opacity: 0; box-shadow: 0 0 0 1px rgba(127, 243, 230, .55), 0 0 70px 10px rgba(0, 214, 200, .38); transition: opacity .55s; }
+	.vault:global(.open) .v-glow { opacity: 1; }
 	.a-dial { position: absolute; inset-inline-start: max(6vw, calc(50vw - 560px)); top: calc(50% - 262px); width: 150px; aspect-ratio: 1; }
 	:global(html.story) .fl { position: absolute; left: 0; top: 0; margin: 0; z-index: 1; transform-origin: center; will-change: transform; }
 	.hint { position: absolute; display: none; }
@@ -482,7 +494,7 @@ const MORE = [
 	.dev img { position: absolute; inset: 0; width: 100%; height: 100%; object-fit: cover; object-position: top; }
 	.dev-small { display: none; }
 	:global(html.story) .ex { height: 260vh; height: 260svh; padding: 0; }
-	:global(html.story) .ex-stick { position: sticky; top: 0; height: 100vh; height: 100svh; justify-content: center; overflow: hidden; }
+	:global(html.story) .ex-stick { position: sticky; top: 0; height: 100vh; height: 100lvh; box-sizing: border-box; padding-bottom: calc(100lvh - 100svh); justify-content: center; overflow: hidden; }
 	:global(html.story) .ex-light { display: block; }
 	:global(html.story) .dev { aspect-ratio: auto; width: 240px; height: 520px; }
 	:global(html.story) .dev-small { display: block; }
@@ -497,23 +509,13 @@ const MORE = [
 		.hero-web { margin-top: 6px; font-size: .9rem; }
 		.hero h1 { font-size: clamp(2rem, 9vw, 3rem); }
 		.hero p { margin-bottom: 0; font-size: 1.04rem; }
-		.rig { left: 50%; top: clamp(326px, 39vh, 372px); translate: -50% 0; width: min(96vw, 470px); aspect-ratio: 1.14; }
-		.a-fan { right: 4%; bottom: 0; width: 31%; }
-		.hd-lap { left: 6%; top: 0; width: 88%; }
-		.lap-lid { padding: 4px 4px 0; border-radius: 10px 10px 0 0; }
-		.lap-bar { padding: 0 6px; border-radius: 6px 6px 0 0; }
-		.lap-bar i { width: 4px; height: 4px; }
-		.lap-base { border-radius: 0 0 10px 10px; }
-		.hd-pad { left: 1%; bottom: 9%; width: 47%; padding: 4px; border-radius: 11px; }
-		.hd-pad img { border-radius: 7px; }
-		.hr-glow { left: 50%; top: 66%; width: 112vw; height: 112vw; }
-		.hr-rings { left: 50%; top: 66%; width: 190vw; height: 190vw; animation: none; }
-		.a-hero { left: 72%; top: -9%; width: 24%; }
+		.rig { left: 50%; top: calc(318px + max(0px, (100svh - 318px - 76px - 67vw) / 2)); translate: -50% 0; width: min(106vw, 540px); }
 		.hchip { padding: 6px 9px 6px 10px; gap: 6px; border-radius: 12px; }
 		.hchip i { width: 26px; height: 26px; }
 		.hchip small { font-size: .64rem; }
 		.hchip b { font-size: .76rem; }
 		.a-dial { inset-inline-start: auto; inset-inline-end: 6px; top: 72px; width: 104px; }
+		.a-vault { inset-inline-start: auto; inset-inline-end: 26px; top: 96px; width: 62px; }
 		:global(html.story) .chs { inset-inline-start: 20px; top: 84px; width: calc(100% - 128px); }
 		.ch-key { margin-bottom: 4px; font-size: .92rem; }
 		.ch h2 { font-size: 1.56rem; margin-bottom: 6px; }
@@ -528,7 +530,7 @@ const MORE = [
 		.paper-art { height: 54px; }
 		.sun { width: 76px; height: 76px; }
 		.map { -webkit-mask-image: linear-gradient(180deg, transparent 25%, #000 37%); mask-image: linear-gradient(180deg, transparent 25%, #000 37%); }
-		.cl { left: 10px; top: auto; bottom: 5vh; width: 56vw; padding: 9px 11px 11px; }
+		.cl { left: 10px; top: auto; bottom: calc(var(--bar, 0px) + 5svh); width: 56vw; padding: 9px 11px 11px; }
 		.cl-t { font-size: .82rem; }
 		.digits span { height: 30px; }
 		.digits b { font-size: .84rem; }
@@ -545,7 +547,7 @@ const MORE = [
 		.chips li { font-size: .92rem; padding: 6px 14px; }
 	}
 	@media (prefers-reduced-motion: reduce) {
-		.track, .strip-track, .au, .hr-rings, .cue svg { animation: none; }
+		.track, .strip-track, .cue svg { animation: none; }
 		.wall-toggle { display: none; }
 		.strip { -webkit-mask-image: none; mask-image: none; direction: rtl; }
 		.strip-track { width: auto; }
