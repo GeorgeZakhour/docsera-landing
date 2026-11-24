@@ -1,8 +1,7 @@
 ---
-// The page for a link that leads nowhere, in the home page's light, warm language: «4 0 4»
-// where the zero is the site's 3D mark (the original shape), and the message arrives as a
-// DocSera notification, with the two actions people need, like the app's own reminders.
-// Below: a search of the help guide. Light: one 12 KB image (the same still /download uses).
+// The page for a link that leads nowhere: «4 0 4» where the zero is the site's 3D mark (the
+// original shape, the same still /download uses, 12 KB), the message, the two ways people need,
+// and a search of the help guide. Light, in the site's teal on white.
 import Layout from '../layouts/Layout.astro';
 import SiteHeader from '../components/site/SiteHeader.astro';
 import Footer from '../components/Footer.astro';
@@ -24,19 +23,12 @@ import '../components/help/help.css';
 				<span class="digit">4</span>
 			</div>
 
-			<article class="push">
-				<header class="push-head">
-					<img class="push-icon" src="/images/links/app-icon.webp" width="60" height="60" alt="" />
-					<span class="push-app">DocSera</span>
-					<span class="push-time">الآن</span>
-				</header>
-				<h1>لم نجد هذه الصفحة</h1>
-				<p>ربما تغيّر الرابط، أو فيه خطأ صغير في الكتابة.</p>
-				<div class="push-acts">
-					<a class="act act-main" href="/">الصفحة الرئيسية</a>
-					<a class="act" href="/help">دليل المساعدة</a>
-				</div>
-			</article>
+			<h1>لم نجد هذه الصفحة</h1>
+			<p class="nf-lead">ربما تغيّر الرابط، أو فيه خطأ صغير في الكتابة.</p>
+			<div class="acts">
+				<a class="act act-main" href="/">الصفحة الرئيسية</a>
+				<a class="act" href="/help">دليل المساعدة</a>
+			</div>
 
 			<div class="nf-search">
 				<p class="nf-label">أو ابحث عن سؤالك</p>
@@ -75,19 +67,17 @@ import '../components/help/help.css';
 		padding: clamp(96px, 12vh, 128px) 16px clamp(48px, 8vh, 80px);
 		color: #0E2B2C;
 		background:
-			radial-gradient(70% 45% at 50% 20%, rgba(255, 205, 170, 0.55), transparent 70%),
-			linear-gradient(180deg, #FFF4EB 0%, #FDF0E6 38%, #F4FAF9 100%);
+			radial-gradient(60% 38% at 50% 24%, rgba(0, 144, 146, 0.10), transparent 70%),
+			linear-gradient(180deg, #EEF8F7 0%, #FFFFFF 55%, #F4FAF9 100%);
 	}
-	/* the warm sphere of the home page, behind the zero */
+	/* a soft teal light behind the zero */
 	.sun {
 		position: absolute;
-		left: 50%; top: clamp(120px, 17vh, 170px);
-		width: clamp(220px, 46vw, 340px); aspect-ratio: 1;
+		left: 50%; top: clamp(110px, 15vh, 160px);
+		width: clamp(240px, 52vw, 380px); aspect-ratio: 1;
 		transform: translateX(-50%);
 		border-radius: 50%;
-		background: radial-gradient(circle at 35% 30%, #FFD9C0, #FFAF86 60%, #F59A70);
-		opacity: 0.38;
-		filter: blur(2px);
+		background: radial-gradient(closest-side, rgba(63, 208, 201, 0.22), rgba(0, 144, 146, 0.06) 60%, transparent);
 	}
 	.nf-in { position: relative; width: min(560px, 100%); text-align: center; }
 
@@ -119,37 +109,37 @@ import '../components/help/help.css';
 		background: radial-gradient(closest-side, rgba(0, 60, 62, 0.35), transparent);
 	}
 
-	/* ── the message, as a DocSera notification ── */
-	.push {
-		margin: clamp(8px, 2vh, 18px) auto 0;
-		max-width: 440px;
-		padding: 14px 16px 16px;
-		text-align: start;
-		background: #fff;
-		border-radius: 24px;
-		box-shadow: 0 30px 60px -30px rgba(0, 60, 62, 0.45), 0 2px 6px rgba(0, 60, 62, 0.06);
-	}
-	.push-head { display: flex; align-items: center; gap: 8px; margin-bottom: 8px; }
-	.push-icon { width: 24px; height: 24px; border-radius: 7px; }
-	.push-app { font: 700 13px 'Montserrat', 'Cairo', sans-serif; color: #0E2B2C; }
-	.push-time { margin-inline-start: auto; font-size: 12.5px; font-weight: 600; color: #6A7F80; }
-	.push h1 { margin: 0 0 4px; font-size: clamp(1.25rem, 5vw, 1.5rem); font-weight: 800; line-height: 1.35; }
-	.push p { margin: 0; font-size: 1rem; line-height: 1.7; color: #566B6C; }
-	.push-acts { display: grid; grid-template-columns: 1fr 1fr; gap: 8px; margin-top: 14px; }
-	.act {
-		display: grid; place-items: center;
-		min-height: 46px;
-		padding: 0 10px;
-		border-radius: 14px;
-		font-size: 0.98rem; font-weight: 800;
-		text-decoration: none;
+	/* ── the message and the two ways ── */
+	h1 {
+		margin: clamp(6px, 1.6vh, 14px) 0 6px;
+		font-size: clamp(1.7rem, 6vw, 2.5rem);
+		font-weight: 800;
+		line-height: 1.3;
 		color: #0E2B2C;
-		background: #EEF3F3;
-		transition: transform 0.25s cubic-bezier(0.2, 0.8, 0.2, 1), background 0.2s;
+		text-wrap: balance;
 	}
-	.act-main { color: #006F71; background: #E1F4F3; }
-	.act:hover { background: #E4ECEC; }
-	.act-main:hover { background: #CFEDEB; }
+	.nf-lead { margin: 0 auto; max-width: 28em; font-size: clamp(1rem, 3.8vw, 1.12rem); line-height: 1.8; color: #566B6C; }
+	.acts { display: grid; grid-template-columns: 1fr 1fr; gap: 10px; max-width: 420px; margin: 22px auto 0; }
+	.act {
+		display: inline-grid; place-items: center;
+		min-height: 50px;
+		padding: 0 12px;
+		border-radius: 16px;
+		font-size: 1rem; font-weight: 800;
+		text-decoration: none;
+		color: #006F71;
+		background: #fff;
+		border: 1.5px solid rgba(0, 144, 146, 0.35);
+		transition: transform 0.25s cubic-bezier(0.2, 0.8, 0.2, 1), background 0.2s, box-shadow 0.2s;
+	}
+	.act-main {
+		color: #fff;
+		background: linear-gradient(180deg, #0A9C9C, #007A7C);
+		border-color: transparent;
+		box-shadow: 0 14px 28px -14px rgba(0, 110, 112, 0.8);
+	}
+	.act:hover { background: #F0F9F8; }
+	.act-main:hover { background: linear-gradient(180deg, #0AA6A6, #00858A); }
 	.act:active { transform: scale(0.96); }
 	.act:focus-visible, .more a:focus-visible { outline: 2px solid #007474; outline-offset: 2px; }
 
@@ -182,8 +172,9 @@ import '../components/help/help.css';
 		@keyframes shadow { 0%, 100% { transform: scale(1); opacity: 1; } 50% { transform: scale(0.8); opacity: 0.6; } }
 		.code:global(.spin) .gem { animation: spin 0.9s cubic-bezier(0.34, 1.56, 0.64, 1), float 5.5s ease-in-out 0.9s infinite; }
 		@keyframes spin { from { transform: rotate(0deg) scale(0.9); } to { transform: rotate(360deg) scale(1); } }
-		/* the notification drops in from the top, like a push */
-		.push { animation: push-in 0.8s cubic-bezier(0.34, 1.4, 0.64, 1) 0.7s backwards; }
-		@keyframes push-in { from { transform: translateY(-34px) scale(0.94); opacity: 0; } to { transform: none; opacity: 1; } }
+		h1, .nf-lead, .acts { animation: digit-in 0.7s cubic-bezier(0.2, 0.8, 0.2, 1) backwards; }
+		h1 { animation-delay: 0.45s; }
+		.nf-lead { animation-delay: 0.55s; }
+		.acts { animation-delay: 0.65s; }
 	}
 </style>

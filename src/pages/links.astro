@@ -13,6 +13,12 @@ import { APP_STORE_URL, playUrl, proWhatsAppUrl, INSTAGRAM_URL } from '../config
 import whiteLogo from '../../public/images/docsera_white.svg?raw';
 import { articleById } from '../data/help';
 
+// The top of the page: three candidates for the founder to choose from in the preview
+// (/links?top=a|b|c, with a switcher); a production build carries only the chosen one.
+const PREVIEW = import.meta.env.PUBLIC_DOCTOR_PREVIEW === '1';
+const DEFAULT_TOP = 'a';
+const TOPS = PREVIEW ? ['a', 'b', 'c'] : [DEFAULT_TOP];
+
 // The three questions people ask most, straight from the help guide (titles stay in sync with it).
 const QUESTIONS = ['cancel-appointment', 'fix-code-not-arriving', 'how-to-book']
 	.map((id) => articleById(id))
@@ -156,32 +162,34 @@ const WA_TEXT = 'مرحباً، عندي سؤال عن DocSera';
 			<button class="lang-btn" type="button" data-lang lang="en" aria-label="Switch to English">EN</button>
 		</header>
 
-		<section class="hero">
-			<!-- The site's 3D mark (the original shape), floating, with the app's own
-			     notifications arriving around it. A tap spins it. -->
-			<div class="stage" data-stage aria-hidden="true">
-				<span class="glow"></span>
-				<span class="gem-shadow"></span>
-				<img class="gem" src="/images/app110/gem.webp" width="480" height="480" alt="" fetchpriority="high" decoding="async" />
-				<span class="note note-a">
-					<i class="ni"><svg viewBox="0 0 24 24"><path d="m5 12.5 4.5 4.5L19 7.5" /></svg></i>
-					<b data-t="noteA">تم تأكيد موعدك</b>
-				</span>
-				<span class="note note-b">
-					<i class="ni ni-warm"><svg viewBox="0 0 24 24"><g transform="rotate(-30 12 12)"><path d="M12 8H7.5a4 4 0 0 0 0 8H12z" fill="currentColor" /><rect x="3.5" y="8" width="17" height="8" rx="4" /></g></svg></i>
-					<b data-t="noteB">حان موعد دوائك</b>
-				</span>
-				<span class="note note-c">
-					<i class="ni"><svg viewBox="0 0 24 24"><path d="M14 3.5H7.5a2 2 0 0 0-2 2v13a2 2 0 0 0 2 2h9a2 2 0 0 0 2-2V8z" /><path d="M14 3.5V8h4.5" /><path d="M9 12.5h6M9 16h4" /></svg></i>
-					<b data-t="noteC">تقرير طبي جديد</b>
-				</span>
-			</div>
-			<h1 class="wordmark">
-				<svg viewBox={WORD_BOX} role="img" aria-label="DocSera">
-					<g fill="currentColor">{letterPaths.map((d, j) => <path d={d} style={`--j:${j}`} />)}</g>
-				</svg>
-			</h1>
-			<p class="slogan" data-t="slogan">كل صحتك في تطبيق واحد</p>
+		<section class="hero" data-hero>
+			{TOPS.includes('a') && (
+				<!-- (a) the app icon, as the stores show it, then the name -->
+				<div class:list={['top', 'top-a', { on: DEFAULT_TOP === 'a' }]} data-top="a">
+					<span class="badge-wrap"><img class="badge" src="/images/links/app-icon-288.webp" width="288" height="288" alt="" fetchpriority="high" /></span>
+					<h1 class="wordmark">
+						<svg viewBox={WORD_BOX} role="img" aria-label="DocSera">
+							<g fill="currentColor">{letterPaths.map((d) => <path d={d} />)}</g>
+						</svg>
+					</h1>
+					<p class="slogan" data-t="slogan">كل صحتك في تطبيق واحد</p>
+				</div>
+			)}
+			{TOPS.includes('b') && (
+				<!-- (b) the official logo, as in the site header, with one pass of light -->
+				<div class:list={['top', 'top-b', { on: DEFAULT_TOP === 'b' }]} data-top="b">
+					<h1 class="lockup"><img src="/images/docsera_white.svg" width="1536" height="257" alt="DocSera" /><span class="lockup-light" aria-hidden="true"></span></h1>
+					<p class="slogan" data-t="slogan">كل صحتك في تطبيق واحد</p>
+				</div>
+			)}
+			{TOPS.includes('c') && (
+				<!-- (c) the official logo, and the real app rising from below, like the home page's last section -->
+				<div class:list={['top', 'top-c', { on: DEFAULT_TOP === 'c' }]} data-top="c">
+					<h1 class="lockup lockup-sm"><img src="/images/docsera_white.svg" width="1536" height="257" alt="DocSera" /></h1>
+					<p class="slogan" data-t="slogan">كل صحتك في تطبيق واحد</p>
+					<div class="rise-phone" aria-hidden="true"><img src="/images/app110/home-480.webp" width="480" height="1041" alt="" decoding="async" /></div>
+				</div>
+			)}
 		</section>
 
 		<main class="links">
@@ -295,6 +303,14 @@ const WA_TEXT = 'مرحباً، عندي سؤال عن DocSera';
 	</div>
 
 	<div class="toast" role="status" aria-live="polite" data-toast></div>
+	{PREVIEW && (
+		<div class="pick" data-pick>
+			<span>أعلى الصفحة:</span>
+			<button type="button" data-pick-top="a">أ</button>
+			<button type="button" data-pick-top="b">ب</button>
+			<button type="button" data-pick-top="c">ج</button>
+		</div>
+	)}
 </body>
 </html>
 
@@ -311,9 +327,6 @@ const WA_TEXT = 'مرحباً، عندي سؤال عن DocSera';
 	const T: Record<'ar' | 'en', Record<string, string>> = {
 		ar: {
 			slogan: 'كل صحتك في تطبيق واحد',
-			noteA: 'تم تأكيد موعدك',
-			noteB: 'حان موعد دوائك',
-			noteC: 'تقرير طبي جديد',
 			appTitle: 'حمّل التطبيق',
 			appSub: 'مواعيدك وملفك الطبي وأدويتك، في مكان واحد',
 			appGet: 'حمّل مجاناً',
@@ -336,9 +349,6 @@ const WA_TEXT = 'مرحباً، عندي سؤال عن DocSera';
 		},
 		en: {
 			slogan: 'Your health, connected.',
-			noteA: 'Appointment confirmed',
-			noteB: 'Time for your medicine',
-			noteC: 'New medical report',
 			appTitle: 'Get the app',
 			appSub: 'Your visits, medical file and medicines in one place',
 			appGet: 'Get it free',
@@ -419,14 +429,24 @@ const WA_TEXT = 'مرحباً، عندي سؤال عن DocSera';
 		});
 	});
 
-	// ------------------------------------------------------------ stage
-	// A tap on the mark spins it once.
-	const stage = document.querySelector<HTMLElement>('[data-stage]');
-	stage?.addEventListener('click', () => {
-		stage.classList.remove('spin');
-		void stage.offsetWidth;
-		stage.classList.add('spin');
-	});
+	// ------------------------------------------------------------ preview: the top
+	// Only in a preview build: ?top=a|b|c and the switcher show each candidate.
+	const pick = document.querySelector<HTMLElement>('[data-pick]');
+	if (pick) {
+		const show = (t: string) => {
+			document.querySelectorAll<HTMLElement>('[data-top]').forEach((el) => el.classList.toggle('on', el.dataset.top === t));
+			pick.querySelectorAll<HTMLButtonElement>('[data-pick-top]').forEach((b) => b.classList.toggle('on', b.dataset.pickTop === t));
+			root.dataset.top = t;
+		};
+		const fromUrl = new URLSearchParams(location.search).get('top');
+		show(fromUrl && /^[abc]$/.test(fromUrl) ? fromUrl : 'a');
+		pick.addEventListener('click', (e) => {
+			const t = (e.target as HTMLElement).closest<HTMLButtonElement>('[data-pick-top]')?.dataset.pickTop;
+			if (!t) return;
+			const u = new URL(location.href); u.searchParams.set('top', t); history.replaceState(null, '', u);
+			show(t);
+		});
+	}
 
 	// ------------------------------------------------------------ share
 	const toast = document.querySelector<HTMLElement>('[data-toast]')!;
@@ -1090,72 +1110,76 @@ const WA_TEXT = 'مرحباً، عندي سؤال عن DocSera';
 	.pro-foot { justify-content: flex-end; }
 	.row-first { margin-top: 16px; }
 
-	/* ── the stage: the site's 3D mark, and the app's notifications arriving ── */
-	.stage { position: relative; height: 236px; margin: 2px -6px 0; cursor: pointer; -webkit-tap-highlight-color: transparent; }
-	.glow {
-		position: absolute; left: 50%; top: 46%;
-		width: 260px; height: 220px; margin: -110px 0 0 -130px;
-		border-radius: 50%;
-		background: radial-gradient(closest-side, rgba(255, 196, 160, 0.34), rgba(63, 208, 201, 0.16) 55%, transparent);
-		filter: blur(10px);
+
+	/* ── the top: three candidates (preview); production renders one ── */
+	.hero { padding: 6px 0 26px; }
+	.top { display: none; text-align: center; }
+	.top:global(.on) { display: block; }
+	/* (a) the app icon */
+	.badge-wrap { position: relative; display: inline-block; margin-top: 18px; border-radius: 28%; }
+	.badge-wrap::before {
+		content: ''; position: absolute; inset: -26px; z-index: -1; border-radius: 50%;
+		background: radial-gradient(closest-side, rgba(63, 208, 201, 0.42), transparent);
 	}
-	.gem {
-		position: absolute; left: 50%; top: 50%;
-		width: 176px; height: 176px; margin: -98px 0 0 -88px;
-		filter: drop-shadow(0 18px 26px rgba(0, 20, 22, 0.45)) saturate(1.08) brightness(1.06);
+	.badge {
+		display: block; width: 112px; height: 112px; border-radius: 26px;
+		box-shadow: 0 26px 44px -18px rgba(0, 0, 0, 0.75), 0 0 0 1px rgba(255, 255, 255, 0.2);
 	}
-	.gem-shadow {
-		position: absolute; left: 50%; top: 50%;
-		width: 110px; height: 18px; margin: 84px 0 0 -55px;
-		border-radius: 50%;
-		background: radial-gradient(closest-side, rgba(0, 12, 14, 0.55), transparent);
+	.top-a .wordmark { margin: 20px auto 0; width: 158px; }
+	/* (b) / (c) the official logo */
+	.lockup { position: relative; margin: 34px auto 0; width: min(248px, 70vw); line-height: 0; }
+	.lockup img { display: block; width: 100%; height: auto; }
+	.lockup-sm { margin-top: 26px; width: min(200px, 58vw); }
+	.lockup-light {
+		position: absolute; inset: 0;
+		background: linear-gradient(105deg, transparent 30%, #BDF4EC 48%, #fff 50%, #BDF4EC 52%, transparent 70%) no-repeat;
+		background-size: 250% 100%;
+		background-position: 130% 0;
+		-webkit-mask: url(/images/docsera_white.svg) center / 100% 100% no-repeat;
+		mask: url(/images/docsera_white.svg) center / 100% 100% no-repeat;
 	}
-	.note {
-		position: absolute;
-		display: inline-flex; align-items: center; gap: 8px;
-		height: 38px; padding: 0 12px 0 6px;
-		border-radius: 999px;
-		font: 700 12.5px/1 'Cairo', sans-serif;
-		color: #0E2B2C;
-		white-space: nowrap;
-		background: rgba(255, 255, 255, 0.95);
-		box-shadow: 0 14px 30px -12px rgba(0, 16, 18, 0.7), inset 0 0 0 1px rgba(255, 255, 255, 0.6);
+	.top-b .slogan { margin-top: 16px; }
+	/* (c) the real app rising, fading into the page */
+	.rise-phone {
+		position: relative;
+		width: 216px; height: 214px;
+		margin: 22px auto -26px;
+		overflow: hidden;
+		border-radius: 34px 34px 0 0;
+		border: 6px solid #0A2427;
+		border-bottom: 0;
+		box-shadow: 0 -10px 60px -12px rgba(63, 208, 201, 0.45);
+		-webkit-mask: linear-gradient(180deg, #000 55%, transparent);
+		mask: linear-gradient(180deg, #000 55%, transparent);
 	}
-	:global(html[dir='ltr']) .note { padding: 0 6px 0 12px; font-family: 'Montserrat', 'Cairo', sans-serif; font-weight: 600; font-size: 12px; }
-	.ni { display: grid; place-items: center; width: 28px; height: 28px; border-radius: 50%; color: #fff; background: linear-gradient(150deg, #19B3B1, #00797B); }
-	.ni-warm { background: linear-gradient(150deg, #FFB48A, #F08A5D); }
-	.ni svg { width: 15px; height: 15px; fill: none; stroke: currentColor; stroke-width: 2.4; stroke-linecap: round; stroke-linejoin: round; }
-	.note-a { top: 8px; inset-inline-start: 6px; }
-	.note-b { top: 106px; inset-inline-end: -2px; }
-	.note-c { bottom: 12px; inset-inline-start: 26px; }
-	.wordmark { margin: 4px auto 0; width: 170px; color: var(--ivory); line-height: 0; }
+	.rise-phone img { display: block; width: 100%; height: auto; }
+	:global(html[data-top='c']) .app-phone { display: none; }
+	:global(html[data-top='c']) .card-app { min-height: 0; padding: 20px; }
 
 	@media (prefers-reduced-motion: no-preference) {
-		:global(html.js) .gem { animation: gem-in 0.9s var(--ease-spring) 0.1s backwards, float 5.5s ease-in-out 1s infinite; }
-		:global(html.js) .gem-shadow { animation: shadow-in 0.9s var(--ease-out) 0.1s backwards, shadow 5.5s ease-in-out 1s infinite; }
-		:global(html.js) .glow { animation: shadow-in 1.2s var(--ease-out) backwards; }
-		@keyframes gem-in { from { transform: translateY(-26px) scale(0.6) rotate(-30deg); opacity: 0; } to { transform: none; opacity: 1; } }
-		@keyframes shadow-in { from { opacity: 0; transform: scale(0.5); } to { opacity: 1; transform: none; } }
-		@keyframes float {
-			0%, 100% { transform: translateY(0) rotate(0deg); }
-			50% { transform: translateY(-10px) rotate(6deg); }
-		}
-		@keyframes shadow {
-			0%, 100% { transform: scale(1); opacity: 1; }
-			50% { transform: scale(0.82); opacity: 0.7; }
-		}
-		/* the notifications arrive one after another, like pushes, then drift */
-		:global(html.js) .note { animation: note-in 0.7s var(--ease-spring) backwards, drift 6s ease-in-out infinite; }
-		:global(html.js) .note-a { animation-delay: 0.7s, 1.4s; }
-		:global(html.js) .note-b { animation-delay: 1s, 2.2s; }
-		:global(html.js) .note-c { animation-delay: 1.3s, 3s; }
-		@keyframes note-in { from { transform: translateY(14px) scale(0.7); opacity: 0; } to { transform: none; opacity: 1; } }
-		@keyframes drift { 0%, 100% { transform: translateY(0); } 50% { transform: translateY(-6px); } }
-		:global(html.js) .stage:global(.spin) .gem { animation: spin 0.9s var(--ease-spring), float 5.5s ease-in-out 0.9s infinite; }
-		@keyframes spin { from { transform: rotate(0deg) scale(0.92); } to { transform: rotate(360deg) scale(1); } }
+		:global(html.js) .top > * { animation: rise 0.8s var(--ease-out) backwards; }
+		:global(html.js) .top > :nth-child(2) { animation-delay: 0.12s; }
+		:global(html.js) .top > :nth-child(3) { animation-delay: 0.22s; }
+		:global(html.js) .badge { animation: badge-in 0.9s var(--ease-spring) backwards; }
+		@keyframes badge-in { from { transform: scale(0.7) translateY(10px); opacity: 0; } to { transform: none; opacity: 1; } }
+		:global(html.js) .lockup-light { animation: light 1.6s ease-in-out 0.6s both; }
+		@keyframes light { from { background-position: 130% 0; } to { background-position: -30% 0; } }
+		:global(html.js) .rise-phone { animation: phone-up 1s var(--ease-out) 0.25s backwards; }
+		@keyframes phone-up { from { transform: translateY(60px); opacity: 0; } to { transform: none; opacity: 1; } }
+		:global(html.js) .links > * { animation-delay: calc(0.3s + var(--i) * 0.07s); }
+		:global(html.js) .foot { animation-delay: 0.85s; }
 	}
-	@media (max-width: 360px) {
-		.note { font-size: 11.5px; height: 34px; }
-		.ni { width: 24px; height: 24px; }
+
+	/* the preview switcher (preview builds only) */
+	.pick {
+		position: fixed; z-index: 50; left: 50%; bottom: max(14px, env(safe-area-inset-bottom));
+		transform: translateX(-50%);
+		display: flex; align-items: center; gap: 6px;
+		padding: 6px 6px 6px 12px;
+		border-radius: 999px;
+		font: 700 13px 'Cairo', sans-serif; color: #0E2B2C; white-space: nowrap;
+		background: #fff; box-shadow: 0 14px 34px -10px rgba(0, 0, 0, 0.6);
 	}
+	.pick button { width: 34px; height: 34px; border: 0; border-radius: 50%; font: 800 15px 'Cairo', sans-serif; color: #006F71; background: #E6F6F5; cursor: pointer; }
+	.pick button:global(.on) { color: #fff; background: #009092; }
 </style>
