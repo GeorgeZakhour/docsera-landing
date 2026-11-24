@@ -7,7 +7,10 @@ interface TourData {
 	spins: boolean[];
 }
 
-const BASE = '/images/tour';
+// The screens come in two sizes: 640 px (light) and the render's own 860 px (tour/hd). A screen
+// that is shown — zoomed — wider than the 640 copy holds gets the 860 one, so it never upscales.
+const LIGHT = '/images/tour';
+const HD = '/images/tour/hd';
 const clamp = (v: number, a = 0, b = 1) => Math.min(b, Math.max(a, v));
 const ease = (t: number) => t * t * (3 - 2 * t);
 const lerp = (a: number, b: number, t: number) => a + (b - a) * t;
@@ -23,6 +26,10 @@ export function startTour(root: HTMLElement): void {
 	const chapters = qa('[data-ch]'), stepBtns = qa<HTMLButtonElement>('[data-step]');
 	const auras = qa('[data-aura]');
 	const { pages, steps, spins } = data;
+	// device pixels the screen needs at its largest (the first, zoomed-in view)
+	const zoom = innerWidth >= 900 ? 1.42 : 1.18;
+	const shown = box.offsetWidth || innerWidth * (innerWidth >= 900 ? 0.24 : 0.7);
+	const BASE = shown * zoom * (window.devicePixelRatio || 1) > 660 ? HD : LIGHT;
 
 	const layers = new Map<string, HTMLElement>();
 	const layer = (id: string) => {

@@ -51,8 +51,10 @@ const src = (key: string) => `/images/pro/site/${key}.webp`;
 						})}
 						{items.map((it, i) => {
 							const f = fit(it.shot);
+							// the card's own sharp file (cut from the original capture) when there is one
+							const own = ((SHOTS as any)[it.shot].lifts || [])[0];
 							return f.lifted ? (
-								<div class:list={['rise', { on: i === 0 }]} data-rise={i} style={f.lift} aria-hidden="true"><img data-src={src(it.shot)} alt="" style={f.inner} decoding="async" /></div>
+								<div class:list={['rise', { on: i === 0 }]} data-rise={i} style={f.lift} aria-hidden="true"><img data-src={own ? own.src : src(it.shot)} alt="" style={own ? 'width:100%;height:100%;left:0;top:0' : f.inner} decoding="async" /></div>
 							) : null;
 						})}
 					</div>

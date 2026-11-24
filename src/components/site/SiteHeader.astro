@@ -4,11 +4,12 @@
 import { WEB_APP_URL } from '../../config/links';
 
 const { current = '', cta = { href: '/download', label: 'حمّل التطبيق' } } = Astro.props as { current?: string; cta?: { href: string; label: string } };
+// DocSera Pro is reached from its own section on the home page, not from this menu (founder, 2026-11-24).
 const LINKS = [
+	['home', '/', 'الرئيسية'],
 	['features', '/features', 'عن التطبيق'],
 	['about', '/about', 'من نحن'],
 	['help', '/help', 'المساعدة'],
-	['pro', '/pro', 'DocSera Pro'],
 ];
 ---
 <header class="h">
@@ -21,7 +22,6 @@ const LINKS = [
 		<details class="h-menu" data-h-menu>
 			<summary aria-label="القائمة" title="القائمة"><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M4 7h16M4 12h16M4 17h16" /></svg></summary>
 			<nav class="h-drop" aria-label="القائمة">
-				<a href="/">الرئيسية</a>
 				{LINKS.map(([key, href, label]) => <a href={href} aria-current={key === current ? 'page' : undefined}>{label}</a>)}
 				<a href={WEB_APP_URL} class="h-web">افتحه من المتصفح</a>
 			</nav>

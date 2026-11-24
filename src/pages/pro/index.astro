@@ -17,6 +17,9 @@ const groups = PRO_GROUPS.filter((g) => g.items.some((i) => (SHOTS as any)[i.sho
 const crop = (key: string, rect?: number[]) => {
 	const s = (SHOTS as any)[key];
 	const [x, y, w, h] = rect || s.rect;
+	// the card's own sharp file (cut from the original capture) when it is this rect
+	const own = (s.lifts || []).find((l: { rect: number[] }) => l.rect.join() === [x, y, w, h].join());
+	if (own) return { box: `aspect-ratio:${w} / ${h}`, img: 'width:100%;height:100%;left:0;top:0', src: own.src };
 	return { box: `aspect-ratio:${w} / ${h}`, img: `width:${(s.w / w * 100).toFixed(3)}%;left:${(-x / w * 100).toFixed(3)}%;top:${(-y / h * 100).toFixed(3)}%`, src: `/images/pro/site/${key}.webp` };
 };
 const WAITING = crop('dash');

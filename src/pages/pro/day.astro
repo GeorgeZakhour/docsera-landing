@@ -17,8 +17,11 @@ const shotSrc = (id: string) => `/images/pro/site/${id}.webp`;
 const stations = PRO_DAY.map((st) => {
 	const m = (SHOTS as any)[st.shot];
 	const rect = st.rect === null ? null : (st.rect || m.rect);
-	const crop = rect ? `width:${(m.w / rect[2] * 100).toFixed(3)}%;left:${(-rect[0] / rect[2] * 100).toFixed(3)}%;top:${(-rect[1] / rect[3] * 100).toFixed(3)}%` : '';
-	return { ...st, src: shotSrc(st.shot), rect, crop, W: m.w, H: m.h, r: m.r || 16 };
+	// The card is its own file, cut from the original 2x capture (or a sharper one), so it stays
+	// sharp when it rises; without one it is cropped out of the screen picture.
+	const hit = rect && (m.lifts || []).find((l: { rect: number[] }) => l.rect.join() === rect.join());
+	const crop = hit ? 'width:100%;left:0;top:0' : rect ? `width:${(m.w / rect[2] * 100).toFixed(3)}%;left:${(-rect[0] / rect[2] * 100).toFixed(3)}%;top:${(-rect[1] / rect[3] * 100).toFixed(3)}%` : '';
+	return { ...st, src: hit ? hit.src : shotSrc(st.shot), rect, crop, W: m.w, H: m.h, r: m.r || 16 };
 });
 ---
 
