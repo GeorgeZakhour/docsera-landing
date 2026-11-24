@@ -1,7 +1,7 @@
 ---
-// The page for a link that leads nowhere. The DocSera mark has come apart into its four
-// petals; the page offers the way back: a search of the help guide and the four places
-// people are usually looking for. Light: one inline SVG, no image.
+// The page for a link that leads nowhere. The DocSera mark becomes a compass: its four petals
+// point at the four ways back, and the needle searches until one of them is chosen. Below it, a
+// search of the help guide. Light: one inline SVG, no image, CSS motion + a few lines of script.
 import Layout from '../layouts/Layout.astro';
 import SiteHeader from '../components/site/SiteHeader.astro';
 import Footer from '../components/Footer.astro';
@@ -10,75 +10,83 @@ import '../components/help/help.css';
 import whiteLogo from '../../public/images/docsera_white.svg?raw';
 
 // docsera_white.svg = the mark (first path) then the letters; the petals are the mark cut along
-// its diagonals (same geometry as /links).
+// its diagonals (same geometry as /links), so each can light on its own.
 const markPath = [...whiteLogo.matchAll(/\sd="([^"]+)"/g)].map((m) => m[1].replace(/\s+/g, ' ').trim())[0];
 const B = { x: 14, y: 14, w: 242, h: 242 };
 const C = { x: 134.8, y: 134.9 };
 const tl = `${B.x},${B.y}`, tr = `${B.x + B.w},${B.y}`, br = `${B.x + B.w},${B.y + B.h}`, bl = `${B.x},${B.y + B.h}`, c = `${C.x},${C.y}`;
 const PETALS = [
-	{ id: 'top', pts: `${tl} ${tr} ${c}`, dx: 6, dy: -34, r: -9 },
-	{ id: 'right', pts: `${tr} ${br} ${c}`, dx: 38, dy: 8, r: 12 },
-	{ id: 'bottom', pts: `${br} ${bl} ${c}`, dx: -8, dy: 40, r: -6 },
-	{ id: 'left', pts: `${bl} ${tl} ${c}`, dx: -40, dy: -10, r: 10 },
+	{ dir: 'n', pts: `${tl} ${tr} ${c}` },
+	{ dir: 'e', pts: `${tr} ${br} ${c}` },
+	{ dir: 's', pts: `${br} ${bl} ${c}` },
+	{ dir: 'w', pts: `${bl} ${tl} ${c}` },
 ];
 
+// Each way sits where its petal points (n = top, e = right, s = bottom, w = left).
 const WAYS = [
-	{ href: '/', title: 'الصفحة الرئيسية', sub: 'كل ما يقدّمه DocSera', icon: 'home' },
-	{ href: '/download', title: 'حمّل التطبيق', sub: 'مجاني على iPhone و Android', icon: 'get' },
-	{ href: '/help', title: 'دليل المساعدة', sub: 'إجابات خطوة بخطوة', icon: 'help' },
-	{ href: '/pro', title: 'DocSera Pro', sub: 'للعيادات والمراكز', icon: 'pro' },
+	{ dir: 'n', href: '/', title: 'الرئيسية', icon: 'home' },
+	{ dir: 'e', href: '/download', title: 'حمّل التطبيق', icon: 'get' },
+	{ dir: 's', href: '/help', title: 'دليل المساعدة', icon: 'help' },
+	{ dir: 'w', href: '/pro', title: 'DocSera Pro', icon: 'pro' },
 ];
 ---
 
-<Layout title="الصفحة غير موجودة — DocSera" description="الرابط الذي فتحته غير موجود. ابحث في دليل المساعدة أو عد إلى الصفحة الرئيسية." path="/404.html">
+<Layout title="الصفحة غير موجودة — DocSera" description="الرابط الذي فتحته غير موجود. اختر طريقك من هنا، أو ابحث في دليل المساعدة." path="/404.html">
 	<SiteHeader />
 	<main class="nf">
-		<svg width="0" height="0" style="position:absolute" aria-hidden="true">
-			<defs>
-				<path id="nf-mark" d={markPath} />
-				<linearGradient id="nf-fill" x1="0" y1="0" x2="1" y2="1">
-					<stop offset="0" stop-color="#FFFFFF" />
-					<stop offset="1" stop-color="#9FEBE1" />
-				</linearGradient>
-				{PETALS.map((p) => <clipPath id={`nf-cut-${p.id}`}><polygon points={p.pts} /></clipPath>)}
-			</defs>
-		</svg>
-
 		<div class="nf-in">
-			<div class="nf-mark" aria-hidden="true">
-				<svg viewBox={`${B.x - 60} ${B.y - 60} ${B.w + 120} ${B.h + 120}`}>
-					{PETALS.map((p, i) => (
-						<g class="petal" style={`--dx:${p.dx}px;--dy:${p.dy}px;--r:${p.r}deg;--i:${i}`}>
-							<use href="#nf-mark" clip-path={`url(#nf-cut-${p.id})`} fill="url(#nf-fill)" />
-						</g>
-					))}
-				</svg>
-			</div>
-
 			<h1>هذه الصفحة غير موجودة</h1>
-			<p class="nf-lead">ربما تغيّر الرابط، أو فيه خطأ صغير في الكتابة <span class="nf-code">(404)</span>.</p>
+			<p class="nf-lead">ربما تغيّر الرابط، أو فيه خطأ صغير في الكتابة. اختر طريقك من هنا:</p>
 
-			<div class="nf-search">
-				<p class="nf-label">ابحث عن سؤالك في دليل المساعدة</p>
-				<HelpSearch />
-			</div>
-
-			<nav class="nf-ways" aria-label="إلى أين؟">
+			<nav class="compass" aria-label="طرق العودة" data-compass>
+				<div class="dial" aria-hidden="true">
+					<svg class="dial-face" viewBox="0 0 200 200">
+						<circle class="dial-ticks" cx="100" cy="100" r="92" pathLength="360" />
+						<circle class="dial-ring" cx="100" cy="100" r="76" />
+						<text class="dial-code" x="100" y="191" text-anchor="middle" direction="ltr">404</text>
+					</svg>
+					<span class="sweep"></span>
+					<span class="ping"></span>
+					<span class="ping ping-2"></span>
+					<svg class="needle" viewBox={`${B.x} ${B.y} ${B.w} ${B.h}`} data-needle>
+						<defs>
+							<path id="nf-mark" d={markPath} />
+							<linearGradient id="nf-fill" x1="0" y1="0" x2="1" y2="1">
+								<stop offset="0" stop-color="#FFFFFF" />
+								<stop offset="1" stop-color="#A8EEE5" />
+							</linearGradient>
+							<linearGradient id="nf-lit" x1="0" y1="0" x2="1" y2="1">
+								<stop offset="0" stop-color="#FFFFFF" />
+								<stop offset="1" stop-color="#5FE3D6" />
+							</linearGradient>
+							{PETALS.map((p) => <clipPath id={`nf-cut-${p.dir}`}><polygon points={p.pts} /></clipPath>)}
+						</defs>
+						{PETALS.map((p) => (
+							<g class={`petal petal-${p.dir}`}>
+								<use href="#nf-mark" clip-path={`url(#nf-cut-${p.dir})`} fill="url(#nf-fill)" />
+								<use class="lit" href="#nf-mark" clip-path={`url(#nf-cut-${p.dir})`} fill="url(#nf-lit)" />
+							</g>
+						))}
+					</svg>
+				</div>
 				{WAYS.map((w) => (
-					<a class="way" href={w.href}>
+					<a class={`way way-${w.dir}`} href={w.href} data-dir={w.dir}>
 						<span class="way-icon" aria-hidden="true">
 							{w.icon === 'home' && <svg viewBox="0 0 24 24"><path d="M3.5 10.5 12 3.5l8.5 7" /><path d="M5.5 9v10.5h13V9" /><path d="M10 19.5v-5h4v5" /></svg>}
-							{w.icon === 'get' && <svg viewBox="0 0 24 24"><path d="M12 4v11" /><path d="m7 10.500 5 5 5-5" /><path d="M5 20h14" /></svg>}
-							{w.icon === 'help' && <svg viewBox="0 0 24 24"><circle cx="12" cy="12" r="9.500" /><path d="M9.200 9.200a2.900 2.900 0 0 1 5.600 1c0 1.900-2.800 2.700-2.800 2.700" /><path d="M12 16.800h.01" /></svg>}
-							{w.icon === 'pro' && <svg viewBox="0 0 24 24"><rect x="3.500" y="5" width="17" height="15" rx="2.500" /><path d="M3.500 10h17" /><path d="M8 3v4M16 3v4" /></svg>}
+							{w.icon === 'get' && <svg viewBox="0 0 24 24"><path d="M12 4v11" /><path d="m7 10.5 5 5 5-5" /><path d="M5 20h14" /></svg>}
+							{w.icon === 'help' && <svg viewBox="0 0 24 24"><circle cx="12" cy="12" r="9.5" /><path d="M9.2 9.2a2.9 2.9 0 0 1 5.6 1c0 1.9-2.8 2.7-2.8 2.7" /><path d="M12 16.8h.01" /></svg>}
+							{w.icon === 'pro' && <svg viewBox="0 0 24 24"><rect x="3.5" y="5" width="17" height="15" rx="2.5" /><path d="M3.5 10h17" /><path d="M8 3v4M16 3v4" /></svg>}
 						</span>
-						<span class="way-text">
-							<b>{w.title}</b>
-							<small>{w.sub}</small>
-						</span>
+						<span class="way-title">{w.title}</span>
 					</a>
 				))}
 			</nav>
+
+			<div class="nf-search">
+				<p class="nf-label">أو ابحث عن سؤالك في دليل المساعدة</p>
+				<!-- .hp carries the help centre's colours (ink text, white results) -->
+				<div class="hp nf-hp"><HelpSearch /></div>
+			</div>
 		</div>
 	</main>
 	<Footer />
@@ -87,6 +95,39 @@ const WAYS = [
 <script>
 	import { startHelpSearch } from '../scripts/help/search';
 	startHelpSearch();
+
+	// The needle searches on its own (CSS). Pointing at a way stops it where it is, then turns it
+	// upright, so the petal for that way faces it, and lights that petal.
+	const compass = document.querySelector<HTMLElement>('[data-compass]');
+	const needle = document.querySelector<SVGElement>('[data-needle]');
+	if (compass && needle) {
+		let resume = 0;
+		const choose = (dir: string | null) => {
+			window.clearTimeout(resume);
+			if (dir) {
+				if (!compass.classList.contains('chosen')) {
+					const now = getComputedStyle(needle).transform;
+					needle.style.transform = now === 'none' ? '' : now;
+					compass.classList.add('chosen');
+					requestAnimationFrame(() => requestAnimationFrame(() => { needle.style.transform = 'rotate(0deg)'; }));
+				}
+				compass.dataset.dir = dir;
+			} else {
+				resume = window.setTimeout(() => {
+					delete compass.dataset.dir;
+					compass.classList.remove('chosen');
+					needle.style.transform = '';
+				}, 900);
+			}
+		};
+		compass.querySelectorAll<HTMLAnchorElement>('.way').forEach((a) => {
+			a.addEventListener('pointerenter', () => choose(a.dataset.dir!));
+			a.addEventListener('focus', () => choose(a.dataset.dir!));
+			a.addEventListener('pointerdown', () => choose(a.dataset.dir!));
+			a.addEventListener('pointerleave', () => choose(null));
+			a.addEventListener('blur', () => choose(null));
+		});
+	}
 </script>
 
 <style>
@@ -96,96 +137,153 @@ const WAYS = [
 		min-height: calc(100svh - 64px);
 		display: grid;
 		place-items: center;
-		padding: clamp(96px, 14vh, 140px) 16px clamp(56px, 9vh, 96px);
+		padding: clamp(96px, 13vh, 132px) 16px clamp(48px, 8vh, 88px);
 		color: #F3FBFA;
 		background:
+			radial-gradient(70% 50% at 50% 42%, rgba(0, 160, 158, 0.32), transparent 70%),
 			radial-gradient(90% 60% at 50% 0%, #0A5C5E 0%, transparent 62%),
-			radial-gradient(60% 40% at 85% 85%, rgba(0, 144, 146, 0.28), transparent 70%),
 			linear-gradient(180deg, #03292C 0%, #021C1F 100%);
 	}
-	.nf-in { width: min(640px, 100%); text-align: center; }
-
-	.nf-mark { width: min(210px, 52vw); margin: 0 auto 10px; }
-	.nf-mark svg { display: block; width: 100%; height: auto; overflow: visible; }
-	.petal {
-		transform-box: fill-box;
-		transform-origin: center;
-		transform: translate(var(--dx), var(--dy)) rotate(var(--r));
-		filter: drop-shadow(0 10px 18px rgba(0, 20, 22, 0.55));
-	}
-	.petal { animation: drift 7s ease-in-out calc(var(--i) * -1.7s) infinite alternate; }
-	@keyframes drift {
-		from { transform: translate(var(--dx), var(--dy)) rotate(var(--r)); }
-		to { transform: translate(calc(var(--dx) * 1.18), calc(var(--dy) * 1.18 - 6px)) rotate(calc(var(--r) * -0.6)); }
-	}
-	/* pointing at the way home pulls the mark back together */
-	.nf-in:has(.way:hover, .way:focus-visible) .petal {
-		animation: none;
-		transform: translate(0, 0) rotate(0);
-		transition: transform 0.7s cubic-bezier(0.2, 0.8, 0.2, 1);
-	}
+	.nf-in { width: min(620px, 100%); text-align: center; }
 
 	h1 {
-		margin: 0 0 10px;
-		font-size: clamp(1.9rem, 6.4vw, 2.9rem);
+		margin: 0 0 8px;
+		font-size: clamp(1.85rem, 6.2vw, 2.8rem);
 		font-weight: 800;
 		line-height: 1.25;
 		color: #fff;
 		text-wrap: balance;
 	}
-	.nf-lead { margin: 0 auto; max-width: 30em; font-size: clamp(1.02rem, 3.6vw, 1.15rem); line-height: 1.8; color: #B9DCD9; }
-	.nf-code { font-family: 'Montserrat', sans-serif; font-size: 0.86em; color: #8CC7C2; }
+	.nf-lead { margin: 0 auto; max-width: 30em; font-size: clamp(1rem, 3.6vw, 1.12rem); line-height: 1.8; color: #B9DCD9; text-wrap: balance; }
 
-	.nf-search { margin: 28px auto 0; max-width: 520px; text-align: start; }
-	.nf-label { margin: 0 0 8px; font-size: 0.95rem; font-weight: 700; color: #D8F2EF; }
-	.nf-search :global(.hp-search) { position: relative; z-index: 5; }
-
-	.nf-ways {
+	/* ── the compass: a 3 × 3 grid laid out physically (n top, e right, s bottom, w left) ── */
+	.compass {
+		--d: clamp(136px, 37vw, 220px);
+		direction: ltr;
 		display: grid;
-		grid-template-columns: repeat(2, minmax(0, 1fr));
-		gap: 10px;
-		margin: 22px auto 0;
+		grid-template-columns: minmax(0, 1fr) var(--d) minmax(0, 1fr);
+		grid-template-rows: auto var(--d) auto;
+		grid-template-areas: '. n .' 'w c e' '. s .';
+		align-items: center;
+		justify-items: center;
+		gap: 6px 4px;
+		margin: 26px auto 6px;
 		max-width: 520px;
 	}
+	.dial { grid-area: c; position: relative; width: var(--d); height: var(--d); }
+	.dial-face { position: absolute; inset: 0; width: 100%; height: 100%; overflow: visible; }
+	.dial-ticks { fill: none; stroke: rgba(189, 244, 236, 0.35); stroke-width: 6; stroke-dasharray: 0.6 8.4; }
+	.dial-ring { fill: rgba(255, 255, 255, 0.03); stroke: rgba(189, 244, 236, 0.16); stroke-width: 1; }
+	.dial-code { font: 700 12px 'Cairo', sans-serif; fill: rgba(189, 244, 236, 0.5); }
+	/* a radar sweep and two pings: the page is being looked for */
+	.sweep {
+		position: absolute;
+		inset: 12%;
+		border-radius: 50%;
+		background: conic-gradient(from 0deg, rgba(95, 227, 214, 0.28), transparent 22%);
+		mask: radial-gradient(circle, transparent 18%, #000 19%);
+		-webkit-mask: radial-gradient(circle, transparent 18%, #000 19%);
+		animation: sweep 4.8s linear infinite;
+	}
+	@keyframes sweep { to { transform: rotate(360deg); } }
+	.ping {
+		position: absolute;
+		inset: 30%;
+		border-radius: 50%;
+		border: 1.5px solid rgba(95, 227, 214, 0.6);
+		opacity: 0;
+		animation: ping 3.2s cubic-bezier(0.2, 0.7, 0.3, 1) infinite;
+	}
+	.ping-2 { animation-delay: 1.6s; }
+	@keyframes ping {
+		0% { transform: scale(0.6); opacity: 0.75; }
+		100% { transform: scale(1.75); opacity: 0; }
+	}
+	.needle {
+		position: absolute;
+		inset: 25%;
+		width: 50%;
+		height: 50%;
+		overflow: visible;
+		filter: drop-shadow(0 10px 18px rgba(0, 20, 22, 0.6));
+		animation: seek 7s ease-in-out infinite;
+		transition: transform 0.9s cubic-bezier(0.25, 1.4, 0.4, 1);
+	}
+	/* a compass that has not found north: it swings, settles, and swings again */
+	@keyframes seek {
+		0% { transform: rotate(0deg); }
+		16% { transform: rotate(38deg); }
+		30% { transform: rotate(-24deg); }
+		42% { transform: rotate(12deg); }
+		52% { transform: rotate(-5deg); }
+		60%, 72% { transform: rotate(0deg); }
+		86% { transform: rotate(-30deg); }
+		100% { transform: rotate(0deg); }
+	}
+	.compass:global(.chosen) .needle { animation: none; }
+	.petal { transform-box: fill-box; transform-origin: center; transition: transform 0.5s cubic-bezier(0.25, 1.4, 0.4, 1); }
+	.petal .lit { opacity: 0; transition: opacity 0.35s; }
+	.compass[data-dir='n'] .petal-n { transform: translateY(-9%); }
+	.compass[data-dir='e'] .petal-e { transform: translateX(9%); }
+	.compass[data-dir='s'] .petal-s { transform: translateY(9%); }
+	.compass[data-dir='w'] .petal-w { transform: translateX(-9%); }
+	.compass[data-dir='n'] .petal-n .lit,
+	.compass[data-dir='e'] .petal-e .lit,
+	.compass[data-dir='s'] .petal-s .lit,
+	.compass[data-dir='w'] .petal-w .lit { opacity: 1; }
+	.compass:global(.chosen) .sweep { animation-play-state: paused; opacity: 0.4; }
+
+	/* ── the four ways ── */
 	.way {
-		display: flex;
+		direction: rtl;
+		display: inline-flex;
+		flex-direction: column;
 		align-items: center;
-		gap: 12px;
-		min-height: 64px;
-		padding: 12px 14px;
-		text-align: start;
+		gap: 6px;
+		max-width: 100%;
+		padding: 8px 4px;
 		text-decoration: none;
 		color: #F3FBFA;
-		background: linear-gradient(140deg, rgba(255, 255, 255, 0.12), rgba(255, 255, 255, 0.04));
-		border: 1px solid rgba(255, 255, 255, 0.14);
 		border-radius: 18px;
-		transition: transform 0.3s cubic-bezier(0.2, 0.8, 0.2, 1), border-color 0.25s, background 0.25s;
+		transition: background 0.25s, transform 0.3s cubic-bezier(0.2, 0.8, 0.2, 1);
 	}
-	.way:hover { transform: translateY(-2px); border-color: rgba(189, 244, 236, 0.4); background: linear-gradient(140deg, rgba(255, 255, 255, 0.17), rgba(255, 255, 255, 0.06)); }
-	.way:active { transform: scale(0.97); }
-	.way:focus-visible { outline: 2px solid #BDF4EC; outline-offset: 3px; }
+	.way-n { grid-area: n; }
+	.way-e { grid-area: e; }
+	.way-s { grid-area: s; }
+	.way-w { grid-area: w; }
 	.way-icon {
-		flex: none;
 		display: grid;
 		place-items: center;
-		width: 38px;
-		height: 38px;
-		border-radius: 12px;
+		width: 46px;
+		height: 46px;
+		border-radius: 50%;
 		color: #BDF4EC;
-		background: rgba(255, 255, 255, 0.09);
-		border: 1px solid rgba(255, 255, 255, 0.12);
+		background: linear-gradient(140deg, rgba(255, 255, 255, 0.16), rgba(255, 255, 255, 0.05));
+		border: 1px solid rgba(255, 255, 255, 0.18);
+		box-shadow: inset 0 1px 0 rgba(255, 255, 255, 0.2), 0 12px 24px -14px rgba(0, 0, 0, 0.8);
+		transition: background 0.25s, color 0.25s, border-color 0.25s, box-shadow 0.25s;
 	}
-	.way-icon svg { width: 20px; height: 20px; fill: none; stroke: currentColor; stroke-width: 1.9; stroke-linecap: round; stroke-linejoin: round; }
-	.way-text { display: flex; flex-direction: column; min-width: 0; }
-	.way-text b { font-size: 0.98rem; font-weight: 800; line-height: 1.35; }
-	.way-text small { font-size: 0.8rem; line-height: 1.45; color: #A9CFCB; }
+	.way-icon svg { width: 21px; height: 21px; fill: none; stroke: currentColor; stroke-width: 1.9; stroke-linecap: round; stroke-linejoin: round; }
+	.way-title { font-size: 0.92rem; font-weight: 800; line-height: 1.3; text-align: center; text-wrap: balance; }
+	@media (min-width: 600px) { .way { padding: 10px 12px; } .way-title { font-size: 0.98rem; white-space: nowrap; } }
+	.way:hover .way-icon,
+	.way:focus-visible .way-icon { color: #04181C; background: linear-gradient(180deg, #A8EEE5, #3FD0C9); border-color: transparent; box-shadow: 0 0 0 6px rgba(95, 227, 214, 0.16), 0 14px 26px -12px rgba(63, 208, 201, 0.9); }
+	.way:active { transform: scale(0.95); }
+	.way:focus-visible { outline: 2px solid #BDF4EC; outline-offset: 2px; }
 
-	@media (max-width: 520px) {
-		.nf-ways { grid-template-columns: minmax(0, 1fr); gap: 8px; }
-		.way { min-height: 58px; }
+	/* ── search ── */
+	.nf-search { margin: 26px auto 0; max-width: 520px; text-align: start; }
+	.nf-label { margin: 0 0 8px; font-size: 0.95rem; font-weight: 700; color: #D8F2EF; }
+	.nf-hp { background: none; }
+	.nf-hp :global(.hp-search) { z-index: 5; }
+
+	@media (max-width: 380px) {
+		.way-title { font-size: 0.86rem; }
+		.way-icon { width: 42px; height: 42px; }
 	}
 	@media (prefers-reduced-motion: reduce) {
-		.petal { animation: none; }
-		.way, .nf-in:has(.way:hover) .petal { transition: none; }
+		.needle, .sweep, .ping { animation: none; }
+		.ping { display: none; }
+		.needle, .petal, .way { transition: none; }
 	}
 </style>
