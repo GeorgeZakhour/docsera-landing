@@ -2,7 +2,7 @@
 // folds Arabic spelling, drops filler words, forgives one typo, and ranks on title and keywords.
 interface Row { i: string; t: string; s: string; k: string; w: string; nt: string[]; nk: string[]; ns: string[]; ft: string; fk: string; }
 
-const STOP = new Set(['كيف', 'ما', 'ماذا', 'هل', 'لماذا', 'اين', 'من', 'في', 'على', 'عن', 'الي', 'او', 'و', 'بدي', 'عم', 'شو', 'ليش', 'لا', 'لم', 'انا', 'هو', 'هي', 'متي', 'لي', 'ان', 'مع', 'هذا', 'هذه', 'يا', 'اريد', 'ابغي', 'كيفيه', 'طريقه']);
+const STOP = new Set(['ما', 'عم', 'شي', 'ليه', 'كيف', 'ما', 'ماذا', 'هل', 'لماذا', 'اين', 'من', 'في', 'على', 'عن', 'الي', 'او', 'و', 'بدي', 'عم', 'شو', 'ليش', 'لا', 'لم', 'انا', 'هو', 'هي', 'متي', 'لي', 'ان', 'مع', 'هذا', 'هذه', 'يا', 'اريد', 'ابغي', 'كيفيه', 'طريقه']);
 
 export function fold(s: string): string {
 	return s.toLowerCase()
@@ -11,9 +11,17 @@ export function fold(s: string): string {
 		.replace(/[٠-٩]/g, (d) => String('٠١٢٣٤٥٦٧٨٩'.indexOf(d)))
 		.replace(/[^\p{L}\p{N}]+/gu, ' ').trim();
 }
+// Everyday Syrian words → the words the articles use.
+const SYN: Record<string, string[]> = {
+	اقدر: ['استطيع'], بقدر: ['استطيع'], فيني: ['استطيع'], قادر: ['استطيع'], سجل: ['تسجيل', 'سجل'], فوت: ['تسجيل', 'الدخول'],
+	ادخل: ['الدخول', 'تسجيل'], بصمه: ['البصمه', 'face'], وجه: ['face'], الغي: ['الغاء', 'الغي'], لغيت: ['الغاء', 'الغي'], الغيت: ['الغاء', 'الغي'],
+	تذكير: ['تذكيرات', 'تذكير'], يذكرني: ['تذكيرات', 'تصلني'], بيذكرني: ['تذكيرات', 'تصلني'], بتوصل: ['تصلني'], بيوصل: ['تصلني'], وصلني: ['يصلني', 'تصلني'], موعد: ['موعد', 'موعدي'], دكتور: ['طبيب'], حكيم: ['طبيب'], كود: ['رمز'], رساله: ['رساله', 'رسائل'],
+	تلفون: ['هاتف', 'رقم'], موبايل: ['هاتف', 'رقم'], نمره: ['رقم'], ابني: ['اقاربي', 'قريب'], بنتي: ['اقاربي', 'قريب'], امي: ['اقاربي', 'قريب'], ابي: ['اقاربي', 'قريب'],
+	مسح: ['حذف'], امسح: ['حذف'], شيل: ['حذف', 'ازاله'], صوره: ['صوره', 'مستند'], تحليل: ['تحليل', 'مستند'], دوا: ['دواء'], ادويه: ['دواء', 'ادويتي'],
+};
 const stem = (w: string) => (w.length > 4 && w.startsWith('ال') ? w.slice(2) : w.length > 5 && /^(وال|بال|لل)/.test(w) ? w.slice(w.startsWith('لل') ? 2 : 3) : w);
 const words = (s: string) => fold(s).split(' ').filter(Boolean).map(stem);
-const queryWords = (s: string) => fold(s).split(' ').filter((w) => w && !STOP.has(w)).map(stem);
+const queryWords = (s: string) => fold(s).split(' ').filter((w) => w && !STOP.has(w)).map(stem).map((w) => [w, ...(SYN[w] || []).map(stem)]);
 
 function near(a: string, b: string): boolean {
 	if (Math.abs(a.length - b.length) > 1 || a.length < 4) return false;
@@ -38,8 +46,9 @@ function rank(rows: Row[], text: string): Row[] {
 	if (!q.length) return [];
 	return rows.map((r) => {
 		let score = 0, matched = 0;
-		for (const w of q) {
-			const s = Math.max(hit(w, r.nt, 12, 9, 6, 5), hit(w, r.nk, 10, 7, 5, 4), hit(w, r.ns, 3, 2, 1, 0));
+		for (const alts of q) {
+			let s = 0;
+			for (const w of alts) s = Math.max(s, hit(w, r.nt, 12, 9, 6, 5), hit(w, r.nk, 10, 7, 5, 4), hit(w, r.ns, 3, 2, 1, 0));
 			if (s) matched++;
 			score += s;
 		}
