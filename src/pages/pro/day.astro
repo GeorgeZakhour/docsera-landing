@@ -21,7 +21,7 @@ const stations = PRO_DAY.map((st) => {
 	// sharp when it rises; without one it is cropped out of the screen picture.
 	const hit = rect && (m.lifts || []).find((l: { rect: number[] }) => l.rect.join() === rect.join());
 	const crop = hit ? 'width:100%;left:0;top:0' : rect ? `width:${(m.w / rect[2] * 100).toFixed(3)}%;left:${(-rect[0] / rect[2] * 100).toFixed(3)}%;top:${(-rect[1] / rect[3] * 100).toFixed(3)}%` : '';
-	return { ...st, src: hit ? hit.src : shotSrc(st.shot), rect, crop, W: m.w, H: m.h, r: m.r || 16 };
+	return { ...st, src: shotSrc(st.shot), liftSrc: hit ? hit.src : shotSrc(st.shot), rect, crop, W: m.w, H: m.h, r: m.r || 16 };
 });
 ---
 
@@ -68,7 +68,7 @@ const stations = PRO_DAY.map((st) => {
 				</div>
 
 				{stations.map((c, i) => (c.rect ? (
-					<div class:list={['lift', { bare: c.bare }]} data-lift={i} data-rect={c.rect.join(',')} data-w={c.W} data-h={c.H} data-r={c.r} aria-hidden="true"><img data-src={c.src} style={c.crop} alt="" decoding="async" /></div>
+					<div class:list={['lift', { bare: c.bare }]} data-lift={i} data-rect={c.rect.join(',')} data-w={c.W} data-h={c.H} data-r={c.r} aria-hidden="true"><img data-src={c.liftSrc} style={c.crop} alt="" decoding="async" /></div>
 				) : <div data-lift={i} hidden></div>))}
 
 				<div class="txt">

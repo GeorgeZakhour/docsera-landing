@@ -26,10 +26,10 @@ export function startTour(root: HTMLElement): void {
 	const chapters = qa('[data-ch]'), stepBtns = qa<HTMLButtonElement>('[data-step]');
 	const auras = qa('[data-aura]');
 	const { pages, steps, spins } = data;
-	// device pixels the screen needs at its largest (the first, zoomed-in view)
-	const zoom = innerWidth >= 900 ? 1.42 : 1.18;
-	const shown = box.offsetWidth || innerWidth * (innerWidth >= 900 ? 0.24 : 0.7);
-	const BASE = shown * zoom * (window.devicePixelRatio || 1) > 660 ? HD : LIGHT;
+	// The phone is laid out at its zoomed size (features.astro --zr) and only scaled down, so its
+	// layout width is the widest it is ever shown: pick the copy that covers it in device pixels.
+	const shown = box.offsetWidth || innerWidth * (innerWidth >= 900 ? 0.34 : 0.8);
+	const BASE = shown * (window.devicePixelRatio || 1) > 660 ? HD : LIGHT;
 
 	const layers = new Map<string, HTMLElement>();
 	const layer = (id: string) => {
@@ -140,7 +140,8 @@ export function startTour(root: HTMLElement): void {
 		return {
 			x: reach * side * t,
 			y: lerp(stick.offsetHeight * (wide ? 0.46 : 0.34), 0, t),
-			s: lerp(wide ? 1.42 : 1.18, 1, t),
+			// laid out at the zoomed size: 1 = zoomed in, 1 / zoom = the resting size
+			s: lerp(1, 1 / (wide ? 1.42 : 1.18), t),
 			ry: side * -turned * t + spun * 360,
 			rx: lerp(13, wide ? 3 : 1, t),
 		};

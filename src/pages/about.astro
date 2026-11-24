@@ -13,21 +13,8 @@ const STORY = [
 	['ما فهمناه', 'لم يكن الطب هو ما ينقص. كان ينقص طريق واضح تصل به المعلومة إلى من يحتاجها، في وقتها، وبإذن صاحبها.'],
 	['ما بنيناه', 'منصة واحدة تصل المريض بعيادته، وتبقي تاريخه الصحي معه.'],
 ];
-// Each friction on the path, what replaced it once the line crossed it, and the real app card
-// that shows the answer (cut from the tour's full-resolution screens; invented names only).
-const STATIONS = [
-	['مكالمات', 'رسائل', 18, 'msg', 480, 208],
-	['انتظار', 'موعد', 39, 'appt', 480, 219],
-	['أوراق', 'ملف', 61, 'file', 480, 181],
-	['ذاكرة', 'تذكير', 82, 'dose', 480, 194],
-] as const;
-// The friction, drawn as a grey line icon until the line reaches it.
-const OLD_ICON: Record<string, string> = {
-	msg: 'M6.5 3.5h3l1.5 4-2 1.5a11 11 0 0 0 6 6l1.5-2 4 1.5v3a2 2 0 0 1-2 2A17 17 0 0 1 4.5 5.5a2 2 0 0 1 2-2z',
-	appt: 'M7 3.5h10M7 20.5h10M8 3.5c0 4 4 5.5 4 8.5s-4 4.5-4 8.5M16 3.5c0 4-4 5.5-4 8.5s4 4.5 4 8.5',
-	file: 'M8 3.5h7.5L19 7v13.5H8zM15 3.5V7h4M5 6.5v15h11M11 11h5M11 14.5h5',
-	dose: 'M12 20.5a8.5 8.5 0 1 1 0-17 8.5 8.5 0 0 1 0 17zM9.6 9.4a2.5 2.5 0 0 1 4.8.9c0 1.7-2.4 2.2-2.4 2.2M12 15.6h.01',
-};
+// Each friction on the path, and what replaced it once the line crossed it.
+const STATIONS = [['مكالمات', 'رسائل', 18], ['انتظار', 'موعد', 39], ['أوراق', 'ملف', 61], ['ذاكرة', 'تذكير', 82]] as const;
 // The Arabic question mark of Cairo, drawn as two shapes so that its dot can leave it.
 const QM_HOOK = 'M285 202H220V237Q220 270 198 296Q176 323 132 360Q93 393 73 418Q53 442 46 470Q39 498 39 541Q39 599 62 634Q84 670 129 686Q174 702 241 702Q266 702 296 697Q327 692 357 685Q387 678 409 671L403 608Q382 613 354 618Q326 624 298 628Q270 631 249 631Q182 631 150 609Q119 587 119 535Q119 507 126 488Q133 468 152 448Q171 427 207 396Q234 373 254 352Q275 331 287 310Q299 288 299 264Q299 245 294 229Q290 213 285 202Z';
 const QM_DOT = 'M296 1H212V116H296Z';
@@ -53,9 +40,8 @@ const BELIEFS = [
 	<main>
 		<section class="q" data-q>
 			<div class="q-stick" data-q-stick>
-				<i class="aura aura-t" data-aura-t aria-hidden="true"></i>
-				<i class="aura aura-g" data-aura-g aria-hidden="true"></i>
-				<i class="aura aura-c" data-aura-c aria-hidden="true"></i>
+				<i class="q-glow" aria-hidden="true"></i>
+				<img class="q-shape" data-q-shape src="/images/DocSera-shape-main.svg" alt="" width="2000" height="1924" aria-hidden="true" />
 				<div class="q-text">
 					<h1 class="q-line q-ask" data-q-ask><span class="q-rise" data-q-rise>من نحن<span class="q-sr">؟</span><svg class="qm" viewBox="0 -720 446 740" aria-hidden="true"><g transform="scale(1 -1)"><path data-q-hook d={QM_HOOK} /><path data-q-tittle d={QM_DOT} /></g></svg></span></h1>
 					<p class="q-line q-say" data-q-say=".125,.155,.235,.265">بين المريض وطبيبه،<br />كانت هناك مسافة.</p>
@@ -65,28 +51,21 @@ const BELIEFS = [
 							<p>{text.split(' ').map((w) => <Fragment><span class="w">{w}</span>{' '}</Fragment>)}</p>
 						</article>
 					))}
-					<h2 class="q-line q-say q-answer" data-q-say=".885,.915,2,3"><img class="q-gem" src="/images/app110/gem.webp" width="480" height="480" alt="" loading="lazy" decoding="async" />نحن DocSera.</h2>
+					<h2 class="q-line q-say q-answer" data-q-say=".885,.915,2,3">نحن DocSera.</h2>
 				</div>
 				<div class="q-ends" aria-hidden="true">
 					<span class="q-end"><i class="q-dot on" data-q-dot-r></i><span data-q-word-r>المريض</span></span>
 					<span class="q-wire">
 						<i class="q-dash" data-q-dash></i>
 						<i class="q-solid" data-q-wire></i>
-						{STATIONS.map(([from, to, at, card, w, h]) => (
+						{STATIONS.map(([from, to, at]) => (
 							<span class="st" style={`right:${at}%`} data-st={at / 100}>
 								<span class="st-a">{from}</span><span class="st-b">{to}</span><i class="st-t"></i>
-								<span class="qc" aria-hidden="true">
-									<span class="qc-old"><svg viewBox="0 0 24 24"><path d={OLD_ICON[card]} /></svg></span>
-									<img class="qc-new" src={`/images/about/st-${card}.webp`} width={w} height={h} alt="" loading="lazy" decoding="async" />
-								</span>
 							</span>
 						))}
 						<span class="q-mark" data-q-mark><img src="/images/DocSera-shape-main.svg" alt="" width="24" height="24" /></span>
 					</span>
 					<span class="q-end" data-q-end-l><i class="q-dot" data-q-dot></i>الطبيب</span>
-				</div>
-				<div class="q-slot" data-q-slot aria-hidden="true">
-					{STATIONS.map(([, , , card, w, h]) => <img src={`/images/about/st-${card}.webp`} width={w} height={h} alt="" loading="lazy" decoding="async" />)}
 				</div>
 				<i class="q-fly" data-q-fly aria-hidden="true"></i>
 				<i class="q-ring" data-q-ring aria-hidden="true"></i>
@@ -137,7 +116,7 @@ const BELIEFS = [
 		const ask = one('[data-q-ask]'), tittle = one<SVGPathElement>('[data-q-tittle]'), fly = one('[data-q-fly]'), ring = one('[data-q-ring]');
 		const dotR = one('[data-q-dot-r]'), wordR = one('[data-q-word-r]'), endL = one('[data-q-end-l]'), dot = one('[data-q-dot]');
 		const dash = one('[data-q-dash]'), wire = one('[data-q-wire]'), mark = one('[data-q-mark]'), cue = one('[data-q-cue]');
-		const slot = one('[data-q-slot]'), auraT = one('[data-aura-t]'), auraG = one('[data-aura-g]'), auraC = one('[data-aura-c]');
+		const shape = one('[data-q-shape]');
 		const says = Array.from(root.querySelectorAll<HTMLElement>('[data-q-say]')).map((el) => ({ el, t: (el.dataset.qSay || '').split(',').map(Number) }));
 		// [fade in from, to, ink from, to, fade out from, to]
 		const TIMES = [[0.275, 0.305, 0.312, 0.405, 0.432, 0.462], [0.472, 0.502, 0.51, 0.612, 0.635, 0.665], [0.675, 0.705, 0.712, 0.79, 0.85, 0.88]];
@@ -159,6 +138,7 @@ const BELIEFS = [
 			ring.style.top = `${E.y}px`;
 		};
 		const paint = (p: number) => {
+			shape.style.transform = `translate3d(0, ${(-6 * p).toFixed(2)}vh, 0) rotate(${(p * 90).toFixed(2)}deg)`;
 			const leave = seg(p, 0.045, 0.09);
 			ask.style.opacity = String(1 - leave);
 			ask.style.transform = `translateY(${-12 * leave}px)`;
@@ -206,16 +186,8 @@ const BELIEFS = [
 			dash.style.opacity = String(seg(p, 0.298, 0.336));
 			const r = seg(p, 0.7, 0.868);
 			wire.style.transform = `scaleX(${r.toFixed(4)})`;
-			// the light: teal from the start, a grey fog over the broken path, teal again once crossed
-			auraT.style.opacity = String(0.55 + 0.45 * seg(p, 0, 0.08) - 0.4 * seg(p, 0.3, 0.4) + 0.4 * r);
-			auraT.style.transform = `translate3d(${(p * 18).toFixed(2)}vw, ${(p * 26).toFixed(2)}vh, 0)`;
-			auraG.style.opacity = String(seg(p, 0.29, 0.36) * (1 - r));
-			auraC.style.opacity = String(r);
-			let latest = -1;
 			stations.forEach(({ el, at, i, from, to, tick }) => {
 				const show = seg(p, 0.316 + i * 0.021, 0.342 + i * 0.021), done = seg(r, at - 0.012, at + 0.035);
-				el.style.setProperty('--done', done.toFixed(3));
-				if (done > 0.5) latest = i;
 				el.style.opacity = String(show);
 				from.style.opacity = String(1 - done);
 				from.style.transform = `translateY(${-5 * done}px)`;
@@ -223,7 +195,6 @@ const BELIEFS = [
 				to.style.transform = `translateY(${5 * (1 - done)}px)`;
 				tick.classList.toggle('on', done > 0.5);
 			});
-			slot.dataset.cur = String(latest);
 			dot.classList.toggle('on', r > 0.997);
 			const m = seg(p, 0.868, 0.908);
 			mark.style.opacity = String(m);
@@ -368,44 +339,9 @@ const BELIEFS = [
 		.q-cue i::after { animation: none; }
 	}
 
-	/* ── what fills the story: light, the real app cards that replace each friction, the 3D mark ── */
-	.aura, .qc, .q-slot { display: none; }
-	:global(html.anim) .aura { display: block; position: absolute; z-index: 0; width: 72vmax; height: 72vmax; border-radius: 50%; opacity: 0; pointer-events: none; will-change: transform, opacity; }
-	.aura-t { left: -22vmax; top: -34vmax; background: radial-gradient(closest-side, rgba(0, 160, 158, .17), rgba(0, 160, 158, .05) 55%, transparent); }
-	.aura-g { right: -26vmax; bottom: -38vmax; background: radial-gradient(closest-side, rgba(94, 110, 113, .16), rgba(94, 110, 113, .05) 55%, transparent); }
-	.aura-c { right: -26vmax; bottom: -38vmax; background: radial-gradient(closest-side, rgba(63, 208, 201, .2), rgba(0, 144, 146, .06) 55%, transparent); }
+	/* the only background: a soft teal light, and the original shape, faint and large, turning slowly */
+	.q-glow, .q-shape { display: none; }
+	:global(html.anim) .q-glow { display: block; position: absolute; z-index: 0; inset-inline-end: -18vmax; top: -24vmax; width: 66vmax; height: 66vmax; border-radius: 50%; background: radial-gradient(closest-side, rgba(0, 160, 158, .12), rgba(0, 160, 158, .04) 55%, transparent); pointer-events: none; }
+	:global(html.anim) .q-shape { display: block; position: absolute; z-index: 0; inset-inline-start: -16vmin; bottom: -22vmin; width: 62vmin; height: auto; opacity: .045; pointer-events: none; will-change: transform; }
 	:global(html.anim) .q-text, :global(html.anim) .q-ends { z-index: 1; }
-	:global(html.anim) .qc { display: block; position: absolute; top: calc(100% + 26px); left: 50%; width: clamp(132px, 11.2vw, 172px); translate: -50% 0; }
-	.qc-old {
-		position: absolute; top: 0; left: 50%;
-		display: grid; place-items: center;
-		width: 54px; height: 54px; margin-left: -27px;
-		color: rgba(18, 40, 44, .45);
-		background: rgba(255, 255, 255, .7);
-		border: 1px dashed rgba(18, 40, 44, .28);
-		border-radius: 16px;
-		opacity: calc(1 - var(--done, 0));
-		transform: scale(calc(1 - var(--done, 0) * .35)) rotate(calc(var(--done, 0) * -10deg));
-	}
-	.qc-old svg { width: 24px; height: 24px; fill: none; stroke: currentColor; stroke-width: 1.6; stroke-linecap: round; stroke-linejoin: round; }
-	.qc-new {
-		display: block; width: 100%; height: auto;
-		border-radius: 16px;
-		box-shadow: 0 24px 40px -20px rgba(0, 60, 62, .5), 0 0 0 1px rgba(0, 144, 146, .12);
-		opacity: var(--done, 0);
-		transform: translateY(calc((1 - var(--done, 0)) * 18px)) scale(calc(.92 + var(--done, 0) * .08)) rotate(calc(var(--tilt, 0deg) * var(--done, 0)));
-	}
-	.st:nth-of-type(odd) .qc-new { --tilt: -2deg; }
-	.st:nth-of-type(even) .qc-new { --tilt: 2deg; }
-	.q-gem { display: block; width: clamp(84px, 9vw, 128px); height: auto; margin: 0 auto 4px; filter: drop-shadow(0 18px 24px rgba(0, 80, 82, .3)); }
-	@media (prefers-reduced-motion: no-preference) {
-		:global(html.anim) .q-gem { animation: q-gem 6s ease-in-out infinite; }
-		@keyframes q-gem { 0%, 100% { transform: translateY(0) rotate(0deg); } 50% { transform: translateY(-8px) rotate(7deg); } }
-	}
-	@media (max-width: 620px) {
-		:global(html.anim) .qc { display: none; }
-		:global(html.anim) .q-slot { display: grid; position: absolute; z-index: 1; left: 50%; top: calc(72% + 64px); width: min(300px, 78vw); translate: -50% 0; }
-		.q-slot img { grid-area: 1 / 1; width: 100%; height: auto; border-radius: 16px; box-shadow: 0 24px 40px -20px rgba(0, 60, 62, .5), 0 0 0 1px rgba(0, 144, 146, .12); opacity: 0; transform: translateY(14px) scale(.95); transition: opacity .45s ease, transform .6s cubic-bezier(.2, .8, .2, 1); }
-		.q-slot[data-cur='0'] img:nth-child(1), .q-slot[data-cur='1'] img:nth-child(2), .q-slot[data-cur='2'] img:nth-child(3), .q-slot[data-cur='3'] img:nth-child(4) { opacity: 1; transform: none; }
-	}
 </style>
