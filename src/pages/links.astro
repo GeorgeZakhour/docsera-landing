@@ -13,42 +13,16 @@ import { APP_STORE_URL, playUrl, proWhatsAppUrl, INSTAGRAM_URL } from '../config
 import whiteLogo from '../../public/images/docsera_white.svg?raw';
 import { articleById } from '../data/help';
 
-// The top of the page: three candidates for the founder to choose from in the preview
-// (/links?top=a|b|c, with a switcher); a production build carries only the chosen one.
-const PREVIEW = import.meta.env.PUBLIC_DOCTOR_PREVIEW === '1';
-const DEFAULT_TOP = 'a';
-const TOPS = PREVIEW ? ['a', 'b', 'c'] : [DEFAULT_TOP];
-
 // The three questions people ask most, straight from the help guide (titles stay in sync with it).
 const QUESTIONS = ['cancel-appointment', 'fix-code-not-arriving', 'how-to-book']
 	.map((id) => articleById(id))
 	.filter((a): a is NonNullable<typeof a> => !!a)
 	.map((a) => ({ id: a.id, title: a.title }));
 
-// docsera_white.svg = the mark (first path) followed by the letters.
-const paths = [...whiteLogo.matchAll(/\sd="([^"]+)"/g)].map((m) => m[1].replace(/\s+/g, ' ').trim());
-const markPath = paths[0];
-const letterPaths = paths.slice(1);
-
-// Measured with getBBox() in the browser — the mark's own box inside the logo
-// (with a little room), its centre, and the letters' box. The four petals are
-// cut apart along the diagonals and drawn together from the centre.
+// docsera_white.svg = the mark (first path) followed by the letters; the mark, blurred, is the
+// backdrop's light. Its own box inside the logo (measured with getBBox()).
+const markPath = [...whiteLogo.matchAll(/\sd="([^"]+)"/g)].map((m) => m[1].replace(/\s+/g, ' ').trim())[0];
 const MARK_BOX = { x: 14, y: 14, w: 242, h: 242 };
-const C = { x: 134.8, y: 134.9 };
-const WORD_BOX = '299 25 1238 233';
-const corners = {
-	tl: `${MARK_BOX.x},${MARK_BOX.y}`,
-	tr: `${MARK_BOX.x + MARK_BOX.w},${MARK_BOX.y}`,
-	br: `${MARK_BOX.x + MARK_BOX.w},${MARK_BOX.y + MARK_BOX.h}`,
-	bl: `${MARK_BOX.x},${MARK_BOX.y + MARK_BOX.h}`,
-};
-const centre = `${C.x},${C.y}`;
-const petals = [
-	{ id: 'top', pts: `${corners.tl} ${corners.tr} ${centre}`, dx: 0, dy: -46 },
-	{ id: 'right', pts: `${corners.tr} ${corners.br} ${centre}`, dx: 46, dy: 0 },
-	{ id: 'bottom', pts: `${corners.br} ${corners.bl} ${centre}`, dx: 0, dy: 46 },
-	{ id: 'left', pts: `${corners.bl} ${corners.tl} ${centre}`, dx: -46, dy: 0 },
-];
 
 const WA_TEXT = 'مرحباً، عندي سؤال عن DocSera';
 
@@ -133,13 +107,6 @@ const WA_TEXT = 'مرحباً، عندي سؤال عن DocSera';
 	<svg width="0" height="0" style="position:absolute" aria-hidden="true">
 		<defs>
 			<path id="ds-mark" d={markPath} />
-			<linearGradient id="markFill" x1="0" y1="0" x2="1" y2="1">
-				<stop offset="0" stop-color="#FFFFFF" />
-				<stop offset="1" stop-color="#BDF4EC" />
-			</linearGradient>
-			{petals.map((p) => (
-				<clipPath id={`cut-${p.id}`}><polygon points={p.pts} /></clipPath>
-			))}
 		</defs>
 	</svg>
 
@@ -162,34 +129,10 @@ const WA_TEXT = 'مرحباً، عندي سؤال عن DocSera';
 			<button class="lang-btn" type="button" data-lang lang="en" aria-label="Switch to English">EN</button>
 		</header>
 
-		<section class="hero" data-hero>
-			{TOPS.includes('a') && (
-				<!-- (a) the app icon, as the stores show it, then the name -->
-				<div class:list={['top', 'top-a', { on: DEFAULT_TOP === 'a' }]} data-top="a">
-					<span class="badge-wrap"><img class="badge" src="/images/links/app-icon-288.webp" width="288" height="288" alt="" fetchpriority="high" /></span>
-					<h1 class="wordmark">
-						<svg viewBox={WORD_BOX} role="img" aria-label="DocSera">
-							<g fill="currentColor">{letterPaths.map((d) => <path d={d} />)}</g>
-						</svg>
-					</h1>
-					<p class="slogan" data-t="slogan">كل صحتك في تطبيق واحد</p>
-				</div>
-			)}
-			{TOPS.includes('b') && (
-				<!-- (b) the official logo, as in the site header, with one pass of light -->
-				<div class:list={['top', 'top-b', { on: DEFAULT_TOP === 'b' }]} data-top="b">
-					<h1 class="lockup"><img src="/images/docsera_white.svg" width="1536" height="257" alt="DocSera" /><span class="lockup-light" aria-hidden="true"></span></h1>
-					<p class="slogan" data-t="slogan">كل صحتك في تطبيق واحد</p>
-				</div>
-			)}
-			{TOPS.includes('c') && (
-				<!-- (c) the official logo, and the real app rising from below, like the home page's last section -->
-				<div class:list={['top', 'top-c', { on: DEFAULT_TOP === 'c' }]} data-top="c">
-					<h1 class="lockup lockup-sm"><img src="/images/docsera_white.svg" width="1536" height="257" alt="DocSera" /></h1>
-					<p class="slogan" data-t="slogan">كل صحتك في تطبيق واحد</p>
-					<div class="rise-phone" aria-hidden="true"><img src="/images/app110/home-480.webp" width="480" height="1041" alt="" decoding="async" /></div>
-				</div>
-			)}
+		<!-- The official logo, as in the site header, with one pass of light (founder's pick, 2026-11-24). -->
+		<section class="hero">
+			<h1 class="lockup"><img src="/images/docsera_white.svg" width="1536" height="257" alt="DocSera" fetchpriority="high" /><span class="lockup-light" aria-hidden="true"></span></h1>
+			<p class="slogan" data-t="slogan">كل صحتك في تطبيق واحد</p>
 		</section>
 
 		<main class="links">
@@ -303,14 +246,6 @@ const WA_TEXT = 'مرحباً، عندي سؤال عن DocSera';
 	</div>
 
 	<div class="toast" role="status" aria-live="polite" data-toast></div>
-	{PREVIEW && (
-		<div class="pick" data-pick>
-			<span>أعلى الصفحة:</span>
-			<button type="button" data-pick-top="a">أ</button>
-			<button type="button" data-pick-top="b">ب</button>
-			<button type="button" data-pick-top="c">ج</button>
-		</div>
-	)}
 </body>
 </html>
 
@@ -428,25 +363,6 @@ const WA_TEXT = 'مرحباً، عندي سؤال عن DocSera';
 			}
 		});
 	});
-
-	// ------------------------------------------------------------ preview: the top
-	// Only in a preview build: ?top=a|b|c and the switcher show each candidate.
-	const pick = document.querySelector<HTMLElement>('[data-pick]');
-	if (pick) {
-		const show = (t: string) => {
-			document.querySelectorAll<HTMLElement>('[data-top]').forEach((el) => el.classList.toggle('on', el.dataset.top === t));
-			pick.querySelectorAll<HTMLButtonElement>('[data-pick-top]').forEach((b) => b.classList.toggle('on', b.dataset.pickTop === t));
-			root.dataset.top = t;
-		};
-		const fromUrl = new URLSearchParams(location.search).get('top');
-		show(fromUrl && /^[abc]$/.test(fromUrl) ? fromUrl : 'a');
-		pick.addEventListener('click', (e) => {
-			const t = (e.target as HTMLElement).closest<HTMLButtonElement>('[data-pick-top]')?.dataset.pickTop;
-			if (!t) return;
-			const u = new URL(location.href); u.searchParams.set('top', t); history.replaceState(null, '', u);
-			show(t);
-		});
-	}
 
 	// ------------------------------------------------------------ share
 	const toast = document.querySelector<HTMLElement>('[data-toast]')!;
@@ -640,13 +556,6 @@ const WA_TEXT = 'مرحباً، عندي سؤال عن DocSera';
 		padding: 18px 0 30px;
 	}
 
-	.wordmark {
-		margin: 22px auto 0;
-		width: 168px;
-		color: var(--ivory);
-		line-height: 0;
-	}
-	.wordmark svg { width: 100%; height: auto; display: block; }
 	.slogan {
 		margin: 12px 0 0;
 		font: 500 16px/1.4 'Montserrat', sans-serif;
@@ -941,13 +850,11 @@ const WA_TEXT = 'مرحباً، عندي سؤال عن DocSera';
 	   One sequence: the four petals of the mark come together (“connected”),
 	   a ring answers, then the name, the line, and the links settle in. */
 	@media (prefers-reduced-motion: no-preference) {
-		:global(html.js) .wordmark,
 		:global(html.js) .slogan,
 		:global(html.js) .links > *,
 		:global(html.js) .foot {
 			animation: rise 0.8s var(--ease-out) backwards;
 		}
-		:global(html.js) .wordmark { animation: none; }
 		:global(html.js) .slogan { animation-delay: 1s; }
 		:global(html.js) .links > * { animation-delay: calc(1.12s + var(--i) * 0.08s); }
 		:global(html.js) .foot { animation-delay: 1.5s; }
@@ -974,7 +881,7 @@ const WA_TEXT = 'مرحباً، عندي سؤال عن DocSera';
 	}
 
 	/* ================================================= 2026-11 refresh */
-	/* the line under the wordmark is the site's own promise, in Arabic first */
+	/* the line under the logo is the site's own promise, in Arabic first */
 	.slogan { font: 700 17px/1.5 'Cairo', sans-serif; letter-spacing: 0; }
 	:global(html[lang='en']) .slogan { font: 500 16px/1.4 'Montserrat', sans-serif; letter-spacing: 0.01em; }
 
@@ -1111,25 +1018,10 @@ const WA_TEXT = 'مرحباً، عندي سؤال عن DocSera';
 	.row-first { margin-top: 16px; }
 
 
-	/* ── the top: three candidates (preview); production renders one ── */
-	.hero { padding: 6px 0 26px; }
-	.top { display: none; text-align: center; }
-	.top:global(.on) { display: block; }
-	/* (a) the app icon */
-	.badge-wrap { position: relative; display: inline-block; margin-top: 18px; border-radius: 28%; }
-	.badge-wrap::before {
-		content: ''; position: absolute; inset: -26px; z-index: -1; border-radius: 50%;
-		background: radial-gradient(closest-side, rgba(63, 208, 201, 0.42), transparent);
-	}
-	.badge {
-		display: block; width: 112px; height: 112px; border-radius: 26px;
-		box-shadow: 0 26px 44px -18px rgba(0, 0, 0, 0.75), 0 0 0 1px rgba(255, 255, 255, 0.2);
-	}
-	.top-a .wordmark { margin: 20px auto 0; width: 158px; }
-	/* (b) / (c) the official logo */
-	.lockup { position: relative; margin: 34px auto 0; width: min(248px, 70vw); line-height: 0; }
+	/* ── the top: the official logo, small, and the promise ── */
+	.hero { padding: 10px 0 24px; text-align: center; }
+	.lockup { position: relative; margin: 30px auto 0; width: min(168px, 46vw); line-height: 0; }
 	.lockup img { display: block; width: 100%; height: auto; }
-	.lockup-sm { margin-top: 26px; width: min(200px, 58vw); }
 	.lockup-light {
 		position: absolute; inset: 0;
 		background: linear-gradient(105deg, transparent 30%, #BDF4EC 48%, #fff 50%, #BDF4EC 52%, transparent 70%) no-repeat;
@@ -1138,48 +1030,14 @@ const WA_TEXT = 'مرحباً، عندي سؤال عن DocSera';
 		-webkit-mask: url(/images/docsera_white.svg) center / 100% 100% no-repeat;
 		mask: url(/images/docsera_white.svg) center / 100% 100% no-repeat;
 	}
-	.top-b .slogan { margin-top: 16px; }
-	/* (c) the real app rising, fading into the page */
-	.rise-phone {
-		position: relative;
-		width: 216px; height: 214px;
-		margin: 22px auto -26px;
-		overflow: hidden;
-		border-radius: 34px 34px 0 0;
-		border: 6px solid #0A2427;
-		border-bottom: 0;
-		box-shadow: 0 -10px 60px -12px rgba(63, 208, 201, 0.45);
-		-webkit-mask: linear-gradient(180deg, #000 55%, transparent);
-		mask: linear-gradient(180deg, #000 55%, transparent);
-	}
-	.rise-phone img { display: block; width: 100%; height: auto; }
-	:global(html[data-top='c']) .app-phone { display: none; }
-	:global(html[data-top='c']) .card-app { min-height: 0; padding: 20px; }
+	.hero .slogan { margin-top: 12px; font-size: 15.5px; }
 
 	@media (prefers-reduced-motion: no-preference) {
-		:global(html.js) .top > * { animation: rise 0.8s var(--ease-out) backwards; }
-		:global(html.js) .top > :nth-child(2) { animation-delay: 0.12s; }
-		:global(html.js) .top > :nth-child(3) { animation-delay: 0.22s; }
-		:global(html.js) .badge { animation: badge-in 0.9s var(--ease-spring) backwards; }
-		@keyframes badge-in { from { transform: scale(0.7) translateY(10px); opacity: 0; } to { transform: none; opacity: 1; } }
+		:global(html.js) .lockup { animation: rise 0.8s var(--ease-out) backwards; }
+		:global(html.js) .hero .slogan { animation-delay: 0.12s; }
 		:global(html.js) .lockup-light { animation: light 1.6s ease-in-out 0.6s both; }
 		@keyframes light { from { background-position: 130% 0; } to { background-position: -30% 0; } }
-		:global(html.js) .rise-phone { animation: phone-up 1s var(--ease-out) 0.25s backwards; }
-		@keyframes phone-up { from { transform: translateY(60px); opacity: 0; } to { transform: none; opacity: 1; } }
-		:global(html.js) .links > * { animation-delay: calc(0.3s + var(--i) * 0.07s); }
-		:global(html.js) .foot { animation-delay: 0.85s; }
+		:global(html.js) .links > * { animation-delay: calc(0.25s + var(--i) * 0.07s); }
+		:global(html.js) .foot { animation-delay: 0.8s; }
 	}
-
-	/* the preview switcher (preview builds only) */
-	.pick {
-		position: fixed; z-index: 50; left: 50%; bottom: max(14px, env(safe-area-inset-bottom));
-		transform: translateX(-50%);
-		display: flex; align-items: center; gap: 6px;
-		padding: 6px 6px 6px 12px;
-		border-radius: 999px;
-		font: 700 13px 'Cairo', sans-serif; color: #0E2B2C; white-space: nowrap;
-		background: #fff; box-shadow: 0 14px 34px -10px rgba(0, 0, 0, 0.6);
-	}
-	.pick button { width: 34px; height: 34px; border: 0; border-radius: 50%; font: 800 15px 'Cairo', sans-serif; color: #006F71; background: #E6F6F5; cursor: pointer; }
-	.pick button:global(.on) { color: #fff; background: #009092; }
 </style>
