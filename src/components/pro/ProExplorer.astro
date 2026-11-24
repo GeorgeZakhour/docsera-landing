@@ -15,7 +15,7 @@ function fit(key: string) {
 	const [x, y, w, h] = s.rect || [0, 0, s.w, s.h];
 	const cx = (x + w / 2) / s.w, cy = (y + h / 2) / s.h, area = (w * h) / (s.w * s.h);
 	// The card rises where it is, growing toward the middle of the window.
-	const lifted = !!s.rect && area < 0.46;
+	const lifted = !!s.rect && !s.nolift && area < 0.46;
 	const scale = clamp(620 / w, 1.07, 1.62);
 	const ox = cx < 0.34 ? '0%' : cx > 0.66 ? '100%' : '50%';
 	const oy = cy < 0.34 ? '0%' : cy > 0.66 ? '100%' : '50%';

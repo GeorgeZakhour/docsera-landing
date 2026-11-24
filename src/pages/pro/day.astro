@@ -9,27 +9,24 @@ import ProHeader from '../../components/pro/ProHeader.astro';
 import ProFooter from '../../components/pro/ProFooter.astro';
 import { proWhatsAppUrl } from '../../config/links';
 import { WHATSAPP_TEXT } from '../../config/pro-join';
+import SHOTS from '../../data/proShots.json';
+import { DAY_MORE, PRO_DAY } from '../../data/proDay';
 
 const WA = proWhatsAppUrl(WHATSAPP_TEXT);
-const CHAPTERS = [
-	{ screen: 'calendar', lift: 'calendar', time: '8:30', ap: 'ص', title: 'جدول اليوم',
-		body: 'كل مواعيدك بلمحة، تنظّمها بالطبيب والسبب والحالة وحقولك الخاصة، والمريض يحجز بنفسه في الأوقات التي تحددها، وأكثر.' },
-	{ screen: 'dashboard', lift: 'waiting', time: '10:00', ap: 'ص', title: 'غرفة الانتظار',
-		body: 'من وصل وكم انتظر كل مريض، بترتيب عادل تعدّله بالسحب، واستدعاء المريض بضغطة، وأكثر.' },
-	{ screen: 'file', lift: 'file', time: '11:30', ap: 'ص', title: 'ملف شامل',
-		body: 'ملف لكل مريض يجمع معلوماته وزياراته وتقاريره وتاريخه الطبي وغيرها، مرتبطاً بملفه المركزي على دوكسيرا.' },
-	{ screen: 'dashboard', lift: 'round', time: '6:30', ap: 'م', title: 'جولة التذكير',
-		body: 'مرضى الغد في قائمة واحدة، تذكّرهم واحداً بعد الآخر بواتساب أو SMS أو اتصال، ومن لديه التطبيق يصله التذكير تلقائياً.' },
-];
-const MORE = ['التقارير الطبية', 'محاسبة ذكية', 'مراسلة المرضى', 'إدارة الفريق', 'إحصاءات العيادة', 'مخطط الأسنان', 'عروض وخصومات', 'نقاط الولاء', 'مرضى جدد', 'وأكثر'];
-const img = (id: string) => `/images/pro/day/${id}`;
+const shotSrc = (id: string) => `/images/pro/site/${id}.webp`;
+const stations = PRO_DAY.map((st) => {
+	const m = (SHOTS as any)[st.shot];
+	const rect = st.rect === null ? null : (st.rect || m.rect);
+	const crop = rect ? `width:${(m.w / rect[2] * 100).toFixed(3)}%;left:${(-rect[0] / rect[2] * 100).toFixed(3)}%;top:${(-rect[1] / rect[3] * 100).toFixed(3)}%` : '';
+	return { ...st, src: shotSrc(st.shot), rect, crop, W: m.w, H: m.h, r: m.r || 16 };
+});
 ---
 
 <Layout title="DocSera Pro — عيادتك كلها" description="DocSera Pro لإدارة العيادة والمركز الطبي: المواعيد، غرفة الانتظار، ملفات المرضى، التقارير، المحاسبة، وأكثر." appBanner="none" appBar={false}>
 	<ProHeader current="day" />
 
 	<main class="pd">
-		<section class="day" data-day>
+		<section class="day" data-day style={`--n:${stations.length + 1}`}>
 			<div class="stick" data-stick>
 				<div class="sky" aria-hidden="true">
 					<ProBackdrop fixed={false} />
@@ -56,13 +53,8 @@ const img = (id: string) => `/images/pro/day/${id}`;
 							<i class="lid-edge"></i>
 							<div class="lid-face">
 								<div class="screen" data-screen>
-									{CHAPTERS.map((c, i) => (
-										<img class:list={['shot', { on: i === 0 }]} data-shot
-											src={i === 0 ? `${img(c.screen)}.webp` : undefined}
-											srcset={i === 0 ? `${img(c.screen)}-sm.webp 1000w, ${img(c.screen)}.webp 2880w` : undefined}
-											data-src={i === 0 ? undefined : `${img(c.screen)}.webp`}
-											data-srcset={i === 0 ? undefined : `${img(c.screen)}-sm.webp 1000w, ${img(c.screen)}.webp 2880w`}
-											sizes="(max-width: 899px) 96vw, 60vw" alt="" width="1440" height="900" decoding="async" />
+									{stations.map((c, i) => (
+										<img class:list={['shot', { on: i === 0 }]} data-shot src={i === 0 ? c.src : undefined} data-src={i === 0 ? undefined : c.src} alt="" width={c.W} height={c.H} decoding="async" />
 									))}
 									<i class="glare"></i>
 								</div>
@@ -72,7 +64,9 @@ const img = (id: string) => `/images/pro/day/${id}`;
 					</div>
 				</div>
 
-				{CHAPTERS.map((c) => <img class="lift" data-lift={c.lift} data-src={`${img(c.lift)}-lift.webp`} alt="" decoding="async" aria-hidden="true" />)}
+				{stations.map((c, i) => (c.rect ? (
+					<div class:list={['lift', { bare: c.bare }]} data-lift={i} data-rect={c.rect.join(',')} data-w={c.W} data-h={c.H} data-r={c.r} aria-hidden="true"><img data-src={c.src} style={c.crop} alt="" decoding="async" /></div>
+				) : <div data-lift={i} hidden></div>))}
 
 				<div class="txt">
 					<svg class="arc" viewBox="0 0 320 92" aria-hidden="true">
@@ -81,9 +75,9 @@ const img = (id: string) => `/images/pro/day/${id}`;
 						<circle class="sun-glow" data-sun-glow r="13" /><circle class="sun" data-sun r="6" />
 					</svg>
 					<div class="blocks">
-						{CHAPTERS.map((c) => (
+						{stations.map((c) => (
 							<article class="b" data-block>
-								<p class="time"><b>{c.time}</b><span>{c.ap}</span></p>
+								<p class="time"><b>{c.time}</b><span>{c.ap}</span>{c.tag && <em>{c.tag}</em>}</p>
 								<h2>{c.title}</h2>
 								<p class="body">{c.body}</p>
 							</article>
@@ -93,8 +87,8 @@ const img = (id: string) => `/images/pro/day/${id}`;
 
 				<div class="end" data-end>
 					<p class="time"><b>9:00</b><span>م</span></p>
-					<h2>والكثير غيرها</h2>
-					<ul>{MORE.map((m) => <li>{m}</li>)}</ul>
+					<h2>وانتهى يومك</h2>
+					<ul>{DAY_MORE.map((m) => <li>{m}</li>)}</ul>
 					<div class="acts">
 						<a class="btn" href="/pro/join">ابدأ تجربتك المجانية</a>
 						<a class="lnk" href={WA} target="_blank" rel="noopener">تواصل معنا على واتساب</a>
@@ -110,70 +104,67 @@ const img = (id: string) => `/images/pro/day/${id}`;
 </Layout>
 
 <script>
-	import LIFTS from '../../../public/images/pro/day/lift.json';
-
 	const day = document.querySelector<HTMLElement>('[data-day]')!;
 	const stick = document.querySelector<HTMLElement>('[data-stick]')!;
 	const screen = document.querySelector<HTMLElement>('[data-screen]')!;
 	const shots = Array.from(document.querySelectorAll<HTMLImageElement>('[data-shot]'));
 	const blocks = Array.from(document.querySelectorAll<HTMLElement>('[data-block]'));
 	const skies = Array.from(document.querySelectorAll<HTMLElement>('[data-sky]'));
-	const lifts = Array.from(document.querySelectorAll<HTMLImageElement>('[data-lift]'));
+	const lifts = Array.from(document.querySelectorAll<HTMLElement>('[data-lift]'));
 	const arc = document.querySelector<SVGPathElement>('[data-arc]')!;
 	const sun = document.querySelector<SVGCircleElement>('[data-sun]')!;
 	const glow = document.querySelector<SVGCircleElement>('[data-sun-glow]')!;
-	const LAST = 5;
+	const COUNT = blocks.length, LAST = COUNT + 1;
 	const arcLength = arc.getTotalLength();
 	arc.style.strokeDasharray = String(arcLength);
-	const still = matchMedia('(prefers-reduced-motion: reduce)').matches;
 	const clamp = (v: number, a = 0, b = 1) => Math.min(b, Math.max(a, v));
 	const ease = (t: number) => t * t * (3 - 2 * t);
 
-	const load = (el: HTMLImageElement) => {
-		if (el.dataset.srcset) { el.srcset = el.dataset.srcset; el.removeAttribute('data-srcset'); }
-		if (el.dataset.src) { el.src = el.dataset.src; el.removeAttribute('data-src'); }
+	const load = (el: HTMLImageElement | null) => {
+		if (el?.dataset.src) { el.src = el.dataset.src; el.removeAttribute('data-src'); }
+	};
+	const loadAt = (i: number) => {
+		load(shots[i] || null);
+		load(lifts[i]?.querySelector('img') || null);
 	};
 
 	// Where a card sits on the laptop's screen, and where it rises to.
-	function placeLift(el: HTMLImageElement) {
-		const r = (LIFTS as any)[el.dataset.lift!];
+	function placeLift(el: HTMLElement) {
+		if (!el.dataset.rect) return;
+		const [x, y, w, h] = el.dataset.rect.split(',').map(Number);
+		const W = Number(el.dataset.w);
 		const box = screen.getBoundingClientRect(), stage = stick.getBoundingClientRect();
-		const k = box.width / 1440;
-		const [fx, fy, fw, fh] = r.from || [r.x, r.y, r.w, r.h];
-		const from = { x: box.left - stage.left + fx * k, y: box.top - stage.top + fy * k, w: fw * k, h: fh * k };
-		const ratio = r.ratio || r.w / r.h;
-		const phone = innerWidth < 900;
-		const small = el.dataset.lift === 'calendar' ? 0.68 : 1;
-		const maxW = (phone ? Math.min(innerWidth * 0.76, 320) : Math.min(innerWidth * 0.25, 370)) * small;
+		const k = box.width / W;
+		const from = { x: box.left - stage.left + x * k, y: box.top - stage.top + y * k, w: w * k, h: h * k };
+		const ratio = w / h, phone = innerWidth < 900;
+		const maxW = phone ? Math.min(innerWidth * 0.92, 420) : ratio > 2 ? Math.min(innerWidth * 0.5, 760) : Math.min(innerWidth * 0.3, 470);
 		const maxH = phone ? innerHeight * 0.4 : innerHeight * 0.66;
-		const w = Math.min(maxW, maxH * ratio), h = w / ratio;
-		// The waiting room rises over its own widget, so the empty one is never beside it.
-		const own = el.dataset.lift === 'waiting' && !phone;
-		const cx = phone ? innerWidth / 2 : own ? Math.max(w / 2 + 14, from.x + from.w / 2) : box.left - stage.left + box.width * 0.72;
+		const tw = Math.min(maxW, maxH * ratio), th = tw / ratio;
+		const middle = box.left - stage.left + box.width / 2;
+		const cx = phone ? innerWidth / 2 : tw > innerWidth * 0.34 ? middle : box.left - stage.left + box.width * 0.66;
 		const cy = phone ? box.top - stage.top + box.height * 0.56 : box.top - stage.top + box.height * 0.52;
-		const to = { x: cx - w / 2, y: clamp(cy - h / 2, 76, innerHeight - h - 16), w, h };
-		el.style.width = `${to.w}px`;
-		el.style.height = `${to.h}px`;
-		el.style.left = `${to.x}px`;
-		el.style.top = `${to.y}px`;
-		const sx = from.w / to.w;
-		el.style.setProperty('--from', `translate(${from.x + from.w / 2 - (to.x + to.w / 2)}px, ${from.y + from.h / 2 - (to.y + to.h / 2)}px) scale(${sx})`);
+		const left = clamp(cx - tw / 2, 10, innerWidth - tw - 10), top = clamp(cy - th / 2, 76, innerHeight - th - 14);
+		el.style.width = `${tw}px`;
+		el.style.height = `${th}px`;
+		el.style.left = `${left}px`;
+		el.style.top = `${top}px`;
+		el.style.borderRadius = `${Math.max(10, Number(el.dataset.r) * (tw / w))}px`;
+		el.style.setProperty('--from', `translate(${from.x + from.w / 2 - (left + tw / 2)}px, ${from.y + from.h / 2 - (top + th / 2)}px) scale(${from.w / tw})`);
 	}
 
 	let cur = -1, liftOn = -1;
-	function setChapter(i: number) {
+	function setStation(i: number) {
 		if (i === cur) return;
 		cur = i;
-		load(shots[i]);
-		if (shots[i + 1]) load(shots[i + 1]);
-		if (lifts[i + 1]) load(lifts[i + 1]);
+		loadAt(i);
+		loadAt(i + 1);
 		shots.forEach((s, k) => s.classList.toggle('on', k === i));
 	}
 	function setLift(i: number) {
 		if (i === liftOn) return;
 		liftOn = i;
 		lifts.forEach((l, k) => {
-			if (k === i) { load(l); placeLift(l); }
+			if (k === i) { loadAt(k); placeLift(l); }
 			l.classList.toggle('on', k === i);
 		});
 	}
@@ -184,39 +175,39 @@ const img = (id: string) => `/images/pro/day/${id}`;
 		const span = day.offsetHeight - stick.offsetHeight;
 		const pos = clamp((scrollY - day.offsetTop) / Math.max(1, span)) * LAST;
 		const q = ease(clamp(pos / 0.8));
-		const f = ease(clamp((pos - 4.28) / 0.6));
+		const f = ease(clamp((pos - (LAST - 0.72)) / 0.6));
 		day.style.setProperty('--q', q.toFixed(4));
 		day.style.setProperty('--f', f.toFixed(4));
 
-		skies.forEach((s, i) => { s.style.opacity = String(clamp(1 - Math.abs(pos - i))); });
-
-		const t = clamp(pos / LAST);
+		// The sky follows the hour, not the number of stations.
+		const t = clamp(pos / LAST), sky = t * (skies.length - 1);
+		skies.forEach((s, i) => { s.style.opacity = String(clamp(1 - Math.abs(sky - i))); });
 		const p = arc.getPointAtLength(arcLength * t);
 		sun.setAttribute('cx', String(p.x)); sun.setAttribute('cy', String(p.y));
 		glow.setAttribute('cx', String(p.x)); glow.setAttribute('cy', String(p.y));
 		arc.style.strokeDashoffset = String(arcLength * (1 - t));
-		day.style.setProperty('--night', clamp((pos - 4) / 0.8).toFixed(3));
+		day.style.setProperty('--night', clamp((pos - (LAST - 1)) / 0.8).toFixed(3));
 
-		const ch = clamp(Math.round(pos), 1, CHAPTER_COUNT) - 1;
-		setChapter(ch);
+		const ch = clamp(Math.round(pos), 1, COUNT) - 1;
+		setStation(ch);
 		const near = Math.abs(pos - (ch + 1));
-		blocks.forEach((b, k) => b.classList.toggle('on', k === ch && near < 0.42));
-		setLift(near < 0.3 && pos > 0.72 && pos < 4.3 ? ch : -1);
+		blocks.forEach((b, k) => b.classList.toggle('on', k === ch && near < 0.44));
+		setLift(near < 0.32 && pos > 0.72 && pos < LAST - 0.72 ? ch : -1);
 		day.classList.toggle('at-hero', pos < 0.42);
-		day.classList.toggle('at-end', pos > 4.62);
+		day.classList.toggle('at-end', pos > LAST - 0.38);
 		day.classList.toggle('moved', pos > 0.05);
 	}
-	const CHAPTER_COUNT = blocks.length;
 	const ask = () => { if (!queued) { queued = true; requestAnimationFrame(frame); } };
 	addEventListener('scroll', ask, { passive: true });
 	addEventListener('resize', () => { const l = liftOn; liftOn = -1; setLift(l); ask(); });
-	if (still) day.classList.add('still');
+	if (matchMedia('(prefers-reduced-motion: reduce)').matches) day.classList.add('still');
 	frame();
 </script>
 
+
 <style>
 	.pd { background: #0A1218; color: #fff; }
-	.day { --q: 0; --f: 0; --night: 0; position: relative; height: 640vh; }
+	.day { --q: 0; --f: 0; --night: 0; position: relative; height: calc(var(--n) * 74vh + 100vh); }
 	.stick { position: sticky; top: 0; height: 100vh; height: 100svh; overflow: hidden; background: #0A1218; }
 
 	.sky, .s { position: absolute; inset: 0; }
@@ -264,8 +255,11 @@ const img = (id: string) => `/images/pro/day/${id}`;
 	.deck-front { position: absolute; left: 0; right: 0; bottom: 0; height: calc(var(--w) * .014); background: linear-gradient(180deg, #5A6668, #262E30); border-radius: 0 0 calc(var(--w) * .012) calc(var(--w) * .012); transform-origin: 50% 100%; transform: rotateX(-90deg); }
 
 	/* the card that rises out of the screen */
-	.lift { position: absolute; z-index: 4; opacity: 0; pointer-events: none; transform: var(--from, none); filter: drop-shadow(0 26px 34px rgba(0, 10, 12, .72)); transition: transform .62s cubic-bezier(.2, .8, .2, 1), opacity .32s ease; }
+	.lift { position: absolute; z-index: 4; overflow: hidden; background: #15222A; opacity: 0; pointer-events: none; transform: var(--from, none); box-shadow: 0 0 0 1px rgba(255, 255, 255, .17), 0 30px 46px -14px rgba(0, 0, 0, .92); transition: transform .62s cubic-bezier(.2, .8, .2, 1), opacity .32s ease; }
 	.lift:global(.on) { opacity: 1; transform: none; }
+	.lift img { position: absolute; max-width: none; height: auto; }
+	.lift.bare { background: transparent; box-shadow: none; }
+	.time em { margin-inline-start: 8px; padding: 2px 10px; color: #04181C; font-size: .86rem; font-style: normal; font-weight: 800; line-height: 1.7; background: #7DD3D4; border-radius: 999px; align-self: center; }
 
 	/* the day's text */
 	.txt { position: absolute; z-index: 5; top: 50%; right: max(24px, calc((100vw - 1320px) / 2)); width: min(400px, 31vw); transform: translateY(-50%); opacity: calc((var(--q) - .5) * 3 - var(--night) * 3); }
@@ -294,7 +288,7 @@ const img = (id: string) => `/images/pro/day/${id}`;
 	.end .acts { justify-content: flex-start; }
 
 	@media (max-width: 899px) {
-		.day { height: 620vh; }
+		.day { height: calc(var(--n) * 70vh + 100vh); }
 		.scene { --w: min(88vw, calc((100vh - 330px) * 1.5)); top: auto; bottom: calc(26vh - var(--w) * .2); left: 50%; transform: translate(-50%, calc((1 - var(--q)) * 4vh + var(--f) * 6vh)) scale(calc(1.02 - var(--q) * .02 - var(--f) * .22)); }
 		.lap { transform: rotateX(calc(-9deg - var(--f) * 22deg)) rotateY(0deg); }
 		.hero { top: 80px; }
