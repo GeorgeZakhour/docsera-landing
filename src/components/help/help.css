@@ -80,9 +80,8 @@
 .hp-btn { display: inline-flex; align-items: center; justify-content: center; padding: 11px 22px; font-size: 1rem; font-weight: 800; color: #fff !important; text-decoration: none; background: linear-gradient(150deg, #008485, #007172); border-radius: 13px; }
 
 /* ── a topic ── */
-.hp-band { position: relative; padding: 96px 20px 36px; overflow: hidden; color: #fff; background: linear-gradient(150deg, #0AA3A5, #007677); border-radius: 0 0 32px 32px; }
-.hp-band::before { content: ""; position: absolute; top: -130px; left: -90px; width: 320px; height: 320px; background: #fff; border-radius: 50%; opacity: .07; }
-.hp-band::after { content: ""; position: absolute; right: -70px; bottom: -110px; width: 230px; height: 230px; background: #fff; border-radius: 50%; opacity: .05; }
+/* The band's circles are painted, not clipped: the search's results must be free to hang below it. */
+.hp-band { position: relative; z-index: 6; padding: 96px 20px 36px; color: #fff; background: radial-gradient(circle 160px at 6% -12%, rgba(255, 255, 255, .07) 99%, transparent 100%), radial-gradient(circle 115px at 104% 118%, rgba(255, 255, 255, .05) 99%, transparent 100%), linear-gradient(150deg, #0AA3A5, #007677); border-radius: 0 0 32px 32px; }
 .hp-band-in { position: relative; z-index: 2; width: min(1220px, 100%); margin: 0 auto; }
 .hp-crumb { display: flex; flex-wrap: wrap; gap: 4px 8px; margin: 0 0 12px; padding: 0; font-size: .92rem; font-weight: 700; color: #D8F3EF; list-style: none; }
 .hp-crumb li + li::before { content: "‹"; margin-inline-end: 8px; opacity: .7; }
