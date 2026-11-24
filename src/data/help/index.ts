@@ -5,7 +5,7 @@ import raw from './guide.json';
 export interface HelpImg { src: string; w: number; h: number; }
 export interface HelpStep { text: string; img?: HelpImg; }
 export interface HelpNote { kind: 'tip' | 'warn' | 'info'; text: string; }
-export interface HelpArticle { id: string; category: string; title: string; summary: string; intro: string; keywords: string[]; steps: HelpStep[]; notes: HelpNote[]; faq: { q: string; a: string }[]; related: string[]; }
+export interface HelpArticle { id: string; category: string; also: string[]; title: string; summary: string; intro: string; keywords: string[]; steps: HelpStep[]; notes: HelpNote[]; faq: { q: string; a: string }[]; related: string[]; }
 export interface HelpCategory { id: string; title: string; lead: string; icon: string; }
 export interface HelpWorld { id: string; title: string; lead: string; icon: string; cats: string[]; peek?: string; }
 
@@ -28,13 +28,13 @@ export const WORLDS: HelpWorld[] = [
 
 export const POPULAR = ['how-to-book', 'cancel-appointment', 'fix-code-not-arriving', 'forgot-password', 'family-add-relative', 'access-consent-code'];
 export const FIRST_TIME = ['create-account', 'search-doctor', 'how-to-book', 'health-complete-profile', 'routine-what-is'];
-export const QUICK_FIXES = ['fix-cannot-sign-in', 'fix-code-not-arriving', 'no-slots', 'too-late-to-cancel', 'notify-android', 'fix-upload-file'];
+export const QUICK_FIXES = ['sign-in-failed', 'fix-code-not-arriving', 'no-slots', 'too-late-to-cancel', 'notify-android', 'fix-upload-file'];
 
 const byId = new Map(ARTICLES.map((a) => [a.id, a]));
 export const articleById = (id: string) => byId.get(id);
 export const categoryById = (id: string) => CATEGORIES.find((c) => c.id === id);
 export const worldOfCategory = (id: string) => WORLDS.find((w) => w.cats.includes(id));
-export const articlesIn = (category: string) => ARTICLES.filter((a) => a.category === category);
+export const articlesIn = (category: string) => ARTICLES.filter((a) => a.category === category || a.also.includes(category));
 
 const esc = (s: string) => s.replace(/&/g, '&amp;').replace(/</g, '&lt;').replace(/>/g, '&gt;');
 /** Escapes the text and draws every «label» as the button it names in the app. */

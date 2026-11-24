@@ -31,10 +31,8 @@
   <url><loc>https://docsera.app/help/guest-mode</loc><priority>0.5</priority></url>
   <url><loc>https://docsera.app/help/main-tabs</loc><priority>0.5</priority></url>
   <url><loc>https://docsera.app/help/welcome-tour</loc><priority>0.5</priority></url>
-  <url><loc>https://docsera.app/help/force-update</loc><priority>0.5</priority></url>
   <url><loc>https://docsera.app/help/no-internet</loc><priority>0.5</priority></url>
   <url><loc>https://docsera.app/help/web-app</loc><priority>0.5</priority></url>
-  <url><loc>https://docsera.app/help/web-auto-lock</loc><priority>0.5</priority></url>
   <url><loc>https://docsera.app/help/create-account</loc><priority>0.5</priority></url>
   <url><loc>https://docsera.app/help/signup-phone-or-email</loc><priority>0.5</priority></url>
   <url><loc>https://docsera.app/help/signup-code-problem</loc><priority>0.5</priority></url>
@@ -50,9 +48,7 @@
   <url><loc>https://docsera.app/help/new-device-code</loc><priority>0.5</priority></url>
   <url><loc>https://docsera.app/help/device-code-again</loc><priority>0.5</priority></url>
   <url><loc>https://docsera.app/help/lost-phone</loc><priority>0.5</priority></url>
-  <url><loc>https://docsera.app/help/face-id</loc><priority>0.5</priority></url>
   <url><loc>https://docsera.app/help/sign-out</loc><priority>0.5</priority></url>
-  <url><loc>https://docsera.app/help/session-ended</loc><priority>0.5</priority></url>
   <url><loc>https://docsera.app/help/account-disabled</loc><priority>0.5</priority></url>
   <url><loc>https://docsera.app/help/edit-profile</loc><priority>0.5</priority></url>
   <url><loc>https://docsera.app/help/edit-address</loc><priority>0.5</priority></url>
@@ -60,12 +56,8 @@
   <url><loc>https://docsera.app/help/change-email</loc><priority>0.5</priority></url>
   <url><loc>https://docsera.app/help/change-password</loc><priority>0.5</priority></url>
   <url><loc>https://docsera.app/help/two-factor</loc><priority>0.5</priority></url>
-  <url><loc>https://docsera.app/help/who-sees-data</loc><priority>0.5</priority></url>
   <url><loc>https://docsera.app/help/change-language</loc><priority>0.5</priority></url>
-  <url><loc>https://docsera.app/help/notification-settings</loc><priority>0.5</priority></url>
-  <url><loc>https://docsera.app/help/quiet-hours</loc><priority>0.5</priority></url>
   <url><loc>https://docsera.app/help/complaints</loc><priority>0.5</priority></url>
-  <url><loc>https://docsera.app/help/contact-support</loc><priority>0.5</priority></url>
   <url><loc>https://docsera.app/help/legal-pages</loc><priority>0.5</priority></url>
   <url><loc>https://docsera.app/help/legal-update</loc><priority>0.5</priority></url>
   <url><loc>https://docsera.app/help/delete-account</loc><priority>0.5</priority></url>
@@ -101,7 +93,6 @@
   <url><loc>https://docsera.app/help/add-to-calendar</loc><priority>0.5</priority></url>
   <url><loc>https://docsera.app/help/send-documents</loc><priority>0.5</priority></url>
   <url><loc>https://docsera.app/help/what-doctor-sees</loc><priority>0.5</priority></url>
-  <url><loc>https://docsera.app/help/past-visit-report</loc><priority>0.5</priority></url>
   <url><loc>https://docsera.app/help/cancel-appointment</loc><priority>0.5</priority></url>
   <url><loc>https://docsera.app/help/too-late-to-cancel</loc><priority>0.5</priority></url>
   <url><loc>https://docsera.app/help/reschedule</loc><priority>0.5</priority></url>
@@ -140,7 +131,6 @@
   <url><loc>https://docsera.app/help/documents-rename-details</loc><priority>0.5</priority></url>
   <url><loc>https://docsera.app/help/documents-download-share</loc><priority>0.5</priority></url>
   <url><loc>https://docsera.app/help/documents-send-to-doctor</loc><priority>0.5</priority></url>
-  <url><loc>https://docsera.app/help/documents-attach-appointment</loc><priority>0.5</priority></url>
   <url><loc>https://docsera.app/help/documents-delete</loc><priority>0.5</priority></url>
   <url><loc>https://docsera.app/help/documents-upload-failed</loc><priority>0.5</priority></url>
   <url><loc>https://docsera.app/help/documents-storage-full</loc><priority>0.5</priority></url>
@@ -160,7 +150,6 @@
   <url><loc>https://docsera.app/help/family-remove-relative</loc><priority>0.5</priority></url>
   <url><loc>https://docsera.app/help/family-access-rights</loc><priority>0.5</priority></url>
   <url><loc>https://docsera.app/help/family-switch-file</loc><priority>0.5</priority></url>
-  <url><loc>https://docsera.app/help/family-book-for-relative</loc><priority>0.5</priority></url>
   <url><loc>https://docsera.app/help/routine-what-is</loc><priority>0.5</priority></url>
   <url><loc>https://docsera.app/help/routine-add-medicine</loc><priority>0.5</priority></url>
   <url><loc>https://docsera.app/help/routine-schedules</loc><priority>0.5</priority></url>
@@ -206,23 +195,18 @@
   <url><loc>https://docsera.app/help/notify-web</loc><priority>0.5</priority></url>
   <url><loc>https://docsera.app/help/privacy-what-we-store</loc><priority>0.5</priority></url>
   <url><loc>https://docsera.app/help/privacy-encryption</loc><priority>0.5</priority></url>
-  <url><loc>https://docsera.app/help/privacy-who-sees-file</loc><priority>0.5</priority></url>
-  <url><loc>https://docsera.app/help/privacy-revoke-access</loc><priority>0.5</priority></url>
   <url><loc>https://docsera.app/help/privacy-on-device</loc><priority>0.5</priority></url>
   <url><loc>https://docsera.app/help/privacy-shared-phone</loc><priority>0.5</priority></url>
   <url><loc>https://docsera.app/help/privacy-biometric</loc><priority>0.5</priority></url>
   <url><loc>https://docsera.app/help/privacy-web-autolock</loc><priority>0.5</priority></url>
   <url><loc>https://docsera.app/help/privacy-suspicious-signin</loc><priority>0.5</priority></url>
   <url><loc>https://docsera.app/help/privacy-report-content</loc><priority>0.5</priority></url>
-  <url><loc>https://docsera.app/help/privacy-legal-update</loc><priority>0.5</priority></url>
   <url><loc>https://docsera.app/help/fix-no-internet</loc><priority>0.5</priority></url>
   <url><loc>https://docsera.app/help/fix-slow-stuck</loc><priority>0.5</priority></url>
   <url><loc>https://docsera.app/help/fix-page-wont-load</loc><priority>0.5</priority></url>
   <url><loc>https://docsera.app/help/fix-session-ended</loc><priority>0.5</priority></url>
-  <url><loc>https://docsera.app/help/fix-cannot-sign-in</loc><priority>0.5</priority></url>
   <url><loc>https://docsera.app/help/fix-code-not-arriving</loc><priority>0.5</priority></url>
   <url><loc>https://docsera.app/help/fix-code-wrong</loc><priority>0.5</priority></url>
-  <url><loc>https://docsera.app/help/fix-already-registered</loc><priority>0.5</priority></url>
   <url><loc>https://docsera.app/help/fix-booking-failed</loc><priority>0.5</priority></url>
   <url><loc>https://docsera.app/help/fix-upload-file</loc><priority>0.5</priority></url>
   <url><loc>https://docsera.app/help/fix-open-file</loc><priority>0.5</priority></url>
