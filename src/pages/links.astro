@@ -11,6 +11,13 @@
 // Never link the web apps (my.docsera.app / pro.docsera.app) from here.
 import { APP_STORE_URL, playUrl, proWhatsAppUrl, INSTAGRAM_URL } from '../config/links';
 import whiteLogo from '../../public/images/docsera_white.svg?raw';
+import { articleById } from '../data/help';
+
+// The three questions people ask most, straight from the help guide (titles stay in sync with it).
+const QUESTIONS = ['cancel-appointment', 'fix-code-not-arriving', 'how-to-book']
+	.map((id) => articleById(id))
+	.filter((a): a is NonNullable<typeof a> => !!a)
+	.map((a) => ({ id: a.id, title: a.title }));
 
 // docsera_white.svg = the mark (first path) followed by the letters.
 const paths = [...whiteLogo.matchAll(/\sd="([^"]+)"/g)].map((m) => m[1].replace(/\s+/g, ' ').trim());
@@ -165,25 +172,31 @@ const WA_TEXT = 'مرحباً، عندي سؤال عن DocSera';
 					<g fill="currentColor">{letterPaths.map((d) => <path d={d} />)}</g>
 				</svg>
 			</h1>
-			<p class="slogan" lang="en" dir="ltr">Your health, connected.</p>
+			<p class="slogan" data-t="slogan">كل صحتك في تطبيق واحد</p>
 		</section>
 
 		<main class="links">
 			<!-- 1. The patient app. On a phone it goes straight to that phone's store. -->
 			<a class="card card-app" href="/download/" data-app-link data-track="app" style="--i:0">
 				<span class="sheen" aria-hidden="true"></span>
-				<img class="app-icon" src="/images/links/app-icon.webp" width="60" height="60" alt="" />
-				<span class="card-text">
-					<span class="card-title" data-t="appTitle">حمّل التطبيق</span>
-					<span class="card-sub" data-t="appSub">احجز موعدك وتابع ملفك الطبي</span>
+				<span class="app-copy">
+					<span class="app-head">
+						<img class="app-icon" src="/images/links/app-icon.webp" width="60" height="60" alt="" />
+						<span class="card-title" data-t="appTitle">حمّل التطبيق</span>
+					</span>
+					<span class="card-sub" data-t="appSub">مواعيدك وملفك الطبي وأدويتك، في مكان واحد</span>
+					<span class="get-pill">
+						<svg viewBox="0 0 24 24" aria-hidden="true"><path d="M12 4v12" /><path d="m6 11 6 6 6-6" /><path d="M5 20h14" /></svg>
+						<span data-t="appGet">حمّل مجاناً</span>
+					</span>
 					<span class="store-line">
-						<span class="os-ios" data-t="appIos">مجاني على App Store</span>
-						<span class="os-android" data-t="appAndroid">مجاني على Google Play</span>
-						<span class="os-desktop" data-t="appDesktop">مجاني على App Store و Google Play</span>
+						<span class="os-ios" data-t="appIos">من App Store</span>
+						<span class="os-android" data-t="appAndroid">من Google Play</span>
+						<span class="os-desktop" data-t="appDesktop">App Store · Google Play</span>
 					</span>
 				</span>
-				<span class="get" aria-hidden="true">
-					<svg viewBox="0 0 24 24"><path d="M12 4v12" /><path d="m6 11 6 6 6-6" /><path d="M5 20h14" /></svg>
+				<span class="app-phone" aria-hidden="true">
+					<img src="/images/app110/home-320.webp" width="320" height="694" alt="" decoding="async" />
 				</span>
 			</a>
 
@@ -198,13 +211,44 @@ const WA_TEXT = 'مرحباً، عندي سؤال عن DocSera';
 					<svg class="chev" viewBox="0 0 24 24" aria-hidden="true"><path d="m15 18-6-6 6-6" /></svg>
 				</a>
 				<div class="pro-foot">
-					<span class="pro-for" data-t="proFor">للأطباء والمراكز</span>
+					<span class="pro-for" data-t="proFor">للأطباء والمختصين والمراكز</span>
 					<a class="chip" href="/pro/join/" data-carry-source data-track="pro_join" data-t="proJoin">ابدأ تجربتك المجانية</a>
 				</div>
 			</div>
 
-			<!-- 3. The website. -->
-			<a class="card card-row" href="/" data-carry-source data-track="site" style="--i:2">
+			<!-- 3. Help: the guide, and the three questions people ask most, one tap away. -->
+			<div class="card card-help" style="--i:2">
+				<a class="help-main" href="/help/" data-carry-source data-track="help">
+					<span class="row-icon" aria-hidden="true">
+						<svg viewBox="0 0 24 24"><circle cx="12" cy="12" r="9.5" /><path d="M9.2 9.2a2.9 2.9 0 0 1 5.6 1c0 1.9-2.8 2.7-2.8 2.7" /><path d="M12 16.8h.01" /></svg>
+					</span>
+					<span class="card-text">
+						<span class="row-title" data-t="helpTitle">دليل المساعدة</span>
+						<span class="row-sub" data-t="helpSub">إجابات خطوة بخطوة، مع صور من التطبيق</span>
+					</span>
+					<svg class="chev" viewBox="0 0 24 24" aria-hidden="true"><path d="m15 18-6-6 6-6" /></svg>
+				</a>
+				<div class="help-qs" lang="ar" dir="rtl">
+					{QUESTIONS.map((q) => (
+						<a href={`/help/${q.id}`} data-carry-source data-track="help_question">{q.title}</a>
+					))}
+				</div>
+			</div>
+
+			<!-- 4. WhatsApp. -->
+			<a class="card card-row" href={proWhatsAppUrl(WA_TEXT)} target="_blank" rel="noopener" data-track="whatsapp" style="--i:3">
+				<span class="row-icon row-wa" aria-hidden="true">
+					<svg viewBox="0 0 24 24"><path d="M17.47 14.38c-.3-.15-1.76-.87-2.03-.97-.27-.1-.47-.15-.67.15-.2.3-.77.97-.94 1.16-.17.2-.35.22-.64.08-.3-.15-1.26-.47-2.39-1.48-.88-.79-1.48-1.76-1.65-2.06-.17-.3-.02-.46.13-.6.13-.14.3-.35.45-.52.15-.18.2-.3.3-.5.1-.2.05-.37-.03-.52-.07-.15-.67-1.61-.92-2.21-.24-.58-.49-.5-.67-.51h-.57c-.2 0-.52.07-.79.37-.27.3-1.04 1.02-1.04 2.48 0 1.46 1.07 2.88 1.21 3.07.15.2 2.1 3.2 5.08 4.49.71.31 1.26.49 1.7.63.71.22 1.36.19 1.87.12.57-.09 1.76-.72 2-1.41.25-.7.25-1.29.18-1.41-.08-.13-.28-.2-.57-.35M12.05 21.79h-.01a9.87 9.87 0 0 1-5.03-1.38l-.36-.21-3.74.98 1-3.65-.24-.37a9.86 9.86 0 0 1-1.51-5.26c0-5.45 4.44-9.88 9.89-9.88 2.64 0 5.12 1.03 6.99 2.9a9.83 9.83 0 0 1 2.89 6.99c0 5.45-4.44 9.88-9.88 9.88m8.41-18.3A11.82 11.82 0 0 0 12.05 0C5.5 0 .16 5.34.16 11.89c0 2.1.55 4.14 1.59 5.95L.06 24l6.3-1.65a11.88 11.88 0 0 0 5.68 1.45h.01c6.55 0 11.89-5.34 11.89-11.89a11.82 11.82 0 0 0-3.48-8.41z" /></svg>
+				</span>
+				<span class="card-text">
+					<span class="row-title" data-t="waTitle">تواصل معنا</span>
+					<span class="row-sub" data-t="waSub">على واتساب</span>
+				</span>
+				<svg class="chev" viewBox="0 0 24 24" aria-hidden="true"><path d="m15 18-6-6 6-6" /></svg>
+			</a>
+
+			<!-- 5. The website. -->
+			<a class="card card-row" href="/" data-carry-source data-track="site" style="--i:4">
 				<span class="row-icon" aria-hidden="true">
 					<svg viewBox="0 0 24 24"><circle cx="12" cy="12" r="9.5" /><path d="M12 2.5a14 14 0 0 0 0 19 14 14 0 0 0 0-19" /><path d="M2.5 12h19" /></svg>
 				</span>
@@ -215,9 +259,9 @@ const WA_TEXT = 'مرحباً، عندي سؤال عن DocSera';
 				<svg class="chev" viewBox="0 0 24 24" aria-hidden="true"><path d="m15 18-6-6 6-6" /></svg>
 			</a>
 
-			<!-- 4. Careers: the hiring page, tagged like everything else here so an
+			<!-- 6. Careers: the hiring page, tagged like everything else here so an
 			     application that started in the bio is counted as Instagram. -->
-			<a class="card card-row" href="/careers" data-carry-source data-track="careers" style="--i:3">
+			<a class="card card-row" href="/careers" data-carry-source data-track="careers" style="--i:5">
 				<span class="row-icon" aria-hidden="true">
 					<svg viewBox="0 0 24 24"><rect x="2.5" y="7" width="19" height="13" rx="2.5" /><path d="M8.5 7V5.5A1.5 1.5 0 0 1 10 4h4a1.5 1.5 0 0 1 1.5 1.5V7" /><path d="M2.5 12.5h19" /><path d="M12 11.5v2.5" /></svg>
 				</span>
@@ -227,24 +271,6 @@ const WA_TEXT = 'مرحباً، عندي سؤال عن DocSera';
 				</span>
 				<svg class="chev" viewBox="0 0 24 24" aria-hidden="true"><path d="m15 18-6-6 6-6" /></svg>
 			</a>
-
-			<!-- 5 + 6. Contact and help, side by side. -->
-			<div class="pair" style="--i:4">
-				<a class="card card-tile" href={proWhatsAppUrl(WA_TEXT)} target="_blank" rel="noopener" data-track="whatsapp">
-					<span class="tile-icon tile-wa" aria-hidden="true">
-						<svg viewBox="0 0 24 24"><path d="M17.47 14.38c-.3-.15-1.76-.87-2.03-.97-.27-.1-.47-.15-.67.15-.2.3-.77.97-.94 1.16-.17.2-.35.22-.64.08-.3-.15-1.26-.47-2.39-1.48-.88-.79-1.48-1.76-1.65-2.06-.17-.3-.02-.46.13-.6.13-.14.3-.35.45-.52.15-.18.2-.3.3-.5.1-.2.05-.37-.03-.52-.07-.15-.67-1.61-.92-2.21-.24-.58-.49-.5-.67-.51h-.57c-.2 0-.52.07-.79.37-.27.3-1.04 1.02-1.04 2.48 0 1.46 1.07 2.88 1.21 3.07.15.2 2.1 3.2 5.08 4.49.71.31 1.26.49 1.7.63.71.22 1.36.19 1.87.12.57-.09 1.76-.72 2-1.41.25-.7.25-1.29.18-1.41-.08-.13-.28-.2-.57-.35M12.05 21.79h-.01a9.87 9.87 0 0 1-5.03-1.38l-.36-.21-3.74.98 1-3.65-.24-.37a9.86 9.86 0 0 1-1.51-5.26c0-5.45 4.44-9.88 9.89-9.88 2.64 0 5.12 1.03 6.99 2.9a9.83 9.83 0 0 1 2.89 6.99c0 5.45-4.44 9.88-9.88 9.88m8.41-18.3A11.82 11.82 0 0 0 12.05 0C5.5 0 .16 5.34.16 11.89c0 2.1.55 4.14 1.59 5.95L.06 24l6.3-1.65a11.88 11.88 0 0 0 5.68 1.45h.01c6.55 0 11.89-5.34 11.89-11.89a11.82 11.82 0 0 0-3.48-8.41z" /></svg>
-					</span>
-					<span class="tile-title" data-t="waTitle">تواصل معنا</span>
-					<span class="tile-sub" data-t="waSub">على واتساب</span>
-				</a>
-				<a class="card card-tile" href="/help/" data-carry-source data-track="help">
-					<span class="tile-icon" aria-hidden="true">
-						<svg viewBox="0 0 24 24" class="stroke"><circle cx="12" cy="12" r="10" /><path d="M9.1 9a3 3 0 0 1 5.8 1c0 2-3 3-3 3" /><path d="M12 17h.01" /></svg>
-					</span>
-					<span class="tile-title" data-t="helpTitle">المساعدة</span>
-					<span class="tile-sub" data-t="helpSub">الأسئلة الشائعة</span>
-				</a>
-			</div>
 		</main>
 
 		<footer class="foot">
@@ -274,41 +300,45 @@ const WA_TEXT = 'مرحباً، عندي سؤال عن DocSera';
 	// ------------------------------------------------------------ language
 	const T: Record<'ar' | 'en', Record<string, string>> = {
 		ar: {
+			slogan: 'كل صحتك في تطبيق واحد',
 			appTitle: 'حمّل التطبيق',
-			appSub: 'احجز موعدك وتابع ملفك الطبي',
-			appIos: 'مجاني على App Store',
-			appAndroid: 'مجاني على Google Play',
-			appDesktop: 'مجاني على App Store و Google Play',
+			appSub: 'مواعيدك وملفك الطبي وأدويتك، في مكان واحد',
+			appGet: 'حمّل مجاناً',
+			appIos: 'من App Store',
+			appAndroid: 'من Google Play',
+			appDesktop: 'App Store · Google Play',
 			proSub: 'لإدارة العيادات والمراكز الطبية',
-			proFor: 'للأطباء والمراكز',
+			proFor: 'للأطباء والمختصين والمراكز',
 			proJoin: 'ابدأ تجربتك المجانية',
 			siteTitle: 'الموقع الرسمي',
 			careersTitle: 'الوظائف',
 			careersSub: 'انضم إلى فريق المبيعات في دمشق',
 			waTitle: 'تواصل معنا',
 			waSub: 'على واتساب',
-			helpTitle: 'المساعدة',
-			helpSub: 'الأسئلة الشائعة',
+			helpTitle: 'دليل المساعدة',
+			helpSub: 'إجابات خطوة بخطوة، مع صور من التطبيق',
 			privacy: 'سياسة الخصوصية',
 			share: 'مشاركة الصفحة',
 			copied: 'تم نسخ الرابط',
 		},
 		en: {
+			slogan: 'Your health, connected.',
 			appTitle: 'Get the app',
-			appSub: 'Book visits and keep your medical file',
-			appIos: 'Free on the App Store',
-			appAndroid: 'Free on Google Play',
-			appDesktop: 'Free on the App Store and Google Play',
+			appSub: 'Your visits, medical file and medicines in one place',
+			appGet: 'Get it free',
+			appIos: 'On the App Store',
+			appAndroid: 'On Google Play',
+			appDesktop: 'App Store · Google Play',
 			proSub: 'Practice management for clinics and medical centres',
-			proFor: 'For doctors and centres',
+			proFor: 'For doctors, specialists and centres',
 			proJoin: 'Start your free trial',
 			siteTitle: 'Official website',
 			careersTitle: 'Careers',
 			careersSub: 'Join the sales team in Damascus',
 			waTitle: 'Contact us',
 			waSub: 'On WhatsApp',
-			helpTitle: 'Help',
-			helpSub: 'Frequently asked questions',
+			helpTitle: 'Help guide',
+			helpSub: 'Step-by-step answers, in Arabic',
 			privacy: 'Privacy policy',
 			share: 'Share this page',
 			copied: 'Link copied',
@@ -744,28 +774,6 @@ const WA_TEXT = 'مرحباً، عندي سؤال عن DocSera';
 	:global(html[data-os='android']) .os-android,
 	:global(html[data-os='desktop']) .os-desktop { display: inline; }
 	:global(html:not(.js)) .os-desktop { display: inline; }
-	.get {
-		flex: none;
-		display: grid;
-		place-items: center;
-		width: 46px;
-		height: 46px;
-		border-radius: 50%;
-		background: var(--ivory);
-		color: #006E70;
-		box-shadow: 0 8px 18px -8px rgba(0, 30, 32, 0.7);
-		transition: transform 0.35s var(--ease-spring);
-	}
-	.get svg {
-		width: 21px;
-		height: 21px;
-		fill: none;
-		stroke: currentColor;
-		stroke-width: 2.2;
-		stroke-linecap: round;
-		stroke-linejoin: round;
-	}
-	.card-app:hover .get { transform: translateY(2px); }
 	.sheen {
 		position: absolute;
 		inset: 0;
@@ -879,42 +887,6 @@ const WA_TEXT = 'مرحباً، عندي سؤال عن DocSera';
 	}
 	:global(html[dir='rtl']) .row-sub { text-align: right; }
 
-	/* 4 + 5 — two tiles */
-	.pair {
-		display: grid;
-		grid-template-columns: 1fr 1fr;
-		gap: 12px;
-	}
-	.card-tile {
-		flex-direction: column;
-		align-items: flex-start;
-		gap: 0;
-		padding: 16px;
-		border-radius: 22px;
-	}
-	.tile-icon {
-		display: grid;
-		place-items: center;
-		width: 40px;
-		height: 40px;
-		border-radius: 12px;
-		margin-bottom: 14px;
-		background: rgba(255, 255, 255, 0.09);
-		border: 1px solid rgba(255, 255, 255, 0.12);
-		color: var(--mint);
-	}
-	.tile-icon svg { width: 21px; height: 21px; fill: currentColor; }
-	.tile-icon svg.stroke {
-		fill: none;
-		stroke: currentColor;
-		stroke-width: 1.9;
-		stroke-linecap: round;
-		stroke-linejoin: round;
-	}
-	.tile-wa { color: #5BE38F; }
-	.tile-title { font-weight: 700; font-size: 16px; line-height: 1.35; }
-	.tile-sub { font-size: 12.5px; color: var(--text-soft); margin-top: 1px; }
-
 	/* ---------------------------------------------------------- footer */
 	.foot {
 		margin-top: auto;
@@ -1011,7 +983,7 @@ const WA_TEXT = 'مرحباً، عندي سؤال عن DocSera';
 	}
 	@media (prefers-reduced-motion: reduce) {
 		.bloom { animation: none; }
-		.card, .chip, .get, .chev { transition: none; }
+		.card, .chip, .get-pill, .chev, .app-phone img { transition: none; }
 	}
 
 	@media (max-width: 360px) {
@@ -1020,4 +992,120 @@ const WA_TEXT = 'مرحباً، عندي سؤال عن DocSera';
 		.app-icon, .pro-icon { width: 52px; height: 52px; border-radius: 13px; }
 		.chip { padding: 0 12px; font-size: 12.5px; }
 	}
+
+	/* ================================================= 2026-11 refresh */
+	/* the line under the wordmark is the site's own promise, in Arabic first */
+	.slogan { font: 700 17px/1.5 'Cairo', sans-serif; letter-spacing: 0; }
+	:global(html[lang='en']) .slogan { font: 500 16px/1.4 'Montserrat', sans-serif; letter-spacing: 0.01em; }
+
+	/* 1 — the app: copy on one side, a real screen of the app rising on the other */
+	.card-app {
+		align-items: stretch;
+		gap: 4px;
+		min-height: 184px;
+		padding: 20px 20px 18px 0;
+	}
+	:global(html[dir='ltr']) .card-app { padding: 20px 0 18px 20px; }
+	.app-copy {
+		position: relative;
+		z-index: 1;
+		flex: 1;
+		min-width: 0;
+		display: flex;
+		flex-direction: column;
+		align-items: flex-start;
+	}
+	.app-head { display: flex; align-items: center; gap: 10px; margin-bottom: 6px; }
+	.app-head .app-icon { width: 40px; height: 40px; border-radius: 11px; }
+	.card-app .card-sub { max-width: 17em; }
+	.get-pill {
+		display: inline-flex;
+		align-items: center;
+		gap: 7px;
+		height: 42px;
+		margin-top: 14px;
+		padding: 0 18px 0 16px;
+		border-radius: 999px;
+		font-weight: 800;
+		font-size: 14.5px;
+		color: #005F61;
+		background: var(--ivory);
+		box-shadow: 0 10px 22px -10px rgba(0, 30, 32, 0.8);
+		transition: transform 0.35s var(--ease-spring);
+	}
+	:global(html[dir='ltr']) .get-pill { padding: 0 16px 0 18px; font-weight: 700; }
+	.get-pill svg { width: 18px; height: 18px; fill: none; stroke: currentColor; stroke-width: 2.4; stroke-linecap: round; stroke-linejoin: round; }
+	.card-app:hover .get-pill { transform: translateY(-1px); }
+	.store-line { margin-top: 9px; white-space: nowrap; font-size: 11.5px; color: rgba(225, 252, 247, 0.82); }
+	.app-phone { position: relative; flex: none; width: 116px; align-self: stretch; }
+	.app-phone img {
+		position: absolute;
+		top: -2px;
+		inset-inline-end: 12px;
+		width: 108px;
+		height: auto;
+		border-radius: 19px;
+		border: 3px solid #0A2A2D;
+		box-shadow: 0 22px 34px -12px rgba(0, 22, 24, 0.85), 0 0 0 1px rgba(255, 255, 255, 0.18);
+		transform: rotate(-7deg) translateY(6px);
+		transition: transform 0.5s var(--ease-spring);
+	}
+	:global(html[dir='ltr']) .app-phone img { transform: rotate(7deg) translateY(6px); }
+	@media (hover: hover) {
+		.card-app:hover .app-phone img { transform: rotate(-4deg) translateY(0); }
+		:global(html[dir='ltr']) .card-app:hover .app-phone img { transform: rotate(4deg) translateY(0); }
+	}
+
+	/* 2 — Pro wears Pro's own identity: graphite, the schedule grid, aqua */
+	.card-pro {
+		background:
+			linear-gradient(rgba(255, 255, 255, 0.04) 1px, transparent 1px) 0 0 / 100% 26px,
+			linear-gradient(90deg, rgba(255, 255, 255, 0.035) 1px, transparent 1px) 0 0 / 52px 100%,
+			radial-gradient(120% 120% at 0% 0%, rgba(0, 181, 183, 0.24), transparent 55%),
+			linear-gradient(160deg, #131C21, #0A1114);
+		border-color: rgba(125, 211, 212, 0.24);
+	}
+	.card-pro .chip { color: #04181C; background: linear-gradient(180deg, #7DD3D4, #00B5B7); box-shadow: inset 0 1px 0 rgba(255, 255, 255, 0.5), 0 8px 20px -8px rgba(0, 181, 183, 0.75); }
+	.card-pro .pro-for { color: #A3C7CA; }
+
+	/* 3 — help: the guide, and the questions people ask most */
+	.card-help {
+		flex-direction: column;
+		align-items: stretch;
+		gap: 0;
+		padding: 0;
+		border-radius: 22px;
+	}
+	.card-help:has(.help-main:active) { transform: scale(0.975); }
+	.help-main { display: flex; align-items: center; gap: 14px; padding: 14px 18px 10px 16px; }
+	:global(html[dir='ltr']) .help-main { padding: 14px 16px 10px 18px; }
+	.help-main:hover .chev { opacity: 0.9; }
+	.help-qs { display: flex; flex-wrap: wrap; gap: 8px; padding: 2px 16px 16px; }
+	.help-qs a {
+		position: relative;
+		z-index: 1;
+		display: inline-flex;
+		align-items: center;
+		min-height: 34px;
+		padding: 0 13px;
+		border-radius: 999px;
+		font: 600 13px/1.4 'Cairo', sans-serif;
+		color: var(--ivory);
+		background: rgba(255, 255, 255, 0.08);
+		border: 1px solid rgba(255, 255, 255, 0.14);
+		transition: background 0.25s, transform 0.3s var(--ease-spring);
+	}
+	.help-qs a:hover { background: rgba(255, 255, 255, 0.15); }
+	.help-qs a:active { transform: scale(0.95); }
+
+	/* 4 — WhatsApp keeps its green */
+	.row-wa { color: #5BE38F; }
+	.row-wa svg { fill: currentColor; stroke: none; }
+
+	@media (max-width: 360px) {
+		.app-phone { width: 96px; }
+		.app-phone img { width: 92px; inset-inline-end: 8px; }
+		.help-qs a { font-size: 12.5px; padding: 0 11px; }
+	}
+	a:focus-visible { outline: 2px solid var(--mint); outline-offset: 3px; border-radius: 12px; }
 </style>

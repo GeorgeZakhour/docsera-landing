@@ -1,71 +1,191 @@
 ---
+// The page for a link that leads nowhere. The DocSera mark has come apart into its four
+// petals; the page offers the way back: a search of the help guide and the four places
+// people are usually looking for. Light: one inline SVG, no image.
 import Layout from '../layouts/Layout.astro';
+import SiteHeader from '../components/site/SiteHeader.astro';
+import Footer from '../components/Footer.astro';
+import HelpSearch from '../components/help/HelpSearch.astro';
+import '../components/help/help.css';
+import whiteLogo from '../../public/images/docsera_white.svg?raw';
+
+// docsera_white.svg = the mark (first path) then the letters; the petals are the mark cut along
+// its diagonals (same geometry as /links).
+const markPath = [...whiteLogo.matchAll(/\sd="([^"]+)"/g)].map((m) => m[1].replace(/\s+/g, ' ').trim())[0];
+const B = { x: 14, y: 14, w: 242, h: 242 };
+const C = { x: 134.8, y: 134.9 };
+const tl = `${B.x},${B.y}`, tr = `${B.x + B.w},${B.y}`, br = `${B.x + B.w},${B.y + B.h}`, bl = `${B.x},${B.y + B.h}`, c = `${C.x},${C.y}`;
+const PETALS = [
+	{ id: 'top', pts: `${tl} ${tr} ${c}`, dx: 6, dy: -34, r: -9 },
+	{ id: 'right', pts: `${tr} ${br} ${c}`, dx: 38, dy: 8, r: 12 },
+	{ id: 'bottom', pts: `${br} ${bl} ${c}`, dx: -8, dy: 40, r: -6 },
+	{ id: 'left', pts: `${bl} ${tl} ${c}`, dx: -40, dy: -10, r: 10 },
+];
+
+const WAYS = [
+	{ href: '/', title: 'الصفحة الرئيسية', sub: 'كل ما يقدّمه DocSera', icon: 'home' },
+	{ href: '/download', title: 'حمّل التطبيق', sub: 'مجاني على iPhone و Android', icon: 'get' },
+	{ href: '/help', title: 'دليل المساعدة', sub: 'إجابات خطوة بخطوة', icon: 'help' },
+	{ href: '/pro', title: 'DocSera Pro', sub: 'للعيادات والمراكز', icon: 'pro' },
+];
 ---
 
-<Layout title="الصفحة غير موجودة — DocSera" path="/404.html">
-	<main class="nf-wrap">
-		<div class="nf-card">
-			<img src="/images/docsera_main.svg" alt="DocSera" class="nf-logo" />
-			<div class="nf-code font-en">404</div>
-			<h1>الصفحة غير موجودة</h1>
-			<p>الرابط الذي تبحث عنه غير موجود أو تم نقله. تحقق من العنوان أو عد إلى الصفحة الرئيسية.</p>
-			<a href="/" class="nf-btn">العودة للرئيسية</a>
+<Layout title="الصفحة غير موجودة — DocSera" description="الرابط الذي فتحته غير موجود. ابحث في دليل المساعدة أو عد إلى الصفحة الرئيسية." path="/404.html">
+	<SiteHeader />
+	<main class="nf">
+		<svg width="0" height="0" style="position:absolute" aria-hidden="true">
+			<defs>
+				<path id="nf-mark" d={markPath} />
+				<linearGradient id="nf-fill" x1="0" y1="0" x2="1" y2="1">
+					<stop offset="0" stop-color="#FFFFFF" />
+					<stop offset="1" stop-color="#9FEBE1" />
+				</linearGradient>
+				{PETALS.map((p) => <clipPath id={`nf-cut-${p.id}`}><polygon points={p.pts} /></clipPath>)}
+			</defs>
+		</svg>
+
+		<div class="nf-in">
+			<div class="nf-mark" aria-hidden="true">
+				<svg viewBox={`${B.x - 60} ${B.y - 60} ${B.w + 120} ${B.h + 120}`}>
+					{PETALS.map((p, i) => (
+						<g class="petal" style={`--dx:${p.dx}px;--dy:${p.dy}px;--r:${p.r}deg;--i:${i}`}>
+							<use href="#nf-mark" clip-path={`url(#nf-cut-${p.id})`} fill="url(#nf-fill)" />
+						</g>
+					))}
+				</svg>
+			</div>
+
+			<h1>هذه الصفحة غير موجودة</h1>
+			<p class="nf-lead">ربما تغيّر الرابط، أو فيه خطأ صغير في الكتابة <span class="nf-code">(404)</span>.</p>
+
+			<div class="nf-search">
+				<p class="nf-label">ابحث عن سؤالك في دليل المساعدة</p>
+				<HelpSearch />
+			</div>
+
+			<nav class="nf-ways" aria-label="إلى أين؟">
+				{WAYS.map((w) => (
+					<a class="way" href={w.href}>
+						<span class="way-icon" aria-hidden="true">
+							{w.icon === 'home' && <svg viewBox="0 0 24 24"><path d="M3.5 10.5 12 3.5l8.5 7" /><path d="M5.5 9v10.5h13V9" /><path d="M10 19.5v-5h4v5" /></svg>}
+							{w.icon === 'get' && <svg viewBox="0 0 24 24"><path d="M12 4v11" /><path d="m7 10.500 5 5 5-5" /><path d="M5 20h14" /></svg>}
+							{w.icon === 'help' && <svg viewBox="0 0 24 24"><circle cx="12" cy="12" r="9.500" /><path d="M9.200 9.200a2.900 2.900 0 0 1 5.600 1c0 1.900-2.800 2.700-2.800 2.700" /><path d="M12 16.800h.01" /></svg>}
+							{w.icon === 'pro' && <svg viewBox="0 0 24 24"><rect x="3.500" y="5" width="17" height="15" rx="2.500" /><path d="M3.500 10h17" /><path d="M8 3v4M16 3v4" /></svg>}
+						</span>
+						<span class="way-text">
+							<b>{w.title}</b>
+							<small>{w.sub}</small>
+						</span>
+					</a>
+				))}
+			</nav>
 		</div>
 	</main>
+	<Footer />
 </Layout>
 
+<script>
+	import { startHelpSearch } from '../scripts/help/search';
+	startHelpSearch();
+</script>
+
 <style>
-	.nf-wrap {
-		min-height: 100vh;
-		display: flex;
-		align-items: center;
-		justify-content: center;
-		padding: 24px;
-		background: linear-gradient(180deg, #FAFAFA 0%, var(--c-main-light) 100%);
+	.nf {
+		position: relative;
+		overflow: hidden;
+		min-height: calc(100svh - 64px);
+		display: grid;
+		place-items: center;
+		padding: clamp(96px, 14vh, 140px) 16px clamp(56px, 9vh, 96px);
+		color: #F3FBFA;
+		background:
+			radial-gradient(90% 60% at 50% 0%, #0A5C5E 0%, transparent 62%),
+			radial-gradient(60% 40% at 85% 85%, rgba(0, 144, 146, 0.28), transparent 70%),
+			linear-gradient(180deg, #03292C 0%, #021C1F 100%);
 	}
+	.nf-in { width: min(640px, 100%); text-align: center; }
 
-	.nf-card {
-		text-align: center;
-		max-width: 420px;
+	.nf-mark { width: min(210px, 52vw); margin: 0 auto 10px; }
+	.nf-mark svg { display: block; width: 100%; height: auto; overflow: visible; }
+	.petal {
+		transform-box: fill-box;
+		transform-origin: center;
+		transform: translate(var(--dx), var(--dy)) rotate(var(--r));
+		filter: drop-shadow(0 10px 18px rgba(0, 20, 22, 0.55));
 	}
-
-	.nf-logo {
-		height: 28px;
-		margin-bottom: 32px;
+	.petal { animation: drift 7s ease-in-out calc(var(--i) * -1.7s) infinite alternate; }
+	@keyframes drift {
+		from { transform: translate(var(--dx), var(--dy)) rotate(var(--r)); }
+		to { transform: translate(calc(var(--dx) * 1.18), calc(var(--dy) * 1.18 - 6px)) rotate(calc(var(--r) * -0.6)); }
 	}
-
-	.nf-code {
-		font-size: 5rem;
-		font-weight: 700;
-		line-height: 1;
-		color: var(--c-main);
-		opacity: 0.25;
-		margin-bottom: 8px;
+	/* pointing at the way home pulls the mark back together */
+	.nf-in:has(.way:hover, .way:focus-visible) .petal {
+		animation: none;
+		transform: translate(0, 0) rotate(0);
+		transition: transform 0.7s cubic-bezier(0.2, 0.8, 0.2, 1);
 	}
 
 	h1 {
-		font-size: 1.6rem;
-		margin-bottom: 12px;
+		margin: 0 0 10px;
+		font-size: clamp(1.9rem, 6.4vw, 2.9rem);
+		font-weight: 800;
+		line-height: 1.25;
+		color: #fff;
+		text-wrap: balance;
 	}
+	.nf-lead { margin: 0 auto; max-width: 30em; font-size: clamp(1.02rem, 3.6vw, 1.15rem); line-height: 1.8; color: #B9DCD9; }
+	.nf-code { font-family: 'Montserrat', sans-serif; font-size: 0.86em; color: #8CC7C2; }
 
-	p {
-		color: var(--c-text-muted);
-		font-size: 1rem;
-		margin: 0 0 28px;
+	.nf-search { margin: 28px auto 0; max-width: 520px; text-align: start; }
+	.nf-label { margin: 0 0 8px; font-size: 0.95rem; font-weight: 700; color: #D8F2EF; }
+	.nf-search :global(.hp-search) { position: relative; z-index: 5; }
+
+	.nf-ways {
+		display: grid;
+		grid-template-columns: repeat(2, minmax(0, 1fr));
+		gap: 10px;
+		margin: 22px auto 0;
+		max-width: 520px;
 	}
-
-	.nf-btn {
-		display: inline-block;
-		background: var(--c-main);
-		color: var(--c-white);
-		padding: 12px 32px;
-		border-radius: 12px;
+	.way {
+		display: flex;
+		align-items: center;
+		gap: 12px;
+		min-height: 64px;
+		padding: 12px 14px;
+		text-align: start;
 		text-decoration: none;
-		font-weight: 600;
-		transition: background 0.2s ease;
+		color: #F3FBFA;
+		background: linear-gradient(140deg, rgba(255, 255, 255, 0.12), rgba(255, 255, 255, 0.04));
+		border: 1px solid rgba(255, 255, 255, 0.14);
+		border-radius: 18px;
+		transition: transform 0.3s cubic-bezier(0.2, 0.8, 0.2, 1), border-color 0.25s, background 0.25s;
 	}
+	.way:hover { transform: translateY(-2px); border-color: rgba(189, 244, 236, 0.4); background: linear-gradient(140deg, rgba(255, 255, 255, 0.17), rgba(255, 255, 255, 0.06)); }
+	.way:active { transform: scale(0.97); }
+	.way:focus-visible { outline: 2px solid #BDF4EC; outline-offset: 3px; }
+	.way-icon {
+		flex: none;
+		display: grid;
+		place-items: center;
+		width: 38px;
+		height: 38px;
+		border-radius: 12px;
+		color: #BDF4EC;
+		background: rgba(255, 255, 255, 0.09);
+		border: 1px solid rgba(255, 255, 255, 0.12);
+	}
+	.way-icon svg { width: 20px; height: 20px; fill: none; stroke: currentColor; stroke-width: 1.9; stroke-linecap: round; stroke-linejoin: round; }
+	.way-text { display: flex; flex-direction: column; min-width: 0; }
+	.way-text b { font-size: 0.98rem; font-weight: 800; line-height: 1.35; }
+	.way-text small { font-size: 0.8rem; line-height: 1.45; color: #A9CFCB; }
 
-	.nf-btn:hover {
-		background: var(--c-main-dark);
+	@media (max-width: 520px) {
+		.nf-ways { grid-template-columns: minmax(0, 1fr); gap: 8px; }
+		.way { min-height: 58px; }
+	}
+	@media (prefers-reduced-motion: reduce) {
+		.petal { animation: none; }
+		.way, .nf-in:has(.way:hover) .petal { transition: none; }
 	}
 </style>
