@@ -4,9 +4,9 @@
 // built by landing-3d/pro-day/build.py), and at the end of the day the lid closes.
 // Not linked from anywhere; it replaces pro/index.astro only after the founder's approval.
 import Layout from '../../layouts/Layout.astro';
-import Footer from '../../components/Footer.astro';
 import ProBackdrop from '../../components/pro/ProBackdrop.astro';
 import ProHeader from '../../components/pro/ProHeader.astro';
+import ProFooter from '../../components/pro/ProFooter.astro';
 import { proWhatsAppUrl } from '../../config/links';
 import { WHATSAPP_TEXT } from '../../config/pro-join';
 
@@ -106,7 +106,7 @@ const img = (id: string) => `/images/pro/day/${id}`;
 		</section>
 	</main>
 
-	<Footer seamless />
+	<ProFooter />
 </Layout>
 
 <script>

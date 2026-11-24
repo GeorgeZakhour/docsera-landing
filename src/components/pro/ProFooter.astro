@@ -1,0 +1,35 @@
+---
+// The footer of every DocSera Pro page. No store badges: Pro is not in the public stores.
+import { proWhatsAppUrl } from '../../config/links';
+import { WHATSAPP_TEXT } from '../../config/pro-join';
+const WA = proWhatsAppUrl(WHATSAPP_TEXT);
+const year = new Date().getFullYear();
+---
+<footer class="pfoot">
+	<div class="pf-in">
+		<div class="pf-brand">
+			<img src="/images/pro/logo-full-teal.png" alt="DocSera Pro" width="126" height="28" loading="lazy" />
+			<p>منصّة إدارة العيادات والمراكز الطبية.</p>
+		</div>
+		<nav aria-label="روابط DocSera Pro">
+			<a href="/pro/join">ابدأ التجربة</a>
+			<a href="/pro/day">يوم في العيادة</a>
+			<a href="/pro/privacy-policy/">سياسة الخصوصية</a>
+			<a href="/">موقع DocSera للمرضى</a>
+			<a href={WA} target="_blank" rel="noopener">واتساب</a>
+		</nav>
+	</div>
+	<p class="pf-c">© DocSera {year}. جميع الحقوق محفوظة.</p>
+</footer>
+
+<style>
+	.pfoot { position: relative; z-index: 1; padding: 34px 20px 24px; color: #A3B7BB; background: #080F14; border-top: 1px solid rgba(255, 255, 255, .09); }
+	.pf-in { display: flex; flex-wrap: wrap; align-items: center; justify-content: space-between; gap: 18px 40px; width: min(1320px, 100%); margin: 0 auto; }
+	.pf-brand img { display: block; width: auto; height: 24px; }
+	.pf-brand p { margin: 7px 0 0; font-size: .95rem; }
+	nav { display: flex; flex-wrap: wrap; gap: 8px 22px; }
+	a { color: #C9D8DB; font-size: .96rem; font-weight: 600; text-decoration: none; }
+	a:hover { color: #7DD3D4; }
+	a:focus-visible { outline: 2px solid #7DD3D4; outline-offset: 3px; border-radius: 4px; }
+	.pf-c { width: min(1320px, 100%); margin: 20px auto 0; padding-top: 16px; font-size: .88rem; border-top: 1px solid rgba(255, 255, 255, .07); }
+</style>

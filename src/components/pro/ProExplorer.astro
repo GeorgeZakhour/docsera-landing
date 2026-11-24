@@ -1,0 +1,130 @@
+---
+// One feature family of the /pro page: its real screens in a window, a list beside it, and
+// the important card of each screen rising out of it. On a phone the window zooms to that
+// card instead. Screens load only when they are about to be seen (scripts/site/pro-page.ts).
+import SHOTS from '../../data/proShots.json';
+import type { ProGroup } from '../../data/proSite';
+
+const { group, flip = false } = Astro.props as { group: ProGroup; flip?: boolean };
+const items = group.items.filter((i) => (SHOTS as any)[i.shot]);
+const clamp = (v: number, a: number, b: number) => Math.min(b, Math.max(a, v));
+const pct = (v: number) => `${(v * 100).toFixed(3)}%`;
+
+function fit(key: string) {
+	const s = (SHOTS as any)[key];
+	const [x, y, w, h] = s.rect || [0, 0, s.w, s.h];
+	const cx = (x + w / 2) / s.w, cy = (y + h / 2) / s.h, area = (w * h) / (s.w * s.h);
+	// The card rises where it is, growing toward the middle of the window.
+	const lifted = !!s.rect && area < 0.46;
+	const scale = clamp(620 / w, 1.07, 1.62);
+	const ox = cx < 0.34 ? '0%' : cx > 0.66 ? '100%' : '50%';
+	const oy = cy < 0.34 ? '0%' : cy > 0.66 ? '100%' : '50%';
+	const lift = `left:${pct(x / s.w)};top:${pct(y / s.h)};width:${pct(w / s.w)};height:${pct(h / s.h)};--s:${scale.toFixed(3)};--o:${ox} ${oy};--rr:${((s.r || 16) / w * 100).toFixed(2)}% / ${((s.r || 16) / h * 100).toFixed(2)}%`;
+	const inner = `width:${pct(s.w / w)};left:${pct(-x / w)};top:${pct(-y / h)}`;
+	// Phone: the window is 5:4, the screen 16:10. Zoom to the card and keep the screen filling it.
+	const z = clamp(s.w / w, 1.3, 2.5);
+	const view = 1.28;
+	const tx = clamp(0.5 - z * cx, 1 - z, 0), ty = clamp(view / 2 - z * cy, view - z, 0);
+	return { lifted, lift, inner, phone: `--z:${z.toFixed(3)};--tx:${pct(tx)};--ty:${pct(ty)}`, w: s.w, h: s.h };
+}
+const src = (key: string) => `/images/pro/site/${key}.webp`;
+---
+{items.length > 0 && (
+	<section class:list={['fx', { flip }]} id={group.id} data-fx data-spy={group.id}>
+		<div class="fx-in">
+			<header class="fx-head">
+				<h2>{group.title}</h2>
+				<p>{group.lead}</p>
+			</header>
+
+			<div class="fx-stage">
+				<div class="win">
+					<div class="bar" aria-hidden="true"><i></i><i></i><i></i></div>
+					<div class="view" data-view>
+						{items.map((it, i) => {
+							const f = fit(it.shot);
+							return (
+								<figure class:list={['shot', { on: i === 0 }]} data-shot style={f.phone}>
+									<img data-src={src(it.shot)} alt={`شاشة ${it.title} في DocSera Pro`} width={f.w} height={f.h} decoding="async" />
+								</figure>
+							);
+						})}
+						{items.map((it, i) => {
+							const f = fit(it.shot);
+							return f.lifted ? (
+								<div class:list={['rise', { on: i === 0 }]} data-rise={i} style={f.lift} aria-hidden="true"><img data-src={src(it.shot)} alt="" style={f.inner} decoding="async" /></div>
+							) : null;
+						})}
+					</div>
+				</div>
+			</div>
+
+			<div class="fx-list">
+				{items.map((it, i) => (
+					<div class:list={['it', { on: i === 0 }]} data-item>
+						<button type="button" aria-expanded={i === 0 ? 'true' : 'false'} data-pick={i}>
+							<span>{it.title}</span>
+							<svg viewBox="0 0 24 24" aria-hidden="true"><path d="m6 9.500 6 6 6-6" /></svg>
+						</button>
+						<div class="it-b"><ul>{it.points.map((p) => <li>{p}</li>)}</ul></div>
+					</div>
+				))}
+				{group.note && <p class="fx-note">{group.note}</p>}
+			</div>
+		</div>
+	</section>
+)}
+
+<style>
+	.fx { position: relative; padding: clamp(46px, 7vw, 92px) 20px; scroll-margin-top: 112px; }
+	.fx-in { display: grid; grid-template-columns: minmax(300px, 400px) minmax(0, 1fr); grid-template-areas: 'head stage' 'list stage'; grid-template-rows: auto 1fr; column-gap: clamp(32px, 5vw, 72px); row-gap: 18px; align-items: start; width: min(1320px, 100%); margin: 0 auto; }
+	.fx.flip .fx-in { grid-template-columns: minmax(0, 1fr) minmax(300px, 400px); grid-template-areas: 'stage head' 'stage list'; }
+	.fx-head { grid-area: head; }
+	.fx-head h2 { margin: 0 0 8px; font-size: clamp(1.95rem, 3.2vw, 3rem); font-weight: 800; line-height: 1.25; color: #fff; text-wrap: balance; }
+	.fx-head p { margin: 0; font-size: clamp(1.02rem, 1.25vw, 1.14rem); line-height: 1.8; color: #B7C8CB; }
+	.fx-stage { grid-area: stage; align-self: center; min-width: 0; perspective: 1800px; }
+	.win { overflow: visible; background: #0F1A21; border: 1px solid rgba(255, 255, 255, .13); border-radius: 16px; box-shadow: inset 0 1px 0 rgba(255, 255, 255, .08), 0 40px 74px -36px #000, 0 0 80px -40px rgba(0, 181, 183, .5); transform: rotateY(3deg) rotateX(1.200deg); transition: transform .5s cubic-bezier(.2, .7, .2, 1); }
+	.fx.flip .win { transform: rotateY(-3deg) rotateX(1.200deg); }
+	.fx-stage:hover .win { transform: none; }
+	.bar { display: flex; gap: 6px; padding: 10px 14px; direction: ltr; }
+	.bar i { width: 9px; height: 9px; background: rgba(255, 255, 255, .17); border-radius: 50%; }
+	.view { position: relative; aspect-ratio: 16 / 10; background: #0F1A22; border-radius: 0 0 15px 15px; }
+	.shot { position: absolute; inset: 0; margin: 0; overflow: hidden; border-radius: 0 0 15px 15px; opacity: 0; transition: opacity .38s ease; }
+	.shot:global(.on) { opacity: 1; }
+	.shot img { display: block; width: 100%; height: auto; transition: filter .4s ease; }
+	.view:has(:global(.rise.on)) .shot img { filter: brightness(.62); }
+	.rise { position: absolute; z-index: 3; overflow: hidden; border-radius: var(--rr); opacity: 0; pointer-events: none; transform: scale(1); transform-origin: var(--o); box-shadow: 0 0 0 1px rgba(255, 255, 255, .16), 0 26px 44px -14px rgba(0, 0, 0, .9); transition: transform .5s cubic-bezier(.2, .8, .2, 1), opacity .24s ease; }
+	.rise:global(.on) { opacity: 1; transform: scale(var(--s)); transition-delay: .12s; }
+	.rise img { position: absolute; max-width: none; height: auto; }
+
+	.fx-list { grid-area: list; display: grid; gap: 4px; }
+	.it { border-bottom: 1px solid rgba(255, 255, 255, .09); }
+	.it button { display: flex; align-items: center; justify-content: space-between; gap: 12px; width: 100%; padding: 11px 2px; color: #C9D8DB; font: 800 1.08rem Cairo, sans-serif; text-align: start; cursor: pointer; background: none; border: 0; transition: color .2s ease; }
+	.it button:hover { color: #fff; }
+	.it button:focus-visible { outline: 2px solid #7DD3D4; outline-offset: 2px; border-radius: 6px; }
+	.it svg { flex: none; width: 19px; height: 19px; fill: none; stroke: currentColor; stroke-width: 2.2; stroke-linecap: round; stroke-linejoin: round; transition: transform .26s ease; }
+	.it:global(.on) button { color: #7DD3D4; }
+	.it:global(.on) svg { transform: rotate(180deg); }
+	.it-b { display: grid; grid-template-rows: 0fr; visibility: hidden; transition: grid-template-rows .3s ease, visibility 0s linear .3s; }
+	.it:global(.on) .it-b { grid-template-rows: 1fr; visibility: visible; transition: grid-template-rows .3s ease; }
+	.it ul { display: grid; gap: 5px; min-height: 0; margin: 0; padding: 0; overflow: hidden; list-style: none; }
+	.it li { position: relative; padding-inline-start: 17px; font-size: 1rem; line-height: 1.7; color: #DDE9EB; }
+	.it li::before { content: ""; position: absolute; top: .72em; inset-inline-start: 2px; width: 6px; height: 6px; background: #00B5B7; border-radius: 2px; }
+	.it:global(.on) ul { padding-bottom: 13px; }
+	.fx-note { margin: 10px 0 0; font-size: .92rem; line-height: 1.7; color: #A3B7BB; }
+
+	@media (max-width: 899px) {
+		.fx { padding: 38px 16px; scroll-margin-top: 128px; }
+		.fx-in, .fx.flip .fx-in { grid-template-columns: minmax(0, 1fr); grid-template-areas: 'head' 'stage' 'list'; grid-template-rows: none; row-gap: 14px; }
+		.win, .fx.flip .win, .fx-stage:hover .win { transform: none; }
+		.bar { display: none; }
+		.view { aspect-ratio: 5 / 4; overflow: hidden; border-radius: 15px; }
+		.shot { border-radius: 15px; }
+		.shot img { transform-origin: 0 0; transform: translate(var(--tx), var(--ty)) scale(var(--z)); }
+		.rise { display: none; }
+		.view:has(:global(.rise.on)) .shot img { filter: none; }
+	}
+	@media (prefers-reduced-motion: reduce) {
+		.win, .shot, .rise, .it-b, .it svg { transition: none; }
+	}
+</style>
