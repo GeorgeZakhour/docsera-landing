@@ -5,7 +5,8 @@
 // Not linked from anywhere; it replaces pro/index.astro only after the founder's approval.
 import Layout from '../../layouts/Layout.astro';
 import Footer from '../../components/Footer.astro';
-import SiteHeader from '../../components/site/SiteHeader.astro';
+import ProBackdrop from '../../components/pro/ProBackdrop.astro';
+import ProHeader from '../../components/pro/ProHeader.astro';
 import { proWhatsAppUrl } from '../../config/links';
 import { WHATSAPP_TEXT } from '../../config/pro-join';
 
@@ -25,13 +26,13 @@ const img = (id: string) => `/images/pro/day/${id}`;
 ---
 
 <Layout title="DocSera Pro — عيادتك كلها" description="DocSera Pro لإدارة العيادة والمركز الطبي: المواعيد، غرفة الانتظار، ملفات المرضى، التقارير، المحاسبة، وأكثر." appBanner="none" appBar={false}>
-	<SiteHeader current="pro" cta={{ href: '/pro/join', label: 'ابدأ التجربة' }} />
+	<ProHeader current="day" />
 
 	<main class="pd">
 		<section class="day" data-day>
 			<div class="stick" data-stick>
 				<div class="sky" aria-hidden="true">
-					<img class="silk" src="/images/home/3d/silk-860.webp" srcset="/images/home/3d/silk-860.webp 860w, /images/home/3d/silk-1600.webp 1600w" sizes="max(100vw, 160vh)" alt="" width="1600" height="1000" fetchpriority="high" decoding="async" />
+					<ProBackdrop fixed={false} />
 					{[0, 1, 2, 3, 4, 5].map((i) => <i class={`s s${i}`} data-sky></i>)}
 				</div>
 
@@ -214,21 +215,20 @@ const img = (id: string) => `/images/pro/day/${id}`;
 </script>
 
 <style>
-	.pd { background: #03191E; color: #fff; }
+	.pd { background: #0A1218; color: #fff; }
 	.day { --q: 0; --f: 0; --night: 0; position: relative; height: 640vh; }
-	.stick { position: sticky; top: 0; height: 100vh; height: 100svh; overflow: hidden; background: #03191E; }
+	.stick { position: sticky; top: 0; height: 100vh; height: 100svh; overflow: hidden; background: #0A1218; }
 
-	.sky, .silk, .s { position: absolute; inset: 0; }
-	.silk { width: 100%; height: 100%; object-fit: cover; object-position: 34% 50%; }
+	.sky, .s { position: absolute; inset: 0; }
 	.s { opacity: 0; will-change: opacity; }
-	.s0 { opacity: 1; background: radial-gradient(90% 58% at 50% 108%, rgba(255, 176, 120, .34), rgba(255, 150, 100, .08) 48%, transparent 72%), linear-gradient(180deg, rgba(4, 34, 40, .74), rgba(6, 44, 50, .42)); }
-	.s1 { background: radial-gradient(80% 60% at 82% 2%, rgba(170, 240, 230, .36), transparent 62%), linear-gradient(180deg, rgba(10, 104, 108, .7), rgba(5, 56, 62, .56)); }
-	.s2 { background: radial-gradient(84% 64% at 62% -8%, rgba(206, 248, 240, .5), transparent 64%), linear-gradient(180deg, rgba(18, 138, 140, .78), rgba(7, 78, 84, .6)); }
-	.s3 { background: radial-gradient(80% 60% at 38% -6%, rgba(246, 240, 204, .42), transparent 64%), linear-gradient(180deg, rgba(16, 122, 124, .74), rgba(7, 66, 72, .6)); }
-	.s4 { background: radial-gradient(96% 66% at 16% 104%, rgba(255, 156, 100, .5), rgba(206, 100, 92, .18) 50%, transparent 74%), linear-gradient(180deg, rgba(16, 36, 58, .84), rgba(34, 40, 56, .6)); }
-	.s5 { background: radial-gradient(40% 30% at 18% 14%, rgba(180, 220, 226, .12), transparent 70%), linear-gradient(180deg, rgba(2, 13, 18, .94), rgba(3, 24, 30, .88)); }
+	.s0 { opacity: 1; background: radial-gradient(90% 58% at 50% 108%, rgba(255, 176, 120, .24), rgba(255, 150, 100, .05) 48%, transparent 72%); }
+	.s1 { background: radial-gradient(80% 60% at 82% 0%, rgba(125, 211, 212, .17), transparent 64%); }
+	.s2 { background: radial-gradient(90% 70% at 62% -10%, rgba(150, 232, 226, .28), transparent 66%), linear-gradient(180deg, rgba(0, 181, 183, .08), transparent 62%); }
+	.s3 { background: radial-gradient(84% 62% at 38% -8%, rgba(246, 236, 196, .2), transparent 64%), linear-gradient(180deg, rgba(0, 181, 183, .05), transparent 62%); }
+	.s4 { background: radial-gradient(96% 64% at 16% 106%, rgba(255, 150, 96, .34), rgba(206, 100, 92, .09) 50%, transparent 74%), linear-gradient(180deg, rgba(20, 28, 54, .4), transparent 70%); }
+	.s5 { background: radial-gradient(40% 30% at 18% 14%, rgba(180, 220, 226, .08), transparent 70%), linear-gradient(180deg, rgba(4, 8, 12, .72), rgba(4, 9, 13, .6)); }
 
-	.btn { display: inline-flex; align-items: center; justify-content: center; padding: 13px 26px; font-size: 1.08rem; font-weight: 800; color: #063A3C; text-decoration: none; background: #fff; border-radius: 15px; box-shadow: 0 16px 30px -16px rgba(0, 0, 0, .7); transition: transform .2s ease; }
+	.btn { display: inline-flex; align-items: center; justify-content: center; padding: 13px 26px; font-size: 1.08rem; font-weight: 800; color: #04181C; text-decoration: none; background: linear-gradient(180deg, #7DD3D4, #00B5B7); border-radius: 15px; box-shadow: inset 0 1px 0 rgba(255, 255, 255, .35), 0 16px 30px -14px rgba(0, 181, 183, .62); transition: transform .2s ease; }
 	.btn:hover { transform: translateY(-1px); }
 	.btn:focus-visible, .lnk:focus-visible { outline: 3px solid #8FE7DC; outline-offset: 3px; }
 	.lnk { font-size: .98rem; font-weight: 700; color: #D8F3EF; text-underline-offset: 5px; }
@@ -237,7 +237,7 @@ const img = (id: string) => `/images/pro/day/${id}`;
 
 	.hero { position: absolute; z-index: 5; top: clamp(84px, 11vh, 118px); inset-inline: 20px; text-align: center; opacity: calc(1 - var(--q) * 2.4); transform: translateY(calc(var(--q) * -34px)); }
 	.day:not(.at-hero) .hero { pointer-events: none; visibility: hidden; }
-	.hero-logo { display: block; width: auto; height: 28px; margin: 0 auto 10px; filter: brightness(0) invert(1); }
+	.hero-logo { display: block; width: auto; height: 28px; margin: 0 auto 10px; }
 	.hero h1 { margin: 0; font-size: clamp(2.7rem, 6.4vw, 5.2rem); font-weight: 900; line-height: 1.16; color: #fff; }
 	.hero p { max-width: 34em; margin: 8px auto 18px; font-size: clamp(1.04rem, 1.6vw, 1.3rem); line-height: 1.7; color: #DDF3F1; }
 

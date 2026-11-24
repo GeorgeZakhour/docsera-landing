@@ -6,9 +6,9 @@
 // here only together with them — see CLAUDE.md → "Pro request form".
 
 export const ROLES = [
-	{ key: 'clinic', label: 'لديّ عيادة خاصة' },
+	{ key: 'clinic', label: 'لديّ عيادة أو مكتب خاص' },
 	{ key: 'center_owner', label: 'أملك أو أدير مركزاً طبياً' },
-	{ key: 'center_staff', label: 'أعمل طبيباً في مركز طبي' },
+	{ key: 'center_staff', label: 'أعمل طبيباً أو مختصاً في مركز طبي' },
 ] as const;
 
 export const GOVERNORATES = [
@@ -251,7 +251,7 @@ export const FAILURE_COPY = {
 } as const;
 
 /** Prefilled WhatsApp message from the form and from the closed panel. */
-export const WHATSAPP_TEXT = 'مرحباً، أودّ تجربة DocSera Pro لعيادتي.';
+export const WHATSAPP_TEXT = 'مرحباً، أودّ تجربة DocSera Pro.';
 
 /** Prefilled WhatsApp message from the thank-you screen. */
 export function whatsappTextWithCode(code: string): string {
