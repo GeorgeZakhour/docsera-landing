@@ -1,0 +1,72 @@
+---
+// The help centre's front door. Everything here was rewritten from the code of DocSera 1.1.0.
+import Layout from '../../layouts/Layout.astro';
+import Footer from '../../components/Footer.astro';
+import SiteHeader from '../../components/site/SiteHeader.astro';
+import HelpIcon from '../../components/help/HelpIcon.astro';
+import HelpSearch from '../../components/help/HelpSearch.astro';
+import '../../components/help/help.css';
+import { FIRST_TIME, POPULAR, QUICK_FIXES, WORLDS, articleById } from '../../data/help';
+
+const pop = POPULAR.map(articleById).filter(Boolean) as NonNullable<ReturnType<typeof articleById>>[];
+const stops = FIRST_TIME.map(articleById).filter(Boolean) as typeof pop;
+const fixes = QUICK_FIXES.map(articleById).filter(Boolean) as typeof pop;
+const arrow = '<path d="m14.500 6-6 6 6 6" />';
+---
+<Layout title="مركز المساعدة — DocSera" description="دليل كامل لاستخدام تطبيق DocSera: الحساب، حجز المواعيد، الملف الصحي، العائلة، روتيني، الرسائل، الخصوصية، وحل المشكلات، خطوة بخطوة." path="/help" appBar={false}>
+	<SiteHeader current="help" />
+	<main class="hp">
+		<section class="hp-hero">
+			<div class="hp-silk" aria-hidden="true"><img src="/images/home/3d/silk-860.webp" srcset="/images/home/3d/silk-860.webp 860w, /images/home/3d/silk-1600.webp 1600w" sizes="max(100vw, 160vh)" alt="" width="1600" height="1000" fetchpriority="high" decoding="async" /></div>
+			<div class="hp-hero-in">
+				<h1>كيف نساعدك؟</h1>
+				<p>اكتب سؤالك كما تقوله، ونأخذك إلى الجواب خطوة بخطوة.</p>
+				<HelpSearch big />
+				<nav class="hp-pop" aria-label="الأسئلة الأكثر طلباً">
+					{pop.map((a) => <a href={`/help/${a.id}`}>{a.title}</a>)}
+				</nav>
+			</div>
+		</section>
+
+		<div class="hp-sheet">
+			<div class="hp-wrap">
+				<h2 class="hp-h2">كل ما في التطبيق</h2>
+				<div class="hp-bento">
+					{WORLDS.map((w) => (
+						<a href={`/help/topics/${w.id}`} class:list={['hp-w', { big: !!w.peek }]}>
+							<i><HelpIcon name={w.icon} /></i>
+							<h3>{w.title}</h3>
+							<p>{w.lead}</p>
+							{w.peek && <span class="hp-peek" aria-hidden="true"><img src={`/images/help/${w.peek}.webp`} alt="" width="600" height="1298" loading="lazy" decoding="async" /></span>}
+						</a>
+					))}
+				</div>
+
+				<section class="hp-path">
+					<h2 class="hp-h2">أول مرة على DocSera؟</h2>
+					<ol class="hp-stops">
+						{stops.map((a, i) => <li><a href={`/help/${a.id}`}><em>{i + 1}</em><b>{a.title}</b></a></li>)}
+					</ol>
+				</section>
+
+				<section class="hp-quick">
+					<h2 class="hp-h2">مشكلة الآن؟</h2>
+					<div class="hp-qg">
+						{fixes.map((a) => <a href={`/help/${a.id}`}>{a.title}<svg viewBox="0 0 24 24" aria-hidden="true" set:html={arrow} /></a>)}
+					</div>
+				</section>
+
+				<section class="hp-talk">
+					<div><h2>لم تجد جوابك؟</h2><p>اكتب لنا ما حدث، ومن أي جهاز، وصورة للشاشة إن أمكن.</p></div>
+					<a class="hp-btn" href="mailto:support@docsera.app">راسل الدعم</a>
+				</section>
+			</div>
+		</div>
+	</main>
+	<Footer seamless />
+</Layout>
+
+<script>
+	import { startHelpSearch } from '../../scripts/help/search';
+	startHelpSearch();
+</script>

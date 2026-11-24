@@ -1,0 +1,119 @@
+---
+// One help article: the answer first, then the steps beside a phone showing the real screen
+// of the step being read.
+import Layout from '../../layouts/Layout.astro';
+import Footer from '../../components/Footer.astro';
+import SiteHeader from '../../components/site/SiteHeader.astro';
+import HelpSearch from '../../components/help/HelpSearch.astro';
+import '../../components/help/help.css';
+import { ARTICLES, articleById, articlesIn, categoryById, rich, worldOfCategory, type HelpArticle } from '../../data/help';
+
+export function getStaticPaths() {
+	return ARTICLES.map((a) => ({ params: { slug: a.id }, props: { a } }));
+}
+const { a } = Astro.props as { a: HelpArticle };
+const cat = categoryById(a.category)!, world = worldOfCategory(a.category)!;
+const siblings = articlesIn(a.category);
+const at = siblings.findIndex((x) => x.id === a.id);
+const prev = siblings[at - 1], next = siblings[at + 1];
+const related = a.related.map(articleById).filter(Boolean) as HelpArticle[];
+
+// One phone page per distinct screen, in order; each step points at its own.
+const pages: { src: string; w: number; h: number }[] = [];
+const pageOf = a.steps.map((s) => {
+	if (!s.img) return undefined;
+	let i = pages.findIndex((p) => p.src === s.img!.src);
+	if (i < 0) { pages.push(s.img); i = pages.length - 1; }
+	return i;
+});
+const hasPhone = pages.length > 0;
+const arrow = '<path d="m14.500 6-6 6 6 6" />', chevron = '<path d="m6 9.500 6 6 6-6" />';
+const NOTE: Record<string, string> = {
+	tip: '<path d="M9.500 18h5M10.500 21h3M12 3a6.500 6.500 0 0 0-4 11.600c.8.700 1.300 1.500 1.500 2.400h5c.2-.9.700-1.700 1.500-2.400A6.500 6.500 0 0 0 12 3z"/>',
+	warn: '<path d="M12 4 2.800 19.500h18.400zM12 10v4.500M12 17.300v.01"/>',
+	info: '<circle cx="12" cy="12" r="8.500"/><path d="M12 11v5M12 8v.01"/>',
+};
+const plain = (s: string) => s.replace(/[«»]/g, '');
+const ld = JSON.stringify({
+	'@context': 'https://schema.org', '@type': 'FAQPage',
+	mainEntity: [{ '@type': 'Question', name: a.title, acceptedAnswer: { '@type': 'Answer', text: plain([a.summary, ...a.steps.map((s) => s.text)].join(' ')) } },
+		...a.faq.map((f) => ({ '@type': 'Question', name: f.q, acceptedAnswer: { '@type': 'Answer', text: plain(f.a) } }))],
+}).replace(/</g, '\\u003c');
+---
+<Layout title={`${a.title} — مركز مساعدة DocSera`} description={plain(a.summary)} path={`/help/${a.id}`} appBar={false}>
+	<script type="application/ld+json" set:html={ld} />
+	<SiteHeader current="help" />
+	<main class="hp">
+		<section class="hp-band">
+			<div class="hp-band-in">
+				<ol class="hp-crumb"><li><a href="/help">مركز المساعدة</a></li><li><a href={`/help/topics/${world.id}`}>{world.title}</a></li><li>{cat.title}</li></ol>
+				<h1>{a.title}</h1>
+				<p class="hp-band-lead" set:html={rich(a.summary).replace(/class="hp-ui"/g, 'style="font-weight:800"')} />
+				<HelpSearch />
+			</div>
+		</section>
+
+		<div class:list={['hp-art', { 'no-phone': !hasPhone }]}>
+			<nav class="hp-toc" aria-label={cat.title}>
+				<h2>{cat.title}</h2>
+				<ul>{siblings.map((x) => <li><a href={`/help/${x.id}`} aria-current={x.id === a.id ? 'page' : undefined}>{x.title}</a></li>)}</ul>
+			</nav>
+
+			<article class="hp-main">
+				{a.intro && <p class="hp-intro" set:html={rich(a.intro)} />}
+				{a.steps.length > 0 && (
+					<ol class="hp-steps">
+						{a.steps.map((s, i) => (
+							<li class="hp-step" data-step={pageOf[i] ?? ''}>
+								<span class="hp-n" aria-hidden="true">{i + 1}</span>
+								<div class="hp-st">
+									<p set:html={rich(s.text)} />
+									{s.img && <button type="button" class="hp-thumb" data-zoom={s.img.src} aria-label={`تكبير صورة الخطوة ${i + 1}`}><img src={s.img.src} alt="" width={s.img.w} height={s.img.h} loading="lazy" decoding="async" /></button>}
+								</div>
+							</li>
+						))}
+					</ol>
+				)}
+				{a.notes.map((n) => <aside class:list={['hp-note', n.kind]}><svg viewBox="0 0 24 24" aria-hidden="true" set:html={NOTE[n.kind] || NOTE.info} /><div set:html={rich(n.text)} /></aside>)}
+				{a.faq.length > 0 && (
+					<section class="hp-faq">
+						<h2 class="hp-sec">أسئلة قريبة</h2>
+						{a.faq.map((f) => <details><summary><span set:html={rich(f.q)} /><svg viewBox="0 0 24 24" aria-hidden="true" set:html={chevron} /></summary><p set:html={rich(f.a)} /></details>)}
+					</section>
+				)}
+				{related.length > 0 && (
+					<section>
+						<h2 class="hp-sec">قد يفيدك أيضاً</h2>
+						<div class="hp-rel">{related.slice(0, 6).map((r) => <a href={`/help/${r.id}`}>{r.title}<svg viewBox="0 0 24 24" aria-hidden="true" set:html={arrow} /></a>)}</div>
+					</section>
+				)}
+				<nav class="hp-pn" aria-label="المقال السابق والتالي">
+					{prev ? <a href={`/help/${prev.id}`}>→ {prev.title}</a> : <span></span>}
+					{next ? <a href={`/help/${next.id}`}>{next.title} ←</a> : <span></span>}
+				</nav>
+				<section class="hp-talk">
+					<div><h2>لم تجد جوابك؟</h2><p>اكتب لنا ما حدث، ومن أي جهاز، وصورة للشاشة إن أمكن.</p></div>
+					<a class="hp-btn" href="mailto:support@docsera.app">راسل الدعم</a>
+				</section>
+			</article>
+
+			{hasPhone && (
+				<aside class="hp-phone" aria-hidden="true">
+					<div class="hp-dev"><div class="hp-scr">
+						{pages.map((p, i) => <div class:list={['hp-pg', { on: i === 0 }]} data-page><img src={i === 0 ? p.src : undefined} data-src={i === 0 ? undefined : p.src} alt="" width={p.w} height={p.h} decoding="async" /></div>)}
+					</div></div>
+					<small data-phone-step></small>
+				</aside>
+			)}
+		</div>
+		<dialog class="hp-zoom" data-zoom-box aria-label="صورة الخطوة"><button type="button" aria-label="إغلاق"><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M6 6l12 12M18 6 6 18" /></svg></button><img alt="" /></dialog>
+	</main>
+	<Footer seamless />
+</Layout>
+
+<script>
+	import { startHelpSearch } from '../../scripts/help/search';
+	import { startArticle } from '../../scripts/help/article';
+	startHelpSearch();
+	startArticle();
+</script>

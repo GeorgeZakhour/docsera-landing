@@ -1,0 +1,55 @@
+---
+// One topic of the help centre: its categories and every question in them.
+import Layout from '../../../layouts/Layout.astro';
+import Footer from '../../../components/Footer.astro';
+import SiteHeader from '../../../components/site/SiteHeader.astro';
+import HelpIcon from '../../../components/help/HelpIcon.astro';
+import HelpSearch from '../../../components/help/HelpSearch.astro';
+import '../../../components/help/help.css';
+import { WORLDS, articlesIn, categoryById, type HelpWorld } from '../../../data/help';
+
+export function getStaticPaths() {
+	return WORLDS.map((w) => ({ params: { world: w.id }, props: { w } }));
+}
+const { w } = Astro.props as { w: HelpWorld };
+const arrow = '<path d="m14.500 6-6 6 6 6" />';
+const cats = w.cats.map((id) => ({ c: categoryById(id)!, items: articlesIn(id) })).filter((x) => x.c && x.items.length);
+---
+<Layout title={`${w.title} — مركز مساعدة DocSera`} description={w.lead} path={`/help/topics/${w.id}`} appBar={false}>
+	<SiteHeader current="help" />
+	<main class="hp">
+		<section class="hp-band">
+			<div class="hp-band-in">
+				<ol class="hp-crumb"><li><a href="/help">مركز المساعدة</a></li><li>{w.title}</li></ol>
+				<h1>{w.title}</h1>
+				<p class="hp-band-lead">{w.lead}</p>
+				<HelpSearch />
+			</div>
+		</section>
+		<div class="hp-topic">
+			<div class="hp-wrap">
+				<nav class="hp-chips" aria-label="مواضيع أخرى" style="margin:0 0 16px">
+					{WORLDS.filter((x) => x.id !== w.id).map((x) => <a href={`/help/topics/${x.id}`}>{x.title}</a>)}
+				</nav>
+				<div class="hp-cats">
+					{cats.map(({ c, items }) => (
+						<section class="hp-cat">
+							<header><i><HelpIcon name={c.icon} /></i><h2>{c.title}</h2></header>
+							<ul>{items.map((a) => <li><a href={`/help/${a.id}`}>{a.title}<svg viewBox="0 0 24 24" aria-hidden="true" set:html={arrow} /></a></li>)}</ul>
+						</section>
+					))}
+				</div>
+				<section class="hp-talk">
+					<div><h2>لم تجد جوابك؟</h2><p>اكتب لنا ما حدث، ومن أي جهاز، وصورة للشاشة إن أمكن.</p></div>
+					<a class="hp-btn" href="mailto:support@docsera.app">راسل الدعم</a>
+				</section>
+			</div>
+		</div>
+	</main>
+	<Footer seamless />
+</Layout>
+
+<script>
+	import { startHelpSearch } from '../../../scripts/help/search';
+	startHelpSearch();
+</script>

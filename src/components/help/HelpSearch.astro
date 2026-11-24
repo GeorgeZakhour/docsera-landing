@@ -1,0 +1,11 @@
+---
+// One search for the whole help centre. It works on the visitor's own words, and its index
+// loads only when they start typing (scripts/help/search.ts).
+const { big = false } = Astro.props as { big?: boolean };
+const id = `hp-r-${big ? 'hero' : 'bar'}`;
+---
+<div class:list={['hp-search', { 'is-big': big }]} data-help-search data-typing={big ? '1' : undefined}>
+	<svg viewBox="0 0 24 24" aria-hidden="true"><circle cx="10.800" cy="10.800" r="6.300" /><path d="m15.500 15.500 4.500 4.500" /></svg>
+	<input type="search" role="combobox" aria-expanded="false" aria-controls={id} aria-autocomplete="list" aria-label="ابحث في مركز المساعدة" placeholder="اكتب سؤالك هنا" autocomplete="off" enterkeyhint="search" />
+	<div class="hp-results" id={id} role="listbox" aria-label="نتائج البحث" hidden></div>
+</div>
