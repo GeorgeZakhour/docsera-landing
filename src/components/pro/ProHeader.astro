@@ -13,14 +13,12 @@ const LINKS = [
 		{LINKS.map(([key, href, label]) => <a href={href} aria-current={key === current ? 'page' : undefined}>{label}</a>)}
 	</nav>
 	<div class="ph-end">
-		<a href="/" class="ph-site">موقع DocSera</a>
 		<a href={cta.href} class="ph-cta">{cta.label}</a>
 		<details class="ph-menu" data-ph-menu>
 			<summary aria-label="القائمة" title="القائمة"><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M4 7h16M4 12h16M4 17h16" /></svg></summary>
 			<nav class="ph-drop" aria-label="القائمة">
 				<a href="/pro">DocSera Pro</a>
 				{LINKS.map(([key, href, label]) => <a href={href} aria-current={key === current ? 'page' : undefined}>{label}</a>)}
-				<a href="/" class="ph-out">موقع DocSera للمرضى</a>
 			</nav>
 		</details>
 	</div>
@@ -42,8 +40,6 @@ const LINKS = [
 	.ph-nav a { color: #C9D8DB; font-size: .96rem; font-weight: 700; text-decoration: none; }
 	.ph-nav a:hover, .ph-nav a[aria-current] { color: #7DD3D4; }
 	.ph-end { display: flex; align-items: center; gap: 10px; }
-	.ph-site { color: #9FB4B8; font-size: .88rem; font-weight: 700; text-decoration: none; white-space: nowrap; }
-	.ph-site:hover { color: #fff; }
 	.ph-cta { padding: 9px 16px; color: #04181C; font-size: .92rem; font-weight: 800; text-decoration: none; white-space: nowrap; background: linear-gradient(180deg, #7DD3D4, #00B5B7); border-radius: 12px; }
 	.ph a:focus-visible, .ph-menu summary:focus-visible { outline: 2px solid #7DD3D4; outline-offset: 2px; border-radius: 8px; }
 	.ph-menu { display: none; position: static; }
@@ -54,8 +50,6 @@ const LINKS = [
 	.ph-drop { position: absolute; top: calc(100% + 8px); inset-inline: 0; display: grid; padding: 8px; background: #15222A; border: 1px solid rgba(255, 255, 255, .12); border-radius: 18px; box-shadow: 0 24px 46px -18px #000; }
 	.ph-drop a { padding: 12px 14px; color: #E8EEF0; font-size: 1.04rem; font-weight: 700; text-decoration: none; border-radius: 12px; }
 	.ph-drop a:hover, .ph-drop a[aria-current] { color: #7DD3D4; background: rgba(0, 181, 183, .13); }
-	.ph-drop .ph-out { margin-top: 4px; color: #9FB4B8; border-top: 1px solid rgba(255, 255, 255, .09); border-radius: 0 0 12px 12px; }
-	@media (max-width: 1040px) { .ph-site { display: none; } }
 	@media (max-width: 899px) {
 		.ph-nav { display: none; }
 		.ph-menu { display: block; }
