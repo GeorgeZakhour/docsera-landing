@@ -46,11 +46,6 @@ const petals = [
 
 const WA_TEXT = 'مرحباً، عندي سؤال عن DocSera';
 
-// The pulse line (viewBox 360 × 120, mark in the middle, x 134–226). It is drawn from the right
-// edge into the mark (a heartbeat trace: a small wave, the spike, a small wave), then out of the
-// mark to the left edge with a faint echo.
-const BEAT_IN = 'M360 60 H300 l5 -7 l5 7 H282 l4 6 l6 -36 l7 46 l5 -16 H250 l6 -8 l6 8 H230';
-const BEAT_OUT = 'M130 60 H98 l5 -5 l5 5 H0';
 ---
 
 <!doctype html>
@@ -162,36 +157,24 @@ const BEAT_OUT = 'M130 60 H98 l5 -5 l5 5 H0';
 		</header>
 
 		<section class="hero">
-			<!-- A pulse runs along the line into the mark; the mark answers with a heartbeat
-			     (lub-dub) and a ring, and the pulse goes on: “Your health, connected.” -->
-			<div class="emblem" data-emblem>
-				<svg class="beat" viewBox="0 0 360 120" aria-hidden="true">
-					<defs>
-						<linearGradient id="beatFade" x1="0" y1="0" x2="1" y2="0">
-							<stop offset="0" stop-color="#fff" stop-opacity="0" />
-							<stop offset="0.22" stop-color="#fff" />
-							<stop offset="0.78" stop-color="#fff" />
-							<stop offset="1" stop-color="#fff" stop-opacity="0" />
-						</linearGradient>
-						<mask id="beatMask"><rect width="360" height="120" fill="url(#beatFade)" /></mask>
-					</defs>
-					<g mask="url(#beatMask)">
-						<path class="beat-base beat-base-in" d={BEAT_IN} pathLength="100" />
-						<path class="beat-base beat-base-out" d={BEAT_OUT} pathLength="100" />
-						<path class="beat-run beat-in" d={BEAT_IN} pathLength="100" />
-						<path class="beat-run beat-out" d={BEAT_OUT} pathLength="100" />
-					</g>
-				</svg>
-				<span class="halo" aria-hidden="true"></span>
-				<span class="ring" aria-hidden="true"></span>
-				<svg class="mark" viewBox={`${MARK_BOX.x} ${MARK_BOX.y} ${MARK_BOX.w} ${MARK_BOX.h}`} aria-hidden="true">
-					{petals.map((p, i) => (
-						<g class="petal" style={`--dx:${p.dx}px;--dy:${p.dy}px;--i:${i}`}>
-							<use href="#ds-mark" clip-path={`url(#cut-${p.id})`} fill="url(#markFill)" />
-						</g>
-					))}
-					<use class="mark-whole" href="#ds-mark" fill="url(#markFill)" />
-				</svg>
+			<!-- The site's 3D mark (the original shape), floating, with the app's own
+			     notifications arriving around it. A tap spins it. -->
+			<div class="stage" data-stage aria-hidden="true">
+				<span class="glow"></span>
+				<span class="gem-shadow"></span>
+				<img class="gem" src="/images/app110/gem.webp" width="480" height="480" alt="" fetchpriority="high" decoding="async" />
+				<span class="note note-a">
+					<i class="ni"><svg viewBox="0 0 24 24"><path d="m5 12.5 4.5 4.5L19 7.5" /></svg></i>
+					<b data-t="noteA">تم تأكيد موعدك</b>
+				</span>
+				<span class="note note-b">
+					<i class="ni ni-warm"><svg viewBox="0 0 24 24"><g transform="rotate(-30 12 12)"><path d="M12 8H7.5a4 4 0 0 0 0 8H12z" fill="currentColor" /><rect x="3.5" y="8" width="17" height="8" rx="4" /></g></svg></i>
+					<b data-t="noteB">حان موعد دوائك</b>
+				</span>
+				<span class="note note-c">
+					<i class="ni"><svg viewBox="0 0 24 24"><path d="M14 3.5H7.5a2 2 0 0 0-2 2v13a2 2 0 0 0 2 2h9a2 2 0 0 0 2-2V8z" /><path d="M14 3.5V8h4.5" /><path d="M9 12.5h6M9 16h4" /></svg></i>
+					<b data-t="noteC">تقرير طبي جديد</b>
+				</span>
 			</div>
 			<h1 class="wordmark">
 				<svg viewBox={WORD_BOX} role="img" aria-label="DocSera">
@@ -328,6 +311,9 @@ const BEAT_OUT = 'M130 60 H98 l5 -5 l5 5 H0';
 	const T: Record<'ar' | 'en', Record<string, string>> = {
 		ar: {
 			slogan: 'كل صحتك في تطبيق واحد',
+			noteA: 'تم تأكيد موعدك',
+			noteB: 'حان موعد دوائك',
+			noteC: 'تقرير طبي جديد',
 			appTitle: 'حمّل التطبيق',
 			appSub: 'مواعيدك وملفك الطبي وأدويتك، في مكان واحد',
 			appGet: 'حمّل مجاناً',
@@ -350,6 +336,9 @@ const BEAT_OUT = 'M130 60 H98 l5 -5 l5 5 H0';
 		},
 		en: {
 			slogan: 'Your health, connected.',
+			noteA: 'Appointment confirmed',
+			noteB: 'Time for your medicine',
+			noteC: 'New medical report',
 			appTitle: 'Get the app',
 			appSub: 'Your visits, medical file and medicines in one place',
 			appGet: 'Get it free',
@@ -430,13 +419,13 @@ const BEAT_OUT = 'M130 60 H98 l5 -5 l5 5 H0';
 		});
 	});
 
-	// ------------------------------------------------------------ emblem
-	// A tap on the mark opens the flower again.
-	const emblem = document.querySelector<HTMLElement>('[data-emblem]');
-	emblem?.addEventListener('click', () => {
-		emblem.classList.remove('again');
-		void emblem.offsetWidth;
-		emblem.classList.add('again');
+	// ------------------------------------------------------------ stage
+	// A tap on the mark spins it once.
+	const stage = document.querySelector<HTMLElement>('[data-stage]');
+	stage?.addEventListener('click', () => {
+		stage.classList.remove('spin');
+		void stage.offsetWidth;
+		stage.classList.add('spin');
 	});
 
 	// ------------------------------------------------------------ share
@@ -1080,102 +1069,6 @@ const BEAT_OUT = 'M130 60 H98 l5 -5 l5 5 H0';
 	}
 	a:focus-visible { outline: 2px solid var(--mint); outline-offset: 3px; border-radius: 12px; }
 
-	/* ── the emblem: a pulse that runs into the mark, and the mark's heartbeat ── */
-	.emblem { position: relative; height: 132px; margin: 4px -18px 0; cursor: pointer; -webkit-tap-highlight-color: transparent; }
-	.beat { position: absolute; inset: 0; width: 100%; height: 100%; overflow: visible; }
-	.beat path { fill: none; stroke-linecap: round; stroke-linejoin: round; }
-	.beat-base { stroke: rgba(189, 244, 236, 0.24); stroke-width: 1.5; }
-	.beat-run {
-		stroke: #A6FFF4;
-		stroke-width: 2.6;
-		stroke-dasharray: 22 200;
-		stroke-dashoffset: 22;
-		opacity: 0;
-		filter: drop-shadow(0 0 5px rgba(95, 227, 214, 0.95));
-	}
-	.halo {
-		position: absolute;
-		left: 50%; top: 50%;
-		width: 150px; height: 150px;
-		margin: -75px 0 0 -75px;
-		border-radius: 50%;
-		background: radial-gradient(circle, rgba(95, 227, 214, 0.42), rgba(0, 144, 146, 0.12) 45%, transparent 70%);
-		filter: blur(6px);
-	}
-	.ring {
-		position: absolute;
-		left: 50%; top: 50%;
-		width: 104px; height: 104px;
-		margin: -52px 0 0 -52px;
-		border-radius: 50%;
-		border: 1.5px solid rgba(166, 255, 244, 0.8);
-		opacity: 0;
-	}
-	.mark {
-		position: absolute;
-		left: 50%; top: 50%;
-		width: 88px; height: 88px;
-		margin: -44px 0 0 -44px;
-		overflow: visible;
-		filter: drop-shadow(0 8px 18px rgba(0, 30, 32, 0.55));
-	}
-	.petal { transform-box: view-box; transform-origin: center; }
-	.wordmark { margin: 6px auto 0; width: 176px; color: var(--ivory); line-height: 0; }
-	.wordmark svg { overflow: visible; }
-
-	@media (prefers-reduced-motion: no-preference) {
-		/* once: the line draws in from the right, the petals open from the centre, the name follows */
-		:global(html.js) .beat-base { stroke-dasharray: 100 100; animation: draw 0.8s var(--ease-out) backwards; }
-		:global(html.js) .beat-base-in { animation-delay: 0.05s; }
-		:global(html.js) .beat-base-out { animation-delay: 0.75s; }
-		@keyframes draw { from { stroke-dashoffset: 100; } to { stroke-dashoffset: 0; } }
-		:global(html.js) .emblem .petal { animation: bloom 0.9s var(--ease-spring) backwards; animation-delay: calc(0.45s + var(--i) * 0.07s); }
-		@keyframes bloom { from { transform: scale(0.15) rotate(-70deg); opacity: 0; } to { transform: none; opacity: 1; } }
-		:global(html.js) .emblem .mark-whole { animation: whole 0.25s linear 1.35s backwards; }
-		@keyframes whole { from { opacity: 0; } to { opacity: 1; } }
-		@keyframes halo-in { from { transform: scale(0.3); opacity: 0; } to { transform: none; opacity: 1; } }
-		:global(html.js) .wordmark path { animation: letter 0.7s var(--ease-out) backwards; animation-delay: calc(0.95s + var(--j) * 0.05s); }
-		@keyframes letter { from { transform: translateY(18px); opacity: 0; } to { transform: none; opacity: 1; } }
-		.wordmark path { transform-box: fill-box; }
-
-		/* then, every 4.8 s: a pulse arrives, the mark beats twice, a ring answers, the pulse goes on */
-		.beat-in { animation: run-in 4.8s linear 1.6s infinite; }
-		.beat-out { animation: run-out 4.8s linear 1.6s infinite; }
-		.mark { animation: heart 4.8s ease-in-out 1.6s infinite; }
-		.halo { animation: halo-in 1.2s var(--ease-out) 0.4s backwards, glow 4.8s ease-in-out 1.6s infinite; }
-		.ring { animation: ring 4.8s var(--ease-out) 1.6s infinite; }
-		@keyframes run-in {
-			0% { stroke-dashoffset: 22; opacity: 1; }
-			26% { stroke-dashoffset: -100; opacity: 1; }
-			26.1%, 100% { stroke-dashoffset: -100; opacity: 0; }
-		}
-		@keyframes run-out {
-			0%, 33% { stroke-dashoffset: 22; opacity: 0; }
-			33.1% { stroke-dashoffset: 22; opacity: 0.7; }
-			50% { stroke-dashoffset: -100; opacity: 0.7; }
-			50.1%, 100% { stroke-dashoffset: -100; opacity: 0; }
-		}
-		@keyframes heart {
-			0%, 25% { transform: scale(1); }
-			28% { transform: scale(1.1); }
-			31% { transform: scale(0.97); }
-			34% { transform: scale(1.06); }
-			39%, 100% { transform: scale(1); }
-		}
-		@keyframes glow {
-			0%, 25%, 55%, 100% { opacity: 0.75; transform: scale(1); }
-			30% { opacity: 1; transform: scale(1.12); }
-		}
-		@keyframes ring {
-			0%, 26% { transform: scale(0.8); opacity: 0; }
-			27% { transform: scale(0.85); opacity: 0.85; }
-			56%, 100% { transform: scale(2.1); opacity: 0; }
-		}
-		/* a tap opens the flower again */
-		:global(html.js) .emblem:global(.again) .petal { animation: bloom 0.8s var(--ease-spring) backwards; animation-delay: calc(var(--i) * 0.06s); }
-		:global(html.js) .emblem:global(.again) .mark-whole { animation: whole 0.2s linear 0.75s backwards; }
-	}
-
 	/* ── one font: Cairo, like the app; English mode uses Montserrat ── */
 	.row-sub { font: 500 12.5px/1.45 'Cairo', sans-serif; direction: inherit; }
 	.store-line, .legal span { font-family: 'Cairo', sans-serif; }
@@ -1196,4 +1089,73 @@ const BEAT_OUT = 'M130 60 H98 l5 -5 l5 5 H0';
 	.aud::before, .aud::after { content: ''; flex: 1; height: 1px; background: linear-gradient(90deg, transparent, rgba(189, 244, 236, 0.28), transparent); }
 	.pro-foot { justify-content: flex-end; }
 	.row-first { margin-top: 16px; }
+
+	/* ── the stage: the site's 3D mark, and the app's notifications arriving ── */
+	.stage { position: relative; height: 236px; margin: 2px -6px 0; cursor: pointer; -webkit-tap-highlight-color: transparent; }
+	.glow {
+		position: absolute; left: 50%; top: 46%;
+		width: 260px; height: 220px; margin: -110px 0 0 -130px;
+		border-radius: 50%;
+		background: radial-gradient(closest-side, rgba(255, 196, 160, 0.34), rgba(63, 208, 201, 0.16) 55%, transparent);
+		filter: blur(10px);
+	}
+	.gem {
+		position: absolute; left: 50%; top: 50%;
+		width: 176px; height: 176px; margin: -98px 0 0 -88px;
+		filter: drop-shadow(0 18px 26px rgba(0, 20, 22, 0.45)) saturate(1.08) brightness(1.06);
+	}
+	.gem-shadow {
+		position: absolute; left: 50%; top: 50%;
+		width: 110px; height: 18px; margin: 84px 0 0 -55px;
+		border-radius: 50%;
+		background: radial-gradient(closest-side, rgba(0, 12, 14, 0.55), transparent);
+	}
+	.note {
+		position: absolute;
+		display: inline-flex; align-items: center; gap: 8px;
+		height: 38px; padding: 0 12px 0 6px;
+		border-radius: 999px;
+		font: 700 12.5px/1 'Cairo', sans-serif;
+		color: #0E2B2C;
+		white-space: nowrap;
+		background: rgba(255, 255, 255, 0.95);
+		box-shadow: 0 14px 30px -12px rgba(0, 16, 18, 0.7), inset 0 0 0 1px rgba(255, 255, 255, 0.6);
+	}
+	:global(html[dir='ltr']) .note { padding: 0 6px 0 12px; font-family: 'Montserrat', 'Cairo', sans-serif; font-weight: 600; font-size: 12px; }
+	.ni { display: grid; place-items: center; width: 28px; height: 28px; border-radius: 50%; color: #fff; background: linear-gradient(150deg, #19B3B1, #00797B); }
+	.ni-warm { background: linear-gradient(150deg, #FFB48A, #F08A5D); }
+	.ni svg { width: 15px; height: 15px; fill: none; stroke: currentColor; stroke-width: 2.4; stroke-linecap: round; stroke-linejoin: round; }
+	.note-a { top: 8px; inset-inline-start: 6px; }
+	.note-b { top: 106px; inset-inline-end: -2px; }
+	.note-c { bottom: 12px; inset-inline-start: 26px; }
+	.wordmark { margin: 4px auto 0; width: 170px; color: var(--ivory); line-height: 0; }
+
+	@media (prefers-reduced-motion: no-preference) {
+		:global(html.js) .gem { animation: gem-in 0.9s var(--ease-spring) 0.1s backwards, float 5.5s ease-in-out 1s infinite; }
+		:global(html.js) .gem-shadow { animation: shadow-in 0.9s var(--ease-out) 0.1s backwards, shadow 5.5s ease-in-out 1s infinite; }
+		:global(html.js) .glow { animation: shadow-in 1.2s var(--ease-out) backwards; }
+		@keyframes gem-in { from { transform: translateY(-26px) scale(0.6) rotate(-30deg); opacity: 0; } to { transform: none; opacity: 1; } }
+		@keyframes shadow-in { from { opacity: 0; transform: scale(0.5); } to { opacity: 1; transform: none; } }
+		@keyframes float {
+			0%, 100% { transform: translateY(0) rotate(0deg); }
+			50% { transform: translateY(-10px) rotate(6deg); }
+		}
+		@keyframes shadow {
+			0%, 100% { transform: scale(1); opacity: 1; }
+			50% { transform: scale(0.82); opacity: 0.7; }
+		}
+		/* the notifications arrive one after another, like pushes, then drift */
+		:global(html.js) .note { animation: note-in 0.7s var(--ease-spring) backwards, drift 6s ease-in-out infinite; }
+		:global(html.js) .note-a { animation-delay: 0.7s, 1.4s; }
+		:global(html.js) .note-b { animation-delay: 1s, 2.2s; }
+		:global(html.js) .note-c { animation-delay: 1.3s, 3s; }
+		@keyframes note-in { from { transform: translateY(14px) scale(0.7); opacity: 0; } to { transform: none; opacity: 1; } }
+		@keyframes drift { 0%, 100% { transform: translateY(0); } 50% { transform: translateY(-6px); } }
+		:global(html.js) .stage:global(.spin) .gem { animation: spin 0.9s var(--ease-spring), float 5.5s ease-in-out 0.9s infinite; }
+		@keyframes spin { from { transform: rotate(0deg) scale(0.92); } to { transform: rotate(360deg) scale(1); } }
+	}
+	@media (max-width: 360px) {
+		.note { font-size: 11.5px; height: 34px; }
+		.ni { width: 24px; height: 24px; }
+	}
 </style>
